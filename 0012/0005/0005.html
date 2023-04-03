@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>DRL Lecture 6: Actor-Critic</h2><a href=https://www.youtube.com/watch?v=j82QLgfhFiY><img src=https://i.ytimg.com/vi_webp/j82QLgfhFiY/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1">00:01.000</a></div>
+        <div class="t">接下來要跟大家講一下Added Quotient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:07.500" id=00:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=7">00:07.500</a></div>
+        <div class="t">在Added Quotient裡面,最知名的方法就是A3C,Asynchronous Advantage Added Quotient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.000" id=00:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=15">00:15.000</a></div>
+        <div class="t">等一下就要跟大家介紹Added Quotient是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=19">00:19.000</a></div>
+        <div class="t">如果我們去掉前面的Asynchronous這個字眼,只有Added Quotient就叫做A2C。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:26.000" id=00:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=26">00:26.000</a></div>
+        <div class="t">如果前面加了Asynchronous的這個字眼,變成Asynchronous Advantage Added Quotient,就變成A3C。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:33.000" id=00:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=33">00:33.000</a></div>
+        <div class="t">等一下我們會來講一下這個東西是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:36.000" id=00:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=36">00:36.000</a></div>
+        <div class="t">好,那我們很快地複習一下Parse Quotient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:39.000" id=00:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=39">00:39.000</a></div>
+        <div class="t">在Parse Quotient裡面,我們是怎麼說的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:41.000" id=00:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=41">00:41.000</a></div>
+        <div class="t">在Parse Quotient裡面,我們說我們在Update我們的這個Parse的參數Theta的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:47.000" id=00:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=47">00:47.000</a></div>
+        <div class="t">我們是用了以下這個式子來算出我們的Quotient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.000" id=00:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=52">00:52.000</a></div>
+        <div class="t">那我們說以下這個式子其實是還蠻直覺的,以下這個式子在說什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:57.000" id=00:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=57">00:57.000</a></div>
+        <div class="t">以下這個式子是在說,我們先讓Agent去跟環境互動一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01.000" id=01:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=61">01:01.000</a></div>
+        <div class="t">然後我們知道我們在某一個State S採取了某一個Action A,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07.000" id=01:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=67">01:07.000</a></div>
+        <div class="t">那我們可以計算出在某一個State S採取某一個Action A的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.000" id=01:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=71">01:11.000</a></div>
+        <div class="t">接下來呢,我們去計算說從這一個State採取這個Action A之後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18.000" id=01:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=78">01:18.000</a></div>
+        <div class="t">Accumulated Reward有多大,從這個時間點開始,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.000" id=01:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=82">01:22.000</a></div>
+        <div class="t">在某一個State S採取某一個Action A之後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=85">01:25.000</a></div>
+        <div class="t">到遊戲結束到互動結束為止,我們到底Collect了多少的Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.000" id=01:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=90">01:30.000</a></div>
+        <div class="t">那我們把這些Reward,從時間T到時間大T的Reward,通通加起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:35.000" id=01:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=95">01:35.000</a></div>
+        <div class="t">那有時候我們會在前面呢,成一個Discount的Factor,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:39.000" id=01:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=99">01:39.000</a></div>
+        <div class="t">因為我們之前也有講過說,離現在這個時間點比較久遠的Action,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.000" id=01:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=103">01:43.000</a></div>
+        <div class="t">它可能是比較沒用,它可能是跟現在這個Action比較沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:47.000" id=01:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=107">01:47.000</a></div>
+        <div class="t">所以我們會給它成一個Discount的Factor,可能是0.9或是0.99。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:53.000" id=01:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=113">01:53.000</a></div>
+        <div class="t">那我們接下來來說呢,我們會減掉一個Bias,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.000" id=01:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=116">01:56.000</a></div>
+        <div class="t">減掉一個Baseline B,減掉一個值B。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.000" id=01:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=119">01:59.000</a></div>
+        <div class="t">減掉這個值B的目的,是希望括號這裡面這一下是有正有負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:05.000" id=02:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=125">02:05.000</a></div>
+        <div class="t">而如果括號裡面這一下是正的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:07.000" id=02:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=127">02:07.000</a></div>
+        <div class="t">那我們就要增加在這個State採取這個Action的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.000" id=02:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=131">02:11.000</a></div>
+        <div class="t">如果括號裡面是負的,我們就要減少在這個State採取這個Action的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:16.000" id=02:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=136">02:16.000</a></div>
+        <div class="t">那這個是我們之前呢,都講過的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.000" id=02:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=139">02:19.000</a></div>
+        <div class="t">那我們把這個Accumulated Reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:21.000" id=02:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=141">02:21.000</a></div>
+        <div class="t">從這個時間點採取Action A,一直到遊戲結束為止會得到Reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=145">02:25.000</a></div>
+        <div class="t">用大G呢,來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:28.000" id=02:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=148">02:28.000</a></div>
+        <div class="t">那這個B呢,就是一個Baseline,它是要確保說括號裡面的值有時候是正的,有時候是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:36.000" id=02:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=156">02:36.000</a></div>
+        <div class="t">好,那但是問題是這個大G這個值啊,它其實是非常的Unstable的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:43.000" id=02:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=163">02:43.000</a></div>
+        <div class="t">為什麼會說大G這個值是非常的Unstable的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:46.000" id=02:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=166">02:46.000</a></div>
+        <div class="t">因為你想想看哦,這個互動的Process其實本身是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:52.000" id=02:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=172">02:52.000</a></div>
+        <div class="t">所以我們在某一個State S,採取某一個Action A,然後計算Accumulated Reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:58.000" id=02:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=178">02:58.000</a></div>
+        <div class="t">每次算出來的結果都是不一樣的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:02.000" id=03:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=182">03:02.000</a></div>
+        <div class="t">所以大G其實是一個Random Variable。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.000" id=03:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=185">03:05.000</a></div>
+        <div class="t">給同樣的State S,給同樣的Action A,大G它可能有一個固定的Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.000" id=03:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=191">03:11.000</a></div>
+        <div class="t">但我們是採取Sample的方式,我們在某一個State S,採取某一個Action A,然後玩到底,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:16.000" id=03:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=196">03:16.000</a></div>
+        <div class="t">我們看看說我們會得到多少的Reward,我們就把這個東西當作大G。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:22.000" id=03:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=202">03:22.000</a></div>
+        <div class="t">所以我們只有對大G這個角度,就把G想成是一個Random Variable的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:27.000" id=03:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=207">03:27.000</a></div>
+        <div class="t">我們實際上做的事情是對這個大G做一些Sample,然後拿這些Sample的結果去Update我們的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:39.000" id=03:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=219">03:39.000</a></div>
+        <div class="t">但實際上在某一個State S,採取某一個Action A,接下來會發生什麼事?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.000" id=03:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=225">03:45.000</a></div>
+        <div class="t">它本身是有隨機性的,雖然說有一個固定的Distribution,但它本身是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:50.000" id=03:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=230">03:50.000</a></div>
+        <div class="t">而這個Random Variable,它的Variance可能會非常的巨大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:56.000" id=03:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=236">03:56.000</a></div>
+        <div class="t">你在同一個State,採取同一個Action,你最後得到的結果可能會是天差地遠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.000" id=04:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=242">04:02.000</a></div>
+        <div class="t">那今天假設我們可以Sample足夠的次數,我們在每次Update參數之前,我們都可以Sample足夠的次數,那其實沒有什麼問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:12.000" id=04:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=252">04:12.000</a></div>
+        <div class="t">但問題就是我們每次做Policy Gradient,每次Update參數之前都要做一些Sample,這個Sample的次數其實是不可能太多的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.000" id=04:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=260">04:20.000</a></div>
+        <div class="t">我們只能夠做非常少量的Sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.000" id=04:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=263">04:23.000</a></div>
+        <div class="t">那如果你今天Sample到正好差的結果,比如正好Sample到G等於100,最後Sample到G等於負10,那顯然你的結果不會是很差的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:32.000" id=04:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=272">04:32.000</a></div>
+        <div class="t">所以接下來我們要問的問題是,能不能讓這整個Training的Process變得比較Stable一點?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:38.000" id=04:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=278">04:38.000</a></div>
+        <div class="t">我們能不能夠直接估測G這個Random Variable的期望值?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.000" id=04:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=285">04:45.000</a></div>
+        <div class="t">我們在State S採取Action A的時候,我們直接想辦法用一個Network去估測在State S採取Action A的時候,你的G的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:56.000" id=04:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=296">04:56.000</a></div>
+        <div class="t">如果這件事情是可行的,那之後Training的時候就用期望值來代替Sample的值,那這樣會讓Training變得比較Stable,用期望值來代替Sample的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.000" id=05:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=307">05:07.000</a></div>
+        <div class="t">那怎麼拿期望值代替Sample的值呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:10.000" id=05:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=310">05:10.000</a></div>
+        <div class="t">這邊就需要引入到這個Value Based的方法,那Value Based的方法我們介紹的就是Q-Learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.000" id=05:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=317">05:17.000</a></div>
+        <div class="t">那在講Q-Learning的時候,我們說有兩種Function,有兩種Critic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:22.000" id=05:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=322">05:22.000</a></div>
+        <div class="t">第一種Critic我們寫作V,它的意思是說呢,假設我們現在的Actor是Pi,那我們拿Pi去跟環境做互動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.000" id=05:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=330">05:30.000</a></div>
+        <div class="t">當今天我們看到State S的時候,接下來Accumulated Reward的期望值有多少?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:40.000" id=05:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=340">05:40.000</a></div>
+        <div class="t">還有另外一個Critic叫作Pi,Pi是吃S跟A當作Input,它的意思是說在State S採取Action A,接下來都用Actor Pi來跟環境進行互動,那Accumulated Reward的期望值是多少?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:53.000" id=05:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=353">05:53.000</a></div>
+        <div class="t">好,那這個都是我們看過的圖啦,V呢,Input S,Output一個Scalar,Q呢,Input S,然後呢,它會給每一個A呢,都Assign一個Q-Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:05.000" id=06:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=365">06:05.000</a></div>
+        <div class="t">好,那這個Estimate的時候,你可以用TD,也可以用NC,那用TD呢,會比較穩,然後用NC呢,比較精確。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:17.000" id=06:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=377">06:17.000</a></div>
+        <div class="t">好,那接下來呢,我們要做的事情其實就是你完全可以想見,這個G這個Random Variable,它的期望值到底是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.000" id=06:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=387">06:27.000</a></div>
+        <div class="t">其實G這個Random Variable的期望值正好就是Q這樣子,因為這個就是Q的定義,Q的定義就是在某一個State S採取某一個Action A,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:38.000" id=06:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=398">06:38.000</a></div>
+        <div class="t">假設我們現在的這個Policy,就是Pi的情況下,會得到的Reward的期望值,Accumulated Reward的期望值有多大?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.000" id=06:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=408">06:48.000</a></div>
+        <div class="t">而這個東西就是G的期望值,那這個為什麼會這樣?因為這個就是Q的定義,Q Function的定義其實就是Accumulated Reward的期望值,就是G的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.000" id=07:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=420">07:00.000</a></div>
+        <div class="t">所以我們現在要做的事情就是,這一下,假設我們要用期望值來代表的話,那我們就是去Estimate出Q Function,然後把Q Function套在這裡,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.000" id=07:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=432">07:12.000</a></div>
+        <div class="t">那我們就可以把Estimate跟Credit這兩個方法把它結合起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.000" id=07:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=437">07:17.000</a></div>
+        <div class="t">好,講到這裡,大家有問題要問的嗎?沒有齁,這個其實很直覺的感覺,就是應該這麼做這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.000" id=07:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=444">07:24.000</a></div>
+        <div class="t">好,那接下來Baseline呢?Baseline你就用,你可以用,但Baseline你有很多不同的方法去加啦,但通常一個常見的做法是,你用我們這個Value Function來表示Baseline。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=458">07:38.000</a></div>
+        <div class="t">所謂Value Function的意思就是說,假設現在Policy是Pi,在某一個State S一直Interact到遊戲結束,那你Expected Reward有多大?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.000" id=07:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=471">07:51.000</a></div>
+        <div class="t">那V呢?沒有Imposed Action,然後Q呢?有Imposed Action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.000" id=07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=477">07:57.000</a></div>
+        <div class="t">那其實,V啊,它會是Q的期望值,所以你今天把Q減掉V,你的括號裡面這一下就會是有正有負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:11.000" id=08:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=491">08:11.000</a></div>
+        <div class="t">所以我們現在很直覺的,我們就把原來在Policy Gradient裡面,括號這一下,換成了Q Function的Value,減掉V Function的Value,就是這樣,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:30.000" id=08:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=510">08:30.000</a></div>
+        <div class="t">好,那接下來呢?其實你可以就單純的這麼實作,但是如果你這麼實作的話,它有一個缺點是你要Estimate兩個Network而不是一個Network,你要EstimateQ這個Network,你要EstimateV這個Network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=528">08:48.000</a></div>
+        <div class="t">那你現在就有兩倍的風險,你有Estimate估測不準的風險就變成兩倍,所以我們何不只估測一個Network就好了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:58.000" id=08:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=538">08:58.000</a></div>
+        <div class="t">事實上,在這個Actor Critic的方法裡面呢,你可以只估測V這個Network,你可以把Q的值用V的值來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:10.000" id=09:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=550">09:10.000</a></div>
+        <div class="t">什麼意思呢?現在其實Q of SA可以寫成R加V of S的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:33.000" id=09:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=573">09:33.000</a></div>
+        <div class="t">那今天呢,我們直接假設說,當然這個R這個本身它是一個Random Variable,就是你今天在State S,你採取了Action A,接下來你會得到什麼樣的Reward,其實是不確定的,這中間其實是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.000" id=09:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=597">09:57.000</a></div>
+        <div class="t">所以小R它其實是一個Random Variable,所以要把右邊這個式子取期望值,它才會等於Q Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.000" id=10:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=606">10:06.000</a></div>
+        <div class="t">但是我們現在呢,把期望值這件事情去掉,就當作左式等於右式,就當作Q Function等於R加上State Value Function,然後接下來我們就可以把這個Q Function用R加V取代掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.000" id=10:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=631">10:31.000</a></div>
+        <div class="t">所以本來是Q of STAT減掉V of ST,現在就把Q換成R加V,這邊是ST加1,因為這邊這個式子的意思是說,你在State S採取Action A,接下來你會得到Reward R,然後跳到State ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:58.000" id=10:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=658">10:58.000</a></div>
+        <div class="t">但是你會得到什麼樣的Reward R跟跳到什麼樣的State ST加1,它本身是有隨機性的,所以我們要在前面取一個期望值,左式才會等於右式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.000" id=11:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=669">11:09.000</a></div>
+        <div class="t">那我們現在把期望值這件事情拿掉,就直接說左式等於右式,然後把這個式子直接套進去,這樣大家可以了解我的意思了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.000" id=11:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=688">11:28.000</a></div>
+        <div class="t">大家可以接受這個想法,因為這其實也是很直覺,因為我們說Q Function是什麼意思?Q Function的意思就是,在State S採取Action A的時候,接下來會得到Reward的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:40.000" id=11:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=700">11:40.000</a></div>
+        <div class="t">接下來會得到Reward的期望值怎麼算呢?在State S採取Action A,接下來會發生的事情就是,你會得到Reward Rt,然後跳到State ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.000" id=12:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=720">12:00.000</a></div>
+        <div class="t">然後我們想要知道說,接下來會得到多少Reward。那接下來會發生什麼事呢?接下來你會得到Reward Rt,然後跳到State ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.000" id=12:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=731">12:11.000</a></div>
+        <div class="t">那在State S採取Action A得到的Reward,其實就是等於接下來得到Reward Rt,加上從State ST加1開始得到的接下來所有Reward的總和。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=743">12:23.000</a></div>
+        <div class="t">而從State ST加1開始得到接下來所有Reward的總和,就是V of ST加1。那在State ST採取Action A以後得到的Reward Rt,就寫在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.000" id=12:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=756">12:36.000</a></div>
+        <div class="t">所以這兩項加起來,會等於Q Function。那為什麼前面要取期望值呢?因為你在State ST採取Action A,你會得到什麼樣的Reward,跳到什麼樣的State這件事情,本身是有隨機性的,不見得是你的法則可以控制的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:48.000" id=12:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=768">12:48.000</a></div>
+        <div class="t">為了要把這個隨機性考慮進去,前面你必須加上期望值。但是我們現在把這個期望值拿掉,就說它們兩個是相等的,把這個東西塞進去,把Qt換掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:58.000" id=12:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=778">12:58.000</a></div>
+        <div class="t">這樣的好處就是,你不需要再Estimate Q了,你只需要Estimate V就夠了,你只要Estimate一個Neighbor就夠了,你不需要Estimate兩個Neighbor,你只需要Estimate一個Neighbor就夠了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.000" id=13:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=789">13:09.000</a></div>
+        <div class="t">那這樣的壞處是什麼呢?這樣你引入了一個隨機的東西,就是R現在它是有隨機性的,它是一個Random Variable。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:18.000" id=13:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=798">13:18.000</a></div>
+        <div class="t">但是這個Random Variable相較於剛才的G Accumulated Reward可能還好,因為它是某一個State會得到的Reward,而Q是所有未來的State會得到的Reward的總和。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.000" id=13:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=810">13:30.000</a></div>
+        <div class="t">G是所有未來會得到的Reward的總和,G的Variance比較大,R雖然也有一些Variance,但它的Variance會比G還要小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.000" id=13:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=821">13:41.000</a></div>
+        <div class="t">所以把原來Variance比較大的G換成現在只有Variance比較小的R這件事情也是合理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.000" id=13:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=828">13:48.000</a></div>
+        <div class="t">如果你不相信的話,如果你覺得說什麼期望值拿掉了,什麼不相信的話,那我就告訴你,原始的那個A3C的Paper,它試了各式各樣的方法,最後做出來就是這個最好,這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:01.000" id=14:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=841">14:01.000</a></div>
+        <div class="t">當然你可能說,搞不好Estimate Q跟V也都Estimate很好啊,那我給你答案就是,做實驗的時候最後結果就是這個最好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.000" id=14:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=851">14:11.000</a></div>
+        <div class="t">所以後來大家都用這個,所以這整個流程就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.000" id=14:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=858">14:18.000</a></div>
+        <div class="t">Advantage的,因為前面這個式子叫做Advantage Function,好,謝謝謝謝。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.000" id=14:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=865">14:25.000</a></div>
+        <div class="t">好,那這個Advantage Function就是前面這個式子叫做Advantage Function,所以這整個方法就叫Advantage的Activated。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.000" id=14:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=881">14:41.000</a></div>
+        <div class="t">我們現在先有一個Pi,有一個初始的Atom,拿去跟環境做互動,先收集資料,在原來的Policy規定裡面收集到資料以後,你就要拿去Update你的Policy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.000" id=14:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=897">14:57.000</a></div>
+        <div class="t">但是在這個Atom規定的方法裡面,你不是直接拿你的那些資料去Update你的Policy,你先拿這些資料去Estimate出你的Value Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:09.000" id=15:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=909">15:09.000</a></div>
+        <div class="t">那假設你用別的方法,你有時候可能也需要Estimate Q Function,但我們這邊是Advantage Activated,我們只需要Value Function就好,我們不需要Q Function,只要Value Function就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:19.000" id=15:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=919">15:19.000</a></div>
+        <div class="t">那Estimate Value Function的過程你可以用TD,也可以用SC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=925">15:25.000</a></div>
+        <div class="t">那你Estimate出這個Value Function以後,接下來你再背上Value Function,套用下面這個式子去Update你的Pi,然後你有了新的Pi以後,再去跟環境互動,再收集新的資料,去Estimate你的Value Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:40.000" id=15:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=940">15:40.000</a></div>
+        <div class="t">然後再用新的Value Function去Update你的Policy,去Update你的Atom。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:46.000" id=15:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=946">15:46.000</a></div>
+        <div class="t">整個Actor Critic的Algorithm就是這麼運作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:58.000" id=15:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=958">15:58.000</a></div>
+        <div class="t">第一個Tip是,我們現在說我們其實要Estimate的Network有兩個,一個是D,就Q不用Estimate,我們只要Estimate V Function,而另外一個需要Estimate的Network是Policy的Network,也就是你的Atom。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:12.000" id=16:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=972">16:12.000</a></div>
+        <div class="t">那這兩個Network,那個V那個Network,它是Input一個State,Output一個Scalar,然後Actor的這個Network,它是Input一個State,Output就是一個Action的Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:23.000" id=16:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=983">16:23.000</a></div>
+        <div class="t">假設你的Action是Discrete的,不是Continuous的話,如果是Continuous的話,它也是一樣,如果是Continuous的話,就只是Output一個Continuous的Vector,我想大家應該知道我的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.000" id=16:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=994">16:34.000</a></div>
+        <div class="t">那這邊是舉Discrete的例子,但是Continuous的Case其實也是一樣的。Output一個State,然後它要決定說你現在要Take哪一個Action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.000" id=16:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1003">16:43.000</a></div>
+        <div class="t">那這兩個Network,這個Actor跟你的Critic,跟你的Value Function,它們的Input都是S,所以它們前面幾個Layer其實是可以Share的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:54.000" id=16:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1014">16:54.000</a></div>
+        <div class="t">尤其是假設你今天是玩Atari的遊戲,或者是你玩的是那種什麼3D遊戲,那Input都是Image,那個Image都非常複雜,那個Image很大張嘛,通常你前面都會用一些CNN來處理,把那些Image抽成High Level的Information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.000" id=17:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1031">17:11.000</a></div>
+        <div class="t">那把那個Pixel Level到High Level的Information這件事情,其實對這個Actor跟Critic來說可能是可以共用的,所以通常你會讓這個Actor跟Critic的前面幾個Layer是Share的,你會讓Actor跟Critic前面幾個Layer共用同一組參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.000" id=17:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1047">17:27.000</a></div>
+        <div class="t">那這一組參數可能是CNN先把Input的Pixel變成比較High Level的資訊,然後再給Actor去決定說他要採取什麼樣的行為,給這個Critic、給Value Function去計算Expected Return跟Expected Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:44.000" id=17:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1064">17:44.000</a></div>
+        <div class="t">那另外一個事情是我們一樣需要Exploration的機制,那我們之前已經有講過在講這個Queue Function的時候,在講Queue Learning的時候,我們有講過Exploration這件事是很重要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.000" id=18:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1083">18:03.000</a></div>
+        <div class="t">那今天在做Actor跟Critic的時候,有一個常見的Exploration的方法是你會對你的Pile Output的這個Distribution下一個Contract,這個Contract是希望這個Distribution的Entropy不要太小,希望這個Distribution的Entropy可以大一點,也就是希望不同的Action被採用的機率平均一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1106">18:26.000</a></div>
+        <div class="t">這樣在Testing的時候,他才會多嘗試各種不同的Action,才會把這個環境探索得比較好,Explore得比較好,才會得到比較好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.000" id=18:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1118">18:38.000</a></div>
+        <div class="t">這個是Advantage的Actor跟Critic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:41.000" id=18:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1121">18:41.000</a></div>
+        <div class="t">那接下來什麼東西是Asynchronous的Advantage的Actor跟Critic呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.000" id=18:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1126">18:46.000</a></div>
+        <div class="t">Reinforcement Learning的一個問題就是它很慢,那怎麼增加訓練的速度呢?這個就講到火影忍者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:56.000" id=18:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1136">18:56.000</a></div>
+        <div class="t">有一次名人說,他想要在一週之內打太小,所以要加快修行的速度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:02.000" id=19:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1142">19:02.000</a></div>
+        <div class="t">卡卡西就教了他一個方法,這個方法是說,你只要用影分身進行同樣的修行,兩個人一起修行的話,經驗值累積的速度就會變成兩倍,所以名人就開了一千個影分身開始修行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1157">19:17.000</a></div>
+        <div class="t">這個其實就是Advantage跟Critic,也就是A3C這個方法的精神。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:23.000" id=19:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1163">19:23.000</a></div>
+        <div class="t">A3C這個方法的精神就是同時開很多個Worker,每一個Worker其實就是一個影分身,最後這些影分身會把所有的經驗通通集合在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:35.000" id=19:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1175">19:35.000</a></div>
+        <div class="t">這個A3C是怎麼運作的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:37.000" id=19:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1177">19:37.000</a></div>
+        <div class="t">首先,這個你可能自己實作的時候,你如果沒有很多個CPU,你可能也是不好做啦,那反正就是講一講,作業也沒有強制你一定要做A3C,你可以Implement A2C就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:51.000" id=19:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1191">19:51.000</a></div>
+        <div class="t">A3C是這樣子,你一開始有一個Global的Network,我們剛才也有講過說,其實Policy的Network跟Value的Network是Tie在一起的啦,他們前幾個Layer會被Tie在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.000" id=20:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1202">20:02.000</a></div>
+        <div class="t">比如一個Global的Network,他們有包含Policy的部分,有包含Value的部分,假設他的參數就是誰打萬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:08.000" id=20:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1208">20:08.000</a></div>
+        <div class="t">接下來,每一個Worker做的事情,你會開很多個Worker,每一個Worker可能就用一張CPU去跑,比如說開八個Worker,你至少有八張CPU。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:18.000" id=20:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1218">20:18.000</a></div>
+        <div class="t">那你第一個Worker就去跟Global的Network去把他的參數Copy過來,每一個Worker要工作前就把他的參數Copy過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:28.000" id=20:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1228">20:28.000</a></div>
+        <div class="t">接下來,你就去跟環境做互動,那每一個Actor跟環境做互動的時候,為了要Collect到比較Diverse的Data,所以舉例來說,如果是走迷宮的話,可能每一個Actor他出生的位置、起始的位置都會不一樣,這樣他們才能夠收集到比較多樣性的Data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:44.000" id=20:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1244">20:44.000</a></div>
+        <div class="t">每一個Actor就自己跟環境做互動,互動完之後,你就會計算出Gradient,那計算出Gradient以後,你要拿Gradient去Update你的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:56.000" id=20:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1256">20:56.000</a></div>
+        <div class="t">那你就計算一下你的Gradient,然後你就拿你的Gradient去Update Global Network的參數,就是這個Worker他算出Gradient以後,就把Gradient傳回給中央的控制中心。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.000" id=21:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1285">21:25.000</a></div>
+        <div class="t">中央的控制中心就會拿這個Gradient去Update原來的參數,但是要注意一下,所有的Actor都是平行跑的,每一個Actor就是各做各的,互相之間就不要管彼此,就是各做各的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.000" id=21:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1299">21:39.000</a></div>
+        <div class="t">所以每一個人都是去要了一個參數以後,做完他就把他的參數傳回去,做完就把參數傳回去。所以當今天第一個Worker做完,想要把參數傳回去的時候,本來他要到的參數是θ1,但等他要把Gradient傳回去的時候,可能別人已經把原來的參數覆蓋掉變成θ2了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.500" id=21:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1316">21:56.500</a></div>
+        <div class="t">但是沒有關係,就不要在意那種細節,他一樣會把這個Gradient直接覆蓋過去,就是了。這個Simpleness的Actor Gradient就是這麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:09.000" id=22:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1329">22:09.000</a></div>
+        <div class="t">這個就是A3C,在講A3C之後,我們要講另外一個方法,叫做Pathwise Derivative Policy Gradient。這個方法很神奇,它可以想成是Q-Learning解Continuous Action的一種特別的方法,也可以想成是一種特別的Actor Critic的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:36.000" id=22:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1356">22:36.000</a></div>
+        <div class="t">所以如果用麒麟王來比喻的話,你想想看,阿光是一個Actor,然後佐維是一個Critic。阿光落某一支以後,佐維會說,如果是一般的Actor Critic,他會告訴他說,這個時候不應該下小馬不飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.400" id=22:50.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1370">22:50.400</a></div>
+        <div class="t">他會告訴你說,你現在採取的這一步,算出來的value到底是好還是不好,但這樣就結束了,他只告訴你說好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:58.180" id=22:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1378">22:58.180</a></div>
+        <div class="t">因為一般的Actor Critic裡面那個Critic就是input state或input state跟action pair,然後給你一個value,然後就結束了。所以對Actor來說,他只知道說,現在他做的這個行為到底是好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:12.320" id=23:12.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1392">23:12.320</a></div>
+        <div class="t">但是如果是在剛才講的這個Pathwise Derivative Policy Gradient裡面,這個Critic會直接告訴Actor說,採取什麼樣的action才是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:24.200" id=23:24.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1404">23:24.200</a></div>
+        <div class="t">所以今天佐維不只是告訴阿光說,這個時候不要下小馬不飛,同時還告訴阿光說,這個時候應該要下大馬不飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.040" id=23:33.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1413">23:33.040</a></div>
+        <div class="t">所以這個就是Pathwise Derivative Policy Gradient,告訴我們的Critic,等一下會講得更清楚一點,Critic會直接引導Actor做什麼樣的action,才是可以得到比較大的value的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:45.060" id=23:45.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1425">23:45.060</a></div>
+        <div class="t">如果今天從Q-learning的觀點來看,我們之前說,Q-learning的一個問題是,你沒有辦法在用Q-learning的時候考慮continuous vector,其實不是完全沒辦法,就是不容易,比較麻煩,比較沒有general solution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.620" id=24:01.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1441">24:01.620</a></div>
+        <div class="t">那今天我們其實可以說,我們怎麼解這個optimization的problem呢?我們用一個Actor來解這個optimization的problem。所以我們本來在Q-learning裡面,如果是一個continuous的action,我們要解這個optimization的problem,那現在這個optimization的problem,用Actor來解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:22.380" id=24:22.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1462">24:22.380</a></div>
+        <div class="t">我們假設Actor就是一個solver,這個solver它的工作就是給你state s,然後它就去解解解,告訴我們說哪一個action可以給我們最大的Q-value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.980" id=24:33.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1473">24:33.980</a></div>
+        <div class="t">所以這是從另外一個觀點來看Pathwise Derivative Policy Gradient這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:39.180" id=24:39.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1479">24:39.180</a></div>
+        <div class="t">那這個說法你有沒有覺得非常的熟悉呢?我們在講GEN的時候不是有講過一個說法,我們認一個discriminator,它是要evaluate東西好不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:48.380" id=24:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1488">24:48.380</a></div>
+        <div class="t">discriminator要自己生東西,非常的困難,那怎麼辦?因為要解一個argmax的problem,非常困難,所以怎麼辦?用generator來生。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:56.780" id=24:56.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1496">24:56.780</a></div>
+        <div class="t">所以今天的概念其實是一樣的,Q就是discriminator,要根據discriminator決定action非常困難,怎麼辦?另外認一個network來解這個optimization的problem,這個東西就是Actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.860" id=25:08.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1508">25:08.860</a></div>
+        <div class="t">所以今天是從兩個不同的觀點,其實同一件事,從兩個不同的觀點來看,一個觀點是說,原來的Q-learning我們可以加以改進,怎麼改進呢?我們認一個actor來決定action,以解決argmax不好解的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.980" id=25:21.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1521">25:21.980</a></div>
+        <div class="t">換句話說,或者是另外一個觀點是,原來的actor推行的問題是cricket並沒有給actor足夠的資訊,它只告訴他好不好,沒有告訴他說什麼樣比較好,那現在有新的方法可以直接鬧出actor說什麼樣叫做好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.060" id=25:36.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1536">25:36.060</a></div>
+        <div class="t">那我們就實際想一下它的algorithm,那其實蠻直覺的,假設我們認了一個Q-function,Q-function就是input action a,output就是Q.sa,那接下來我們要認一個actor,這個actor的工作是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:56.780" id=25:56.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1556">25:56.780</a></div>
+        <div class="t">這個actor的工作就是解這個argmax的problem,這個actor的工作就是input一個state x,希望可以output一個action a,這個action a被丟到Q-function以後,它可以讓Q of x a的值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:12.780" id=26:12.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1572">26:12.780</a></div>
+        <div class="t">那實際上在train的時候,你其實就是把Q跟actor接起來,變成一個比較大的network,就Q是一個network,input x跟a,output一個value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:26.860" id=26:26.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1586">26:26.860</a></div>
+        <div class="t">那actor在training的時候,它要做的事情就是input x,output a,把a丟到Q裡面,希望output的值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:33.740" id=26:33.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1593">26:33.740</a></div>
+        <div class="t">在train的時候會把Q跟actor直接接起來,當作是一個大的network,然後你會fix出Q的參數,只去調actor的參數,就用歸零而生的方法去maximizeQ的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:46.220" id=26:46.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1606">26:46.220</a></div>
+        <div class="t">這個東西你有沒有覺得很熟悉呢?這其實就是一個game,對不對?它就是一個game這樣子,好像就是那個conditional的game,Q就是quitting,Q就是discriminator,但在reinforcement裡面就是quitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:59.900" id=26:59.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1619">26:59.900</a></div>
+        <div class="t">actor在game裡面,它就是generator,其實它們就是同一件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.060" id=27:08.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1628">27:08.060</a></div>
+        <div class="t">那我們來看一下這個Pathwise Derivative Policy Gradient的演算法,一開始你會有一個actor pi,它就跟環境互動,然後你可能會要它去estimate Q value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:22.060" id=27:22.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1642">27:22.060</a></div>
+        <div class="t">estimate完Q value以後,你就把Q value固定,只區分一個actor,actor learning的方向就是希望它的output,希望這個actor採取,就我們假設這個Q估的是很準的,它真的知道說今天在某一個state採取什麼樣的action會真的得到很大的value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:38.300" id=27:38.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1658">27:38.300</a></div>
+        <div class="t">接下來就論這個actor,actor在given s的時候,它採取的a,可以讓最後Q function算出來的value越大越好,你用這個criterion去update你的actor pi,然後接下來有新的pi再去跟環境做互動,然後再estimate Q,然後再得到新的pi,去maximizeQ的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:57.820" id=27:57.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1677">27:57.820</a></div>
+        <div class="t">那其實本來在Q learning裡面你用得上的技巧在這邊也幾乎都用得上了,比如說replay buffer啊,exploration啊等等,這些都是用得上的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:08.460" id=28:08.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1688">28:08.460</a></div>
+        <div class="t">好,那我們再講得更具體一點,這個是原來的Q learning的algorithm,這個是我們上週看過的,你有一個Q function,那你會有另外一個target的Q function叫做Q hat,這個我們之前有講過說你會有另外一個target的Q function叫做Q hat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:26.140" id=28:26.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1706">28:26.140</a></div>
+        <div class="t">然後在每一個episode裡面,在每一個episode的每一個time state裡面,你會看到一個state st,你會take某一個action at,那至於take哪一個action是由Q function所決定的,你會解一個argmax的problem,如果是discrete的話沒有問題,你就看說哪一個a可以讓Q的value最大,就take那個action,但你需要加一些exploration加performance才會好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.500" id=28:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1729">28:49.500</a></div>
+        <div class="t">你會看到如果rt跳到新的state st加1,你會把st,at,rt,st加1塞到你的buffer裡面去,你會從你的buffer裡面sample一個batch的data,這個batch的data裡面可能某一筆是si,ai,ri,si加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:03.740" id=29:03.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1743">29:03.740</a></div>
+        <div class="t">接下來你會算一個target,這個target叫做y,y是什麼?y是ri,加上你拿你的target的Q function過來,你把你的target的Q function拿過來,去計算target的Q functioninput哪一個a的時候,它的value會最大,你把這個target的Q function算出來的Q value跟r加起來,你就得到了你的target y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:26.780" id=29:26.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1766">29:26.780</a></div>
+        <div class="t">接下來,你怎麼認你的Q呢?你就希望你的Q function在帶sai跟ai的時候跟y越接近越好,這是一個regression的problem。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:36.140" id=29:36.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1776">29:36.140</a></div>
+        <div class="t">最後,每第一個step,你會把Q hat用Q替代掉,接下來我們把它改成pathwise derivative的policy gradient,怎麼做?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:47.180" id=29:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1787">29:47.180</a></div>
+        <div class="t">這邊就是只要做四個改變就好,第一個改變是你要把Q換成pi,本來是用Q來決定在state st產生哪一個action at,現在是直接用pi,我們認了一個actor,我們不用再寫argmax的problem了,我們直接認了一個actor,這個actor input st就會告訴我們應該採取哪一個at。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.620" id=30:08.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1808">30:08.620</a></div>
+        <div class="t">所以本來input st採取哪一個at是Q決定的,在pathwise derivative policy gradient裡面,我們會直接用pi來決定,這是第一個改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:17.820" id=30:17.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1817">30:17.820</a></div>
+        <div class="t">第二個改變是,本來這個地方是要計算在state st加1根據你的policy採取某一個action a會得到多少的Q value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.020" id=30:35.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1835">30:35.020</a></div>
+        <div class="t">那你會採取的action a,就是看說哪一個action a可以讓Q hat最大,你就會採取那個action a,這就是你為什麼把式子寫成這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:43.980" id=30:43.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1843">30:43.980</a></div>
+        <div class="t">那現在,因為我們其實不好解這個argmax的problem,所以argmax的problem其實現在就是由policy pi來解了,所以我們就直接把st加1帶到policy pi裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:56.300" id=30:56.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1856">30:56.300</a></div>
+        <div class="t">那你就會知道說,現在呢,given st加1,哪一個action會給我們最大的Q value,那在這邊就會take哪一個action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:06.700" id=31:06.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1866">31:06.700</a></div>
+        <div class="t">那這邊還有另外一件事情要講一下,我們原來在Q function裡面,我們說有兩個Q level,一個是真正的Q level,另外一個是target Q level。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:16.380" id=31:16.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1876">31:16.380</a></div>
+        <div class="t">那實際上你在implement這個algorithm的時候,你也會有兩個actor,你會有一個真正要認的actor pi,你會有一個target的actor pi hat,這個原理就跟為什麼要有target的Q level一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.060" id=31:30.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1890">31:30.060</a></div>
+        <div class="t">我們在算target value的時候,我們並不希望它一直的變動,所以我們會有一個target的actor跟一個target的Q function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:39.980" id=31:39.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1899">31:39.980</a></div>
+        <div class="t">那它們平常的參數就是固定住的,這樣可以讓你的target的value不會一直的變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:46.860" id=31:46.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1906">31:46.860</a></div>
+        <div class="t">所以本來到底是要用哪一個action A,你會看說哪一個action A可以讓Q hat最大,但是現在因為哪一個action A可以讓Q hat最大這件事情已經被直接用那個policy取代掉了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:00.460" id=32:00.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1920">32:00.460</a></div>
+        <div class="t">所以我們要知道哪一個action A可以讓Q hat最大,就直接把那個state帶到pi hat裡面,看它得到哪一個A,就用那個A,那個A就是會讓Q hat of S A它的值最大的那個A。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:13.900" id=32:13.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1933">32:13.900</a></div>
+        <div class="t">講到這邊大家可以接受嗎?其實跟原來的這個Q learning也是沒什麼不同,只是原來你要解AR去max的地方,你如果有一個max A的地方,通通都用policy取代掉就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:27.100" id=32:27.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1947">32:27.100</a></div>
+        <div class="t">那這個是第二個不同,第三個不同就是之前只要learn Q,現在你多learn一個pi,那learn pi的時候的方向是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:37.100" id=32:37.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1957">32:37.100</a></div>
+        <div class="t">learn pi的目的就是為了maximize Q function,希望你得到的這個actor,它可以讓你的Q function的output越大越好,那這個跟learn這個game裡面的generator的概念其實是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:50.620" id=32:50.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1970">32:50.620</a></div>
+        <div class="t">第四個step,就跟原來的Q function一樣,你要把target的Q network取代掉,你現在也要把target的policy取代掉,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:00.220" id=33:00.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1980">33:00.220</a></div>
+        <div class="t">那其實確實game跟actor critic的方法是非常類似的,那我們這邊就不細講,你可以去找到一篇paper叫做connecting generative adversarial network and actor critic method。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:13.900" id=33:13.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=1993">33:13.900</a></div>
+        <div class="t">那知道game跟actor critic非常像,有什麼樣的幫助呢?一個很大的幫助就是,game跟actor critic都是以難勸而聞名的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:22.660" id=33:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=2002">33:22.660</a></div>
+        <div class="t">所以在文獻上就會收集development的各式各樣的方法,告訴你說怎麼樣可以把game勸起來,怎麼樣可以把actor critic勸起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.460" id=33:34.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=2014">33:34.460</a></div>
+        <div class="t">但是因為做game的人跟做actor critic的人,其實是兩群人啊,所以這篇paper裡面就列出說,他在game上面有哪些技術是有人做過的,在actor critic上面有哪些技術是有人做過的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:47.900" id=33:47.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=2027">33:47.900</a></div>
+        <div class="t">但是也許在game上面有試過的技術,你可以試著apply在actor critic上,在actor critic上面做過的技術,你可以試著apply在game上面,看看work不work。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:57.940" id=33:57.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=2037">33:57.940</a></div>
+        <div class="t">這個就是actor critic跟game之間的關係,可以帶給我們的一個好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:02.260" id=34:02.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=j82QLgfhFiY&t=2042">34:02.260</a></div>
+        <div class="t">好,那這個其實就是actor critic,講到這邊大家有沒有問題要問的呢?</div>
+    </div>
+    
+</body>
+</html>   

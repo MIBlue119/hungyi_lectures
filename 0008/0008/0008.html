@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>Pointer Network</h2><a href=https://www.youtube.com/watch?v=VdOyqNQ9aww><img src=https://i.ytimg.com/vi_webp/VdOyqNQ9aww/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=0">00:00.000</a></div>
+        <div class="t">那pointer network它想要解決的問題啊,其實一開始它也是apply在一個intent一發的問題上,一開始pointer network最早的application呢,是被用在想要解系列演算法的問題,那其實在它的原始的paper裡面,我記得是解了三個,我就舉其中一個出來,這個問題是這個convex hole的問題,這個問題是說,給你一大堆的datapoint,在這個圖上呢,給我們十個datapoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:29.700" id=00:29.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=29">00:29.700</a></div>
+        <div class="t">那接下來呢,我們要用這個自動的方法找出說在這個datapoint把哪些點找出來,通通連在一起以後,它可以把其餘的點包進去,就這樣,這是個演算法的問題,但是我們要用neural network呢,硬勸一發,拿一個neural network出來,它的input就是十個datapoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.200" id=00:52.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=52">00:52.200</a></div>
+        <div class="t">那每一個datapoint,我們就用它的xy座標來表示,所以input一個,十個,這個這個,都是二維的vector,然後有十個vector,丟到neural network裡面去,然後我們期待它的output,就是一串式,四二七六五三,就是四二七六五三,正好就可以把這十個datapoint呢,把它框起來,那你只要準備一大堆的training data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19.600" id=01:19.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=79">01:19.600</a></div>
+        <div class="t">那當然training data就是一大堆的datapoint,然後你要知道說它的convex hole是哪些data,那就不要問說那個正確答案是怎麼找出來的這樣子,就是假設是找tunker標的,然後你只要準備數萬筆data,然後讓nn train下去,希望在新的test上,它也work就是了,那這個pointer network要怎麼解呢,我們現在是input一排sequence,output另外一個sequence,所以理論上好像可以直接用sequence to sequence learning解,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:47.760" id=01:47.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=107">01:47.760</a></div>
+        <div class="t">我們之前講sequence to sequence learning的時候,我們說你input一個sequence,比如說character sequence, output另外一個sequence,比如說英文的word sequence,你就可以做翻譯,那現在如果apply在這個convex hole的問題上,我們其實只是改變了一下input output,我們說input變成,假設我們的問題是總共有四個datapoint,input就是四個datapoint的座標,那output是什麼,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:12.720" id=02:12.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=132">02:12.720</a></div>
+        <div class="t">每一個test set,我們的output的選擇是這四個point,1到4,還有n的這個token,所以我們現在要做的事情就是,現在encoder把這四個datapoint讀進來,變成一個紅色的vector,然後把紅色的vector丟到decoder裡面去,然後這個decoder就得到一個distribution,然後根據這個distribution做sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:38.880" id=02:38.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=158">02:38.880</a></div>
+        <div class="t">比如說你做arg map,它就說,噢,我決定要輸出token1,然後接下來它會決定要再輸出下一個token,它說我輸出token4,然後在下一個時間點,它說我再輸出一個token,我輸出token2,直到輸出end的時候就結束了,然後看看intern下去work不work,結果是不work這樣子,為什麼,因為你想想看說,encoder是個RNN,所以你今天input sequence的長短不一樣的時候,encoder可以處理,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.320" id=03:08.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=188">03:08.320</a></div>
+        <div class="t">我們當然不希望說我們train這個sequence-to-sequence model,train完以後它只能說,噢,我每次輸入的點都是4個,我們當然希望說,噢,我train的時候可能,呃,訓練的時候都只給它50個點,但在testing的時候有人輸入100個點,它也要work這樣,當然encoder輸入的長短對它不會造成影響,它都能夠處理,但是decoder的話呢,就有點痛苦,因為假設你原來設定好的輸出就是50個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:36.800" id=03:36.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=216">03:36.800</a></div>
+        <div class="t">那意味著說你output這個vector,它的set就是1到50加end,如果你今天testing的時候變成input100個點,那它output就只有1到50到end,它永遠選不了其他51到編號100的點了,對不對,所以這個方法是行不通的,那怎麼辦,怎麼辦,這邊呢,對,attention這個mechanism做了一下改造以後,讓network可以動態的決定它輸出的set有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.880" id=04:06.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=246">04:06.880</a></div>
+        <div class="t">是長什麼樣子,怎麼做呢,現在呢,用這個attention的model,把sequence,這個sequence,這個第一個點到第四個點讀進來,那我們這邊呢,要再加一個特別的符號x0和y0,這個x0和y0呢,代表end的這件事,等一下你會比較清楚說呢,欸,請說,噢,錄影暫停了,你怎麼知道錄影暫停了,噢,這個問題問得很好,但是因為其實現在錄呢,是用powercam在錄這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:36.560" id=04:36.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=276">04:36.560</a></div>
+        <div class="t">所以這個其實沒有暫停,把它關起來,對,謝謝,謝謝,謝謝,謝謝,謝謝,謝謝,欸,你看左上角出現一個數字耶,我不知道這個是我電腦的數字還是,好,為了確保它的錄影是真的有開的,我們重新把它關起來啊,然後再錄一次,好,這樣,好,謝謝,謝謝,好,這個是怎樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:01.360" id=05:01.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=301">05:01.360</a></div>
+        <div class="t">好,我們就採用我們之前講的那個attention-based的model,然後那個attention-based的model啊,我們不是說要先產生一個key嗎,然後用那個key去做attention嗎,好,現在產生一個key,這個key呢,是z0,跟之前attention-based的model一樣,我們用這個z0呢,對input去做attention,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.480" id=05:28.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=328">05:28.480</a></div>
+        <div class="t">那,對,每一個input就會產生一個attention的weight,舉例來說呢,在x1,y1這邊,attention的weight呢,是0.5,好,每一個input都會得到一個attention的weight,然後接下來呢,根據這個attention的weight,在原來的attention model裡面,我們會根據這個attention的weight對input的vector做位置上,那這邊不是,這邊是說,我得到這個attention的weight以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:54.720" id=05:54.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=354">05:54.720</a></div>
+        <div class="t">這個attention的weight就是我們output的distribution,這個attention的weight就是我們output的distribution,我們根據這個attention的weight去取argmax,我們把這個attention的weight視為一個distribution,取argmax,那假設說,現在這個地方的值最大,那就是output1,結束,那你想說在training的時候怎麼training啊,在training的時候,你當然是有label data,先不要管label data怎麼來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:24.480" id=06:24.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=384">06:24.480</a></div>
+        <div class="t">就是有label data,label data告訴我們說,在第一個time step,output1才是對的,那你就會希望在training的時候,你得到的這一個,由這個attention所構成的distribution,它在這個地方的值最大,其他的值呢,都趨近於0,然後你算,你去minimize那個cross entropy就行了,好,所以現在的好處是什麼,現在的好處是說,隨著input的sequence的變化,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:53.520" id=06:53.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=413">06:53.520</a></div>
+        <div class="t">你現在output的那個set,你可以output的set也會跟著改變,你input的長度是100,那你output的set就有100個可能的選擇,input的長度是10,output的token就有100個可能的選擇,好,那現在假設這邊output1,那你就把x1,y1丟進去,然後再產生新的key,z1,好,再用z1去做attention,然後根據這個attention得到一個distribution,再從這個distribution做argmax,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.360" id=07:19.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=439">07:19.360</a></div>
+        <div class="t">那你這一次是這邊,機率最大,那我們就把4呢,取出來,然後呢,再把x1,4,y4丟進去,然後再產生新的key,z2,然後這個process呢,就一直持續下去,直到end出現,end出現是什麼意思,當今天代表end的這個input,就是x0,y0,它的attention的weight最大的時候,這整個process就結束這樣,好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.800" id=07:46.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=466">07:46.800</a></div>
+        <div class="t">那你可以看一下這篇pointernetwork最早期,這第一篇paper的文獻,它就做了這種很多intrain一發的task,然後至少在這個conflate hold的task上面,它可以做到將近100%的正確率,而且它training的sequence跟casting的sequence的長度可以是不一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.440" id=08:03.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=483">08:03.440</a></div>
+        <div class="t">你可能會覺得說,解這種已經有現成的algorithm的問題好像沒有什麼特別的用,對,確實是沒有什麼特別的用這樣子,但它有一些其他的應用,舉例來說,pointernetwork它蠻適合被用在summarization上面的,為什麼pointernetwork適合被用在summarization上面呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:25.200" id=08:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=505">08:25.200</a></div>
+        <div class="t">你想想看,你當然可以認一個sequence to sequence model來做summarization這件事,input一個document,output那一篇document的summary,但是我們今天在做summary的時候,很多詞彙,很多你summary裡面放的詞彙其實都是人民地名,那你的less than size是有限的,所以你通常你的less than size裡面可能沒有包含那些人民地名,那你只能在那些人民地名的地方output unknown,這樣你就不會得到非常好的summarization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:55.120" id=08:55.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=535">08:55.120</a></div>
+        <div class="t">那事實上另外一方面在做summary的時候,你可以想像summary跟它input document的關係其實就是把input的document取一些重要的詞彙出來,接起來,其實就是summary啦,所以如果我們用這種pointernetwork在做summary的時候,產生summary的時候,讓machine直接從input的document裡面挑字出來,組成summary,那其實就會得到不錯的summary了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.520" id=09:19.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=559">09:19.520</a></div>
+        <div class="t">所以今天如果把pointernetworkapply在summarization上面的時候怎麼樣呢?我們先來看傳統的做法,傳統的做法就是input一個document,當然你用一個encoder,它是bidirectional的lstn去把它讀過,接下來你把這個encoder的output丟給一個decoder,那decoder每次就會吐出一個word,每次會吐出一個word,那把所有的word收集起來就變成summary,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.560" id=09:46.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=586">09:46.560</a></div>
+        <div class="t">那它怎麼決定要怎麼吐出一個word呢?你當然也可以用attention based的model,你用你的decoder的rnn去輸出一個key,這個key會去算這個attention的weight,這邊對每一個input的sequence的每一個word都算一個attention的weight,然後根據這個weight就跟我們之前講的一樣,去做weighted sum,根據這個weighted sum的結果,還有這個rnn你會去產生一個distribution,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.880" id=10:14.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=614">10:14.880</a></div>
+        <div class="t">這個distribution是over你的lexicon裡面所有的詞彙,舉例來說,假設你lexicon裡面就是a到zu,那它就是over這個,假設你lexicon裡面就是十萬個詞彙,它就是over這十萬個詞彙的distribution,某個詞彙如果不在你的lexicon裡面,比如說trump不在你的lexicon裡面,那不存在的詞彙,它的機率就永遠都是零,然後再從這個distribution裡面做argmax,你就可以產生一個word,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:41.920" id=10:41.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=641">10:41.920</a></div>
+        <div class="t">但是我們現在可以加上pointer network的概念,怎麼加上pointer network的概念呢?如果加上pointer network的概念的時候,我們就是從這個distribution裡面直接去做sample,我們就直接輸出這個distribution,用這個distribution來決定summary裡面應該產生什麼樣的word,然後你可以再認另外一個weight,這個weight是pgeneration,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:10.240" id=11:10.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=670">11:10.240</a></div>
+        <div class="t">那這個pgeneration決定了說我們今天要走右邊這條路還是走左邊這條路,我們要用多少的傳統的方法加上多少的pointer network的output,這個pgeneration會決定這個和這個的weight,那如果是pointer network這個部分,我們就把對應到的這個同樣的word把它集合起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.600" id=11:35.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=695">11:35.600</a></div>
+        <div class="t">舉例來說,Agertina這個word,它的機率是很大的,然後我們就把它放在這邊,那假設你的data set裡面,你的network裡面也有Agertina這個word,那你就把它的機率也加起來,那你就把這個distribution的機率加上這個distribution的機率,把這兩個distribution的機率加起來,從這個distribution再去決定說這個summaryization的decoder要產生什麼樣的word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:02.160" id=12:02.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=722">12:02.160</a></div>
+        <div class="t">好,那這個是把pointer network用在summary上,那它還有很多其他的應用,舉例來說它可以用在翻譯上,你知道在翻譯的時候,有一些詞彙是沒辦法翻,比如說人名地名,它沒有辦法翻或者是不需要翻,這個時候你就可以在你的translator裡面加上pointer network的機制,讓你的network可以直接從input的句子裡面選擇詞彙,直接貼到output裡面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:30.720" id=12:30.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=750">12:30.720</a></div>
+        <div class="t">或者是你可以把同樣的概念用在chatbot裡面,如果今天把pointer network用在chatbot裡面,是有什麼樣的好處呢?假設現在你希望說有一個人對你的bot說,X寶你好,我是庫洛洛,我是團長。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:48.000" id=12:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=768">12:48.000</a></div>
+        <div class="t">現在的機器人都一定要叫什麼寶,因為它是什麼bot,然後你會希望你的機器回答的是,庫洛洛你好,很高興認識你,你說我是誰,我是庫洛洛,它就說庫洛洛你好,你說我是團長,它就說團長你好,所以你希望它是直接從input去copy關鍵的詞彙出來放在output裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.640" id=13:12.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=VdOyqNQ9aww&t=792">13:12.640</a></div>
+        <div class="t">這件事情如果你用sequence to sequence model直接認,你可能認不起來,因為你的詞典裡面可能根本就沒有庫洛洛這個人名,但是如果你用pointer network,你就可以讓machine在產生它的response的時候,從input裡面去選擇一些詞彙,貼到response裡面,所以pointer network也可以被用在chatbot上。</div>
+    </div>
+    
+</body>
+</html>   

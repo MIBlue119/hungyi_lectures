@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 17: Unsupervised Learning - Deep Generative Model (Part I)</h2><a href=https://www.youtube.com/watch?v=YNUek8ioAJk><img src=https://i.ytimg.com/vi_webp/YNUek8ioAJk/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1">00:01.000</a></div>
+        <div class="t">接下來呢,我要來講一下這個Generation的Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:06.000" id=00:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=6">00:06.000</a></div>
+        <div class="t">有關Generation的Model呢,你可以看一篇很好的Reference,這個是OpenAI寫的一篇科普的文章,那我把它列在這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.000" id=00:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=15">00:15.000</a></div>
+        <div class="t">那在這篇文章裡面呢,它開頭呢,就是引用這個費曼的話。那這句話呢,來歷是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:23.000" id=00:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=23">00:23.000</a></div>
+        <div class="t">據說是費曼過世以後,有人去他的辦公室拍一下他的黑板,然後他在黑板上留下了這句話。這個是他辦公室的黑板,然後這句話呢,寫在左上角。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.000" id=00:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=35">00:35.000</a></div>
+        <div class="t">他說,"What I cannot create, I do not understand."</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:40.000" id=00:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=40">00:40.000</a></div>
+        <div class="t">所以,如果一個東西它沒有辦法,它不知道怎麼產生它的話,它就不算是真的完全理解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:49.000" id=00:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=49">00:49.000</a></div>
+        <div class="t">那所以對Machine來說,或許也是一樣。現在Machine它,比如說Machine在影像處理上呢,Machine可以做到分類,你可以讓它見識貓和狗的不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02.000" id=01:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=62">01:02.000</a></div>
+        <div class="t">但它或許並不真的了解貓是什麼,或許它並不真的了解狗是什麼。也許在未來呢,有一天Machine它可以自己畫出一隻貓的時候,它對於貓這個東西的概念或許就不一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.000" id=01:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=77">01:17.000</a></div>
+        <div class="t">而這個是現在一個非常熱門的主題,那有很多相關的研究,那我們就來稍微講一下,我們稍微來這個overview一下相關的研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.000" id=01:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=89">01:29.000</a></div>
+        <div class="t">好,那在這些研究裡面呢,大概可以分成三個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.000" id=01:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=94">01:34.000</a></div>
+        <div class="t">那這邊分別是Pixel RNN、VAE、Variational Autoencoder和Generative Adversarial Network。那這些方法呢,其實都非常的新。那其中最舊的是VAE,VAE是2013年提出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:51.000" id=01:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=111">01:51.000</a></div>
+        <div class="t">像GEN呢,是2014年提出來的,所以它提出來還不到兩年。你知道我們一般在上課的時候,尤其在必修課裡面,你聽到的每一個東西往往都是比如說50年前、100年前proposed出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:04.000" id=02:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=124">02:04.000</a></div>
+        <div class="t">但是在Machine Learning這個領域裡面呢,它的變化是非常非常快速的。所以有很多很多未來可能會成為非常經典的方法,它是這幾年才不斷地推陳出新。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:18.000" id=02:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=138">02:18.000</a></div>
+        <div class="t">所以我試著在課程裡面呢,cover一些比較新的技術,來讓大家知道說,這個領域它的變化是非常非常的快。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:28.000" id=02:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=148">02:28.000</a></div>
+        <div class="t">好,那我們呢,先來講一下Pixel RNN。我們今天就先講一下這些方法大概是怎麼運作的,然後下一次呢,再細講它的原理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:38.000" id=02:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=158">02:38.000</a></div>
+        <div class="t">我們來講一下這個Pixel RNN,雖然我還沒有講過RNN是什麼,但我相信這個方法你是可以聽得懂,因為它非常的直覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.000" id=02:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=169">02:49.000</a></div>
+        <div class="t">好,假設我們今天要產生一個,我們今天的目標是要讓Machine自己畫一張圖出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.000" id=02:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=176">02:56.000</a></div>
+        <div class="t">那比如說,我們今天要讓Machine畫出一個解析度呢,是3乘以3,有9個Pixel的Image。怎麼做呢?我們讓Machine每一次呢,就畫一個Pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.000" id=03:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=188">03:08.000</a></div>
+        <div class="t">它每一次就點一個點,點完9個點,就畫出一張圖了。那怎麼做呢?假設我們先隨機給它第一個,隨機給這個Image塗一個紅色的Pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.000" id=03:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=200">03:20.000</a></div>
+        <div class="t">那接下來呢,你就任一個Model,它Input就是已經在圖上的紅色的Pixel,它的Output就是接下來要吐出什麼顏色的Pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.000" id=03:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=212">03:32.000</a></div>
+        <div class="t">假設它吐出藍色的Pixel,那就把藍色的Pixel再擺到Image上面。那你說怎麼描述一個Pixel呢?一個Pixel不就是RGB三個顏色所構成的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.000" id=03:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=222">03:42.000</a></div>
+        <div class="t">所以一個Pixel就是一個三維的Vector,OK?所以你就是任一個Neural Network,它可以吃一個三維的Vector,然後Output另外一個三維的Vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=231">03:51.000</a></div>
+        <div class="t">這個三維的Vector的三個值,就代表這個Pixel的RGB三個值。你要把這個Neural Network的Output轉成一個顏色,然後把它塗上去,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.000" id=04:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=241">04:01.000</a></div>
+        <div class="t">接下來,這個圖上有兩個點。那你就再用同一個Model,它Input紅色和藍色的Pixel,接下來它就Output下一個Pixel,比如說它是淺藍色的Pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:16.000" id=04:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=256">04:16.000</a></div>
+        <div class="t">那這邊你可能會有的問題就是,Neural Network不是Input一個Fixed Length的Vector,Output另外一個Fixed Length的Vector嗎?比如說Input三維,它就固定只能Input三維。那你怎麼Input一個Pixel,又用同一個Network又Input兩個Pixel呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:33.000" id=04:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=273">04:33.000</a></div>
+        <div class="t">這個就是RNN可以處理的地方。RNN它可以處理Variable Length的Input。因為我們還沒有講過RNN,如果你覺得你無法理解怎麼處理一個Variable Length的Pixel的話,那你就想像說,OK,還沒有Pixel的地方我就補0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:50.000" id=04:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=290">04:50.000</a></div>
+        <div class="t">你就想像說,我這邊空白的地方,我其實就是補一個白色的Pixel而已。好,那接下來呢,你給它紅色、藍色跟淺藍色的Pixel,接下來它To出一個灰色的Pixel,那你就再把灰色的Pixel畫到圖上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:09.000" id=05:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=309">05:09.000</a></div>
+        <div class="t">那接下來就重複剛才的步驟,給它這四個Pixel,然後把下一個Pixel再塗上去,那就把九個Pixel都塗完,就畫完一張圖了。那要Train這種Network很簡單,因為它完全就是Unsupervised,你不需要任何的Label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.000" id=05:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=324">05:24.000</a></div>
+        <div class="t">不像我們在作業3裡面,你要知道某一些Image它的Label是什麼,你才能夠Train一個Image的Classify,那這邊不用,你就收集一大堆的Image,然後Machine就會知道說,看到第一個Pixel是這個顏色,第二個Pixel應該是什麼,看到第一個和第二個Pixel這個顏色,第三個應該是什麼,看到一二三個Pixel,第四個Pixel應該是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.000" id=05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=344">05:44.000</a></div>
+        <div class="t">這個就叫Pixel RNN,你可能想說,這招這麼簡單,它會Walk嗎?也讓我蠻驚奇的是,它其實是Walk的,而且在不同的Generate Image的方法裡面,現在就我所知應該是Pixel RNN它產生的圖是最清晰的,其他的方法產生的圖沒有辦法像Pixel RNN這麼清晰。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:04.000" id=06:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=364">06:04.000</a></div>
+        <div class="t">這個是DeepMind的Paper的一個例子,這個是真實的Image,就是一隻狗。如果我們現在把這隻狗的下半身遮掉,接下來我們就要讓Machine去Predict說,Given這些Pixel,接下來這個狗的下半身應該要長什麼樣子,Machine把狗的下半身畫出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=390">06:30.000</a></div>
+        <div class="t">Machine畫出了這樣子的狗,還有這樣子的狗,還有這樣子的狗,有看起來像猩猩的狗,還有看起來像雞的狗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.000" id=06:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=400">06:40.000</a></div>
+        <div class="t">這個方法其實也可以被用在不只是影像上,它也可以被用在語音上,非常著名的例子就是WaveNet。我們知道WaveNet可以做語音合成,那WaveNet到底是怎麼做的呢?其實它的概念非常簡單。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.000" id=07:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=420">07:00.000</a></div>
+        <div class="t">這邊底下的每一個Node,藍色的圈圈,代表的就是Waveform。Waveform大家知道嗎?反正你就把聲音取進來,直接取取樣,然後看它的Amplitude,完全不要做任何Further Transform,通通都不要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.000" id=07:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=439">07:19.000</a></div>
+        <div class="t">這邊每一個藍色的點,就是聲音訊號上面的一個Sample。今天就是這樣,我們等這個動畫跑完。給定前面一段的聲音訊號,然後Predict下一個Sample的結果,然後把它放下來,再Predict下一個Sample的結果,再放下來,再Predict下一個Sample的結果,再放下來,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.000" id=07:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=463">07:43.000</a></div>
+        <div class="t">接下來你就是硬圈下去,就結束了,然後你就可以合出一段聲音。這個是在語音上的應用。在影像上也有應用。在影像上你也可以做一樣的事情,只要讓Machine看過很多的Video,它就可以Predict說,給它一段Video,接下來會發生什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:05.000" id=08:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=485">08:05.000</a></div>
+        <div class="t">比如說在Google的Demo裡面,它會Demo說,它的那些影像都是機器人手臂上的影像。它在機器人手臂上裝了一個攝影機,所以它可以錄說機器人手臂上看到的影像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:19.000" id=08:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=499">08:19.000</a></div>
+        <div class="t">你就可以看到說,影像的前半段是機器人的手伸向一塊抹布,然後影像的後半段就是機器人把抹布拿起來。但是把抹布拿起來的那些影像是機器自己腦補的結果,並不存在於現實生活中。機器自己Predict接下來會發生什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.000" id=08:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=519">08:39.000</a></div>
+        <div class="t">如果你想要練習這個Generation的話,一個最簡單的Application當然是Animist,不過做Animist我覺得有點虛弱,Generate也有點虛弱,而且那個有點簡單。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:51.000" id=08:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=531">08:51.000</a></div>
+        <div class="t">所以我Create另外一個Tester,如果你想要練習這個Generative Model的話,你可以用這個Tester。這個Tester是Pokemon的Creation。這邊我們有792張寶可夢的小圖,我們要讓它去看過這些小圖以後,它自己產生新的寶可夢出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=551">09:11.000</a></div>
+        <div class="t">這邊的口號就是用創造代替捕抓。過去我們是在野外抓寶可夢,現在我們在實驗室裡面自己創造新的寶可夢出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:24.000" id=09:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=564">09:24.000</a></div>
+        <div class="t">Image的Source是來自Pokemon的Wiki,我看了一下它的Copyright,它裡面的Image都可以任意使用和變造,所以應該是沒有版權的問題。原來的Image是40x40的Pixel,其實我覺得40x40有點稍微太大,所以我把它卡小一點,就只取了中心的部分變成20x20的Image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=589">09:49.000</a></div>
+        <div class="t">看起來大概像是這樣子,這個是喵喵,這個是…我也不知道它是什麼,我只知道它好像跟果然在一起,其實我沒有把動畫仔細看完。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=599">09:59.000</a></div>
+        <div class="t">好,反正就是這些,雖然說影像的解析度沒有很高,但你還是可以很清楚地看到它就是寶可夢。那這邊有一些Tips,因為我其實自己實際做了一下,我覺得有一些Tips。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:19.000" id=10:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=619">10:19.000</a></div>
+        <div class="t">第一個,三維的Vector,用三個數字來描述它,每一個數字代表了RGB。比如說,這樣的Pixel,你可能就用三個Vector,50,150,你可能用三個數值,50,150和100來描述它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.000" id=10:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=634">10:34.000</a></div>
+        <div class="t">但是我覺得實際上這樣做以後,我發現這樣做的結果感覺不是太好。我覺得一個原因是因為,你用這樣做,你產生的圖都很灰,看起來都灰灰髒髒的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:49.000" id=10:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=649">10:49.000</a></div>
+        <div class="t">因為如果你要產生非常鮮明的顏色的話,非常鮮明的顏色往往是某一個RGB裡面的某一個Value特別高,其他都接近零。像灰色,就是三個RGB的Value都差不多就是灰色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:04.000" id=11:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=664">11:04.000</a></div>
+        <div class="t">所以如果你要讓它產生非常鮮明的顏色的話,你這三個值要差得夠大才行。但是你在認的時候,你往往沒有辦法真的讓比如說G是零,B是零,你往往做不到這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.000" id=11:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=679">11:19.000</a></div>
+        <div class="t">尤其你今天如果是Output,你Output把0到25,Normalize到0到10,然後Output你用Sigmoid Function的話,Sigmoid Function的值通常都落在0.5左右,通常都落在中間。它很難落在這種極端的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:34.000" id=11:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=694">11:34.000</a></div>
+        <div class="t">所以它產生的值都是RGB三個值都差不多,所以每張圖看起來都是灰色棕色的,感覺不太好看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:42.000" id=11:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=702">11:42.000</a></div>
+        <div class="t">我就稍微做了一下前處理。怎麼做前處理呢?我把每一個Pixel都用一個One-off encoding的Vector來表示。在這個One-off encoding裡面,每一個Dimension就代表了一個顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:55.000" id=11:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=715">11:55.000</a></div>
+        <div class="t">也就是說,每一個Pixel都是用一個Vector來表示。這個Vector的每一個Dimension,比如說第一個Dimension就代表黃色,第二個Dimension就代表藍色,第三個Dimension就代表綠色,第四個Dimension就代表黑色等等。也就是說,不讓它產生RGB去合成顏色,而是直接讓它產生一個顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.000" id=12:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=734">12:14.000</a></div>
+        <div class="t">所以,比如說這個顏色進來,這個綠色進來,那它就是這一維是1,然後其他是0。所以一個Pixel我用這個方式來描述它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:26.000" id=12:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=746">12:26.000</a></div>
+        <div class="t">但是這邊會有一個問題就是,可能的顏色太多啦,RGB每一個都有255種可能、256種可能、256是三次方,有太多可能的顏色。怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:38.000" id=12:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=758">12:38.000</a></div>
+        <div class="t">我先做Clustering,把同樣接近的顏色Cluster在一起。也就是說,這個綠跟這個綠跟這個綠,它們算是同一個顏色,都用上面這個綠來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=770">12:50.000</a></div>
+        <div class="t">那我就把在Corpus裡面出現次數比較少的顏色跟出現次數比較多的顏色把它合併起來,所以我們得到了167個不同的顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.000" id=13:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=782">13:02.000</a></div>
+        <div class="t">好,那我Release了這個Corpus,這樣大家就可以任意使用。那這個Corpus是這樣的,原來Image在這邊,然後我裁過的結果在這邊,那我這邊就直接存Pixel,所以你也不用做preprocessing,我都幫你做好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:16.000" id=13:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=796">13:16.000</a></div>
+        <div class="t">那在這個Data裡面,每一個Row就代表了一張Image,然後每一個數字就代表了一個顏色。那怎麼知道每一個數字代表什麼顏色呢?它的Mapping在這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=812">13:32.000</a></div>
+        <div class="t">比如說0,它的RGB就都是255255255,所以0代表白色。然後呢,比如說這邊這個2呢,2代表三個都是494949,這個其實是一個灰色,等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.000" id=13:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=828">13:48.000</a></div>
+        <div class="t">好,那我等一下就做了一下這個Pixel RN的實驗,那我發現其實,你可能會很懷疑說只有700多張圖,你勸得起來嗎?我勸得起來是勸得起來,但問題就是你可以得出什麼正常的、好的結果嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:02.000" id=14:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=842">14:02.000</a></div>
+        <div class="t">我發現驚人的就是,其實是可以的。然後我沒有花太多時間調參數,我就用了一個一層的LSTM,它有500億Server Cell。你不知道LSTM是什麼也沒有關係,反正就是認一個很簡單的Model,做出來的結果就還算尚可。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:17.000" id=14:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=857">14:17.000</a></div>
+        <div class="t">所以我相信你認真調一下參數,一定可以做得比我好的更多。這個是實驗的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:24.000" id=14:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=864">14:24.000</a></div>
+        <div class="t">首先要強調的是,我刻意留了三張寶可夢呢,是Machine沒有看過的。所以在Training Data裡面呢,是沒有這三張寶可夢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.000" id=14:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=874">14:34.000</a></div>
+        <div class="t">接下來呢,我給Machine看這個寶可夢的前半部,把剩下的半部呢,把它蓋起來,然後只給Machine看前半部,然後讓它決定這個寶可夢應該長什麼樣子。比如說這個,你覺得它是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:48.000" id=14:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=888">14:48.000</a></div>
+        <div class="t">它看起來像是一個紅色的兔子,然後把它下半身Generate出來,它長這樣子。它原來是有穿吊帶褲的兔子,但它其實是長這樣子。那你覺得這一隻是什麼呢?這一隻是什麼?感覺像是鐵甲蛹之類的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.000" id=15:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=908">15:08.000</a></div>
+        <div class="t">那Machine Generate出來的結果是這樣子。它是一個長的綠毛蟲,而且這個還有一個尾巴,它是一個綠毛蟲。但實際上呢,它是一隻蜥蜴。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.000" id=15:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=920">15:20.000</a></div>
+        <div class="t">然後這個呢,這個是什麼?這個Machine Generate出來,它覺得是一個類似狗或者狐狸的東西,它的臉很長,然後這個是它的腳。Machine還是要配色,你看,本來這邊它是沒有很多深紫色,但它只好腳這邊塗一下深紫色,我覺得還蠻強的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=942">15:42.000</a></div>
+        <div class="t">但實際上它其實是長這樣子。那如果我們今天給它看只有25%的圖,它會得到什麼呢?比如說只給它看一個耳朵,它會覺得接下來是什麼呢?它產生這個臘腸兔。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:59.000" id=15:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=959">15:59.000</a></div>
+        <div class="t">而且其實我覺得Machine還算蠻強的,你看它有手,它是用手畫出來的臘腸兔,然後它有嘴巴跟眼睛,我覺得還蠻強的。然後這個,給它看一個腳,它會覺得是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.000" id=16:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=974">16:14.000</a></div>
+        <div class="t">它覺得是鐵甲蛹,類似鐵甲蛹,看向右邊,然後自己產生了一個看起來很不爽的眼睛,鼻子、嘴巴。然後這個,給它看上面一點點,也不知道是什麼東西,然後它判斷出來,它覺得是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:31.000" id=16:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=991">16:31.000</a></div>
+        <div class="t">你看,它產生一個兔子的臉,這是它的耳朵,這個是眼睛,這個是眼睛,它翻白眼,然後這個是它的鼻子,它產生一個臉。所以我覺得還蠻強的。而且我覺得在做這種test有一個難點,就是你很難evaluate這個test,因為所謂的創造這件事情是無法evaluate的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.300" id=16:53.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1013">16:53.300</a></div>
+        <div class="t">你不能說,我覺得這個臘腸兔也很合理,我覺得搞不好還比這個廓魚更合理一點。就是說,它generate出來並不一定要跟光tube一樣,它generate出來結果跟光tube不一樣,並不代表說它畫的是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.300" id=17:09.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1029">17:09.300</a></div>
+        <div class="t">所以像這種test是很難被evaluate,這是現在做這種generation的一個難點。剛才是有給machine一個開頭,然後讓它畫下去,那接下來你就什麼都不給它,讓它從頭開始畫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:32.300" id=17:32.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1052">17:32.300</a></div>
+        <div class="t">但是如果你只是什麼都不給它,讓它從頭開始畫的話,它可能每一張image都是一樣的,所以你要故意加一些random,也就是說它在predict下一個pixel的時候,不見得是選機率最高的那個pixel,它會有一定的機率選一個機率比較低的顏色出來畫在圖上面,這樣它每一次畫的圖都才會有點不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.300" id=17:58.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1078">17:58.300</a></div>
+        <div class="t">其實蠻多都是不知道在做什麼的圖,比如說像這個我都不知道在做什麼。這個看起來像是個鳥的嘴巴,但這個也許是兩個眼睛,我也不知道它在畫什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:11.300" id=18:11.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1091">18:11.300</a></div>
+        <div class="t">這個看起來像是個兔子,難道這個是它的臉嗎?難道這個是它戴了一個頭盔嗎?我也不知道它在畫什麼。有一些我覺得比較清楚,像這個我覺得它是一隻飛鳥,這是它的手,這個是一個大嘴鳥,這是它的嘴巴。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.300" id=18:28.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1108">18:28.300</a></div>
+        <div class="t">這是一隻比較慘的鴕鳥,因為它是一個戴綠帽的鴕鳥。這個是地鼠,這個畫得還不錯,因為它還有配色,淺藍色配白色,這個是一個地鼠,而且它是有眼睛的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:45.300" id=18:45.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1125">18:45.300</a></div>
+        <div class="t">這個也是另外一隻比較大隻的地鼠,它頭上有一些藍藍紅紅的,它也是比較大隻的地鼠。這個是我們胡亂給它取個名字好了,我們叫它岩漿蘑菇好了,它下面是岩漿,上面是雲,我們叫它岩漿雲蘑菇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:02.300" id=19:02.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1142">19:02.300</a></div>
+        <div class="t">這個是有眼睛的,你要小看它是有眼睛的,兩個眼睛都點出來。這個是飛行骷髏,它也是有眼睛的,我發現這個model還蠻強的,它還蠻喜歡點眼睛出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.300" id=19:17.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1157">19:17.300</a></div>
+        <div class="t">好,然後還有其他方法,細節我們或許下一次再講,但我們可以稍微看一下它的結果。這個東西叫做variational的autoencoder,我們之前已經有講過autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:36.300" id=19:36.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1176">19:36.300</a></div>
+        <div class="t">我們之前在講autoencoder的時候,我們說你現在autoencoder的training criteria,就是input一張image,通過encoder變成一個code,再通過decoder把這個image解回來,那你希望input跟output越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.300" id=19:53.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1193">19:53.300</a></div>
+        <div class="t">那你認完這個autoencoder以後,你其實就可以把這個decoder拿出來,你就把decoder拿出來,然後你再給它input一個random的東西,你再給它generate一個random的vector,把這個random的vector當作一個code,把你這個code的實為,你就generate一個實為的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:13.300" id=20:13.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1213">20:13.300</a></div>
+        <div class="t">然後希望丟到這個decoder裡面,它output就可以是一張完整的image。但實際上這麼做,你得到的performance通常不一定很好,你要用一個方法叫做variational autoencoder,你得到的結果會比較好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:31.300" id=20:31.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1231">20:31.300</a></div>
+        <div class="t">那AE怎麼做呢?它的結構跟autoencoder非常像,它只是在中間加了一些神妙的小trick。為什麼加個神妙的小trick,或者我們下一次再講。這個神妙的小trick是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:44.300" id=20:44.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1244">20:44.300</a></div>
+        <div class="t">就是說input一個encoder,encoder跟decoder的部分維持原狀,維持原狀不動。但是現在在encoder的地方,我們不是直接output code,我們先output兩個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:02.300" id=21:02.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1262">21:02.300</a></div>
+        <div class="t">假設你的code,你打算要做的code是三維的話,那你output的這兩個vector也都是三維。這個vector是n1,n2,n3,這個vector是σ1,σ2,σ3。接下來你用normal distribution去generate另外一個也是三維的vector,它的三維分別是e1,e2,e3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:22.300" id=21:22.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1282">21:22.300</a></div>
+        <div class="t">接下來你把σ1,σ2,σ3的tricks potential跟e1,e2,e3相乘,然後把它跟n1,n2,n3加起來,你得到c1,c2,c3,這個東西才是你的code。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:41.300" id=21:41.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1301">21:41.300</a></div>
+        <div class="t">這邊每一個c,這個ci等於σi的tricks potential乘上ei加ni,然後丟到decoder裡面,你再希望說decoder能夠minimize reconstruction error,你希望你的decoder可以minimize reconstruction error。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:02.300" id=22:02.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1322">22:02.300</a></div>
+        <div class="t">但是光只有這麼做是不夠的。它還有第二項,這一項是說,這一項非常的神妙,我們之後再解釋。這一項是怎麼樣呢?你看了覺得很怪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.300" id=22:14.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1334">22:14.300</a></div>
+        <div class="t">這一項是,我們把它的三個dimension加起來,然後我們要去minimize e加σi,減掉ni平方,減掉exponential σi平方,有這麼一項。你要minimize reconstruction error,同時minimize這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.300" id=22:32.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1352">22:32.300</a></div>
+        <div class="t">好,那你用VAE做出來的結果怎麼樣呢?這是OpenAI做的結果,它們是做在Cypher10上面。你會發現說,其實用VAE得到的圖,它是不太清楚的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.300" id=22:50.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1370">22:50.300</a></div>
+        <div class="t">你看得出來好像想畫點什麼,但是你又搞不清楚它到底在畫什麼。但是用VAE跟剛才的PixelRN有什麼不一樣的地方呢?是用VAE的話,你可以做以下的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.300" id=23:05.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1385">23:05.300</a></div>
+        <div class="t">你可以control你要generate的image,理論上。什麼意思呢?假設我們現在把這個VAE用在Pokemon的creation上面。那我們training的時候,就是input一個Pokemon,然後recontract一樣的Pokemon。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.300" id=23:23.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1403">23:23.300</a></div>
+        <div class="t">然後認出來的code,我們就設10位。認好Pokemon的VAE以後,我們就把decoder的部分拿出來。因為現在我們有一個decoder,那你可以input一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.300" id=23:40.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1420">23:40.300</a></div>
+        <div class="t">所以你在input的時候,你可以這樣做。你可以說,我現在有10位的vector,我固定其中8位,只選其中的2位出來。然後在這2位的dimension上面,我灑不同的點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:56.300" id=23:56.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1436">23:56.300</a></div>
+        <div class="t">然後我們把每一個點都丟到decoder裡面,看它合出來的image長什麼樣子。如果我們做這件事情的話,如果我們灑不同的點的話,你就可以看到說,這個code的每一個dimension分別代表什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:13.300" id=24:13.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1453">24:13.300</a></div>
+        <div class="t">那如果我們可以解讀說code的每一個dimension代表什麼意思,以後我們就可以把那個code就當作像是一個拉桿一樣,那個每一個dimension當作一個拉桿一樣,你可以調整它,你就可以產生不同的Pokemon。理想上是這樣子啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.300" id=24:26.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1466">24:26.300</a></div>
+        <div class="t">那我們VAE產生出來的結果是這個樣子的。你可能覺得沒有很好。首先,你都看不出來每一隻是什麼,沒錯,因為VAE做出來就是這樣子。這兩個dimension分別是變化了這個code的兩個dimension以後的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:49.300" id=24:49.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1489">24:49.300</a></div>
+        <div class="t">但是你從這個變化你可以看得出來說,每一個dimension其實或許它真的是有一些含義的。比如說,如果我們看這個變化,它本來看起來像是一個站著的東西,然後它後來就逐漸倒下來了,然後就演化,變成類似魚的東西,然後後來就趴下來,變成一個趴在地上的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:19.300" id=25:19.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1519">25:19.300</a></div>
+        <div class="t">那如果你從左邊到右邊,你會發現說它站得越來越直,它本來感覺是有點前傾的,然後越往右,它就站得越來越直,它頭上會有出現一個帽子,站得越來越直。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:32.800" id=25:32.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1532">25:32.800</a></div>
+        <div class="t">所以你可以從這兩個dimension的變化發現說,它確實是有學到一些東西的。如果我們可以讓圖產生得更清楚的話,我們就可以控制這兩個dimension,就可以產生不同的寶可夢。這邊是某兩個dimension,這邊是另外兩個dimension的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.800" id=25:49.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1549">25:49.800</a></div>
+        <div class="t">這邊這個例子可能要更清楚一點,比如說你看從右邊到左邊,本來是類似一個倉鼠的樣子,後來就慢慢倒下來,倒下來,倒下來,變成一團布。如果你看直的話,它本來是一個倉鼠的樣子,然後從上面往下,你會發現說首先它的腳越來越長,你就會看到寶可夢的演化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:12.460" id=26:12.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1572">26:12.460</a></div>
+        <div class="t">它本來腳很短,然後越來越長,越來越長,後來變成有一隻很長的腳,看起來就變成像是鳥,後來又變成說有兩隻很長的腳,然後後來又變成說其實它是有四隻腳的,看起來像是哺乳類動物,這是它的演化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:28.440" id=26:28.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1588">26:28.440</a></div>
+        <div class="t">如果看它的尾巴的話,本來尾巴很短,後來尾巴也越來越長。如果你看它的頭的話,本來耳朵很短,後來耳朵越來越長,看起來就像是長出了腳一樣,所以你就可以看到說隨著input的code的不同,你就可以產生不同的寶可夢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.920" id=26:48.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1608">26:48.920</a></div>
+        <div class="t">在這麼多圖裡面,你會發現說都沒有清楚,都沒有看起來像樣,但我其實找到一個像樣的,就是在這邊。我想原來寶可夢裡面應該是沒有這一隻,我翻了一下圖鑑,但我沒有很仔細翻,所以我覺得應該是沒有這一隻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:05.160" id=27:05.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1625">27:05.160</a></div>
+        <div class="t">它產生出來是這樣,它看起來它的頭像是一個海馬,然後它的尾巴就叫做鱷魚,我們就胡亂叫它鱷魚海馬。然後有人說可以用VAE來寫詩,怎麼用VAE來寫詩呢?這個做法是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:28.040" id=27:28.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1648">27:28.040</a></div>
+        <div class="t">我們本來這個VAE的autoencoder,你input是一個image,output也是一個image,現在只是把input跟output改掉,改成input一個sentence,output也是一個sentence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:41.320" id=27:41.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1661">27:41.320</a></div>
+        <div class="t">不過如果你要input處理sentence的input,產生sentence的output,這邊你需要用RNN才能夠做到,不過這個我們就之後再講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:51.800" id=27:51.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1671">27:51.800</a></div>
+        <div class="t">那怎麼讓我們去寫詩呢?這邊這個做法是這樣,你先胡亂選兩個句子,一個句子是I went to the store to buy some groceries,另一個句子是Don't worry about it, she said。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:07.480" id=28:07.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1687">28:07.480</a></div>
+        <div class="t">接下來你通過這個encoder,把這兩個句子都找出它的code,所以這兩個句子就變成在code space上面的兩個點。接下來你把這兩個點相連,然後中間等間隔的取一些點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:26.840" id=28:26.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1706">28:26.840</a></div>
+        <div class="t">再把中間等間隔取的點,把這個code丟到decoder裡面,再還原出句子。所以把這個點稍微偏一點以後,把I went to the store to buy some groceries稍微偏一點以後,你得到的句子就是I went to the store to buy some groceries。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.840" id=28:44.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1724">28:44.840</a></div>
+        <div class="t">再偏一點以後,你就得到I went to buy some groceries,然後就這樣一直下來。到這邊呢,變成Come with me, she said,然後Talk to me, she said,然後變成Don't worry about it, she said。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:59.240" id=28:59.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1739">28:59.240</a></div>
+        <div class="t">你可能會說,這個算是寫詩嗎?這個是這樣,如果仔細看它的paper的話,我看它的paper裡面沒有提到寫詩這件事情,但這個blog裡面說是這樣子是在寫詩就是了,我不知道這個blog是誰寫的就是了,大概就是這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.160" id=29:17.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=YNUek8ioAJk&t=1757">29:17.160</a></div>
+        <div class="t">那game的部分我們就下一次再講,那我們先休息十分鐘,等一下講一下final。</div>
+    </div>
+    
+</body>
+</html>   

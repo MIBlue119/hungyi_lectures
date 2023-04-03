@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 12: Semi-supervised</h2><a href=https://www.youtube.com/watch?v=fX_guE7JNnY><img src=https://i.ytimg.com/vi_webp/fX_guE7JNnY/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=0">00:00.000</a></div>
+        <div class="t">我們來講semi-supervised learning,然後有一件事情是這樣子的,本來預計今天要公告作業四,但我想說我們改到下週再公告,對,這樣你就先專心把作業三做完,然後下週再開始做作業四,那如果沒有意外的話,下週也會同時公告final project,好,那我們現在講一下semi-supervised learning,就是我們作業三要請大家稍微做一下的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=30">00:30.000</a></div>
+        <div class="t">因為如果只做這個Cypher train的面試太簡單,網路上摳個script,按個enter應該就會得到結果,所以我們增加一些挑戰性,好,那什麼是semi-supervised learning呢,supervised learning大家都知道,在supervised learning裡面,你就是有一大堆的training data,這些training data的組成呢,是一個function的input跟function的output的pair,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:57.000" id=00:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=57">00:57.000</a></div>
+        <div class="t">假設你有大R筆training data,那每一筆training data裡面呢,都有一個XR代表function的input,都有一個YR hat代表function的output,這個XR呢,舉例來說在綜合賽裡面,XR呢是一張image,YR hat呢是class的label,那所謂的semi-supervised learning是什麼呢,semi-supervised learning是說,在label data上面,我們有另外一組unlabeled的data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26.180" id=01:26.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=86">01:26.180</a></div>
+        <div class="t">那這一組unlabeled data呢,我們這邊寫成XU,那在這些unlabeled data,它就只有function的input,它沒有output,那在這邊呢,有大U筆unlabeled data,那通常呢,我們在做semi-supervised learning的時候,我們期待常見的scenario呢,是unlabeled的數量遠大於labeled data的數量,也就是這邊的大U是遠大於大R的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.160" id=01:56.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=116">01:56.160</a></div>
+        <div class="t">那其實semi-supervised learning呢,可以分成兩種,一種叫做transductive learning,一種叫做inductive learning,那其實transductive learning跟inductive learning,我認為最簡單的分法就是,在做transductive learning的時候,你的unlabeled data就是你的testing set,這樣大家懂我的意思嗎,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.360" id=02:15.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=135">02:15.360</a></div>
+        <div class="t">有人會說,這不是用了testing set,這不是treating嗎,其實不是這樣,你用了testing set的label才是treating,你用了testing set的feature不是treating,這樣大家聽得懂我的意思嗎,所以因為那筆testing set的feature本來就在那邊呢,所以你是可以用它的,所以如果你用了testing set的feature的話,這個叫做transductive learning,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.880" id=02:44.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=164">02:44.880</a></div>
+        <div class="t">我已經跟助教確認過了,就是說其實只要在kaggle上面載下來的data你都可以用的,所以你其實是可以用testing set的image的,你只不能夠去找它的label出來而已,讓大家了解我的意思嗎,那inductive learning呢,inductive learning是說,我們不把testing set考慮進來,我們就只用,假設我們在training的時候,我們還不知道testing set會長什麼樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.520" id=03:13.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=193">03:13.520</a></div>
+        <div class="t">所以我們沒有辦法事先根據testing set去做任何事,我們必須要先認好model,等testing set進來的時候,再去classify它,那至於要用transductive learning還是inductive learning,depend on,現在testing set是不是已經有給你了,在有些比賽裡面,testing set已經有給你了,你就確實,你就可能可以用它了,不過還是跟主辦單位確定一下比較好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:35.840" id=03:35.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=215">03:35.840</a></div>
+        <div class="t">那如果是,但是在很多時候你是,手上沒有那個testing set,你要先認好model以後,尤其是在真正你要用machine learning application的時候,你並沒有testing set在你的手上啊,你要先認好model以後,再等testing set進來,這個時候你就只能做inductive learning,有人會說transductive learning不算是semi-supervised learning,不過我覺得這個也算是一種semi-supervised learning,只是跟inductive learning不一樣就是了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.320" id=04:02.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=242">04:02.320</a></div>
+        <div class="t">好,為什麼做semi-supervised learning呢,因為有人常常會說我們沒有data,其實我們不會沒有data,我們只是缺,我們從來都不缺data,我們只是缺有label的data,比如說你要蒐集image,其實是很容易的,我就放一個機器人,每天就在路上走來走去一直拍照,就蒐集到一大堆的image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.360" id=04:27.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=267">04:27.360</a></div>
+        <div class="t">只是這些image是沒有label的,只有非常少量image你才能有可能雇人去label,所以label data很少,但unlabel data會很多,所以semi-supervised learning如果你可以利用這些unlabel data來做某些事的話,會是很有價值的,那事實上對人類來說,我們人類可能也是一直在做semi-supervised learning,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:49.360" id=04:49.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=289">04:49.360</a></div>
+        <div class="t">我們會從,比如說小孩子會從父母那邊得到一點點的supervised,比如說小孩在路上看到一個狗,他問他爸那是什麼,然後他爸說是狗,然後他就認得說這個東西是狗,然後之後他會再看到其他的東西,有狗啊有貓啊,但沒有人會告訴他說每一個動物是什麼,他在他的往後的人生裡面他看過很多奇奇怪怪的動物,沒有人會去label那些動物,他必須要自己把它學出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.680" id=05:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=317">05:17.680</a></div>
+        <div class="t">所以對人類來說,我們也是在做semi-supervised learning,那為什麼semi-supervised learning有可能會帶來幫助呢?假設我們現在要做一個分類的test,我們要建一個貓跟狗的classifier,那麼同時有一大堆有關貓跟狗的圖片,而這些圖片是沒有label,並不知道哪些是貓哪些是狗,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.680" id=05:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=341">05:41.680</a></div>
+        <div class="t">那今天假設我們只考慮貓跟狗有label的data的話,那假設你今天要畫一個boundary,把貓跟狗的training data分開的話,你可能就會想說就畫在這邊,但是假如那些unlabeled data的分布長得是像灰色點這個樣子的話,這可能就會影響你的決定,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.680" id=06:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=369">06:09.680</a></div>
+        <div class="t">所以unlabeled data雖然它只告訴我們function的input,但unlabeled data它的分布可以告訴我們某一些事,比如說在這個example裡面你可能很直覺的就會覺得說boundary應該切成這樣,但是semi-supervised learning使用unlabeled的方式往往伴隨著一些假設,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:33.680" id=06:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=393">06:33.680</a></div>
+        <div class="t">所以semi-supervised learning有沒有用其實就取決於你這個假設符不符合實際,你這個假設精不精確,因為你可能覺得說這個應該是貓吧,誰知道呢,搞不好這個是狗,他們看起來很像是因為他們背景都是綠的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:51.680" id=06:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=411">06:51.680</a></div>
+        <div class="t">所以semi-supervised learning有沒有用,它不見得永遠都是有用,就depend on你現在的假設是不是合理,我們這邊要講四件事,第一個我們會講說在generative model的時候怎麼用semi-supervised learning,然後我們會講兩個還蠻通用的假設,一個是low density separation assumption,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.680" id=07:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=435">07:15.680</a></div>
+        <div class="t">最後我們會說semi-supervised learning還有一招就是找一個比較好的representation,這個我們會等到supervised learning的時候再講,我們來講一下在generative model裡面你怎麼做semi-supervised learning,我們都已經看過supervised learning的generative model,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:35.680" id=07:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=455">07:35.680</a></div>
+        <div class="t">在supervised learning裡面,你有一堆training的example,你知道他們分別屬於class 1還是屬於class 2,你會去估測class 1和class 2的prior probability,你會估測P of C1, P of C2,然後你會估測P of X given C1和P of X given C2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.680" id=07:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=476">07:56.680</a></div>
+        <div class="t">假設你假設每一個class它的分布都是一個Gaussian distribution的話,那你會估測說class 1是從mean是μ1,covariance是σ的Gaussian估測出來,class 2是從mean是μ2,covariance metric也是σ的Gaussian估測出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:20.680" id=08:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=500">08:20.680</a></div>
+        <div class="t">我們之前講過說,通常如果你share Gaussian,你的performance可能會是比較好的,那現在有了這些prior probability,有了這些mean,有了這些covariance metric,你就可以估測given一個新的data,它是屬於C1的posterior probability,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.680" id=08:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=519">08:39.680</a></div>
+        <div class="t">然後你就可以看一個開筆data,你就可以做classification,那你會決定一個boundary的位置在哪裡,但是如果今天給了我們一些unlabeled data,它就會影響你的決定,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.680" id=08:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=534">08:54.680</a></div>
+        <div class="t">舉例來說,如果我們看這一筆data,我們如果假設這些綠色的其實是unlabeled data的話,那如果你的mean跟variance是μ1,μ2跟σ,顯然就是不合理的,今天這個σ顯然可能應該要比較接近圓圈,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.680" id=09:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=551">09:11.680</a></div>
+        <div class="t">或許你在sample的時候有點問題,所以你sample到比較奇怪的distribution,或許它應該比較接近圓形,而class2的μ或許不應該在這邊,它或許應該在其他的地方,或許應該在比較下面一點等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.680" id=09:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=567">09:27.680</a></div>
+        <div class="t">而如果你看這個prior的話,你的prior可能會受到影響,比如說我們本來覺得說positive這兩個class的labeled data是一樣多的,但看了這些unlabeled data以後,你或許會覺得class2的data其實是比較多的,所以它的prior probability應該是比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:45.680" id=09:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=585">09:45.680</a></div>
+        <div class="t">總之看了這些unlabeled data以後,會影響你對prior probability,對mean,還有對covariance的估測,影響了這些估測就影響你posterior probability的式子,然後就影響了你的decision boundary。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.680" id=09:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=599">09:59.680</a></div>
+        <div class="t">這個是在直覺上是這麼做的,但是實際上在formulation上怎麼做呢?我們先講操作的方式,然後再稍微講它的原理,這邊會講就稍微比較快帶過去,因為也許我猜在這個作業的時候,或許你大概用不上,因為你也不是用generative model做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.680" id=10:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=621">10:21.680</a></div>
+        <div class="t">那step1怎麼樣呢?我們先計算每一筆unlabeled data的posterior probability。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.680" id=10:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=631">10:31.680</a></div>
+        <div class="t">每一筆unlabeled data,x,u,我們都去計算,我們要先初始化一組參數,先初始化兩個,假設我們做binary classification的話,先初始化class1和class2的prior的機率,先初始化μ1,先初始化μ2跟σ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.680" id=10:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=651">10:51.680</a></div>
+        <div class="t">那你說初始化這個值怎麼來?你可以random來,你可以用已經有label的data先估測一個值,總之你就得到一組初始化的參數,我們把這些prior probability,class dependent的μ1,σ統稱為參數setup。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.680" id=11:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=669">11:09.680</a></div>
+        <div class="t">那根據我們現在有的setup,你可以估算每一筆unlabeled data屬於class1的機率,當然這個機率算出來怎樣是跟你的model的值有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.680" id=11:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=681">11:21.680</a></div>
+        <div class="t">算出這個機率以後,你就可以去update你的model,這個update的式子非常的直覺,怎麼個直覺法呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:32.680" id=11:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=692">11:32.680</a></div>
+        <div class="t">現在C1的prior probability怎麼算呢?原來如果沒有unlabeled data的時候,你的計算方法可能是,這個n是所有的example,n1是被標註為C1的example。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.680" id=11:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=708">11:48.680</a></div>
+        <div class="t">如果你要算C1的prior probability,這件事情太直覺了,如果不考慮unlabeled data的話,感覺就是n1除以n,但我們現在需要考慮unlabeled data,我們需要考慮unlabeled data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:02.680" id=12:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=722">12:02.680</a></div>
+        <div class="t">根據unlabeled data告訴我們的資訊,C1出現的次數是多少呢?C1出現的次數就是所有unlabeled data,它是C1的posterior probability的和。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:18.680" id=12:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=738">12:18.680</a></div>
+        <div class="t">所以unlabeled data並不是hard design它一定要屬於C1或C2,而是根據它的posterior probability決定它有百分之多少是屬於C1,有百分之多少是屬於C2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:30.680" id=12:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=750">12:30.680</a></div>
+        <div class="t">好,那你就得到C1的prior probability,根據unsupervised data可以影響你對C1的估測。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:38.680" id=12:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=758">12:38.680</a></div>
+        <div class="t">那μ1怎麼算呢?原來如果不考慮unlabeled data的時候,所謂的μ1就是把所有屬於C1的labeled data都平均起來,就結束了,這個很直覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:49.680" id=12:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=769">12:49.680</a></div>
+        <div class="t">如果今天要加上這個unlabeled data怎麼做呢?你就其實就只是把unlabeled data的那每一筆data SU根據它的posterior probability做weighted sum。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.680" id=13:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=782">13:02.680</a></div>
+        <div class="t">如果這個SU它比較偏向於class 1 C1的話,它對class C1的影響就大一點,反之就小一點。你就把所有unlabeled data根據它是C1的posterior probability做weighted sum,然後再除掉所有weighted的和,做一個normalization,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.680" id=13:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=803">13:23.680</a></div>
+        <div class="t">這件事情你幾乎不用解釋,因為這個太直覺了,直覺就是這麼做的。C2的prior probability,μ1,μ2,σ也都用同樣的方式算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:34.680" id=13:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=814">13:34.680</a></div>
+        <div class="t">然後接下來呢,你有了新的model,你就會back to step 1。有了新的model以後,你的這個機率就不一樣了。你這個機率不一樣,在step 2,你的model算出來又不一樣,然後接下來你又可以去update你的機率,所以就反覆反覆的繼續下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.680" id=13:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=832">13:52.680</a></div>
+        <div class="t">那在理論上這個方法會收斂,可以保證它會收斂,但是它的初始值,就你這個初始值,它就跟gradient descent一樣,初始值會影響你最後收斂的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.680" id=14:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=845">14:05.680</a></div>
+        <div class="t">事實上呢,這個step 1,如果你聽過EM algorithm的話,這個step 1呢,就是這個E step,這個step 2呢,就是M step。那我們先來解釋,我們來解釋一下為什麼這個algorithm是這樣做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.680" id=14:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=865">14:25.680</a></div>
+        <div class="t">雖然這件事情實在是很直覺,但是它背後的理論,它為什麼要這麼做呢?它這個想法是這樣子的。我們原來假設我們只有label data的時候,我們要做的事情是要去maximize一個likelihood,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.680" id=14:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=884">14:44.680</a></div>
+        <div class="t">或是maximize log likelihood,這個意思呢,是一樣的。那每一筆training data,它的likelihood,我們是可以算出來的,如果你給一個setup,每一筆training data,每一筆label data的likelihood,我們是可以算出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:03.680" id=15:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=903">15:03.680</a></div>
+        <div class="t">每一筆data的likelihood,就是P of Y ahead,那個label,那個class出現的quire,根據那個class,generate那一筆data的機率。所以給一個setup,你可以把這個likelihood算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.680" id=15:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=915">15:15.680</a></div>
+        <div class="t">把所有的label data的log likelihood加起來,就是你的total log likelihood,然後你要去找一個setup去maximize它,那個solution是很直覺的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.680" id=15:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=927">15:27.680</a></div>
+        <div class="t">一個closed form solution,帶個式子,你就可以把它解出來。現在如果今天有unlabeled data的式子有什麼不一樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.680" id=15:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=935">15:35.680</a></div>
+        <div class="t">我有一個地方寫錯了,就是這邊應該要有Y ahead,就這一項是要考慮label data,所以這一項跟前面這個部分是一樣。但是unlabeled data怎麼辦呢?unlabeled data,我們並不知道它是來自於哪一個class,我們怎麼估測它的機率呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:02.680" id=16:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=962">16:02.680</a></div>
+        <div class="t">那我們說,一筆unlabeled data,XU,它出現的機率,因為我不知道它是從C1還是從C2來的,所以它就是C1、C2都有可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.680" id=16:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=974">16:14.680</a></div>
+        <div class="t">所以一筆unlabeled data它出現的機率,就是它在C1的prior probability跟C1這個class產生這一筆unlabeled data的機率,加上C2的prior probability乘上C2這個class產生這筆unlabeled data的機率,把它們通通合起來,就是這一筆unlabeled data出現的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:38.680" id=16:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=998">16:38.680</a></div>
+        <div class="t">因為XU它可以從C1來,可以從C2來,我不知道它從哪裡來,所以你就說它兩個都有可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.680" id=16:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1004">16:44.680</a></div>
+        <div class="t">那接下來你要做的事情,就是要去maximize這個式子,那不幸的是這個式子它不是convex的,所以你解它的時候,你變成要用end algorithm解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.680" id=16:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1016">16:56.680</a></div>
+        <div class="t">其實你就是要用iterative的去sort它,所以我們剛才做的那個步驟,在前一個投影片裡面的那個algorithm,它做的事情就是在每一次循環的時候,你做完step1做完step2,你就可以讓這個log likelihood增加一點,然後跑到最後它會收斂在一個local minima的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:20.680" id=17:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1040">17:20.680</a></div>
+        <div class="t">這個是generative的model,那我們接下來要講一個比較general的方式,這邊基於的假設是low density的separation,也就是說這個世界是非黑即白的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:40.680" id=17:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1060">17:40.680</a></div>
+        <div class="t">什麼是非黑即白呢?非黑即白的意思就是說,假設我們現在有一大堆的data,有labeled data,有unlabeled data,在兩個class之間,它們會有一個非常明顯的鴻溝。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.680" id=17:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1077">17:57.680</a></div>
+        <div class="t">就是說,你現在如果給你這些labeled data,你可以說,我boundary要切在這邊也可以,我的boundary要切在這邊也可以,你都可以把這兩個class分開,在training data上的正確率都是100%,但是如果你考慮unlabeled data的話,或許這個boundary是比較好的,這個boundary是比較不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.680" id=18:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1103">18:23.680</a></div>
+        <div class="t">為什麼呢?因為今天基於的假設就是這個世界是一個非黑即白的世界,在這兩個class之間會有一個很明顯的處和和,就會有一個鴻溝,會有一個地方,它之所以說叫low density separation,意思就是說,在這兩個class的交界處,它的density是低的,在這兩個class的交界處,data量很少,不會出現data,所以這個boundary可能就是比較合理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.680" id=18:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1129">18:49.680</a></div>
+        <div class="t">那low density separation最具代表性的簡單的方法就是self-training,那self-training太直覺了,我覺得這個沒什麼好講的,我相信大家都是秒implement。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.680" id=19:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1141">19:01.680</a></div>
+        <div class="t">self-training就是說,我們有一些labeled data,有一些unlabeled data,接下來先從labeled data去train一個model,這個model叫做F-star。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:19.680" id=19:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1159">19:19.680</a></div>
+        <div class="t">那這邊其實你的這個training的方法,因為self-training其實是一個很general的方法,你用什麼方法得到你的F-star,你是用neural network,是用shadow的方法,還是用其他machine learning的方法,都可以,反正你就是train出一個model F-star。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:35.680" id=19:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1175">19:35.680</a></div>
+        <div class="t">那根據這個F-star,你去label你的unlabeled data,你就把su丟進F-star,看它吐出來的yu是什麼,那就是你的labeled data,那這個東西叫做shadow的label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.680" id=19:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1193">19:53.680</a></div>
+        <div class="t">那接下來呢,你要從你的unlabeled data set裡面拿出一些data,把它加到labeled data set裡面,至於哪些data要被加進去,這是open question,你要自己design一些heuristic rule,自己想個辦法來解決。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:11.680" id=20:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1211">20:11.680</a></div>
+        <div class="t">你甚至可以給每一筆unlabeled dataprovide weight,有一些比較confident,有一些su丟label比較confident,有一些su丟label比較不confident。那有了更多的labeled data以後,現在labeled data從unlabeled data那邊得到額外的data,你就可以回頭再去train你的model F-star,這件事情非常的直覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:31.680" id=20:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1231">20:31.680</a></div>
+        <div class="t">事情這麼簡單,你可能覺得自己非常的懂,那我來問大家一個問題。以下這個process,如果我們用在regression上面,會怎樣呢?當然你永遠可以把regression用在這邊,沒有什麼問題,你的程式也不會segmentation fault。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.680" id=20:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1249">20:49.680</a></div>
+        <div class="t">那問題就是,這一招在regression上面,你覺得有可能會有用嗎?我們給大家五秒鐘想像。你覺得這一招在regression上,有可能會有用的同學舉手一下。你覺得這一招在regression上,一定沒有用的同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.680" id=21:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1271">21:11.680</a></div>
+        <div class="t">都沒有人舉手。你仔細想想看,你覺得這一招在regression上面會有用嗎?我們今天regression大家知道,就是output一個數字,就是output一個real number,那你有一個su,然後你output一個real number,你把這筆data加到你的training data裡面再train,你會影響F-star嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.680" id=21:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1299">21:39.680</a></div>
+        <div class="t">你其實不會影響F-star對不對?所以加新的data,所以在做regression其實是不能夠用這一招的。這樣大家有問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:55.680" id=21:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1315">21:55.680</a></div>
+        <div class="t">好,那其實是這樣子的。你可能會覺得剛才這個self-training,它很像是我們剛才在generative model裡面用的那個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.680" id=22:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1332">22:12.680</a></div>
+        <div class="t">它們唯一的差別是在做self-training的時候,你用的是hard level,在做generative model的時候,你用的是soft level。在做self-training的時候,我們會強制assign一筆training data,它一定是屬於某一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:27.680" id=22:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1347">22:27.680</a></div>
+        <div class="t">但是在generative model的時候,我們是說它有根據它的posterior probability,它有一部分屬於class1,有一部分屬於class2。一個是self-training是hard level,generative model的時候,我們用的是soft level。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:42.680" id=22:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1362">22:42.680</a></div>
+        <div class="t">那到底哪一個比較好呢?如果我們今天考慮的是neural network的話,你可以比較看看到底哪一個方法比較好。假設我們用的是neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:57.680" id=22:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1377">22:57.680</a></div>
+        <div class="t">那unlabeled data得到一組neural參數,set of stars。那現在有一筆unlabeled data SU,然後你說根據我們現在手上的參數set of stars,我把它分成兩類,它有0.7的機率屬於class A,有0.3的機率屬於class B,屬於class Q。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.680" id=23:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1397">23:17.680</a></div>
+        <div class="t">如果是hard level的話,你就把它直接label成class 1,然後你就說,因為它變成class 1了嘛,所以SU的新的target,你拿SU在train neural network的時候,它的target就是第一位是1,第二位是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:32.680" id=23:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1412">23:32.680</a></div>
+        <div class="t">或者是你就把這個東西跟你neural network的output拿去算proposed entropy。如果是做soft的話,那你就說70%屬於class 1,這邊寫錯了,30%屬於class 2,然後你就說新的target就是0.7跟0.3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:52.680" id=23:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1432">23:52.680</a></div>
+        <div class="t">你覺得如果我們今天用的是neural network的話,上面跟下面哪一個方法有可能是有用的呢?你覺得下面這個方法有可能有用的同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:09.680" id=24:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1449">24:09.680</a></div>
+        <div class="t">好,手放下。如果你覺得下面這個方法完全不可能會有用的同學舉手一下。好,手放下。比較多人覺得它完全不會有用。為什麼它完全不會有用呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:23.680" id=24:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1463">24:23.680</a></div>
+        <div class="t">你仔細想想看,你現在model的output在這批unlabeled data上,用這個主參數,output是0.7,0.3。你說你把它的target又設成0.7,0.3,它不就是同一組參數就會做到一樣的事情嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:34.680" id=24:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1474">24:34.680</a></div>
+        <div class="t">所以,如果你是做neural network的時候,你用一個soft label,結果是沒有用的。這邊你一定要用hard label。但我們用hard label是什麼意思呢?我們用hard label的時候,我們用的就是low density separation的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:53.680" id=24:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1493">24:53.680</a></div>
+        <div class="t">也就是說,今天我們看XU,它屬於class 1的機率只是比較高而已,我們沒有很確定它一定是屬於class 1。但是這是一個非黑即白的世界,所以如果你看起來有點像class 1,那你就一定是class 1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:09.680" id=25:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1509">25:09.680</a></div>
+        <div class="t">因為本來根據我們的model是說,機率是0.7是class 1,0.3是class 2。那用hard label,用low density separation assumption,就改成說它是class 1的機率是1,就把它往class 1的那邊推過去,這樣它就完全不可能是屬於class 2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:29.680" id=25:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1529">25:29.680</a></div>
+        <div class="t">那下面這個方法不會work,我記得還有看過有配合propose,就是propose在做neural network的時候用一個soft的方法,果然performance不work,不用說C++就知道結果會這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.680" id=25:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1545">25:45.680</a></div>
+        <div class="t">那剛才這一招有一個進階版,叫做entropy-based regularization。你可能會覺得說,直接一看它有點像1就直接變1,直接看有點像class 2就變2,有點太武斷。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:03.680" id=26:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1563">26:03.680</a></div>
+        <div class="t">那你可以用entropy-based這個方法。entropy-based這個方法是說,如果你用neural network的時候,你的output是一個distribution,那我們不要限制說這個output一定要是class 1,一定要是class 2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:18.680" id=26:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1578">26:18.680</a></div>
+        <div class="t">但是我們做的假設是這樣,這個output的distribution它一定要很集中,因為這是一個非黑即白的世界,所以output的distribution一定要很集中,也就是說假設我們現在做五個class的分類,那如果你的output都是在class 1的機率很大,在其他class的機率都很小,這個是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.680" id=26:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1598">26:38.680</a></div>
+        <div class="t">因為是unlabeled data,所以我不知道它的label是什麼,但是如果你的model可以讓這一筆data在class 1的output機率很大,在其他機率很小,那是好的。如果它在class 5的機率很大,其他機率也都很小,這個也是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.680" id=26:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1612">26:52.680</a></div>
+        <div class="t">因為我也不知道它是class 1還是class 5,所以這樣是好,這樣是好。什麼狀況不好呢?如果今天分布是很平均的話,這樣是不好,因為這是個非黑即白的世界,這樣子不符合low density separation的假設。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.680" id=27:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1628">27:08.680</a></div>
+        <div class="t">但是現在的問題就是我們要怎麼用數值的方法來evaluate這個distribution到底是好的還是不好,這個distribution是集中的還是不集中的呢?這邊要用的東西叫做entropy,來算一個distribution的entropy,這個distribution的entropy告訴你說這個distribution到底是集中還是不集中。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:33.680" id=27:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1653">27:33.680</a></div>
+        <div class="t">我們用一個值來表示這個distribution是集中的還是分散的。這個怎麼算呢?其實這個就算你沒有修過information theory之類的,這個我相信你也是聽得懂的,你就記一下它的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:46.680" id=27:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1666">27:46.680</a></div>
+        <div class="t">它的式子是這樣,某一個distribution,它的entropy就是負的,它對每一個class的機率,有五個class,summation1到5,它對每一個class的機率乘上log那個class的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:06.680" id=28:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1686">28:06.680</a></div>
+        <div class="t">所以如果我們今天把第一個distribution的機率帶到這裡面去,它只有一個是1,其他都是0,那你得到的entropy是多少呢?你得到的entropy算出來會是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:23.680" id=28:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1703">28:23.680</a></div>
+        <div class="t">因為1log1是0嘛,0log0也是0,所以這個就是0,沒有什麼特別好講的。這個也是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:38.680" id=28:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1718">28:38.680</a></div>
+        <div class="t">下面這一個,這邊每一個機率,也就是這邊每一個y上標u下標n的都是五分之一,所以你就把這些值帶進去,就把這些五分之一的值都帶進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.680" id=28:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1733">28:53.680</a></div>
+        <div class="t">就是1減log五分之一,也就是log5,所以它的entropy比較大,它是散布比較開的,所以它的entropy比較大,它是散布比較窄的,所以它的entropy比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:08.680" id=29:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1748">29:08.680</a></div>
+        <div class="t">我們希望這個model的output,當然在label data上它的分量正確,但是on label data上,它的output的entropy要越小越好。所以根據這個假設,你就可以去重新設計你的loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:24.680" id=29:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1764">29:24.680</a></div>
+        <div class="t">我們原來的loss function是說,我希望找一組參數,讓我現在在label data上的model output跟正確的model的output,它的距離越近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:34.680" id=29:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1774">29:34.680</a></div>
+        <div class="t">你可能用loss entropy來evaluate它們之間的距離。這個是label data的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.680" id=29:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1780">29:40.680</a></div>
+        <div class="t">在on label data的部分,你會加上每一筆on label data,它的output distribution的entropy,你會希望這些on label data的entropy越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.680" id=29:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1791">29:51.680</a></div>
+        <div class="t">在這兩項中間,你其實可以從一個位置來考慮說,你要偏向on label data多一點還是少一點。那在training的時候怎麼辦呢?在training的時候就是一句話,就是train下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:05.680" id=30:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1805">30:05.680</a></div>
+        <div class="t">這個可以算為分,可以算為分,那可以算為分就沒有什麼問題,就用gradient descent來minimize這個式子而已。那這件事情,它的角色就很像是我們之前講的regularization,所以它稱之為entropy-based regularization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.680" id=30:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1824">30:24.680</a></div>
+        <div class="t">之前我們說regularization的時候,我們說我們在原來的loss function後面加一個parameter的1none或者是2none,讓它比較不會overfitting。那現在加上一個根據on label data得到的entropy,來讓它比較不會overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:41.680" id=30:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1841">30:41.680</a></div>
+        <div class="t">那還有別的semi-supervised learning方式,有一個很著名的叫做semi-supervised SVM,不過我們還沒有講SVM,所以這邊就是當作一個outlook。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:54.680" id=30:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1854">30:54.680</a></div>
+        <div class="t">這個semi-supervised SVM它的精神是這樣,我們知道SVM做的事情就是給你兩個class的data,然後找一個boundary,而這個boundary一方面它要有最大的margin,所謂最大的margin就是讓這兩個class分得越開越好,那同時它也要有最小的分類的錯誤。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:15.680" id=31:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1875">31:15.680</a></div>
+        <div class="t">那現在假設有一些unlabeled data,這個semi-supervised SVM會怎麼處理這個問題呢?它會窮取所有可能的label,就這邊有四筆unlabeled data,每一筆它都可以是屬於class1,也可以屬於class2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.680" id=31:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1890">31:30.680</a></div>
+        <div class="t">我們就窮取它所有可能的label,它可以是長這樣的,就是說這三筆是屬於藍色class,這一筆是屬於橙色class,它可以長這樣,它可以長這樣,這兩個是藍色class,這兩個是橙色class,它可以長這樣,這個是橙的,這個是藍的,這個是藍的,這個是橙的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:48.680" id=31:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1908">31:48.680</a></div>
+        <div class="t">你有各種可能,有很多的可能,有很多可能。然後對每一個可能的結果你都去算一個,你都去做一個SVM,你都去做一個SVM。如果是在這個可能,這個情況下,你的SVM boundary在這邊,這個可能,你的SVM boundary在這邊,這個可能,你的SVM boundary不得不在這邊,你會找不到一個方法可以把兩個class分開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:10.680" id=32:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1930">32:10.680</a></div>
+        <div class="t">然後你再去看說,哪一個unlabeled data的可能性,在這窮取所有的可能的label裡面,哪一個可能性可以讓你的margin最大,同時又minimize error。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:24.680" id=32:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1944">32:24.680</a></div>
+        <div class="t">今天在這個example裡面,可能是這一個方法可以讓你的margin最大,它的margin是小的,它的margin不只小,而且還有分類錯誤,它的margin大,然後又都分類對,所以你可能最後就選擇這一個boundary。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:40.680" id=32:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1960">32:40.680</a></div>
+        <div class="t">這個SVM,我把它的reference放在下面,那可能會有一個問題說,窮取所有的unlabeled data的label,這聽起來不make sense啊,我有一萬筆unlabeled data,有二的一萬十方可能沒辦法做吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:56.680" id=32:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1976">32:56.680</a></div>
+        <div class="t">所以這個paper裡面,它就提出一個approximate的方法,基本精神是一開始先,我們就很快帶過去,基本精神就是一開始得到一些label,然後每次你改一筆unlabeled data的label,看看可不可以讓你的objective function變大,變大的話就改。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.680" id=33:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=1994">33:14.680</a></div>
+        <div class="t">接下來我們要講的方法是叫做Svomis的assumption,它的精神就是進諸者赤,進末者黑,或者是像勸學篇說的,同生麻忠不服兒子,白沙泰虐以知俱黑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:38.680" id=33:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2018">33:38.680</a></div>
+        <div class="t">它的假設是這樣子,如果x是像的,那他們的label y也就要像。這個假設聽起來沒有什麼,而且光講這個假設其實是不精確的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:54.680" id=33:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2034">33:54.680</a></div>
+        <div class="t">因為你知道一個正常的麻忠,你給他像的input,如果他不是很deep的話,本來毫不就會很像啊,所以這個這樣講其實是不夠精確的。真正精確的假設應該是下面這個講法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:08.680" id=34:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2048">34:08.680</a></div>
+        <div class="t">x的分布是不平均的,它在某些地方是很集中,某些地方又很分散。那如果今天x1和x2他們在一個high density的region很close的話,那x1的label y1 hat跟x2的label y2 hat他們才會很像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:34.680" id=34:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2074">34:34.680</a></div>
+        <div class="t">這句話有點讓人不知道在說什麼,什麼叫做在high density的region很像呢?這句話的意思就是說,他們可以用high density的path做connection,這樣講你還是不知道我在說什麼,所以我們直接舉一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:50.680" id=34:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2090">34:50.680</a></div>
+        <div class="t">假設這個是我們data的分布,假設這個是data的分布,它分布就像是一個血輪眼的樣子。那假設我們現在有三筆data,有三筆data,x1,x2跟x3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:07.680" id=35:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2107">35:07.680</a></div>
+        <div class="t">那如果我們只是考慮這個比較粗的假設,像的x,它的output像,那它的label像,所以感覺好像應該是x2跟x3的label應該比較像,但x1跟x2的label比較不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.680" id=35:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2122">35:22.680</a></div>
+        <div class="t">但是其實smoothness assumption的假設不是這樣,它更精確的假設是說,你的像要透過一個high density的region像,懂嗎?就是說,x1跟x2他們中間有一個high density的region,他們中間有很多很多的data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:42.680" id=35:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2142">35:42.680</a></div>
+        <div class="t">所以他們兩個相連的地方是通過一個high density的path相連的,你從x1走到x2中間都是人煙,然後x2跟x3中間沒有點,所以你走不過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:55.680" id=35:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2155">35:55.680</a></div>
+        <div class="t">這樣懂我的意思嗎?假設這個藍色的點是聚落的分布的話,這中間是平原,所以人很多,x1其實走到x2比較容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:05.680" id=36:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2165">36:05.680</a></div>
+        <div class="t">x2跟x3中間是一個山,所以這邊沒有住人,所以你走不過去。所以根據這個真正的smoothness assumption的假設,它要告訴我們的意思是說,x1跟x2是會有比較可能有一樣的label,x2跟x3比較可能有不一樣的label,因為他們中間沒有high density的path。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:29.680" id=36:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2189">36:29.680</a></div>
+        <div class="t">那為什麼會有smoothness assumption這樣的假設?因為在真實的情況下,這個假設很有可能是成立的。比如說我們考慮這個例子,我們考慮手寫數字辨識的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:42.680" id=36:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2202">36:42.680</a></div>
+        <div class="t">我們現在看到這邊有兩個2,這邊有一個3。對人來說,你當然知道說這兩個都是2。但如果你是單純算他們的pixel上的相似度的話,搞不好這兩個其實是比較不像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:59.680" id=36:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2219">36:59.680</a></div>
+        <div class="t">因為它這邊有一個圈圈,它沒有圈圈,這邊有一個勾勾,它有一個這樣的勾勾,我看它們兩個搞不好還比較像。你這邊再稍微彎曲一點,就變成3了,所以它們搞不好還比較像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.680" id=37:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2232">37:12.680</a></div>
+        <div class="t">但是如果你把你的data統統倒出來的話,你會發現這個2和這個2中間,它們有很多連續的型態。就這個2稍微變一下變它,再變一下變它,變一下變它。它從它中間有很多連續的變化型,所以可以從這種生物演化成這種生物,但沒有辦法演化成這種生物,中間沒有過渡的型態。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:34.680" id=37:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2254">37:34.680</a></div>
+        <div class="t">所以說它們中間有很多不直接相連的相似,但中間有很多step stone可以讓它這樣跳過去。所以如果根據Spoon's assumption的話,你就可以得到說這個東西和這個東西是比較像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:51.680" id=37:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2271">37:51.680</a></div>
+        <div class="t">這個東西和這個東西,它們中間沒有過渡的型態,所以它們其實是比較不像的。它們其實不應該是屬於同一個class,而它們其實是屬於同一個class。如果你看人臉辨識的話,其實也是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:05.680" id=38:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2285">38:05.680</a></div>
+        <div class="t">一個人如果他是從他的左臉照一張相跟右臉照一張相,那更差很多。你拿這張相片跟另外一個人的正側面,你拿另外一張一樣是眼睛朝左的相片來比較的話,我看還比這個相,還比較像眼睛朝左的相片跟眼睛朝右的相片相比的話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:32.680" id=38:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2312">38:32.680</a></div>
+        <div class="t">但是假設你收集得到夠多的unlabeled data的話,你會找到說這張臉和這張臉中間有很多過渡的型態,所以這張臉跟這張臉可能是同一個人的臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:47.680" id=38:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2327">38:47.680</a></div>
+        <div class="t">或者是這招在文件分類上面可能是會非常有用的。為什麼呢?假設你現在要分天文學跟旅遊的文章,天文學的文章有一個它固定的word distribution,比如說它會出現as a royal,會出現bride。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:10.680" id=39:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2350">39:10.680</a></div>
+        <div class="t">那如果旅遊文章它可能會出現yellowstone等等。如果今天你的unlabeled data跟你的labeled data是有overlap的,那你就很容易可以處理這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:30.680" id=39:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2370">39:30.680</a></div>
+        <div class="t">但是在真實的情況下,你的unlabeled data跟labeled data它們中間可能沒有任何overlap的word。為什麼呢?因為世界上的word很多,一篇文章裡面你的詞彙往往不會太多,但世界上可能word很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:46.680" id=39:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2386">39:46.680</a></div>
+        <div class="t">所以每篇文章它裡面的詞彙其實非常sparse,它只提到非常少量的word。所以你拿兩篇文章出來,它們中間有重複的word的比例其實沒有那麼多的。所以你很有可能你的data跟你的unlabeled data跟你的labeled data中間是沒有任何overlap的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:07.680" id=40:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2407">40:07.680</a></div>
+        <div class="t">但是如果你connect到夠多的unlabeled data的話,你就可以說這個是D1跟D5項,D5又跟D6項,這個項就可以一路publicate過去,你就會知道說D1跟D3一類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:24.680" id=40:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2424">40:24.680</a></div>
+        <div class="t">D2跟D9項,D9跟D8項,你就會得到D2跟D4項,這個項也可以publicate過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.680" id=40:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2433">40:33.680</a></div>
+        <div class="t">那如何實踐這個smoothness assumption呢?最簡單的方法是這個,我電腦卡住了,沒有卡住,又回來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:45.680" id=40:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2445">40:45.680</a></div>
+        <div class="t">是class and label,這個方法太簡單了,沒什麼可以講的。我們現在data distribution長這個樣子,橙色是class 1,綠色是class 2,藍色是unlabeled data。然後接下來你就做一下classary,你把這些所有的data拿來做classary,你可能就分成三個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:06.680" id=41:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2466">41:06.680</a></div>
+        <div class="t">三個class,你就看說class 1裡面,class 1的label data最多,所以class 1裡面所有的data都算class 1,class 2跟class 3都算class 2,就結束了,就把這些data拿去認,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:25.680" id=41:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2485">41:25.680</a></div>
+        <div class="t">當然這個方法不一定有用,尤其是在你的作業3裡面,你可以implement這個方法,因為我們助教只說要實現兩種方法,沒有說做完以後一定要進步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:39.680" id=41:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2499">41:39.680</a></div>
+        <div class="t">助教不是提供兩個方法,一個是self learning,我們自己試過了,是一定會進步的。如果你今天要做class and label,你這class要很強,因為用這一招work的假設就是,你可以把同一個class的東西class在一起,可是在image裡面你要把同一個class的東西class在一起,其實沒那麼容易了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:59.680" id=41:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2519">41:59.680</a></div>
+        <div class="t">我們之前有講過說,我們剛才在前一份投影片講為什麼要pick learning的時候,我們有講過說,不同class可能會長得很像,同一個class可能會長得很不像,你單純只用pixel來做class,你結果process會壞掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:11.680" id=42:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2531">42:11.680</a></div>
+        <div class="t">你沒有辦法把同一個class的dataclass在一起,讓label data沒什麼方式做出來就會壞掉。所以,如果你要讓class and label這個方法有用,你的class要很強,你要有很好的方法來描述你的一張image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:24.680" id=42:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2544">42:24.680</a></div>
+        <div class="t">在我們自己試的時候,我們會用diff autoencoder,我們還沒有講diff autoencoder,所以你如果覺得沒有辦法實做那個也是正常的,我們是用diff autoencoder,抽feature,然後再做classary,這樣才會work,如果你不這樣做的話,我覺得應該是不會work的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:41.680" id=42:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2561">42:41.680</a></div>
+        <div class="t">但是你還是可以直接用pixel做class的。剛才講的是比較直覺的做法,另外一個方法是引入graph structure,我們用graph structure來表達connected by high density path這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:01.680" id=43:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2581">43:01.680</a></div>
+        <div class="t">就是說我們現在把所有的data point都建成一個graph,每一筆data point x就是這個圖上的一個點,你要想辦法算它們之間的similarity,你要想辦法把它們之間的edge建出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:20.680" id=43:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2600">43:20.680</a></div>
+        <div class="t">有了這個graph以後,所謂的high density path的意思就是說,如果今天有兩個點,它們在這個graph上面是相連的,是走得到的,它們就是同一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:35.680" id=43:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2615">43:35.680</a></div>
+        <div class="t">如果沒有相連,就算是實際上距離也不算太遠,那你也走不到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:40.680" id=43:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2620">43:40.680</a></div>
+        <div class="t">那怎麼建一個graph呢?有些時候呢,這個graph的representation是很自然就可以得到的。舉例來說,假設你現在要做的是網頁的分類,而你有記錄網頁和網頁之間的hyperlink,那hyperlink自然地就告訴你說這些網頁間是如何連結的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:59.680" id=43:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2639">43:59.680</a></div>
+        <div class="t">或者一些要做的是論文的分類,而論文和論文之間有引用的關係,這個引用的關係也是另外一種graph的edge,它也可以很自然地把這種圖畫出來給你。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:11.680" id=44:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2651">44:11.680</a></div>
+        <div class="t">但有時候你需要自己想辦法建這個graph。怎麼自己想辦法建這個graph呢?這個其實這邊,你的graph好壞對你的結果影響是非常的critical的,不過這個地方就非常的heuristic,就是憑著經驗和直覺覺得你怎麼做比較好,就選擇你覺得爽爽的方法做就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:34.680" id=44:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2674">44:34.680</a></div>
+        <div class="t">那這邊通常的做法是這個樣子,你要先定義兩個object之間你怎麼算它的相似度,影像的話你可以base on pixel算相似度,performance不太好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:45.680" id=44:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2685">44:45.680</a></div>
+        <div class="t">如果你base on autoencoder抽出來的feature算相似度,那可能performance就會比較好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:51.680" id=44:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2691">44:51.680</a></div>
+        <div class="t">好,算完相似度以後呢,你就可以建graph了,那graph有很多種,比如說你可以建k-nearest neighbor的graph,所謂k-nearest neighbor的graph的意思是說呢,我現在有一大堆的data,那data和data之間呢,我都可以算出它的相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:10.680" id=45:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2710">45:10.680</a></div>
+        <div class="t">那我就說,我k-nearest neighbor我設k等於3,那每一個point都跟它最近的相似度最像的三個點做相連。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:21.680" id=45:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2721">45:21.680</a></div>
+        <div class="t">或者你可以做這個e-neighbor,e-neighbor會是什麼意思呢?是說,每一個點只有跟它相似度超過某一個threshold的,跟它相似度大於1的那些點才會被連起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:36.680" id=45:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2736">45:36.680</a></div>
+        <div class="t">這都是很直覺的。那所謂的相連也不是只有,這所謂的edge也不是只有相連和不相連這樣binary的選擇而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:44.680" id=45:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2744">45:44.680</a></div>
+        <div class="t">你可以給edge一些weight,你可以讓你的edge跟你的要被連接起來的兩個data point之間的相似度是成正比的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:56.680" id=45:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2756">45:56.680</a></div>
+        <div class="t">怎麼定義這個相似度呢?我會建議比較好的選擇其實是用RBF function來定這個相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:09.680" id=46:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2769">46:09.680</a></div>
+        <div class="t">然後我就發現說,我這邊寫錯了,這邊應該是S才對啊,好,沒關係,這個其實應該是S。那怎麼算這個function呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:26.680" id=46:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2786">46:26.680</a></div>
+        <div class="t">你可以先算說xi跟xj,如果你都把它們用vector來描述的話,算它們的Euclidean distance,然後前面乘一個參數,然後乘一個負號再取exponential。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:38.680" id=46:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2798">46:38.680</a></div>
+        <div class="t">那其實取exponential這件事情是我覺得還蠻必要的,在經驗上用這樣的function可以給你比較好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:49.680" id=46:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2809">46:49.680</a></div>
+        <div class="t">為什麼用這樣的function會給你比較好的performance呢?因為如果你想想看這個function,它的下降的速度是非常快的,因為它有取exponential。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:00.680" id=47:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2820">47:00.680</a></div>
+        <div class="t">所以只有當xi跟xj非常靠近的時候,它的similarity才會大。只要距離稍微遠一點,similarity就會下降很快,就會變得很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:13.680" id=47:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2833">47:13.680</a></div>
+        <div class="t">也就是說,如果你用這種RBF function的話,你才能夠製造說,比如說像這個圖上,這邊有兩個橙色的點是距離很近的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:23.680" id=47:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2843">47:23.680</a></div>
+        <div class="t">這邊有一個綠色的點,其實它跟這個橙色的點距離也蠻近,只是稍微遠一點。但你用這種exponential的話,每一個點都只跟非常近的點連,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:33.680" id=47:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2853">47:33.680</a></div>
+        <div class="t">它跟稍微遠一點,它就不連了。你要有這樣子的機制,你才可以避免你連到這種跨海溝的這種link。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:45.680" id=47:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2865">47:45.680</a></div>
+        <div class="t">所以如果你用exponential,通常效果是會比較好。所以graph based的方法,它的精神是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:56.680" id=47:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2876">47:56.680</a></div>
+        <div class="t">如果我們現在在這個graph上面,我有一些label data,比如說在這個graph上面,我們已經知道說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:04.680" id=48:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2884">48:04.680</a></div>
+        <div class="t">這筆data是屬於class1,這筆data是屬於class1。那跟它們有相連的那些data point,它是屬於class1的機率也就會上升。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:15.680" id=48:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2895">48:15.680</a></div>
+        <div class="t">比如說這筆data,它是屬於class1的機率也會上升,這筆data,它是屬於class1的機率也會上升。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:22.680" id=48:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2902">48:22.680</a></div>
+        <div class="t">所以每一筆data,它會去影響它的鄰居。光是會影響它的鄰居,是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:29.680" id=48:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2909">48:29.680</a></div>
+        <div class="t">如果你只考慮光會影響它的鄰居的話,其實可能幫助不會太大。為什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:34.680" id=48:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2914">48:34.680</a></div>
+        <div class="t">因為如果說它們相連就代表它們本來就很像嘛,本來就很像,you train a model, input很像的東西,output本來就很像的東西,所以幫助不會太大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:45.680" id=48:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2925">48:45.680</a></div>
+        <div class="t">那graph-based approach真正會有幫助它的這個提符位,就是它的這個class,它是會傳遞的。也就是說,本來只有這個點有跟class1相連,所以它會變得比較像class1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:02.680" id=49:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2942">49:02.680</a></div>
+        <div class="t">但是這件事情會像傳染病一樣傳遞過去,所以這個data point雖然沒有真的跟任何真正是class1的點相連,但是因為像class1這件事情是會感染的,所以這件事情也會透過這個graph link傳遞過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:20.680" id=49:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2960">49:20.680</a></div>
+        <div class="t">所以舉例來說,我們如果看這個例子,你把你所有的data point都建成一個graph,當然這個是比較理想的例子,然後你有一個藍色的點,是你label一筆data是屬於class1,你label一筆data是屬於class2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:37.680" id=49:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2977">49:37.680</a></div>
+        <div class="t">經過graph-based approach,如果你的graph是建得這麼漂亮的話,這一邊就通通都會是藍色的,而這一邊就會通通是紅色的。雖然說這一點跟它的尾巴其實沒接在一起,但是紅色這個class的這件事情會一路傳染給過去,會一路傳染給過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:56.680" id=49:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=2996">49:56.680</a></div>
+        <div class="t">那如果你要讓graph-based這種semi-supervised的方法有用,你的一個critical的地方就是你的data要夠多,如果你的data不夠多,你這個地方你沒收集到data,它這個點斷掉了,那你這個information就傳不過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:12.680" id=50:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3012">50:12.680</a></div>
+        <div class="t">好,那剛才是定性的說一下說怎麼使用這個graph,接下來是要說怎麼定量的使用這個graph。這個定量的使用方式呢,是我們在這個graph的structure上面定義一個東西叫做label的smoothness。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:34.680" id=50:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3034">50:34.680</a></div>
+        <div class="t">我們會定義說今天這個label有多符合我們剛才說的那個smoothness assumption的假設。那怎麼定這個東西呢?如果我們看這兩個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:48.680" id=50:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3048">50:48.680</a></div>
+        <div class="t">在這兩個例子裡面都有四個data point,那這個data point和data point之間的連接的這個數字代表了這個edge的weight。那我們說假設在左邊這個例子,左邊和右邊這兩個graph是一樣的,但是我們現在給每一個data不同的label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:08.680" id=51:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3068">51:08.680</a></div>
+        <div class="t">假設在這個class裡面,你給它的label是1110,你這個class在這個example裡面給它的例子是01110,那誰比較smooth呢?給大家一秒鐘的時間考慮一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:26.680" id=51:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3086">51:26.680</a></div>
+        <div class="t">你覺得左邊比較smooth的同學舉手一下。好,手放下。你覺得右邊比較smooth的同學舉手一下。好,沒有人。所以多數人都覺得左邊比較smooth,所以大家的看法其實是非常一致的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:40.680" id=51:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3100">51:40.680</a></div>
+        <div class="t">你看左邊,這個三角形的地方都是1,然後這邊是0,這邊三角的地方有0有1,這邊是0,感覺這個比較不符合smoothness assumption的假設,這個比較符合。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:51.680" id=51:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3111">51:51.680</a></div>
+        <div class="t">但是我們需要用一個數字來定量的描述它說它有多smooth。那常見的做法是這個樣子,常見的做法是你寫一個式子,這個式子你可以這樣寫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:04.680" id=52:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3124">52:04.680</a></div>
+        <div class="t">我們考慮兩兩有相連的這個point,兩兩拿出來,summation over所有的data pair ij,然後我們計算ij之間的位置,跟i的label減掉j的label的平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:28.680" id=52:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3148">52:28.680</a></div>
+        <div class="t">這邊是summation over所有的data,不管它現在是有label還是沒有label。所以如果你看左邊這個case,1減1的平方是0,1減1的平方是0,1減1的平方是0,只有這邊是1減0的平方是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:48.680" id=52:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3168">52:48.680</a></div>
+        <div class="t">所以你在summation over所有的data pair的時候,你只需要考慮x3跟x4這個pair。那yi減yj的平方是1,那wij是1,再除以0.5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:01.680" id=53:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3181">53:01.680</a></div>
+        <div class="t">除0.5這件事情只是為了等一下做某個計算的時候比較方便,它其實沒有什麼真正的效用。除以這邊,這邊乘以0.5,最後得到的有多smooth的evaluation就是0.5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:21.680" id=53:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3201">53:21.680</a></div>
+        <div class="t">那如果是右邊這個case,你自己回去算一下看有沒有算錯,根據這個定義,它算出來的smoothness等於3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:31.680" id=53:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3211">53:31.680</a></div>
+        <div class="t">所以這個值越小,它越smooth。所以你會希望你得出來的label,根據這個smoothness的定義,它算出來越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:47.680" id=53:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3227">53:47.680</a></div>
+        <div class="t">那其實這邊可以很快的告訴大家一件事情,就是這一項可以稍微整理一下,寫成一個比較簡潔的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:58.680" id=53:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3238">53:58.680</a></div>
+        <div class="t">怎麼寫呢?我們把y串成一個vector,那現在y是包括label data也包括unlabeled data,那每一筆labeled data和unlabeled data都附一個值給你,所以你現在有r加u個dimension,串成一個vector,我們就寫成y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:17.680" id=54:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3257">54:17.680</a></div>
+        <div class="t">我們用初體字來表示一個vector。如果你這樣寫的話,這個式子可以寫成y這個vector的transpose,乘上一個matrix叫做l,再乘上y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:30.680" id=54:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3270">54:30.680</a></div>
+        <div class="t">那這個l呢,它是一個,因為y是r加,它的dimension是r加u嘛,所以這個l呢,是一個r加u乘r加u的matrix。那這個l呢,它是有名字的,它叫graph Laplacian,你可能有聽過這個名字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:47.680" id=54:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3287">54:47.680</a></div>
+        <div class="t">Graph Laplacian就是指這個l,這是它的名字。那這個l的定義是什麼呢?它寫成兩個matrix的相點,就是d減掉w。我們現在看w是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:00.680" id=55:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3300">55:00.680</a></div>
+        <div class="t">w呢,就是你把這些data point,兩兩之間的weight的connection的關係,建成一個matrix,就是w。這邊的四個row,這邊的四個row跟四個column,分別就代表了data x1到x4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:20.680" id=55:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3320">55:20.680</a></div>
+        <div class="t">也就是說你看現在,x1跟x2之間的connection的weight是2,那這個1,2這邊就是2,那1跟3的connection是3,那1,3就是3,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:33.680" id=55:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3333">55:33.680</a></div>
+        <div class="t">那就建出一個matrix w。d是什麼呢?d是這樣的,你把w的每一個row合起來,你把第一個row2加3合起來,放在diagonal的地方變成5,2加1合起來變成3,3加1加1變成5,1變成1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:52.680" id=55:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3352">55:52.680</a></div>
+        <div class="t">然後把這些合起來的值放在diagonal的地方就是d,然後你把d減掉w,就得到lambda線,然後你再把它放在這邊,這個左邊的式子就會等於右邊的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:04.680" id=56:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3364">56:04.680</a></div>
+        <div class="t">那你可能沒有辦法一下子看出來說為什麼左邊的式子等於右邊的式子,那這個證明其實很無聊,就講你也不會覺得特別有趣,你就回去把這個東西展開,你就會知道左邊其實就是等於右邊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:20.680" id=56:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3380">56:20.680</a></div>
+        <div class="t">好,那我們現在知道這件事情了,我們可以用這個式子來evaluate說我們現在得到的label有多smooth。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:32.680" id=56:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3392">56:32.680</a></div>
+        <div class="t">那在這個式子裡面,我們會看到有y,有y,那這個y是label,這個label的值,你的這個neural network output的值,是取決於你的network的parameter,所以這一項其實是network的dependent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:50.680" id=56:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3410">56:50.680</a></div>
+        <div class="t">所以你要把這個graph的information考慮到neural network的training的時候,你要做的事情其實就是在原來的loss function裡面加一項,而你原來的loss function是考慮比如說cross entropy之類的,你就加另外一項,你加這一項是這個smoothness的值乘上某一個你想要調的參數lambda。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:12.680" id=57:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3432">57:12.680</a></div>
+        <div class="t">那這後面這一項呢,它其實就象徵了一個regularization,它就像是一個regularization,你不只要調你的參數,讓你那些label data的,你的neural network在那些label data的output跟真正的label越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:31.680" id=57:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3451">57:31.680</a></div>
+        <div class="t">你同時還要做到說,你output的這些label,不管是在enabled data還是unlabeled data上面,它都符合smoothness assumption的假設,smoothness assumption的假設是由這個s所衡量出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:45.680" id=57:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3465">57:45.680</a></div>
+        <div class="t">所以你要同時minimize這一項,也要同時minimize這一項。那你可能問說這件事怎麼做,這件事沒有什麼好講的,你就算一下它的gradient,然後做gradient descent,就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:00.680" id=58:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3480">58:00.680</a></div>
+        <div class="t">那其實呢,你要算smoothness的時候,不一定要算在output的地方,如果你今天是一個deep neural network的話,你可以把你的smoothness放在network的任何地方,你可以假設你的output是smooth的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:16.680" id=58:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3496">58:16.680</a></div>
+        <div class="t">你也可以同時說,我把某一個hidden layer接出來,再乘上一些別的transform,它也要smooth的。你也可以說,我每一個hidden layer的output都要是smooth的,都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:30.680" id=58:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3510">58:30.680</a></div>
+        <div class="t">你可以同時把這些smooth統統都加到neural network上面去。最後一個方法是pattern representation,這個方法的精神就是去無存心,化繁為簡。這個部分我們會等到unsupervised learning的時候再講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:46.680" id=58:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3526">58:46.680</a></div>
+        <div class="t">它的精神是這樣子的。我們觀察到的世界其實是比較複雜的。我們在我們觀察到的世界背後,其實有一些比較簡單的factor,比較簡單的東西在操控我們這個複雜的世界。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:03.680" id=59:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3543">59:03.680</a></div>
+        <div class="t">所以你只要能夠看透這個世界的假象,直指它的核心的話,就可以讓training變得比較容易。舉例來說,這個圖是出自神鵰俠侶的圖像。這個大家知道什麼意思嗎?這個是楊過,他手上拿了一個剪刀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:19.680" id=59:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3559">59:19.680</a></div>
+        <div class="t">這個是梵音鷗,這個是他的鬍子。楊過跟梵音鷗打的時候,他說我可以在三招之內就剪掉你的鬍子,然後大家都不相信,但楊過後來就真的在三招之內剪掉他的鬍子。為什麼呢?因為楊過觀察到說鬍子只是假象而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:36.680" id=59:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3576">59:36.680</a></div>
+        <div class="t">雖然鬍子的變化是比較複雜的,但是鬍子是受到頭所操控的,頭的變化是有限的。只要看透這件事情以後,他就可以把鬍子剪掉。所以說梵音鷗的鬍子就是observation,而他的頭就是你要找的better representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:52.680" id=59:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=fX_guE7JNnY&t=3592">59:52.680</a></div>
+        <div class="t">這就是我們下一堂課要講的東西。</div>
+    </div>
+    
+</body>
+</html>   

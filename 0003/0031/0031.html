@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】概述增強式學習 (Reinforcement Learning, RL) (四) - 回饋非常罕見的時候怎麼辦？機器的望梅止渴</h2><a href=https://www.youtube.com/watch?v=73YyF1gmIus><img src=https://i.ytimg.com/vi/73YyF1gmIus/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC6AKKAgwIABABGHwgEyh_MA8=&rs=AOn4CLDnlsVS-B4Ur4ST9K2-bIuPLOvdyA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=0">00:00.000</a></div>
+        <div class="t">好,這個接下來啊,想要跟大家分享的是一個叫做reward shaping的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:08.000" id=00:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=8">00:08.000</a></div>
+        <div class="t">什麼是reward shaping呢?到目前為止,我們學到的東西是,我們把我們的actor拿去跟環境互動,得到一堆reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=19">00:19.000</a></div>
+        <div class="t">那把這些reward做某些的整理以後,得到這邊的分數A,有了這邊的分數A,你就可以去教你的actor該做什麼,不做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:32.000" id=00:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=32">00:32.000</a></div>
+        <div class="t">但是在這個reinforcement learning裡面,我們很怕遇到一種狀況是,假設reward永遠都是零的時候,怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:42.000" id=00:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=42">00:42.000</a></div>
+        <div class="t">假設多數的時候reward都是零,只有非常低的機率你會得到一個巨大的reward的時候,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:50.000" id=00:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=50">00:50.000</a></div>
+        <div class="t">假設reward幾乎都是零,那意味著什麼?意味著說你今天這個A不管怎麼算,都是零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:59.000" id=00:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=59">00:59.000</a></div>
+        <div class="t">因為每一個action都是差不多的,反正不管執行什麼action得到的reward都是零嘛,所以執行這個action執行那個action根本沒差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08.000" id=01:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=68">01:08.000</a></div>
+        <div class="t">那如果不管執行什麼action,reward幾乎都是零的話,那你根本沒有辦法去train你的actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.000" id=01:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=75">01:15.000</a></div>
+        <div class="t">那講到這種sparse reward的問題,也許有人馬上會想到的是,下圍棋也許是一個sparse reward的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24.000" id=01:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=84">01:24.000</a></div>
+        <div class="t">因為在下圍棋的時候,你每落一子,你並沒有得到reward,你並沒有得到positive或negative的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32.000" id=01:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=92">01:32.000</a></div>
+        <div class="t">在整場遊戲結束,落完最後一子的時候,在中盤落完最後一子遊戲結束的時候,你贏了才會得到positive的reward,你輸了才會得到negative的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:45.000" id=01:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=105">01:45.000</a></div>
+        <div class="t">但是我覺得相較於有一些其他任務,下圍棋還算是比較有reward的RL的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:55.000" id=01:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=115">01:55.000</a></div>
+        <div class="t">舉例來說,假設今天的問題是你要教機器的手臂去拴螺絲。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:02.000" id=02:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=122">02:02.000</a></div>
+        <div class="t">然後教機器的手臂拴螺絲這個問題啊,你合理的reward的定義是,假設今天機器的手臂成功把螺絲拴進去,他就得到positive reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:12.000" id=02:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=132">02:12.000</a></div>
+        <div class="t">沒有把螺絲拴進去,reward就是零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.000" id=02:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=135">02:15.000</a></div>
+        <div class="t">但是你想想看,一開始你的機器的手臂,他裡面的actor的參數是隨機的啊,所以他就在空中隨便揮舞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:23.000" id=02:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=143">02:23.000</a></div>
+        <div class="t">怎麼揮舞,reward都是零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=145">02:25.000</a></div>
+        <div class="t">不像是下圍棋,你至少整場遊戲玩完,你還有正面的或負面的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:30.000" id=02:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=150">02:30.000</a></div>
+        <div class="t">而像機器的手臂,你要教機器的手臂去拴螺絲,除非他正好且非常巧合的拿起一個螺絲再把他拴進去,他得到正向的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:40.000" id=02:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=160">02:40.000</a></div>
+        <div class="t">不管他做什麼事情都沒差,得到的reward通通都是零分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.000" id=02:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=165">02:45.000</a></div>
+        <div class="t">那遇到這種狀況的時候怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.000" id=02:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=169">02:49.000</a></div>
+        <div class="t">遇到這種狀況的時候有一個解法,就是我們想辦法去提供額外的reward來引導我們的agent學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:01.000" id=03:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=181">03:01.000</a></div>
+        <div class="t">也就是說在原來的reward,也就是我們真正要agent去maximize的reward之外,我們再定義一些額外的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.000" id=03:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=193">03:13.000</a></div>
+        <div class="t">我們定義這些額外的reward來幫助我們的agent學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.000" id=03:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=198">03:18.000</a></div>
+        <div class="t">這種定額外的reward來幫助agent學習這種事情就叫做reward shaping。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:26.000" id=03:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=206">03:26.000</a></div>
+        <div class="t">我們人其實也很擅長做reward shaping。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.000" id=03:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=211">03:31.000</a></div>
+        <div class="t">舉例來說,這讓我想到一個妙法蓮華經中的故事,這個故事出自妙法蓮華經中的化塵玉瓶。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:40.000" id=03:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=220">03:40.000</a></div>
+        <div class="t">這個故事就是有一個領隊帶一群人去找寶藏。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:46.000" id=03:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=226">03:46.000</a></div>
+        <div class="t">然後寶藏在500遊行之外,那遊行是什麼單位我也忘了,你就當作很遠就對了,就當500萬公里之外。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:56.000" id=03:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=236">03:56.000</a></div>
+        <div class="t">然後這群人走到半路,已經過了半途了,覺得很累,不想再往前走了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.000" id=04:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=243">04:03.000</a></div>
+        <div class="t">那大家就坐在地上哀號,不想再往前走了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:07.000" id=04:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=247">04:07.000</a></div>
+        <div class="t">那領隊看大家不想再往前走怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:09.000" id=04:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=249">04:09.000</a></div>
+        <div class="t">他就跟大家說,再往前10公里有一個五星級的飯店,大家就可以去休息了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:16.000" id=04:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=256">04:16.000</a></div>
+        <div class="t">大家就看到五星級的飯店就很高興,就去休息了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:19.000" id=04:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=259">04:19.000</a></div>
+        <div class="t">然後隔天早上飯店就不見了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:22.000" id=04:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=262">04:22.000</a></div>
+        <div class="t">領隊說那個飯店是我用法力變出來的,那飯店是領隊用法力變出來的,為了鼓勵大家再繼續往前走,免得大家半途而廢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:37.000" id=04:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=277">04:37.000</a></div>
+        <div class="t">廟法蓮華經說這個故事是為了表示說,佛最後希望大家成就的是佛道,但是佛道非常的長,所以中間設了小聖、中聖、大聖等不同的位階來引導大家前進。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:51.000" id=04:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=291">04:51.000</a></div>
+        <div class="t">那如果對應到比較生活化的例子就是,比如說現在叫你念博士,你要博士畢業才能夠拿到博士學位才能夠得到reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:02.000" id=05:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=302">05:02.000</a></div>
+        <div class="t">那你就會覺得,哇,這個路非常的長,然後就不想要念博班了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.000" id=05:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=307">05:07.000</a></div>
+        <div class="t">但是如果告訴你說,你先修個課就可以得到reward,然後做一點專題,雖然可能也沒有做出什麼厲害的成果,但老師就會說你好棒,你也得到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.000" id=05:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=317">05:17.000</a></div>
+        <div class="t">然後最後先發一個second tier的conference來得到reward,再發表top tier conference,再就得到reward,然後最後你就可以博班畢業,這樣一步一步地往前走,最終你就可以達成最終的目標。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.000" id=05:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=331">05:31.000</a></div>
+        <div class="t">這種地方也要業配念博班,我實在是有點受不了了,不過沒關係,反正這門課快結束了,要再業配也沒幾次了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:39.000" id=05:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=339">05:39.000</a></div>
+        <div class="t">好,那這個就是reward shaping的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:42.000" id=05:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=342">05:42.000</a></div>
+        <div class="t">好,那我們接下來就舉一個reward shaping真正實際使用在RL裡面的例子給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.000" id=05:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=351">05:51.000</a></div>
+        <div class="t">那這邊舉的例子是用Vston來跟大家舉例,那因為怕大家不知道Vston是什麼,所以這邊還是放一個影片給大家看一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:01.000" id=06:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=361">06:01.000</a></div>
+        <div class="t">這個Vston是一個第一人稱的射擊遊戲,那蠻常有人用RL來玩Vston的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.000" id=06:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=367">06:07.000</a></div>
+        <div class="t">那以下呢是一個Vston用RL來玩Vston,用機器來玩Vston這個遊戲的比賽錄影,我們來看一下這個比賽錄影,長起來像這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.000" id=06:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=381">06:21.000</a></div>
+        <div class="t">這邊的每一個選手都不是人喔,每一個選手通通都是機器。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.000" id=06:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=388">06:28.000</a></div>
+        <div class="t">所以你仔細看一下會發現說,有些人的行為很奇怪,比如說右上角這個人,他還蠻容易卡牆的,右上角這個人還蠻容易卡牆的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.000" id=06:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=399">06:39.000</a></div>
+        <div class="t">你看他在撞牆壁,為什麼?因為他不是個人,他是一個機器。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=404">06:44.000</a></div>
+        <div class="t">好,這個是讓你知道一下Vston大概是什麼樣的遊戲。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.000" id=06:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=408">06:48.000</a></div>
+        <div class="t">那這個影片非常長啦,它是一個長達兩小時的史詩級的戰鬥,你有興趣再慢慢把它看完。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.000" id=06:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=416">06:56.000</a></div>
+        <div class="t">在當年那個Vston的比賽裡面,第一名的隊伍就有用到了Reward Shaping的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:03.000" id=07:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=423">07:03.000</a></div>
+        <div class="t">那在Vston這個遊戲裡面,你被敵人殺掉,你就扣分,你殺了敵人就加分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:11.000" id=07:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=431">07:11.000</a></div>
+        <div class="t">但如果你光憑著這個遊戲裡面真正的Reward來訓練Agent,你是很難把他訓練起來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.000" id=07:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=439">07:19.000</a></div>
+        <div class="t">所以呢,在這篇文章裡面就使用了一些Reward Shaping的概念,那我們就來看一下他是怎麼訂這些Reward的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:28.000" id=07:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=448">07:28.000</a></div>
+        <div class="t">舉例來說,這個第一點呢,我們等一下再看,我們先看第二點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:32.000" id=07:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=452">07:32.000</a></div>
+        <div class="t">第二點他說,如果今天有扣血,那你就得到負的Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=458">07:38.000</a></div>
+        <div class="t">那其實在遊戲裡面,扣血並沒有懲罰,扣血並不會扣分,你要死掉才扣分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.000" id=07:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=465">07:45.000</a></div>
+        <div class="t">但是如果機器要到死掉才知道他得到負的Reward,那可是他可能要花很久的時間才能學到扣血跟死掉之間的關聯性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:55.000" id=07:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=475">07:55.000</a></div>
+        <div class="t">所以這邊直接告訴機器,不可以扣血,扣血是壞的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:00.000" id=08:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=480">08:00.000</a></div>
+        <div class="t">好,然後這邊是如果損失彈藥就扣一點分數,然後減到這個醫藥包就加分,減到彈藥的補給包就加分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.000" id=08:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=492">08:12.000</a></div>
+        <div class="t">那這些事情在遊戲裡面是不會影響分數的,但是我們人,我們Developer,另外強加給機器來引導機器學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.000" id=08:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=501">08:21.000</a></div>
+        <div class="t">好,接下來就是一些比較有趣的Reward了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.000" id=08:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=504">08:24.000</a></div>
+        <div class="t">舉例來說,他說呢,如果你的Agent總是待在原地,那就要扣分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:31.000" id=08:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=511">08:31.000</a></div>
+        <div class="t">為什麼需要這樣的Reward呢?因為如果你沒有這樣的Reward,對Agent來說,一開始他非常弱。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:37.000" id=08:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=517">08:37.000</a></div>
+        <div class="t">他出去可能隨便走兩步就被敵人殺死了,所以對他來說,對一開始很弱的Agent來說,可以得到比較高Reward的做法,也許就是待在原地。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:46.000" id=08:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=526">08:46.000</a></div>
+        <div class="t">待在原地至少Reward是0啊,那出去碰到敵人還要被扣血,那多划不來啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:51.000" id=08:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=531">08:51.000</a></div>
+        <div class="t">所以為了避免機器最後什麼都沒有學到就只會待在原地,所以強制告訴他說,你只要待在原地就直接扣分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.000" id=09:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=540">09:00.000</a></div>
+        <div class="t">然後還告訴他說,如果你動就給你一個很小的分數,這邊你只要每動一下就給你9乘以10的負次方,一個非常小的,但是是positive的Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=551">09:11.000</a></div>
+        <div class="t">好,但是光是要求機器動是不夠的,所以這邊就多加了一個非常有趣的Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.000" id=09:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=558">09:18.000</a></div>
+        <div class="t">這個Reward是每次如果Agent活著,Agent每活著他就要被扣分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:26.000" id=09:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=566">09:26.000</a></div>
+        <div class="t">你可能覺得很奇怪,活著不是一件好事嗎?為什麼活著反而應該要被扣分呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:32.000" id=09:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=572">09:32.000</a></div>
+        <div class="t">那是因為假設現在活著沒有扣分,或者甚至是一件正面的事情,對Agent來說他會學到的可能就是邊緣OBR。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:43.000" id=09:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=583">09:43.000</a></div>
+        <div class="t">你雖然有要求他動,你要求他動沒有關係啊,他就在邊緣一直自轉就好,邊緣一直轉圈圈就好,看到敵人就躲開,不要跟敵人做任何的正面交鋒。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:55.000" id=09:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=595">09:55.000</a></div>
+        <div class="t">對Agent來說也許這樣是一個最安全的做法,但是為了強迫Agent學習去殺敵人,所以反而告訴他說你只要活著就是扣分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.000" id=10:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=604">10:04.000</a></div>
+        <div class="t">你要想辦法不可以活太久,你要想辦法去跟別人交手,所以這是一個非常有趣的Reward Shaping的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=613">10:13.000</a></div>
+        <div class="t">看到這些Reward Shaping你就會發現說,Reward Shaping這件事情其實是需要花Domain Knowledge的,它其實是需要憑藉著人類對你現在環境的理解來強加上去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.000" id=10:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=629">10:29.000</a></div>
+        <div class="t">那今天再舉另外一個Reward Shaping的例子,假設你今天要訓練一個機器手臂,那這個機器手臂的工作就是把這個藍色的板子插到這個棍子上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:40.000" id=10:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=640">10:40.000</a></div>
+        <div class="t">那像這樣子的任務,你要憑藉RL的方法讓機器憑空學會把藍色的板子插到這個棍子上,沒有那麼容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:49.000" id=10:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=649">10:49.000</a></div>
+        <div class="t">但是你可能會想到一個很直覺的Reward Shaping的方法是,假設今天這個藍色的板子離這個棍子越近,那我們得到的Reward就越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=660">11:00.000</a></div>
+        <div class="t">但是如果你仔細想想會發現說,單純讓藍色的板子離這個棍子越近是不夠的,為什麼讓藍色的板子離棍子近是不夠的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:10.000" id=11:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=670">11:10.000</a></div>
+        <div class="t">你可以看看像右邊這兩個Case,機器手臂也是想把藍色的板子挪近棍子,但他做的事情其實就是去打那個棍子,從側面接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.000" id=11:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=684">11:24.000</a></div>
+        <div class="t">從側面接近是沒有用的啊,把藍色的板子從側面接近棍子並不能夠達到你最終的目標啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.000" id=11:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=690">11:30.000</a></div>
+        <div class="t">所以如果我們單純只是說,現在你的藍色的板子離這個棍子越近,他的Reward就越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=696">11:36.000</a></div>
+        <div class="t">你就用Reward Shaping的方法把藍色的板子跟棍子之間的距離當作一個新的Reward,但可能對你最終想要解決的問題本身是不一定有幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:46.000" id=11:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=706">11:46.000</a></div>
+        <div class="t">所以Reward Shaping這個東西你在用的時候必須要小心,他需要你對這個問題本身有足夠的理解,你才有辦法使用Reward Shaping這樣的招數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:56.000" id=11:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=716">11:56.000</a></div>
+        <div class="t">好,我們看一下有沒有同學有問問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.000" id=12:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=723">12:03.000</a></div>
+        <div class="t">好,目前沒有同學問問題,那我們就繼續啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.000" id=12:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=729">12:09.000</a></div>
+        <div class="t">Reward Shaping裡面有一個特別有趣而知名的做法叫做Curiosity Based Reward Shaping,也就是給機器加上好奇心。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:24.000" id=12:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=744">12:24.000</a></div>
+        <div class="t">什麼叫做給機器加上好奇心呢?所謂好奇心的意思就是要去探索新的事物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=751">12:31.000</a></div>
+        <div class="t">所以在原來的Reward之外,我們加上一個Reward,這個Reward是如果機器他在活動的過程中看到新的東西,他就被加分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.000" id=12:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=763">12:43.000</a></div>
+        <div class="t">但這邊又有一點要強調的是新的東西必須是有意義的心,不是無謂的心。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=770">12:50.000</a></div>
+        <div class="t">什麼叫做有意義的心,不是無謂的心呢?這個我們等一下再解釋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.000" id=12:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=775">12:55.000</a></div>
+        <div class="t">好,這個Curiosity Based Reinforcement Learning來自於ICML2017的這篇文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.000" id=13:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=783">13:03.000</a></div>
+        <div class="t">那這篇文章裡面有一個非常驚人的Demo,那我們來播一下這個Demo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:33.000" id=13:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=813">13:33.000</a></div>
+        <div class="t">好,我們來播一下這個Demo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.000" id=14:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=843">14:03.000</a></div>
+        <div class="t">我想稍微解釋一下剛才那個影片的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:20.000" id=14:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=860">14:20.000</a></div>
+        <div class="t">剛才那個影片的意思是說,他讓機器玩瑪利歐,那他甚至在瑪利歐這個遊戲裡面沒有任何的Reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.000" id=14:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=872">14:32.000</a></div>
+        <div class="t">他甚至沒有告訴機器說,破關就可以得到Positive的Reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:36.000" id=14:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=876">14:36.000</a></div>
+        <div class="t">那其實你告訴機器破關可以得到Positive的Reward也沒用啦,這個Reward太Sparse了,大概很難拿來訓練Agent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=883">14:43.000</a></div>
+        <div class="t">他只告訴機器說,你要不斷地看到新東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:47.000" id=14:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=887">14:47.000</a></div>
+        <div class="t">那光是這件事情就可以讓機器學會破瑪利歐的其中一些關卡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:52.000" id=14:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=892">14:52.000</a></div>
+        <div class="t">那當然這樣子的方法也許對瑪利歐而言是最合適的,你知道瑪利歐是橫向卷軸遊戲嘛,那你要破關就是要不斷地往右走嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.000" id=15:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=900">15:00.000</a></div>
+        <div class="t">那機器他要看到新的東西就不斷地需要往右走嘛,所以機器會光藉由Curiosity這件事就可以學到破解瑪利歐的一些關卡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.000" id=15:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=910">15:10.000</a></div>
+        <div class="t">不過他有嘗試說,訓練在前面幾關,然後直接把Agent放在地下的關卡,然後就發現說做不起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.000" id=15:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=920">15:20.000</a></div>
+        <div class="t">在地下的關卡還是要微調一下Nervo才做得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=925">15:25.000</a></div>
+        <div class="t">好,那這個影片還有後半段了,我們直接從某個地方開始看好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:36.000" id=15:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=936">15:36.000</a></div>
+        <div class="t">他接下來是直接叫機器去玩Vston,我們來放一下Vston的部分好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.000" id=16:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=966">16:06.000</a></div>
+        <div class="t">好,那這個影片就到這裡了,謝謝觀看,我們下部影片見。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:37.000" id=16:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=997">16:37.000</a></div>
+        <div class="t">好,那最後那個背景有一堆雜訊,有點像是那個電視機壞掉那種雜訊的畫面,你可能有點不知道他這個影片想要表達什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:47.000" id=16:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=1007">16:47.000</a></div>
+        <div class="t">那個部分就是我想要我剛才在最前面講到的有意義的心這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.000" id=16:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=1013">16:53.000</a></div>
+        <div class="t">假設我們要求Agent要一直看到新的東西,那如果你的畫面背景有一個雜訊,那雜訊會不斷地變化啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=1029">17:09.000</a></div>
+        <div class="t">所以對Agent來說,雜訊是新的東西,也許他就不會學到去探索新的環境了,反正光站在那邊看雜訊就夠了,他會覺得他不斷地看到新的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.000" id=17:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=1039">17:19.000</a></div>
+        <div class="t">所以其實在curiosity based的RL裡面,也有想辦法克服這種沒意義的心,這種看到雜訊的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:29.000" id=17:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=73YyF1gmIus&t=1049">17:29.000</a></div>
+        <div class="t">至於實際上怎麼做,那你再參考他的論文。</div>
+    </div>
+    
+</body>
+</html>   

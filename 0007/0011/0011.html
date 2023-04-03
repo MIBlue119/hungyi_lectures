@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 7: Backpropagation</h2><a href=https://www.youtube.com/watch?v=ibJpTrp5mcE><img src=https://i.ytimg.com/vi_webp/ibJpTrp5mcE/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=0">00:00.000</a></div>
+        <div class="t">好,各位同學大家好,那我們今天來,我們開始上課吧,那我們今天要講的是backpropagation,也就是實際上,如果你要用gradient descent的方法來train一個neural network的時候呢,你應該要怎麼做?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:23.500" id=00:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=23">00:23.500</a></div>
+        <div class="t">好,那我們上次其實已經講過了neural network的基本架構,然後我就發現說在作業二裡面,好多人都已經implement了這個neural network based approach這樣,那或許你已經對這個方法非常的清楚了,那我不知道說你,但是我不知道說你是不是清楚說,到底實際上在train neural network的時候,backpropagation這個algorithm是怎麼運作的?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:50.000" id=00:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=50">00:50.000</a></div>
+        <div class="t">好,我們就來講一下這個backpropagation這個algorithm是怎麼讓neural network的training變得比較有效率的,好,那在gradient descent裡面,我們知道說gradient descent的方法就是假設呢,你的network有一大堆的參數,一堆w一堆b,那你先選一個初始的參數,然後計算呢,你先選一個初始的參數θ0,然後計算這個θ0呢,對你的loss function的gradient,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18.000" id=01:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=78">01:18.000</a></div>
+        <div class="t">也就是計算每一個network裡面的參數,w1,w2,b1,b2等等,對你的lossθ的偏微分,而計算出這個東西以後,這個gradient呢,其實是一個vector,而計算出這個vector以後呢,你就可以去更新你的參數,你就把θ0減掉learning rate乘上這個gradient,然後得到θ1,那這個process呢,就持續繼續下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:47.000" id=01:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=107">01:47.000</a></div>
+        <div class="t">你再算一遍,再θ1的gradient,然後呢,再把θ1減掉gradient,update成θ2,而這個process就一直持續下去,所以在neural network裡面呢,當你用gradient descent的方法的時候,跟我們在做logistic regression,還有linear regression等等,是沒有什麼太多的差別的,但是最大的差別就是,最大的問題是,在neural network裡面,我們有非常非常多的參數,那現在如果你要做語音辨識系統的話呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:16.000" id=02:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=136">02:16.000</a></div>
+        <div class="t">你的neural network通常會有,比如說七八成,那每成呢,有一千個neural,那它有上百萬個參數,那所以這個vector呢,它是非常非常長的,這是一個上百萬維的vector,所以現在最大的困難就是,你要如何有效的呢,去把這個有百萬維的vector,有效的把它計算出來,那這個就是backpropagation在做的事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:41.000" id=02:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=161">02:41.000</a></div>
+        <div class="t">所以backpropagation並不是一個和gradient descent不同的training的方法,它就是gradient descent,它只是一個比較有效率的演算法,讓你在計算這個gradient這個vector的時候,是可以比較有效率的把這個vector計算出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=179">02:59.000</a></div>
+        <div class="t">那其實backpropagation呢,它裡面沒有特別高深的數學,你唯一需要記得的就只有channel,那我們用一張投影片,迅速的幫大家複習一下什麼是channel,那假設你現在有兩個function,h跟g,然後g input x就得到y,這個h input y就得到z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:23.000" id=03:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=203">03:23.000</a></div>
+        <div class="t">所以如果你今天給x一個小小的變化的話,它會影響到它的output y,所以y會跟著有變化,然後y有變化以後又會影響到z,所以z會跟著有變化,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:37.000" id=03:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=217">03:37.000</a></div>
+        <div class="t">那如果我們今天要計算這個底x分之底z的話,我們要計算x對z的微分的話,那怎麼算呢,你可以把它拆成兩項,x對z的微分,它就等於這個y對z的微分乘上x對y的微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.000" id=03:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=238">03:58.000</a></div>
+        <div class="t">那這個怎麼來的,你就問一下微積分老師,你可以把這個y就消掉,所以左邊給你右邊,但是不要讓微積分老師知道這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:08.000" id=04:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=248">04:08.000</a></div>
+        <div class="t">好,那第二個case,假設現在有三個function,g,h跟k,那g input x就得到x,h input x就得到y,k input x跟y就得到z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.000" id=04:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=268">04:28.000</a></div>
+        <div class="t">所以今天假如你改變了s,你會透過g和h這兩個function改變了x跟y,改變了s就改變了x跟y,那改變了x跟y以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.000" id=04:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=284">04:44.000</a></div>
+        <div class="t">透過k這個function,k這個function input是x跟y,output是z,改變了x跟y以後,你就改變了z,所以你今天如果要計算s對z的微分的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=299">04:59.000</a></div>
+        <div class="t">那這個s是透過兩條路徑去影響z,它可以透過x去影響z,也可以透過y去影響z,所以s對z的微分就可以寫成,就拆成兩項,根據這兩條path拆成兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.000" id=05:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=317">05:17.000</a></div>
+        <div class="t">這個s對z的微分就可以寫成x對z的微分乘上s對x的微分,上面這條路徑,加上y對z的微分乘上s對y的微分,也就是下面這條路徑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:33.000" id=05:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=333">05:33.000</a></div>
+        <div class="t">所以如果大一微積分有好好學的話,這個就是我們都學過的chain rule,那我們等一下會需要用到這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.000" id=05:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=341">05:41.000</a></div>
+        <div class="t">好,那再來回到這個neural network的training,那我們知道說我們會定一個loss function,那這個loss function是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.000" id=05:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=352">05:52.000</a></div>
+        <div class="t">這個loss function是summation over所有training data的某一個loss值c上標n,我們說假設給定我們一組neural network的參數set,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:06.000" id=06:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=366">06:06.000</a></div>
+        <div class="t">我們把一個training data xn帶到這個neural network裡面,它會output一個yn,那同時我們會有一個我們希望這個neural network output的target yn hat,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.000" id=06:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=378">06:18.000</a></div>
+        <div class="t">就是它希望如果它output yn hat的話,就是最正確的,那我們會定義一個這個yn和yn hat之間的距離的function,這邊寫做cn,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=390">06:30.000</a></div>
+        <div class="t">cn代表yn和yn hat的距離,而如果cn大的話,代表yn和yn hat的距離很遠,所以這個neural network的parameter loss是比較大的,它是比較不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.000" id=06:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=401">06:41.000</a></div>
+        <div class="t">而如果他們這個cn很小的話,代表這組parameter是好的,那我們summation over所有training data的cn,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:49.000" id=06:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=409">06:49.000</a></div>
+        <div class="t">而summation over所有training data根據這個參數set它的output跟它的目標,它的output yn跟它的目標yn hat之間的距離,就是得到我們的total loss L。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.000" id=07:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=422">07:02.000</a></div>
+        <div class="t">那你把這個式子左右兩邊都對某一個參數w做偏為分的話,你就得到右邊這個式子,你就得到partial w分之partial L,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.000" id=07:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=432">07:12.000</a></div>
+        <div class="t">等於summation over所有training datan等於1到N partial w分之partial cn,這個應該是沒有什麼問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.000" id=07:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=441">07:21.000</a></div>
+        <div class="t">而之所以寫這個式子只是要講說,接下來我們就不用想說我們要計算partial w分之partial L,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:28.000" id=07:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=448">07:28.000</a></div>
+        <div class="t">我們就只考慮我們如何去計算對某一筆data的partial w分之partial cn,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:35.000" id=07:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=455">07:35.000</a></div>
+        <div class="t">你只要能夠把一筆data的partial w分之partial cn算出來,再summation over所有training data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:44.000" id=07:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=464">07:44.000</a></div>
+        <div class="t">你就可以把total loss對某一個參數的偏為分算出來了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:50.000" id=07:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=470">07:50.000</a></div>
+        <div class="t">所以等一下我們就只focus在怎麼計算對某一筆data它的cost cn對w的偏為分,我們只focus在怎麼計算這一項上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:00.000" id=08:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=480">08:00.000</a></div>
+        <div class="t">那怎麼做呢?我們先考慮某一個neuron,我們先從底下這個neuron network裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.000" id=08:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=490">08:10.000</a></div>
+        <div class="t">哪一個neuron出來考慮它,那這個neuron它是在第一個layer的neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:19.000" id=08:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=499">08:19.000</a></div>
+        <div class="t">所以它前面的input就是外界給它的input x1 x2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.000" id=08:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=503">08:23.000</a></div>
+        <div class="t">那x1跟x2分別,就假設它只有兩個input,x1跟x2分別乘上weight w1 w2再加上b會得到z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:34.000" id=08:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=514">08:34.000</a></div>
+        <div class="t">我想這個大家應該都非常熟悉,這個z就是x1w1加x2w2加上b,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:41.000" id=08:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=521">08:41.000</a></div>
+        <div class="t">那得到這個z以後,通過activation function在經過了非常非常多的事情以後,你會得到最終的output y1y2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=528">08:48.000</a></div>
+        <div class="t">那現在的問題是這樣,假設我們從這邊拿一個w出來,等一下我們就拿w當作例子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.000" id=08:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=536">08:56.000</a></div>
+        <div class="t">但是b也是一樣的,我們就拿weight當作例子來看怎麼計算某一個weight對某一個example的cost的偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:05.000" id=09:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=545">09:05.000</a></div>
+        <div class="t">那b的話呢,想必你可以以此類推就把它算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:09.000" id=09:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=549">09:09.000</a></div>
+        <div class="t">好,那partial w分之partial c怎麼算?這個partial w分之partial c就按照chain rule就可以把它拆成兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:20.000" id=09:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=560">09:20.000</a></div>
+        <div class="t">partial w分之partial z,partial z分之partial c,這個z可以把它消掉所以沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:26.000" id=09:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=566">09:26.000</a></div>
+        <div class="t">所以partial w分之partial c可以根據chain rule拆成兩項,那這兩項我們就分別去把它計算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.000" id=09:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=575">09:35.000</a></div>
+        <div class="t">那前面這一項是很簡單的,後面這一項是比較複雜的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.000" id=09:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=581">09:41.000</a></div>
+        <div class="t">那計算前面這一項,計算partial w分之partial z的這個process,我們稱之為forward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=589">09:49.000</a></div>
+        <div class="t">那等一下我們會知道為什麼叫forward pass。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.000" id=09:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=592">09:52.000</a></div>
+        <div class="t">那計算後面這一項partial z分之partial c的process,我們稱之為backward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=599">09:59.000</a></div>
+        <div class="t">那我們等一下會講說為什麼它叫做backward pass。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:03.000" id=10:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=603">10:03.000</a></div>
+        <div class="t">那我們就先看一下怎麼來計算這個partial w分之partial z,怎麼來計算partial w分之partial z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.000" id=10:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=610">10:10.000</a></div>
+        <div class="t">那我們先看這個w1,你怎麼計算partial w1分之partial z呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.000" id=10:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=615">10:15.000</a></div>
+        <div class="t">是不是秒算,就是秒算,因為z就長這個樣子嘛,然後w1在這邊,所以一眼就知道說它是x1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.000" id=10:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=625">10:25.000</a></div>
+        <div class="t">那partial w2分之partial z呢?所以一眼就可以看出說它就是x2,這個都是秒算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:33.000" id=10:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=633">10:33.000</a></div>
+        <div class="t">那它的規律是這樣,它的規律就是這個partial w分之partial z啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:39.000" id=10:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=639">10:39.000</a></div>
+        <div class="t">就是看這個w前面接的東西是什麼,那微分以後就是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.000" id=10:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=645">10:45.000</a></div>
+        <div class="t">這個w1前面,它的input是接x1,它的input是x1,所以微分以後就是x1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.000" id=10:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=652">10:52.000</a></div>
+        <div class="t">那partial w2呢?它前面的input是x2,所以微分以後就是x2,它的規律就是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=660">11:00.000</a></div>
+        <div class="t">所以今天呢,假如給你一個neural network,那它裡面有一大堆的參數,一大堆的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.000" id=11:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=669">11:09.000</a></div>
+        <div class="t">但是你要計算這裡面每一個參數對z的偏微分,你要計算這裡面每一個參數的partial w分之partial z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.000" id=11:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=679">11:19.000</a></div>
+        <div class="t">這件事情呢,非常非常的容易,因為我們剛才知道它的規律就是partial w分之partial z,就是看你那個w的input是什麼,它就是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.000" id=11:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=688">11:28.000</a></div>
+        <div class="t">所以如果有人問你說,現在input是1跟-1,那這個1它對它的activation function的input z的偏微分是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:37.000" id=11:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=697">11:37.000</a></div>
+        <div class="t">你就可以瞬間回答告訴他說就是-1,因為這個1前面接-1,所以這個參數對z的偏微分就是-1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.000" id=11:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=709">11:49.000</a></div>
+        <div class="t">同理呢,比如說這個-1,它對z的偏微分就是1,這個-2,它對z的偏微分就是-1,這個1,它對z的偏微分就是1,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:59.000" id=11:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=719">11:59.000</a></div>
+        <div class="t">那接下來呢,接下來假如有人問你說,這個w對它的activation function的input z的偏微分是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:08.000" id=12:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=728">12:08.000</a></div>
+        <div class="t">你其實也可以瞬間就回答他,你只要知道說,這個w前面接的input是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=736">12:16.000</a></div>
+        <div class="t">那這個w前面接的input是某一個neuron的output,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.000" id=12:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=741">12:21.000</a></div>
+        <div class="t">這個w前面接的input是第一個hidden layer的neuron的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:25.000" id=12:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=745">12:25.000</a></div>
+        <div class="t">那這個hidden layer的neuron的output怎麼算呢?這個大家應該都知道,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:30.000" id=12:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=750">12:30.000</a></div>
+        <div class="t">就是把1跟-1丟進去,然後根據我們熟悉的neuron的運算,然後看看它的output是什麼就是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:37.000" id=12:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=757">12:37.000</a></div>
+        <div class="t">在這個例子裡面呢,假如這個function是這個simoy function,算出來就是0.98跟0.12。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:44.000" id=12:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=764">12:44.000</a></div>
+        <div class="t">那如果你可以算出這兩個neuron的output是0.98跟0.12的話,那這個w,它做完偏微分以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.000" id=12:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=773">12:53.000</a></div>
+        <div class="t">這個w對它的activation function的input z做完偏微分以後,顯然就是0.12,因為它接到前面接的w是0.12。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:01.000" id=13:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=781">13:01.000</a></div>
+        <div class="t">這個-1也是0.12,這個-2是0.98,這個-2是0.98,這個也很直覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.000" id=13:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=787">13:07.000</a></div>
+        <div class="t">所以常常的process你就反覆的在做,你可以得到這兩個紅色neuron的output是0.86跟0.11,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:15.000" id=13:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=795">13:15.000</a></div>
+        <div class="t">那你就可以瞄反應說,它對z的偏微分就是0.11。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=803">13:23.000</a></div>
+        <div class="t">所以你要算出這個neuron network裡面的每一個w對它的activation function的input z的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.000" id=13:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=811">13:31.000</a></div>
+        <div class="t">你就把那個input丟進去,然後計算每一個neuron的output就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.000" id=13:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=820">13:40.000</a></div>
+        <div class="t">所以這個步驟叫做forward pass,它是非常容易理解的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:45.000" id=13:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=825">13:45.000</a></div>
+        <div class="t">再來我們要講的是backward pass,也就是怎麼算partial z分之partial c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:53.000" id=13:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=833">13:53.000</a></div>
+        <div class="t">這個你就會覺得很困難了,因為這個z它要通過activation function以後得到output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:01.000" id=14:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=841">14:01.000</a></div>
+        <div class="t">然後後面還有非常非常複雜的process,它才得到這個c,根據非常複雜的process才能夠得到c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:09.000" id=14:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=849">14:09.000</a></div>
+        <div class="t">所以這個partial z分之partial c顯然是很複雜的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:14.000" id=14:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=854">14:14.000</a></div>
+        <div class="t">不過我們可以用chain rule再把這一項做一下拆解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=859">14:19.000</a></div>
+        <div class="t">假設這個activation function是sigmoid function,我這邊就寫一個sigma of z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.000" id=14:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=865">14:25.000</a></div>
+        <div class="t">而z通過sigmoid function得到a,這個neuron的output是a。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:29.000" id=14:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=869">14:29.000</a></div>
+        <div class="t">那接下來會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.000" id=14:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=872">14:32.000</a></div>
+        <div class="t">這個a會通過某一個weight,會乘上某一個weight,再加其他一大堆的value得到z'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.000" id=14:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=879">14:39.000</a></div>
+        <div class="t">它是下一個neuron的activation function的input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=883">14:43.000</a></div>
+        <div class="t">這個a會乘上另外一個weight,這邊寫成w4,再加上其他一堆東西得到z''。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:52.000" id=14:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=892">14:52.000</a></div>
+        <div class="t">後面這個z''跟z''之後可能還會發生很多很多的事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.000" id=14:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=897">14:57.000</a></div>
+        <div class="t">不過我們就先只考慮下一步會發生什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:01.000" id=15:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=901">15:01.000</a></div>
+        <div class="t">所以呢,我們知道說這個partial z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:07.000" id=15:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=907">15:07.000</a></div>
+        <div class="t">你可以寫成partial z分之partial a,partial a分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=912">15:12.000</a></div>
+        <div class="t">那這個沒有什麼問題,partial a可以消掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.000" id=15:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=915">15:15.000</a></div>
+        <div class="t">那partial z分之partial a是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.000" id=15:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=918">15:18.000</a></div>
+        <div class="t">我們知道說a就是等於sigmoid of z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:22.000" id=15:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=922">15:22.000</a></div>
+        <div class="t">那這個partial z分之partial a其實就是這個sigmoid function的微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:28.000" id=15:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=928">15:28.000</a></div>
+        <div class="t">那sigmoid function長這個樣子,綠色這一條線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:33.000" id=15:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=933">15:33.000</a></div>
+        <div class="t">那它的微分你就算一下,它長這個樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=938">15:38.000</a></div>
+        <div class="t">我們之前已經看過很多次了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:41.000" id=15:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=941">15:41.000</a></div>
+        <div class="t">所以partial z分之partial a也沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.000" id=15:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=944">15:44.000</a></div>
+        <div class="t">接下來的問題就是partial a分之partial c應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.000" id=15:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=951">15:51.000</a></div>
+        <div class="t">它應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:55.000" id=15:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=955">15:55.000</a></div>
+        <div class="t">那我們就接下來再看說這個partial a跟c的關係是怎樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:02.000" id=16:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=962">16:02.000</a></div>
+        <div class="t">a它會影響z',然後z'會影響c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:08.000" id=16:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=968">16:08.000</a></div>
+        <div class="t">a會影響z'',z''會影響c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:12.000" id=16:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=972">16:12.000</a></div>
+        <div class="t">所以a透過z'跟z''去影響c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:16.000" id=16:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=976">16:16.000</a></div>
+        <div class="t">所以partial a分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:18.000" id=16:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=978">16:18.000</a></div>
+        <div class="t">你可以寫成partial a分之partial z'乘以partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:24.000" id=16:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=984">16:24.000</a></div>
+        <div class="t">加上partial a分之partial z''除以partial z''分之partial c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:29.000" id=16:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=989">16:29.000</a></div>
+        <div class="t">我們假設說a後面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:31.000" id=16:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=991">16:31.000</a></div>
+        <div class="t">就這個藍色的neuron的下一個layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.000" id=16:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=994">16:34.000</a></div>
+        <div class="t">這個紅色的neuron只有兩個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.000" id=16:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=996">16:36.000</a></div>
+        <div class="t">所以這邊就只有兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:38.000" id=16:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=998">16:38.000</a></div>
+        <div class="t">就這個a只會影響z'跟z''。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.000" id=16:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1001">16:41.000</a></div>
+        <div class="t">如果這邊有一千個neuron的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.000" id=16:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1003">16:43.000</a></div>
+        <div class="t">那這邊這個圈如果你的summation就是summation over一千項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.000" id=16:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1009">16:49.000</a></div>
+        <div class="t">這樣大家了解我的意思嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.000" id=16:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1012">16:52.000</a></div>
+        <div class="t">前面我們就是簡化這個上課的說明,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:58.000" id=16:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1018">16:58.000</a></div>
+        <div class="t">假設只有兩個neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1019">16:59.000</a></div>
+        <div class="t">所以這邊只有兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:01.000" id=17:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1021">17:01.000</a></div>
+        <div class="t">a只會影響z'跟z''。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:04.000" id=17:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1024">17:04.000</a></div>
+        <div class="t">接下來partial a分之partial z'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1029">17:09.000</a></div>
+        <div class="t">這個會算嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.000" id=17:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1031">17:11.000</a></div>
+        <div class="t">這個是秒算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.000" id=17:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1033">17:13.000</a></div>
+        <div class="t">這個是w3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:15.000" id=17:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1035">17:15.000</a></div>
+        <div class="t">這z'等於a,z'等於a乘上w3再加上一些有的沒的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.000" id=17:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1042">17:22.000</a></div>
+        <div class="t">所以這個z'對a做偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:24.000" id=17:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1044">17:24.000</a></div>
+        <div class="t">z'對a做偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:26.000" id=17:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1046">17:26.000</a></div>
+        <div class="t">根據這個式子顯然就是w3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:29.000" id=17:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1049">17:29.000</a></div>
+        <div class="t">所以同理,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.000" id=17:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1051">17:31.000</a></div>
+        <div class="t">這個z''對a做偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1053">17:33.000</a></div>
+        <div class="t">得到的結果顯然就是w4,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:36.000" id=17:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1056">17:36.000</a></div>
+        <div class="t">所以這兩項算起來也不是個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:40.000" id=17:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1060">17:40.000</a></div>
+        <div class="t">最後的問題就是,這個z'對c的偏為分怎麼算?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:45.000" id=17:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1065">17:45.000</a></div>
+        <div class="t">這個z'對c的偏為分怎麼算?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:49.000" id=17:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1069">17:49.000</a></div>
+        <div class="t">因為我們不知道z'對c有什麼關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:53.000" id=17:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1073">17:53.000</a></div>
+        <div class="t">我們不知道z''對c有什麼關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:55.000" id=17:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1075">17:55.000</a></div>
+        <div class="t">這後面還有發生很多很多的事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.000" id=17:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1078">17:58.000</a></div>
+        <div class="t">是很複雜的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:59.000" id=17:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1079">17:59.000</a></div>
+        <div class="t">所以我們搞不清楚後面會發生什麼事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.000" id=18:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1081">18:01.000</a></div>
+        <div class="t">所以我們一下子不知道這兩項要怎麼算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:04.000" id=18:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1084">18:04.000</a></div>
+        <div class="t">不過沒關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:05.000" id=18:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1085">18:05.000</a></div>
+        <div class="t">我們就假設我們知道,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:07.000" id=18:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1087">18:07.000</a></div>
+        <div class="t">假設這兩項的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.000" id=18:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1090">18:10.000</a></div>
+        <div class="t">我們已經商號透過某種方法把它算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:14.000" id=18:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1094">18:14.000</a></div>
+        <div class="t">我們透過一個等一下會簡單一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.000" id=18:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1096">18:16.000</a></div>
+        <div class="t">還不知道怎麼做的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.000" id=18:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1098">18:18.000</a></div>
+        <div class="t">我們就已經把這兩項算出來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:20.000" id=18:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1100">18:20.000</a></div>
+        <div class="t">那把這兩項算出來以後呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.000" id=18:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1103">18:23.000</a></div>
+        <div class="t">把這兩項算出來以後呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1106">18:26.000</a></div>
+        <div class="t">我們就可以把這個z'c輕易的算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:32.000" id=18:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1112">18:32.000</a></div>
+        <div class="t">把這兩項算出來以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:37.000" id=18:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1117">18:37.000</a></div>
+        <div class="t">我們就可以算 partial z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:40.000" id=18:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1120">18:40.000</a></div>
+        <div class="t">所以算 partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:42.000" id=18:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1122">18:42.000</a></div>
+        <div class="t">跟partial zw'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:44.000" id=18:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1124">18:44.000</a></div>
+        <div class="t">就會算 partial z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.000" id=18:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1127">18:47.000</a></div>
+        <div class="t">然後再把這些值帶到我們剛才看到的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:51.000" id=18:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1131">18:51.000</a></div>
+        <div class="t">partial z分之partial c的式子裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1133">18:53.000</a></div>
+        <div class="t">就得到這樣一個式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.000" id=18:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1135">18:55.000</a></div>
+        <div class="t">sigma' of z乘上w3 partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:59.000" id=18:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1139">18:59.000</a></div>
+        <div class="t">加上w4 partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:02.000" id=19:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1142">19:02.000</a></div>
+        <div class="t">就算出這樣一個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.000" id=19:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1143">19:03.000</a></div>
+        <div class="t">那這個式子還蠻簡單的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1146">19:06.000</a></div>
+        <div class="t">但我們可以從另外一個觀點來看待這個式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.000" id=19:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1149">19:09.000</a></div>
+        <div class="t">你可以想像說現在有另外一個neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1157">19:17.000</a></div>
+        <div class="t">這個neuron並不在我們原來的network裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.000" id=19:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1161">19:21.000</a></div>
+        <div class="t">有另外一個neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:23.000" id=19:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1163">19:23.000</a></div>
+        <div class="t">我把它畫成三角形,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.000" id=19:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1167">19:27.000</a></div>
+        <div class="t">那這個neuron的input就是partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:32.000" id=19:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1172">19:32.000</a></div>
+        <div class="t">跟partial zw'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:35.000" id=19:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1175">19:35.000</a></div>
+        <div class="t">那第一個input partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:38.000" id=19:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1178">19:38.000</a></div>
+        <div class="t">它就乘上w3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:39.000" id=19:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1179">19:39.000</a></div>
+        <div class="t">partial zw'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:41.000" id=19:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1181">19:41.000</a></div>
+        <div class="t">它就乘上w4,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.000" id=19:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1182">19:42.000</a></div>
+        <div class="t">再乘上activation function sigma' of z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:46.000" id=19:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1186">19:46.000</a></div>
+        <div class="t">得到output就是partial z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.000" id=19:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1190">19:50.000</a></div>
+        <div class="t">就上面這個neuron所做的運算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:54.000" id=19:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1194">19:54.000</a></div>
+        <div class="t">跟下面這個式子是一模一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:57.000" id=19:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1197">19:57.000</a></div>
+        <div class="t">我們只是把下面這個式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:59.000" id=19:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1199">19:59.000</a></div>
+        <div class="t">這個表式讓它寫成,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.000" id=20:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1202">20:02.000</a></div>
+        <div class="t">畫出來看起來像是一個neuron一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:07.000" id=20:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1207">20:07.000</a></div>
+        <div class="t">那這個z'分之z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:11.000" id=20:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1211">20:11.000</a></div>
+        <div class="t">這個z'分之z其實是一個常數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:15.000" id=20:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1215">20:15.000</a></div>
+        <div class="t">它不是一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:17.000" id=20:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1217">20:17.000</a></div>
+        <div class="t">它是一個constant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.000" id=20:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1220">20:20.000</a></div>
+        <div class="t">因為z其實已經在計算forward pass的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:25.000" id=20:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1225">20:25.000</a></div>
+        <div class="t">就被決定好了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.000" id=20:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1227">20:27.000</a></div>
+        <div class="t">z是一個已經固定的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:31.000" id=20:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1231">20:31.000</a></div>
+        <div class="t">z我們已經知道它是多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:33.000" id=20:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1233">20:33.000</a></div>
+        <div class="t">所以在給定z的情況下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:36.000" id=20:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1236">20:36.000</a></div>
+        <div class="t">這個sigma' of z它就是一個常數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:40.000" id=20:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1240">20:40.000</a></div>
+        <div class="t">所以這個neuron其實跟我們之前看到,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:43.000" id=20:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1243">20:43.000</a></div>
+        <div class="t">sigmoid function是不一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.000" id=20:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1245">20:45.000</a></div>
+        <div class="t">它並不是把input通過一個long linear的轉換,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.000" id=20:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1249">20:49.000</a></div>
+        <div class="t">而是把input直接乘上一個constant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:52.000" id=20:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1252">20:52.000</a></div>
+        <div class="t">sigma' of z就得到一個output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:55.000" id=20:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1255">20:55.000</a></div>
+        <div class="t">所以我把這個neuron畫成三角形的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:58.000" id=20:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1258">20:58.000</a></div>
+        <div class="t">代表它跟之前我們看到,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:00.000" id=21:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1260">21:00.000</a></div>
+        <div class="t">圓形的neuron的運作方式是不一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:02.000" id=21:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1262">21:02.000</a></div>
+        <div class="t">它是直接乘上一個constant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:04.000" id=21:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1264">21:04.000</a></div>
+        <div class="t">有人問說為什麼是三角形呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:06.000" id=21:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1266">21:06.000</a></div>
+        <div class="t">因為我是電機系的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.000" id=21:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1268">21:08.000</a></div>
+        <div class="t">我覺得這是一個op amp,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:10.000" id=21:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1270">21:10.000</a></div>
+        <div class="t">它就乘上一個op amp,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:13.000" id=21:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1273">21:13.000</a></div>
+        <div class="t">乘上一個constant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:15.000" id=21:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1275">21:15.000</a></div>
+        <div class="t">它是一個放大器,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:17.000" id=21:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1277">21:17.000</a></div>
+        <div class="t">這種就算了,這不太重要,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.000" id=21:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1279">21:19.000</a></div>
+        <div class="t">好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:21.000" id=21:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1281">21:21.000</a></div>
+        <div class="t">然後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:23.000" id=21:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1283">21:23.000</a></div>
+        <div class="t">這樣問題都解決了對不對,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:27.000" id=21:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1287">21:27.000</a></div>
+        <div class="t">我們現在最後的問題就只有,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:29.000" id=21:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1289">21:29.000</a></div>
+        <div class="t">怎麼算這兩項而已,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:32.000" id=21:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1292">21:32.000</a></div>
+        <div class="t">假設能夠算這兩項,問題就都解決了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:35.000" id=21:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1295">21:35.000</a></div>
+        <div class="t">那現在怎麼算這兩項呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.000" id=21:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1299">21:39.000</a></div>
+        <div class="t">我們現在假設兩個不同的case,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.000" id=21:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1302">21:42.000</a></div>
+        <div class="t">第一個case是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.000" id=21:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1304">21:44.000</a></div>
+        <div class="t">我們假設現在紅色的這兩個neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:47.000" id=21:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1307">21:47.000</a></div>
+        <div class="t">就已經是output layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:50.000" id=21:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1310">21:50.000</a></div>
+        <div class="t">就這兩個紅色的neuron是在output layer裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:53.000" id=21:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1313">21:53.000</a></div>
+        <div class="t">他們的output就已經是整個network的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.000" id=21:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1316">21:56.000</a></div>
+        <div class="t">這邊寫成y1跟y2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:58.000" id=21:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1318">21:58.000</a></div>
+        <div class="t">它的output就已經是整個network的output了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:01.000" id=22:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1321">22:01.000</a></div>
+        <div class="t">所以今天你要算partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.000" id=22:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1325">22:05.000</a></div>
+        <div class="t">那很簡單就根據chain rule,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:07.000" id=22:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1327">22:07.000</a></div>
+        <div class="t">算partial z' partial y1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:09.000" id=22:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1329">22:09.000</a></div>
+        <div class="t">partial y1分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:11.000" id=22:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1331">22:11.000</a></div>
+        <div class="t">partial z'分之partial y1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:13.000" id=22:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1333">22:13.000</a></div>
+        <div class="t">這個沒什麼問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1334">22:14.000</a></div>
+        <div class="t">只要知道這個activation function的長什麼樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:17.000" id=22:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1337">22:17.000</a></div>
+        <div class="t">這項就輕而易舉的算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:19.000" id=22:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1339">22:19.000</a></div>
+        <div class="t">partial y1分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:21.000" id=22:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1341">22:21.000</a></div>
+        <div class="t">y1對cost c有什麼影響,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:23.000" id=22:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1343">22:23.000</a></div>
+        <div class="t">就depend on你的這個cost function是怎麼定義的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.000" id=22:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1348">22:28.000</a></div>
+        <div class="t">你output跟它的target間是怎麼做evaluate的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.000" id=22:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1352">22:32.000</a></div>
+        <div class="t">你可以用cross entropy,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.000" id=22:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1353">22:33.000</a></div>
+        <div class="t">可以用mean square error,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:34.000" id=22:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1354">22:34.000</a></div>
+        <div class="t">你用不同的定義,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:36.000" id=22:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1356">22:36.000</a></div>
+        <div class="t">這邊這項就不一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.000" id=22:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1357">22:37.000</a></div>
+        <div class="t">但總之它是一個比較簡單的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:40.000" id=22:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1360">22:40.000</a></div>
+        <div class="t">你可以把它算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:42.000" id=22:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1362">22:42.000</a></div>
+        <div class="t">那partial z'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:44.000" id=22:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1364">22:44.000</a></div>
+        <div class="t">partial z''分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.000" id=22:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1366">22:46.000</a></div>
+        <div class="t">partial z''分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:48.000" id=22:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1368">22:48.000</a></div>
+        <div class="t">這你也可以算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:49.000" id=22:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1369">22:49.000</a></div>
+        <div class="t">沒有什麼問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.000" id=22:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1370">22:50.000</a></div>
+        <div class="t">就是partial z''分之partial y2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:51.000" id=22:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1371">22:51.000</a></div>
+        <div class="t">partial y2分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:53.000" id=22:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1373">22:53.000</a></div>
+        <div class="t">這兩項一樣都是可以秒算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:56.000" id=22:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1376">22:56.000</a></div>
+        <div class="t">所以今天假設這個藍色的neuron後面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:03.000" id=23:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1383">23:03.000</a></div>
+        <div class="t">它的下一個layer就已經是output layer了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:07.000" id=23:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1387">23:07.000</a></div>
+        <div class="t">這個藍色的neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:12.000" id=23:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1392">23:12.000</a></div>
+        <div class="t">它在最後一個hidden layer裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:14.000" id=23:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1394">23:14.000</a></div>
+        <div class="t">它後面就已經是output layer了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:16.000" id=23:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1396">23:16.000</a></div>
+        <div class="t">那根據我們剛才所學的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:19.000" id=23:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1399">23:19.000</a></div>
+        <div class="t">你就結束了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:20.000" id=23:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1400">23:20.000</a></div>
+        <div class="t">你就已經可以把這個w1跟w2的對c的偏為分算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:26.000" id=23:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1406">23:26.000</a></div>
+        <div class="t">所以這個沒有什麼問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:28.000" id=23:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1408">23:28.000</a></div>
+        <div class="t">那我們真正煩惱的問題是case 2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1411">23:31.000</a></div>
+        <div class="t">假設現在紅色的neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.000" id=23:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1413">23:33.000</a></div>
+        <div class="t">它並不是整個network的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.000" id=23:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1415">23:35.000</a></div>
+        <div class="t">那它後面還有其他的東西的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:39.000" id=23:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1419">23:39.000</a></div>
+        <div class="t">怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:41.000" id=23:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1421">23:41.000</a></div>
+        <div class="t">那它後面的其他東西可能長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:45.000" id=23:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1425">23:45.000</a></div>
+        <div class="t">它可能長這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:46.000" id=23:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1426">23:46.000</a></div>
+        <div class="t">就是z'再通過activation function得到a'再乘上另外一個weight w5,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:53.000" id=23:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1433">23:53.000</a></div>
+        <div class="t">再加上一些其他的東西得到za,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:56.000" id=23:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1436">23:56.000</a></div>
+        <div class="t">然後你再把a'乘上w6再加上其他一大堆東西得到zb,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:03.000" id=24:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1443">24:03.000</a></div>
+        <div class="t">丟進另外兩個activation function裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.000" id=24:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1448">24:08.000</a></div>
+        <div class="t">那現在的問題是這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:12.000" id=24:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1452">24:12.000</a></div>
+        <div class="t">我們想要求partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.000" id=24:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1456">24:16.000</a></div>
+        <div class="t">如果我們知道partial za分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:20.000" id=24:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1460">24:20.000</a></div>
+        <div class="t">跟partial zb分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:24.000" id=24:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1464">24:24.000</a></div>
+        <div class="t">我們就可以計算partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.000" id=24:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1470">24:30.000</a></div>
+        <div class="t">我們剛才已經有講過說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:34.000" id=24:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1474">24:34.000</a></div>
+        <div class="t">假設我們知道partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:38.000" id=24:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1478">24:38.000</a></div>
+        <div class="t">跟partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:40.000" id=24:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1480">24:40.000</a></div>
+        <div class="t">我們就可以算前面一個layer的partial z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:44.000" id=24:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1484">24:44.000</a></div>
+        <div class="t">所以按照一模一樣的式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.000" id=24:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1486">24:46.000</a></div>
+        <div class="t">如果我知道partial za分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:48.000" id=24:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1488">24:48.000</a></div>
+        <div class="t">跟partial zb分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:50.000" id=24:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1490">24:50.000</a></div>
+        <div class="t">我們就可以算partial z'分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:53.000" id=24:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1493">24:53.000</a></div>
+        <div class="t">按照一模一樣的式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:55.000" id=24:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1495">24:55.000</a></div>
+        <div class="t">就我們剛才看到的op amp的式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.000" id=24:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1498">24:58.000</a></div>
+        <div class="t">所以你就把partial za乘上w,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:02.000" id=25:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1502">25:02.000</a></div>
+        <div class="t">partial zb分之partial c乘上w6,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.000" id=25:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1505">25:05.000</a></div>
+        <div class="t">加起來再通過op amp,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:07.000" id=25:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1507">25:07.000</a></div>
+        <div class="t">乘上sigma z',</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:11.000" id=25:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1511">25:11.000</a></div>
+        <div class="t">再乘上op amp就得到partial z'分之partial c的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:17.000" id=25:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1517">25:17.000</a></div>
+        <div class="t">那現在這個問題就反覆的繼續下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.000" id=25:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1521">25:21.000</a></div>
+        <div class="t">我們剛才說知道z'跟z''的偏微分就可以算z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.000" id=25:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1525">25:25.000</a></div>
+        <div class="t">現在知道za跟zb的偏微分就可以算z',</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:30.000" id=25:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1530">25:30.000</a></div>
+        <div class="t">但是我們又不知道za跟zb的偏微分怎麼算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.000" id=25:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1536">25:36.000</a></div>
+        <div class="t">你不知道這兩項怎麼算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:38.000" id=25:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1538">25:38.000</a></div>
+        <div class="t">如果你會這兩項的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:40.000" id=25:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1540">25:40.000</a></div>
+        <div class="t">你就把這一項算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:41.000" id=25:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1541">25:41.000</a></div>
+        <div class="t">但問題就是你不知道,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:43.000" id=25:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1543">25:43.000</a></div>
+        <div class="t">那怎麼辦呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.000" id=25:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1546">25:46.000</a></div>
+        <div class="t">我們就再往下一層去看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.000" id=25:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1549">25:49.000</a></div>
+        <div class="t">這個綠色的neuron如果它是output layer的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:59.000" id=25:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1559">25:59.000</a></div>
+        <div class="t">要計算這兩個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:01.000" id=26:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1561">26:01.000</a></div>
+        <div class="t">就一次秒算就不成問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:03.000" id=26:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1563">26:03.000</a></div>
+        <div class="t">假設它不是output layer的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.000" id=26:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1566">26:06.000</a></div>
+        <div class="t">你就繼續走下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:09.000" id=26:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1569">26:09.000</a></div>
+        <div class="t">再看下一個layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:11.000" id=26:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1571">26:11.000</a></div>
+        <div class="t">它的activation function的input對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:14.000" id=26:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1574">26:14.000</a></div>
+        <div class="t">那你就可以把這一項算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:16.000" id=26:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1576">26:16.000</a></div>
+        <div class="t">你就可以把這兩項算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:19.000" id=26:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1579">26:19.000</a></div>
+        <div class="t">你就可以再把這一項算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:21.000" id=26:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1581">26:21.000</a></div>
+        <div class="t">你如果沒有辦法算這兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:24.000" id=26:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1584">26:24.000</a></div>
+        <div class="t">它們不是output layer的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.000" id=26:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1585">26:25.000</a></div>
+        <div class="t">你就再去推下一個layer的偏微分是什麼樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:29.000" id=26:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1589">26:29.000</a></div>
+        <div class="t">把這兩個東西推出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:31.000" id=26:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1591">26:31.000</a></div>
+        <div class="t">然後再往前再把這兩個東西推出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:33.000" id=26:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1593">26:33.000</a></div>
+        <div class="t">那你可能就會講說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:35.000" id=26:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1595">26:35.000</a></div>
+        <div class="t">這個方法聽起來還頗崩潰,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.000" id=26:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1598">26:38.000</a></div>
+        <div class="t">就是你每次要算一個微分的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:42.000" id=26:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1602">26:42.000</a></div>
+        <div class="t">你要一路往後走,一直走到network的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.000" id=26:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1607">26:47.000</a></div>
+        <div class="t">而如果network有10層,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.000" id=26:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1609">26:49.000</a></div>
+        <div class="t">那你從第一層開始往後展開,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.000" id=26:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1612">26:52.000</a></div>
+        <div class="t">感覺應該是一個很可怕的事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:55.000" id=26:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1615">26:55.000</a></div>
+        <div class="t">但是實際上並不是這個樣子做的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:58.000" id=26:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1618">26:58.000</a></div>
+        <div class="t">實際上你只要換一個方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:01.000" id=27:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1621">27:01.000</a></div>
+        <div class="t">從output layer的partial z分之partial c開始算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:07.000" id=27:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1627">27:07.000</a></div>
+        <div class="t">你就會發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.000" id=27:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1628">27:08.000</a></div>
+        <div class="t">它的運算量跟原來的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:12.000" id=27:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1632">27:12.000</a></div>
+        <div class="t">其實是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:15.000" id=27:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1635">27:15.000</a></div>
+        <div class="t">假設我們現在有六個neural,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1638">27:18.000</a></div>
+        <div class="t">每一個neural,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.000" id=27:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1640">27:20.000</a></div>
+        <div class="t">它的acclimation function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:22.000" id=27:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1642">27:22.000</a></div>
+        <div class="t">input分別是z1,z2,z3,一直到z6,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:25.000" id=27:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1645">27:25.000</a></div>
+        <div class="t">我們現在要計算這些z對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:31.000" id=27:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1651">27:31.000</a></div>
+        <div class="t">本來我們應該是想要知道z1的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:36.000" id=27:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1656">27:36.000</a></div>
+        <div class="t">你就要算z2,z3,z4的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:39.000" id=27:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1659">27:39.000</a></div>
+        <div class="t">想要知道z3的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:41.000" id=27:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1661">27:41.000</a></div>
+        <div class="t">你就要算z5,z6的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:43.000" id=27:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1663">27:43.000</a></div>
+        <div class="t">想要知道z4的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:45.000" id=27:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1665">27:45.000</a></div>
+        <div class="t">你就要算z5,z6的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:47.000" id=27:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1667">27:47.000</a></div>
+        <div class="t">那你要先算z5,z6的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:49.000" id=27:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1669">27:49.000</a></div>
+        <div class="t">你才算出z3的偏微分,z4的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.000" id=27:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1672">27:52.000</a></div>
+        <div class="t">你才能算出z1的偏微分,跟z2的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:56.000" id=27:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1676">27:56.000</a></div>
+        <div class="t">如果我們今天是從z1,z2的偏微分開始算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.000" id=28:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1680">28:00.000</a></div>
+        <div class="t">那就沒有效率,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:02.000" id=28:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1682">28:02.000</a></div>
+        <div class="t">但是如果你反過來你先算z5,z6的偏微分的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:06.000" id=28:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1686">28:06.000</a></div>
+        <div class="t">這個process就突然之間變得有效率起來了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:10.000" id=28:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1690">28:10.000</a></div>
+        <div class="t">我們就先算z5,z6對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:15.000" id=28:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1695">28:15.000</a></div>
+        <div class="t">然後算出這兩項以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:17.000" id=28:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1697">28:17.000</a></div>
+        <div class="t">你就可以算得出z3,z4對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.000" id=28:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1701">28:21.000</a></div>
+        <div class="t">然後你就可以算出z1,z2對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:26.000" id=28:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1706">28:26.000</a></div>
+        <div class="t">這樣大家懂嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:27.000" id=28:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1707">28:27.000</a></div>
+        <div class="t">這樣大家有問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:30.000" id=28:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1710">28:30.000</a></div>
+        <div class="t">沒有吼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:32.000" id=28:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1712">28:32.000</a></div>
+        <div class="t">其實這整件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:34.000" id=28:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1714">28:34.000</a></div>
+        <div class="t">這兩個東西怎麼得到他的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:36.000" id=28:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1716">28:36.000</a></div>
+        <div class="t">這兩個東西怎麼得到他的偏微分呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:38.000" id=28:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1718">28:38.000</a></div>
+        <div class="t">我們剛才已經看過了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:40.000" id=28:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1720">28:40.000</a></div>
+        <div class="t">就是用一個OPAMP來算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:42.000" id=28:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1722">28:42.000</a></div>
+        <div class="t">每一個OPAMP放大的倍率,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.000" id=28:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1729">28:49.000</a></div>
+        <div class="t">就是σ'z1,σ'z2,σ'z3,σ'z4,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.000" id=28:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1733">28:53.000</a></div>
+        <div class="t">所以你算出了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.000" id=28:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1735">28:55.000</a></div>
+        <div class="t">你就先很快的計算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:57.000" id=28:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1737">28:57.000</a></div>
+        <div class="t">σ'z5分之σ'c,σ'z6分之σ'c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:00.000" id=29:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1740">29:00.000</a></div>
+        <div class="t">然後再把這個偏微分值跟這個偏微分的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.000" id=29:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1746">29:06.000</a></div>
+        <div class="t">乘上一些位特,乘上一些位特,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.000" id=29:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1749">29:09.000</a></div>
+        <div class="t">再通過OPAMP你就得到這兩個偏微分的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:13.000" id=29:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1753">29:13.000</a></div>
+        <div class="t">再乘上一些位特,再乘上一些位特,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.000" id=29:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1757">29:17.000</a></div>
+        <div class="t">再通過一個OPAMP就得到一些偏微分的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:20.000" id=29:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1760">29:20.000</a></div>
+        <div class="t">就這樣,就計算完了,就計算完了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:25.000" id=29:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1765">29:25.000</a></div>
+        <div class="t">所以你在算back propagation的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:28.000" id=29:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1768">29:28.000</a></div>
+        <div class="t">這個步驟叫做backward path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:32.000" id=29:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1772">29:32.000</a></div>
+        <div class="t">你在做這個backward path的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:34.000" id=29:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1774">29:34.000</a></div>
+        <div class="t">你實際上的做法就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:36.000" id=29:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1776">29:36.000</a></div>
+        <div class="t">建另外一個neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.000" id=29:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1780">29:40.000</a></div>
+        <div class="t">我們本來有一個正向的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:42.000" id=29:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1782">29:42.000</a></div>
+        <div class="t">裡面的activation function可能是sigmoid function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:46.000" id=29:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1786">29:46.000</a></div>
+        <div class="t">那現在你在算backward path的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:49.000" id=29:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1789">29:49.000</a></div>
+        <div class="t">你就是建一個反向的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:52.000" id=29:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1792">29:52.000</a></div>
+        <div class="t">但是從右邊到左邊反向的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:56.000" id=29:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1796">29:56.000</a></div>
+        <div class="t">這個反向的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:57.000" id=29:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1797">29:57.000</a></div>
+        <div class="t">它的activation function你要先算完forward path以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.000" id=30:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1801">30:01.000</a></div>
+        <div class="t">你才算得出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:02.000" id=30:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1802">30:02.000</a></div>
+        <div class="t">接下來這個反向的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:05.000" id=30:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1805">30:05.000</a></div>
+        <div class="t">它的input就是這兩項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:07.000" id=30:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1807">30:07.000</a></div>
+        <div class="t">然後其他部分就跟一般neural network的運算一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:10.000" id=30:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1810">30:10.000</a></div>
+        <div class="t">你就做一個backward path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:13.000" id=30:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1813">30:13.000</a></div>
+        <div class="t">但是其實就是做一個neural network的運算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:15.000" id=30:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1815">30:15.000</a></div>
+        <div class="t">你就可以把每一個z對c的偏微分就都算出來了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.000" id=30:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1821">30:21.000</a></div>
+        <div class="t">這個就是backward path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.000" id=30:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1823">30:23.000</a></div>
+        <div class="t">所以我們就summarize一下backward path是怎麼做的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:27.000" id=30:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1827">30:27.000</a></div>
+        <div class="t">首先你做一個forward path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.000" id=30:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1831">30:31.000</a></div>
+        <div class="t">在做forward path的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:33.000" id=30:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1833">30:33.000</a></div>
+        <div class="t">你可以算出,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.000" id=30:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1835">30:35.000</a></div>
+        <div class="t">只要你知道每一個activation function的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:38.000" id=30:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1838">30:38.000</a></div>
+        <div class="t">那activation function的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:40.000" id=30:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1840">30:40.000</a></div>
+        <div class="t">就是它所連接的weight的partial w跟partial z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:44.000" id=30:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1844">30:44.000</a></div>
+        <div class="t">那在backward path裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:47.000" id=30:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1847">30:47.000</a></div>
+        <div class="t">你要把原來的neural network的方向倒過來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:52.000" id=30:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1852">30:52.000</a></div>
+        <div class="t">你把原來的neural network的方向倒過來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:55.000" id=30:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1855">30:55.000</a></div>
+        <div class="t">那在這個倒過來的neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.000" id=30:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1859">30:59.000</a></div>
+        <div class="t">它的每一個三角形的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:01.000" id=31:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1861">31:01.000</a></div>
+        <div class="t">就是z分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:04.000" id=31:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1864">31:04.000</a></div>
+        <div class="t">然後把它們乘起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:07.000" id=31:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1867">31:07.000</a></div>
+        <div class="t">你就知道某一個weight對w的偏微分是什麼了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:12.000" id=31:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1872">31:12.000</a></div>
+        <div class="t">就結束這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:14.000" id=31:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1874">31:14.000</a></div>
+        <div class="t">想要問大家有沒有什麼問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:17.000" id=31:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1877">31:17.000</a></div>
+        <div class="t">就算你沒有聽懂這個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:19.000" id=31:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1879">31:19.000</a></div>
+        <div class="t">其實也沒有什麼關係啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:22.000" id=31:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=ibJpTrp5mcE&t=1882">31:22.000</a></div>
+        <div class="t">因為我相信應該有百分之七十五以上的好奇,</div>
+    </div>
+    
+</body>
+</html>   

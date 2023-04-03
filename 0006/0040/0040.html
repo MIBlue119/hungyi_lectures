@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>Meta Learning - Gradient Descent as LSTM (1/3)</h2><a href=https://www.youtube.com/watch?v=NjZygLDXxjg><img src=https://i.ytimg.com/vi_webp/NjZygLDXxjg/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=0">00:00.000</a></div>
+        <div class="t">好,各位同學,大家早,我們開始上課吧,今天我們要繼續講meta learning,上週我們講了memo跟reptile,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:17.440" id=00:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=17">00:17.440</a></div>
+        <div class="t">今天我們要講說怎麼把我們熟悉的learning algorithm,也就是gradient descent,當作一個LSTM來看待,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:40.480" id=00:40.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=40">00:40.480</a></div>
+        <div class="t">你直接把這個LSTM串下去,也就串出了gradient descent這樣的algorithm,我們上週講說這個是我們熟知的gradient descent的algorithm,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:54.320" id=00:54.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=54">00:54.320</a></div>
+        <div class="t">我們上週講說這個algorithm裡面,我們可以有一些東西,我們可以試著讓machine用meta learning的方法把它認出來,舉例來說,我們上週講說,我們可以learn這個initialization的參數,我們可以用memo或是reptile這個技術來learn這個initialization的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.600" id=01:17.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=77">01:17.600</a></div>
+        <div class="t">今天我們要更進一步講說,其實上面這個架構,你可以把它當作是一個RNN來看,怎麼說呢?如果你現在很快的看這個圖,你大概瞄一下,你會覺得其實它跟RNN有一些非常類似的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:39.520" id=01:39.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=99">01:39.520</a></div>
+        <div class="t">你看,每一個這個parameter的update的step,就是RNN裡面的一個time step,RNN每一個time step不是都會input一個東西嗎?大家在做作業5的時候,RNN每次不是都會吃一個中文的字或者是中文的詞進來嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:57.600" id=01:57.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=117">01:57.600</a></div>
+        <div class="t">其實這個灰色的方塊也是一樣的,它在每一個time step都會吃一個batch的data進來算gradient。然後我們說RNN裡面有memory,這個memory呢,機器那個network會把過去的資訊存在memory裡面,好讓下一個time step使用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.040" id=02:19.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=139">02:19.040</a></div>
+        <div class="t">而在這個灰色的方塊裡面,在這個灰色的algorithm裡面,你可以把你的參數就看作是RNN的memory,你在前一個time step計算出來的參數,會在下一個time step被拿來繼續做運算,就跟RNN把資訊存在memory裡面,在下一個time step再把它拿出來繼續做運算的道理是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:42.280" id=02:42.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=162">02:42.280</a></div>
+        <div class="t">好,那今天呢,等一下要講的這方面的技術就是把整個gradient descent learning algorithm當作LSTM來看待的技術,主要是出自兩篇paper,一篇是Optimization as a Model for Future Learning,那另外一篇呢,它這個題目很有趣,所以我們就特別把它的題目列出來,另外一篇是Learning to Learn by Gradient Descent,它這個題目沒有打錯,它題目真的就是這個樣子,這個題目是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.200" id=03:11.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=191">03:11.200</a></div>
+        <div class="t">這個題目的意思是說,我們一般都是Learn by Gradient Descent,那現在我們要Learning to Learn by Gradient Descent這件事,但我們怎麼Learning to Learn by Gradient Descent這件事呢?就是By Gradient Descent這樣子,所以它題目真的是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.720" id=03:30.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=210">03:30.720</a></div>
+        <div class="t">好,那這邊先非常簡短的為大家複習一下RNN,那我們上課的錄影裡面其實有RNN的段落啦,所以假設你對RNN其實也是已經非常熟悉了,那這邊非常非常快的再幫大家複習一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.000" id=03:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=227">03:47.000</a></div>
+        <div class="t">那這邊的講法呢,跟錄影裡面的講法呢,是有一點點差別的,但是講的是同樣一件事情,只是從略略微不同的觀點來看待同一件事情而已。好,那什麼是RNN呢?RNN就是我們有一個function f,這個function f呢,它吃h跟x作為input,它會output h'跟y,我們一個function f。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:13.200" id=04:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=253">04:13.200</a></div>
+        <div class="t">那每一個time step呢,會有一個x當作input,那如果在我們的作業裡面,那這個x呢,就是比如說一個詞彙,一個中文裡面的字或一個中文裡面的詞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:25.280" id=04:25.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=265">04:25.280</a></div>
+        <div class="t">好,那我們這個f呢,把一個詞彙呢,吃進去以後,那我們還有一個初始的memory的值,那我們這邊呢,寫作h0,那這個初始的值,有時候是人手直接設的,有時候可以直接把它當作network的參數,直接把它認出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.280" id=04:44.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=284">04:44.280</a></div>
+        <div class="t">好,這個f呢,吃x1跟h0,然後呢,就output h1跟y1,然後接下來呢,還會有同樣一個f,它會把h1跟下一個time step的輸入,h2吃進去,然後呢,它就會output h2跟y2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.680" id=05:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=303">05:03.680</a></div>
+        <div class="t">當然今天呢,這個f輸入的h0跟h1,它們的dimension必須要是一樣的,為什麼?因為我們是把同一個function f反覆的做使用,所以h0跟h1的dimension一定要是一樣,這樣同一個f才能再把h1吃進去,put出h2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:19.360" id=05:19.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=319">05:19.360</a></div>
+        <div class="t">好,那你就反覆這個process,反覆這個process,那RN厲害的地方就是,因為它都只有用不斷的以一個f來處理所有各種不同的input,所以不管你input再怎麼長,你都是用同一個f來處理,你input再怎麼長,你的參數量都不會增加,這個就是RN厲害的地方,所以它特別擅長處理input是一個sequence的狀態。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.720" id=05:44.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=344">05:44.720</a></div>
+        <div class="t">好,那我們都知道說今天啊,你一般用的不是RNN,而是RNN的一個變形叫做LSTM,或多數時候今天大家說我們在用RN的時候,其實指的就是用LSTM。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.880" id=06:00.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=360">06:00.880</a></div>
+        <div class="t">好,那一般的LSTM有什麼特別的地方呢?我們剛才講說,RNN就是會吃一個h當作input,然後put出一個h,put出一個y。LSTM特別的地方就是,它把這個h拆解成兩部分,可以想像說它本來是input一個vector,output一個vector,LSTM也是input一個vector,output一個vector,只是我們把這個vector拆解成兩部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.480" id=06:28.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=388">06:28.480</a></div>
+        <div class="t">一部分我們仍然叫做h,另外一部分我們叫做c。那這跟那個錄影的講法略有不同,但是我等一下就會告訴你說,雖然這個投影片看起來跟原錄影裡面講的LSTM有一點點不一樣,但是在下一頁就會告訴你說其實是同一件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:46.240" id=06:46.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=406">06:46.240</a></div>
+        <div class="t">而這個LSTM,它有兩個input c跟h,它有兩個output c跟h。那為什麼要做這樣的分別呢?因為這個c跟h,它們扮演了不同的角色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.240" id=07:00.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=420">07:00.240</a></div>
+        <div class="t">如果我們看ct-1跟ct的變化,LSTMinput的c跟output的c的變化,你會發現這個input的c跟output的c,它們的變化是非常小的,通常你就是把某一個向量加到ct-1上面,就得到ct。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.560" id=07:18.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=438">07:18.560</a></div>
+        <div class="t">那這邊所謂的ct就是LSTM裡面那個memory cell所儲存的值。那你會發現,ht-1跟ht,它們會有很大的差別。所以LSTM相較於原來的RNN,最簡單的RNN,一個不同的地方就是,因為ct-1跟ct非常的像,它不會有太大的改變,所以LSTM它可以儲存比較長時間的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.080" id=07:43.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=463">07:43.080</a></div>
+        <div class="t">你有一個資訊,在很久遠的時候被放到c裡面,被存在c裡面,可能過了很多個time step以後,那個c不會有太大的改變,所以那個資訊仍然是存在的。這就是LSTM特別的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.280" id=07:56.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=476">07:56.280</a></div>
+        <div class="t">接下來我們就來看一下LSTM的式子。我們剛才說LSTM就是input x, input h, input c。我們這邊在剛才的圖裡面是把c跟h放在一起的,那我們這邊是把c跟h分開來放。接下來就會出現我們在之前的上課錄影看過的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:16.120" id=08:16.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=496">08:16.120</a></div>
+        <div class="t">我們先把h跟x接在一起,乘上一個transformation的metric w,通過一些transformation function得到z,z是一個向量,然後我們把x跟h還是一樣接在一起,再乘上另外一個transformation的metric,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.680" id=08:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=518">08:38.680</a></div>
+        <div class="t">然後取一個activation function,比如說做sigmoid,這個sigma代表sigmoid,得到一個vector叫做zi,這個zi就是input gate,就是你的LSTM裡面所有的cell的input gate,靠常錯input gate的結合,合起來是一個vector,這個就是zi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.600" id=09:04.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=544">09:04.600</a></div>
+        <div class="t">同樣的事情,你就把這個x跟h再乘上另外一個metric,然後你會得到bogey gate的值,你看錯,這個cell的bogey gate的訊號的結合,它也是一個向量,這個是zf,然後你還會有一個output gate的值,就是zo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.160" id=09:23.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=563">09:23.160</a></div>
+        <div class="t">所以你根據x跟hconcatenate起來,把x跟h接起來,會算出zi,zi就是input gate,這個是zf不是bogey gate,zo是output gate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:33.640" id=09:33.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=573">09:33.640</a></div>
+        <div class="t">接下來,你把這個z跟zi把它乘起來,把它做點乘,animalize的相乘,也就是說,z跟zi它們都是向量,你把它們同樣維度的部分把它乘起來,把它們做點乘,然後你把zf跟ct-1做點乘,這個zi是input gate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.080" id=09:57.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=597">09:57.080</a></div>
+        <div class="t">這個input gate要決定這個z能不能夠通過input gate來做接下來的運算,那zf是bogey gate,zf這個bogey gate決定說,現在這個ct-1,這個來自於前一個time state的ct-1,我們要繼續使用它,還是把它遺忘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.960" id=10:15.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=615">10:15.960</a></div>
+        <div class="t">好,那我們把z跟zi做點乘,把zf跟ct-1做點乘以後,接下來就是把它加起來,這個就得到了下一個時間點的ct。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.480" id=10:31.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=631">10:31.480</a></div>
+        <div class="t">然後這邊你會把ct再通過一個hyperbody tangent,然後跟output gate做點乘,得到h,然後你還會把h乘上,做一個transform,通過exervation function,得到LSTM的輸出y,那這個就是一個LSTM在某一個time state它的運作的情形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.640" id=10:55.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=655">10:55.640</a></div>
+        <div class="t">但同樣的operation是反覆繼續下去的,所以我們有一個h,然後有一個ht,有新的st-1進來,有新的x進來,然後就做反覆的運算,用同樣的參數去算出z,input gate,bogey gate跟output gate的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.480" id=11:13.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=673">11:13.480</a></div>
+        <div class="t">然後再做一模一樣的運算,把z跟input gate做點乘,把ct跟bogey gate做點乘,把它加起來,再突出ct-1,然後這個步驟就反覆的進行下去,這個就是大家都熟悉的LSTM。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:31.560" id=11:31.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=NjZygLDXxjg&t=691">11:31.560</a></div>
+        <div class="t">好,講了這麼多,它跟gradient descent到底有什麼樣的關係呢?</div>
+    </div>
+    
+</body>
+</html>   

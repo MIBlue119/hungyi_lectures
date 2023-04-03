@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Deep Learning for Coreference Resolution</h2><a href=https://www.youtube.com/watch?v=2BemmceHKOU><img src=https://i.ytimg.com/vi_webp/2BemmceHKOU/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=0">00:00.000</a></div>
+        <div class="t">下一個主題,要跟大家講的是co-reference的resolution。為什麼我要把co-reference的resolution特別拿出來講呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:13.000" id=00:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=13">00:13.000</a></div>
+        <div class="t">因為我們在講這個NLP的任務介紹的時候,我們說NLP的任務我們大概可以分成八類。那這八類裡面,你只要每一個類別繪一種模型,那基本上你就可以解那個類別的所有的任務。前提是你要有data啦,沒有data你什麼都沒辦法做就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:34.000" id=00:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=34">00:34.000</a></div>
+        <div class="t">但是我說有一些例外,那我們就把這些例外特別拿出來看,看這些例外如果你要用deep learning的方法運作的話,應該會是什麼樣子。第一個例外是co-reference的resolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:48.700" id=00:48.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=48">00:48.700</a></div>
+        <div class="t">為什麼要特別把co-reference的resolution拿出來講呢?因為我們在介紹各種不同的NLP的task的時候,我們跟大家說過說,NLP的任務主要可以分成八類。而這八類NLP的任務,你其實都可以輕易地想到說,你怎麼逗一個neural network來解這八類的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12.960" id=01:12.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=72">01:12.960</a></div>
+        <div class="t">但是有一些例外,那co-reference的resolution就是一個例外。所以我們特別把co-reference的resolution拿出來講一下,跟大家講說,如果你今天要用deep learning的技術,要end-to-end地train一個model,你怎麼來解co-reference這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31.340" id=01:31.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=91">01:31.340</a></div>
+        <div class="t">其實每一個NLP的任務都是博大精深,他們累積了各式各樣自己的domain knowledge。這一門課,我們只focus在deep learning的部分,我只想講我想要業配的東西,我只想講一些有趣的end-to-end訓練出來的model,有趣的end-to-end的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:57.900" id=01:57.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=117">01:57.900</a></div>
+        <div class="t">如果你真的想了解我們課程裡面有提到的這些NLP的任務,它有什麼樣的歷史,有什麼樣的背景知識,你可以參見Dan Jareski的Speech and Language Processing教科書的第三版。這個第三版直接在網絡上就可以載到了,你也不用買。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:18.280" id=02:18.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=138">02:18.280</a></div>
+        <div class="t">我們講的課程內容跟這個教科書的內容有什麼關係呢?就是沒有什麼特別的關係。我們在介紹每一個NLP的任務的時候,我們會用比較簡單的方式來介紹它,我們只專注在講每一個任務end-to-end的方法是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:35.380" id=02:35.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=155">02:35.380</a></div>
+        <div class="t">Co-reference的resolution是什麼意思呢?我們這邊就講一個故事。有一個人叫做宗家波,他是一個不向資本主義低頭的有為好青年。這個故事的連結在右上角。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:51.760" id=02:51.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=171">02:51.760</a></div>
+        <div class="t">宗家波有一天就遇到他的朋友樂咖,樂咖騎著機車要去加班。宗家波問說,你要做什麼?樂咖就說,我要去加班。宗家波就把他的拳頭舉起來了,他就說,我想想看我能不能夠回憶他說的是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:09.920" id=03:09.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=189">03:09.920</a></div>
+        <div class="t">他說,我從我們的對話中聽出了結構性的問題,這是資本主義的毒藥,這個是在美好經濟自由謊言之下的。我的手已經不是我的手了,我的手是人民的髮捶,是人民的正義。我的手不捶到高牆,他不放下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.020" id=03:34.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=214">03:34.020</a></div>
+        <div class="t">樂咖就說,你不要這樣子,你把老闆打傷了,我還要陪他去住院。宗家波就說,今天你說不要也沒有用,我說不要也沒有用,他說不要也沒有用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.840" id=03:47.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=227">03:47.840</a></div>
+        <div class="t">這個是時代的洪流,這是無產階級起義的第一聲號角,已經沒有人可以阻止他了。這個他指的是宗家波。雖然我們沒有明確地告訴你說這個他是誰,但你知道這個他舉起拳頭的人不是樂咖,而是宗家波。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:13.380" id=04:13.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=253">04:13.380</a></div>
+        <div class="t">宗家波說,今天他不捶到高牆,他不放下。這個他指的是什麼呢?雖然我們沒有明確地說他是什麼,但我們知道這個沒有生命的他指的是宗家波的拳頭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:30.360" id=04:30.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=270">04:30.360</a></div>
+        <div class="t">這個沒有生命的他指的不是宗家波,指的也不是樂咖,他指的是宗家波的拳頭。這一種可以告訴我們,每一個代名詞它實際上指的是什麼樣的東西,這件事情就叫做co-reference的resolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:50.180" id=04:50.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=290">04:50.180</a></div>
+        <div class="t">而那co-reference的resolution有什麼樣的重要性呢?它的重要性是這樣的。假設今天有一篇文章告訴了你這麼一個人民的法錘的故事,然後接下來問你說,什麼東西會捶到高牆?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.720" id=05:07.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=307">05:07.720</a></div>
+        <div class="t">如果是一個很爛的QA model,他只會看字面的義字的QA model,他可能就會回答說,什麼東西會捶到高牆呢?他直接從字面上看,發現是一個叫做他的東西會捶到高牆。他可能就會很憨地回答他,然後就是一個很蠢的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:26.660" id=05:26.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=326">05:26.660</a></div>
+        <div class="t">過去的QA model沒有那麼強,所以在前端你往往會先做一個co-reference的resolution,告訴他說每一個代名詞實際上指的是什麼樣的東西。如果你先做co-reference的resolution,你就知道說他指的是宗家波,而這個沒有生命的他指的是宗家波的拳頭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:47.880" id=05:47.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=347">05:47.880</a></div>
+        <div class="t">接下來,你就可以把每一個代名詞,用他實際上指的東西把它換掉,你就把這個人字邊的他換成宗家波,你就把沒有生命的他換成宗家波的拳頭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.320" id=06:02.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=362">06:02.320</a></div>
+        <div class="t">你就得到了一個很冗的文章,這個文章的內容是,宗家波蹦著樂咖,舉起宗家波的拳頭說,宗家波的拳頭今天不捶到高牆,宗家波的拳頭不放下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:16.280" id=06:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=376">06:16.280</a></div>
+        <div class="t">這個沒有人寫文章會這樣寫的啦,不過對機器來說,你就是要寫得這麼仔細,這個QA的model才看得懂。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:23.960" id=06:23.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=383">06:23.960</a></div>
+        <div class="t">你今天問他,QA的model說,什麼東西會捶到高牆?他看到說,宗家波的拳頭今天不捶到高牆,宗家波的拳頭不放下。他就知道說,宗家波的拳頭會捶到高牆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.780" id=06:37.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=397">06:37.780</a></div>
+        <div class="t">但是,co-reference resolution這件事情在今天的QA裡面,也許已經不是那麼必要。如果你看今天最state-of-the-art的QAmodel,都是end-to-end的trend,也沒做什麼co-reference resolution,直接給他一篇完整的文章,問他問題,他直接就會得到答案了,裡面有代名詞什麼也不特別處理,反正會得到正確的答案就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.680" id=07:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=422">07:02.680</a></div>
+        <div class="t">所以,co-reference resolution仍然是一個非常重要的問題,甚至有一個東西叫做Winogrand Challenge。Winogrand Schema Challenge是什麼呢?它是一個希望可以取代圖靈測試的比賽。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.480" id=07:21.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=441">07:21.480</a></div>
+        <div class="t">圖靈測試,大家都已經知道了,就是想要機器跟人講話,然後讓你覺得說它是一個人。已經有滿坑滿谷的machine說它們通過了圖靈測試,但是今天告訴你說有什麼機器真的跟人的智力一樣,我相信你也不會相信的啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:40.540" id=07:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=460">07:40.540</a></div>
+        <div class="t">但是因為今天在這個圖靈測試裡面,有太多方法可以去狡猾地欺騙人類,有太多的話術可以讓一個不聰明的機器偽裝成一個聰明的機器,讓你覺得說它應該就是真人,讓你覺得跟它聊起來很開心。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:59.800" id=07:59.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=479">07:59.800</a></div>
+        <div class="t">所以,今天Winogrand Schema的Challenge是說,機器能不能夠直接面對挑戰,不要藏起來,不要用各種話術來欺騙人類,直接面對挑戰。什麼樣的挑戰呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:13.800" id=08:13.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=493">08:13.800</a></div>
+        <div class="t">Winogrand其實是Terry Winogrand,是一個計算機科學家。我在Wiki上找到他的照片,旁邊有一個窟窿,我也不太確定是什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:29.800" id=08:29.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=509">08:29.800</a></div>
+        <div class="t">這讓我想到一個故事,我也是去參訪多倫多大學,他們圖書館裡面就放了一個窟窿。我就問說,為什麼圖書館裡面要有一個窟窿呢?難道是有什麼隱喻嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.600" id=08:44.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=524">08:44.600</a></div>
+        <div class="t">告訴大家說,生命苦短,所以大家要拼命求取知識嗎?放一個窟窿在圖書館的門口告訴你說,今天你馬上就要變成這個窟窿了,還不趕快拼命來求取知識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.900" id=08:56.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=536">08:56.900</a></div>
+        <div class="t">然後就問導覽說為什麼。導覽就說,沒有啊,因為今天萬聖節,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.900" id=09:04.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=544">09:04.900</a></div>
+        <div class="t">Winogrand Schema Challenge要做的事情是什麼呢?它是一個Q&A的問題。它的問題是這個樣子,它給你一個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.900" id=09:11.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=551">09:11.900</a></div>
+        <div class="t">The trophy,就是獎杯,will not fit in the brown suitcase,這個獎杯放不到行李箱裡面,因為它太大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.900" id=09:22.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=562">09:22.900</a></div>
+        <div class="t">然後問你說,什麼東西太大?這顯然就是一個correvolution的問題,你要知道這個it指的是什麼,到底是獎杯還是行李箱呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.400" id=09:34.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=574">09:34.400</a></div>
+        <div class="t">當然我們人一看就知道說,它太大了是什麼太大?是獎杯太大。但對機器來說,這不是一個容易的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:43.900" id=09:43.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=583">09:43.900</a></div>
+        <div class="t">如果換一個問法說,這個獎杯放不到行李箱裡面,這個就是炫耀文,因為它太小了。什麼東西太小呢?是行李箱太小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:55.900" id=09:55.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=595">09:55.900</a></div>
+        <div class="t">但對機器來說,這不是一個容易的問題。對人來說很容易,但今天這個Winogrand Schema Challenge,它期待它可以取代圖靈測試,它就是要機器來解correvolution的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.400" id=10:10.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=610">10:10.400</a></div>
+        <div class="t">要把correvolution做好,從這些問題裡面看來就不是那麼容易,甚至機器需要對這個物理的世界、對這個世界的知識有一定程度的理解,才有可能得到正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.400" id=10:25.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=625">10:25.400</a></div>
+        <div class="t">其實correvolution更正式地說起來是這個樣子的。當我們人在說一段句子、在說一個故事的時候,我們其實是試圖在對方的心裡建構一個場景。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:39.400" id=10:39.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=639">10:39.400</a></div>
+        <div class="t">而我們講的句子裡面會有一些文字的片段去指涉這個場景裡面的東西。舉例來說,當我告訴你鍾家坡瞪著樂咖舉起他的拳頭的時候,你會知道這個世界上有一個人叫做鍾家坡,有一個人叫做樂咖,他們之間發生了什麼什麼樣的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:06.400" id=11:06.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=666">11:06.400</a></div>
+        <div class="t">而這邊每一個指涉我想要在你心裡建構的這個場景裡面的東西的詞彙的文字就叫做mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.400" id=11:19.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=679">11:19.400</a></div>
+        <div class="t">一個句子裡面會有很多mention,每一個mention都指著我要告訴你的故事裡面的一個東西,比如說鍾家坡是一個mention,樂咖是一個mention,他是一個mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.400" id=11:36.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=696">11:36.400</a></div>
+        <div class="t">如果兩個mention所指涉的是同一個entity,他們的文字不一樣,他們表面上看起來不一樣,但實際上我在說這個故事的時候想要指涉的是同一個entity的話,這種現象就叫做co-refer,把co-refer的mention找出來就叫做co-reference。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.900" id=11:58.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=718">11:58.900</a></div>
+        <div class="t">所以其實co-reference resolution並不只是要把代名詞跟其他名詞串起來,我覺得是比較容易讓你理解的一個講法,但其實更正式的講法是,我們需要把一個句子裡面的mention都找出來,然後再找出說哪些mention指的是一樣的東西,哪些mention有co-refer的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:24.680" id=12:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=744">12:24.680</a></div>
+        <div class="t">有一些mention在整個句子裡面可能只出現一次,比如說樂咖只出現一次,這個東西就叫做singleton。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.060" id=12:36.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=756">12:36.060</a></div>
+        <div class="t">假設有兩個mention有co-reference的關係,比較先出現的那一個叫做antecedent,這個中文通常翻譯成先行詞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.820" id=12:55.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=775">12:55.820</a></div>
+        <div class="t">比較後出現的叫anefer,這個中文我就不知道要怎麼翻譯。如果這兩個mention有co-reference的關係,比較後出現的叫做anefer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:08.460" id=13:08.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=788">13:08.460</a></div>
+        <div class="t">你可能會問說,那什麼東西才算是mention,什麼東西不算是mention呢?這個講起來就還頗複雜的,我今天不打算要跟大家講這些事情,我們只跟大家定義,我們只跟大家講說一個co-reference的任務,我們到底要做到什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.840" id=13:30.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=810">13:30.840</a></div>
+        <div class="t">在一個co-reference的任務裡面,你就是要做到兩件事情,第一個是你要把所有的mention都標註出來。很多時候我們其實不需要標註singleton的mention,比如說這邊你可能需要把鍾家波標註出來,他的拳頭標註出來,他也標註出來,另外這兩個沒生命的他也標註出來,但你不一定要把樂咖標註出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:56.160" id=13:56.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=836">13:56.160</a></div>
+        <div class="t">有人可能會問說,那高牆算不算一個mention呢?這個就不好說了,你知道mention的定義有時候比較模糊的。這邊高牆到底算不算一個entity,還是它指的只是某一種隱喻,這個就不好說了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.100" id=14:11.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=851">14:11.100</a></div>
+        <div class="t">所以有時候mention的定義是比較模糊的,但反正你今天會有一個corpus,就今天做co-reference resolution,通常是supervised的,所以你會有一個corpus,這個corpus就會把你到底哪些mention應該被偵測出來都標起來,就好像我這樣畫底線,把它標起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:29.480" id=14:29.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=869">14:29.480</a></div>
+        <div class="t">而這個mention和mention之間呢,有時候有一些mention會被包含在另外一個mention裡面,比如說他的拳頭是一個mention,但是他則是另外一個mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.380" id=14:41.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=881">14:41.380</a></div>
+        <div class="t">這些mention要被group起來,被group成一個cluster。同一個cluster的mention就代表它們指的是同一個entity,它們是co-refer的關係,它們指的是故事裡面的同一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.080" id=14:59.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=899">14:59.080</a></div>
+        <div class="t">所以,中加坡和他,它們是屬於一個cluster,它們都指的是中加坡,一個有為的青年,他白天工作,晚上讀書,假日批判。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.960" id=15:13.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=913">15:13.960</a></div>
+        <div class="t">Cluster II是他的拳頭跟這兩個沒有生命的他,他們都指的是中加坡的拳頭,都指的是人民的髮垂,它們指的都是同樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:29.720" id=15:29.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=929">15:29.720</a></div>
+        <div class="t">這邊就是講co-reference resolution這個任務。就算是co-reference resolution,你不知道它是什麼。總之,今天我們遇到的machine learning的任務就是給你一個句子,裡面就是一堆token,你要把有標註成mention的token,sequence,把它找出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.220" id=15:51.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=951">15:51.220</a></div>
+        <div class="t">而且這些sequence中間可能是有重疊的。再來,你要看哪些sequence是屬於同一群。這個標註也是有的,會有人給你training data,標好哪些mention,哪些token sequence算是同一群。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:04.440" id=16:04.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=964">16:04.440</a></div>
+        <div class="t">你要machine學出說哪些token sequence,哪些mention算是同一群。這樣子的machine learning的問題,我們要怎麼來解它呢?這個就有點不好想了,它可能不是我們之前講的八大類的NLP任務裡面的任何一類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:23.260" id=16:23.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=983">16:23.260</a></div>
+        <div class="t">它好像也不知道要怎麼用sequence-to-sequence model,那就是為什麼我把co-reference resolution特別提出來講,我們講說怎麼用deep learning,讓它輸出mention,也輸出哪些mention屬於同一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.860" id=16:40.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1000">16:40.860</a></div>
+        <div class="t">就算你對co-reference resolution沒什麼興趣,也許日後你在其他場合,也許甚至不是NLP,甚至不是語音的任務,看到類似的問題,你也可以知道怎麼套一個模型去訓練出你要的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.860" id=16:52.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1012">16:52.860</a></div>
+        <div class="t">我們大概就講到這邊,我來回答一下同學的問題。一個同學問說,如果是複數,那該怎麼label?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.860" id=17:05.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1025">17:05.860</a></div>
+        <div class="t">我有點不瞭解你的問題,class會有重疊,不會有重疊,就是類算是一個新的entity。如果我今天再加一個句子說,他們就去打了老闆,他們指的是中加坡跟樂咖,那這算是第三個class了。複數算是另外一個class了,因為他們指的等於是新的實體。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:32.860" id=17:32.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1052">17:32.860</a></div>
+        <div class="t">陳建成問說,請問剛剛那個不只是代名詞的意思是說,有時候這個another可以是普通名詞,但一樣有another的作用嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.860" id=17:48.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1068">17:48.860</a></div>
+        <div class="t">國高中英文講過,關係代名詞那邊,另外找mention的部分跟ner好像有點像。我先回答最後一個問題,跟ner有點像,像的地方就是,也許你可能會覺得說把這些東西標出來,把ner標出來就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:07.860" id=18:07.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1087">18:07.860</a></div>
+        <div class="t">但是不要忘了,今天看mention間是可以有這種槽狀的關係的。如果是一般ner的話,你沒辦法標這種。ner就是,我就train一個RNN,然後去偵測說每一個token它算不算是在ner裡面。但是你要怎麼做這種狀況呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.360" id=18:28.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1108">18:28.360</a></div>
+        <div class="t">你需要別的ner來解這個問題。這個我們之後下一次講。another可以是普通名詞,但一樣有another的作用嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.360" id=18:43.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1123">18:43.360</a></div>
+        <div class="t">沒錯,今天假設這個句子換成,人民的法錘今天不錘倒高牆,它不放下。人民的法錘就是correfer到中加坡的拳頭了,所以人民的法錘可以是another。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:13.360" id=19:13.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1153">19:13.360</a></div>
+        <div class="t">我們就下課了。correference resolution要解的任務是什麼呢?首先給你一個句子,你要把這個句子裡面所有的mention統統都標註出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.880" id=19:31.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1171">19:31.880</a></div>
+        <div class="t">比如說,在這個例子裡面,中加坡是一個mention,他是一個mention,他的拳頭是一個mention,在這個引號裡面的這兩個沒有生命的他也都是mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:46.120" id=19:46.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1186">19:46.120</a></div>
+        <div class="t">你的machine要先把mention標出來,然後把mention標出來以後,接下來你的machine要自動決定說,哪些mention他們指的是同樣的東西,哪些mention有correference的關係,有correference關係的mention,指的是現實生活中的同一個entity的mention,我們就把它放在同一個cluster裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:10.920" id=20:10.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1210">20:10.920</a></div>
+        <div class="t">這樣說起來,correference resolution這個任務應該有兩個步驟。第一個步驟就是偵測出哪裡有mention,第二個步驟就是決定哪些mention應該放在同一個cluster裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:28.460" id=20:28.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1228">20:28.460</a></div>
+        <div class="t">如果從兩個步驟的角度來講,這兩個步驟分別應該怎麼用deep learning來解呢?我們先來看看怎麼把一個句子裡面的mention找出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.280" id=20:42.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1242">20:42.280</a></div>
+        <div class="t">你要做的事情就是你需要一個binary的classifier,這個binary的classifier他的input是一個span,也就是一串的token,他的output是什麼呢?他output就是這一串token是不是一個mention,這是一個yes,no的問題,這是一個binary classification的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:07.120" id=21:07.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1267">21:07.120</a></div>
+        <div class="t">你只需要訓練出這樣一個binary classifier,這個binary classifier就是看一段文字,看一個span,然後就告訴你說他覺得這個span是不是一個mention,然後就結束了,你就可以做出mention detection了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:23.580" id=21:23.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1283">21:23.580</a></div>
+        <div class="t">但是這個mention detection跟我們之前做的segmentation、slot filling其實是有一點點不一樣的,他是比較複雜的。你不能夠只是train一個單純的binary classifier,每次吃一個token,然後看說這個token是不是在mention裡面,這樣做是不行的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.120" id=21:44.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1304">21:44.120</a></div>
+        <div class="t">你的binary classifier其實是要吃一整個span,看這一整個span決定他是不是一個mention。之所以需要這麼做,是因為今天在做mention detection的時候,mention可能會有這種槽狀、互相包含的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:00.960" id=22:00.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1320">22:00.960</a></div>
+        <div class="t">像我們在剛才舉的例子裡面,他的拳頭是一個mention,但是他的拳頭裡面的他也是一個mention。所以如果你只是train一個classifier,看一個token,然後決定說這個token是不是在一個mention裡面,你就沒有辦法處理這種他的拳頭是一個mention,他也是一個mention這種狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:25.700" id=22:25.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1345">22:25.700</a></div>
+        <div class="t">所以你的binary classifier是一次看一個span,然後決定這一整個span是不是一個mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.240" id=22:33.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1353">22:33.240</a></div>
+        <div class="t">假設我們現在有這樣一個binary classifier以後,那你要怎麼用這個binary classifier做mention detection呢?假設你現在有一個token sequence,這個token sequence的長度是n,他裡面有n個token。你只需要把這個binary classifier跑n乘以n-1除以2次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:56.600" id=22:56.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1376">22:56.600</a></div>
+        <div class="t">把所有這個token sequence裡面所有可能的span通通都跑過一次,決定他是不是一個mention就結束了。為什麼是n-1除以2呢?這個是國小數學啦,就是有n個token,那你從n個token裡面Cn取2,取兩個出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:16.700" id=23:16.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1396">23:16.700</a></div>
+        <div class="t">取出兩個token以後,其中一個當作span的開頭,另外一個當作span的結尾,然後把這一串token的subsequence丟給binary classifier,讓他決定是不是一個mention。所以n個token,你需要跑binary classifiern乘以n-1除以2次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.140" id=23:35.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1415">23:35.140</a></div>
+        <div class="t">那怎麼train呢?因為在training的時候,你有training data,在training data裡面通常人家都已經幫你標好說,哪些subsequence合起來是一個mention了。所以你會有訓練資料,已經幫你把mention標出來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:54.020" id=23:54.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1434">23:54.020</a></div>
+        <div class="t">所以訓練資料裡面有標起來告訴你是mention的,他們就是positive example,這些positive example丟到binary classifier裡面,binary classifier要說他是mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:06.160" id=24:06.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1446">24:06.160</a></div>
+        <div class="t">其他沒有被標是mention的,那就是negative example,其他沒有被標是mention的token sequence丟到binary classifier裡面,binary classifier就要說他不是mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:18.220" id=24:18.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1458">24:18.220</a></div>
+        <div class="t">然後就train下去,有訓練資料以後就train下去,就結束了。好,這是mention detection。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.220" id=24:26.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1466">24:26.220</a></div>
+        <div class="t">好,那除了mention detection以外,第二步是我們要知道說哪些mention應該被放在同一個class裡面,這件事情怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:40.700" id=24:40.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1480">24:40.700</a></div>
+        <div class="t">你一樣train一個binary classifier,那這個binary classifier會吃兩個東西,剛才在第一個步驟的binary classifier只吃一個東西,現在我們的binary classifier會吃兩個東西,這兩個東西都是mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:56.780" id=24:56.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1496">24:56.780</a></div>
+        <div class="t">binary classifier吃兩個mention進來,然後他去決定說這兩個mention應不應該在同一個class裡面,這兩個mention有沒有code reference的關係,這兩個mention是不是指的是現實生活中的同一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:14.660" id=25:14.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1514">25:14.660</a></div>
+        <div class="t">所以看下面這個例子,你就要train一個binary classifier,這個binary classifier你把鍾家波丟進去,你把人字邊的他丟進去,他就要output yes,因為讀完這個句子以後,他知道說鍾家波跟他有code reference的關係,指的都是同一個人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.040" id=25:36.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1536">25:36.040</a></div>
+        <div class="t">或者是說,把他的拳頭跟沒有生命的他丟到binary classifier裡面,他也要output yes,因為在這個句子裡面,他跟他的拳頭是指同一個東西,都是指正義的法槌,都是指同一個東西,所以要output yes。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:54.420" id=25:54.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1554">25:54.420</a></div>
+        <div class="t">如果是樂咖跟鍾家波不是同一個東西,所以就要output no,如果是人字邊的他跟沒有生命的他不是指同一個東西,所以就要output no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.560" id=26:06.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1566">26:06.560</a></div>
+        <div class="t">你現在有訓練資料,訓練資料已經告訴你說,哪些mention屬於同一個class,哪些mention指的是在現實生活中同樣的東西,你就train一個binary classifier,train下去就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:20.960" id=26:20.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1580">26:20.960</a></div>
+        <div class="t">假設現在總共有k個mention,這個k個mention怎麼來的呢?那是從上一個階段的mention detection來的。在上一個階段,你已經先決定說有哪些span,哪些token的subsequence,哪些token組合起來是一個mention,所以你已經偵測出k個mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:43.020" id=26:43.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1603">26:43.020</a></div>
+        <div class="t">接下來,你就拿這個binary classifier,把那些mention兩個兩個拿出來丟到binary classifier裏面,由binary classifier決定哪兩個mention應該算是coreference,哪兩個mention指的是同樣的東西。做完這兩個步驟,coreference resolution就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:05.480" id=27:05.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1625">27:05.480</a></div>
+        <div class="t">雖然這兩個步驟都是用deep learning做的,但是我們知道說今天就是要n to n,分成兩個步驟,還不能算是真正的n to n,還不能夠算是真的硬圈一發。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.120" id=27:20.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1640">27:20.120</a></div>
+        <div class="t">那要真的硬圈一發,你要怎麼做呢?你要把這兩個binary classifier的功能綁在一起,我們只需要一個binary classifier就好了。這個binary classifier它吃兩個span,它吃兩個token的subsequence,接下來就output yes跟no,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:41.780" id=27:41.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1661">27:41.780</a></div>
+        <div class="t">這個binary classifier output yes的時候到底要什麼意思呢?如果這兩個span它們都是mention,而且這兩個mention它們指的是同一個entity,它們是有coreference的關係,binary classifier就output yes。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.480" id=28:00.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1680">28:00.480</a></div>
+        <div class="t">反之,只要剛才講的有一點不成立,這兩個span裡面其中一個不是mention,binary classifier就會output no。或者是,就算這兩個span它們通通都是mention,但是它們不是指的是同一個東西,它們沒有coreference的關係,binary classifier也會output no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:22.820" id=28:22.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1702">28:22.820</a></div>
+        <div class="t">然後呢,就沒有然後,就把這個binary classifiertrain下去就結束了。所以我們把這個藍色的classifier跟綠色的classifier它們可以做的事情,它們的功能綁在一起,變成黃色的classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:39.820" id=28:39.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1719">28:39.820</a></div>
+        <div class="t">本來這個藍色的classifier它要看一個span決定是不是mention,然後綠色的classifier看兩個mention決定它們是不是coreference,現在直接用一個黃色的classifier來取代這兩者的功能,這個黃色的classifier給它兩個span,然後決定這兩個span到底是不是mention,如果它們都是mention,那這兩個mention到底指的是不是同一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:05.280" id=29:05.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1745">29:05.280</a></div>
+        <div class="t">好,那這個就是end-to-end的training,大家有問題隨時可以提出來,我都是可以看得到的,我有開手機看一下聊天室裡面的問題,所以大家有問題隨時都可以提出來,我都是看得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.280" id=29:21.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1761">29:21.280</a></div>
+        <div class="t">那怎麼train這個binary classifier呢?就train下去。如果我們要用這個binary classifier來做coreference的話,我們總共要把這個binary classifier跑幾次呢?我們來算算看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:39.280" id=29:39.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1779">29:39.280</a></div>
+        <div class="t">我們現在有n個token,所以總共有幾個可能的span呢?就Cn取2,有n乘以n-1除以2個span。我們假設這個數值就是k,這個k會挺大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:56.280" id=29:56.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1796">29:56.280</a></div>
+        <div class="t">然後接下來呢,我們的binary classifier要把這k個span每次取兩個出來丟到binary classifier裡面,所以你需要跑這個binary classifierk乘以k-1除以2次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:09.280" id=30:09.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1809">30:09.280</a></div>
+        <div class="t">所以這個binary classifier在做influence的時候,你拿這個binary classifier要做coreference resolution的時候,你大概要跑n的四次方次,它的time complexity是n的四次方。這是一個蠻大但又不是超級大的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:29.280" id=30:29.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1829">30:29.280</a></div>
+        <div class="t">就是說,n的四次方挺大的,但是它不是exponential,所以你也不是不能算,是勉強可以算但是挺大的一個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:39.280" id=30:39.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1839">30:39.280</a></div>
+        <div class="t">那沒有關係,我們等一下會看說怎麼用一些approximate的方法來讓你的time complexity不要那麼大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:46.280" id=30:46.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1846">30:46.280</a></div>
+        <div class="t">好,怎麼train這個binary classifier呢?你就給這個binary classifier兩個span,然後告訴binary classifier說現在看到這兩個span,我們到底要output yes還是no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.280" id=30:59.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1859">30:59.280</a></div>
+        <div class="t">比如說中加坡是一個mention,但是舉起它的權不是一個mention,所以把中加坡跟舉起它的權給這個n-to-n的binary classifier看,你就告訴它說這個時候你要輸出no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:14.280" id=31:14.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1874">31:14.280</a></div>
+        <div class="t">如果你把它的權頭跟沒有生命的它都丟給這個n-to-n的binary classifier看,它就要輸出yes。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:24.280" id=31:24.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1884">31:24.280</a></div>
+        <div class="t">這就是一個二元的分類問題,然後硬train下去就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.280" id=31:30.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1890">31:30.280</a></div>
+        <div class="t">其實coreference resolution這個部分我省略了一個東西,就是mention ranking的model,也就是如果你要真的把coreference resolution這個東西做好的話,你不能單純把它當作是一個binary class classification的問題來看,你可能需要把它當成一個ranking的問題來看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:50.280" id=31:50.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1910">31:50.280</a></div>
+        <div class="t">不過這個地方我們的重點不是在告訴你怎麼做出一個最好的coreference resolution的model,我們重點是告訴你說,如果deep learning要解這個表面上不知道要怎麼用deep learning解的問題是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:03.280" id=32:03.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1923">32:03.280</a></div>
+        <div class="t">我們主要是想要看看deep learning怎麼解這樣子的問題的,所以我們這邊就不特別講mention ranking的model。有興趣的人可以自己讀一下Dan Jarebsky的教科書,就在chapter22.4有記載了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.280" id=32:17.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1937">32:17.280</a></div>
+        <div class="t">那我們train完這個binary classifier以後,接下來我們來看看這個binary classifier實際上長什麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:27.280" id=32:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1947">32:27.280</a></div>
+        <div class="t">今天給你一個token的sequence,你的起手式是什麼呢?你的起手式是先把它丟給Bert,今天你看到一段文字,你的起手式都是先丟給Bert或者是Elmo等等,所以每一個token都變成一個embedded。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:49.280" id=32:49.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1969">32:49.280</a></div>
+        <div class="t">其實這邊的每一個embedded都是看了這整個token sequence以後才產生出來的。接下來你就要有一個spam feature extraction,把你現在要考慮的spam,我們現在要train一個classifier,它要吃兩個spam當作input決定它們是不是有coreference的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:11.280" id=33:11.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=1991">33:11.280</a></div>
+        <div class="t">每一個spam,你都通過一個spam feature extraction的module,等一下我們再講說這個spam feature extraction的module是什麼。你通過一個module,把這個spam裡面的embedded匯聚成一個embedded。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:26.280" id=33:26.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2006">33:26.280</a></div>
+        <div class="t">你不用擔心說,我們現在把這些embedded匯聚成一個embedded,它會不會只看到這一小塊範圍裡面的資訊,不知道這整個句子的資訊呢?不會。你想要知道這整個句子的資訊,前面的Elmo和Bert早就幫你處理好了,它已經幫你處理過了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:47.280" id=33:47.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2027">33:47.280</a></div>
+        <div class="t">所以你不用擔心說,這一個embedded會不會只看到這一個spam的資訊,因為產生這一個spam裡面embedded的資訊,你其實已經看了整個句子的資訊了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:57.280" id=33:57.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2037">33:57.280</a></div>
+        <div class="t">每一個spam都變成一個vector,接下來你會有一個mention detection的module,這個mention detection的module它是看一個vector,然後決定說這一個vector是不是一個mention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:13.280" id=34:13.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2053">34:13.280</a></div>
+        <div class="t">所以這一個spam會得到一個分數,這一個spam也會得到一個分數。接下來你還有一個module,它是看兩個spam,然後輸出一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:29.280" id=34:29.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2069">34:29.280</a></div>
+        <div class="t">接下來,你把這三個分數組合起來。所謂組合的意思是,簡單來說可能就是相加,當然你可能可以用更複雜的方法來處理它,比如說在train一個network,再用幾個fully connected的fee-forward network把這三個分數讀進來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:46.280" id=34:46.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2086">34:46.280</a></div>
+        <div class="t">不過在文獻上通常也不常見到有人這麼做,常見的做法就是這三個分數直接加起來,就是你的classifier最終的輸出。你在train這個classifier的時候就告訴它說,如果這兩個token的subsequence都是mention,而且它們有coreference關係,這邊就output yes,這邊的分數就越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:13.280" id=35:13.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2113">35:13.280</a></div>
+        <div class="t">反之,如果這兩者有其中一個不是mention,或者是它們都是mention,但是它們沒有coreference的關係,那這邊輸出的分數就要越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:27.280" id=35:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2127">35:27.280</a></div>
+        <div class="t">那這個binary classifier,就end-to-end的train下去就結束了。所以這是它的輸入,這是它最終的輸出,然後end-to-end的train下去就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:45.280" id=35:45.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2145">35:45.280</a></div>
+        <div class="t">我們來看一下span feature的extraction是怎麼做的。當然在實作上你可以有各式各樣不同的做法,不過在coreference resolution裡面,常見的一種做法是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:58.280" id=35:58.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2158">35:58.280</a></div>
+        <div class="t">假設這個span裡面有四個embedding,那你把這四個embedding的開頭跟結尾取出來。那接下來呢,你可以說我把這四個embedding直接做平均,當作額外的資訊也加進來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:18.280" id=36:18.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2178">36:18.280</a></div>
+        <div class="t">但是有一個更好的方法是,我們把這四個embedding做weighted上。它的weight是要多少呢?你train另外一個module來決定它的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:30.280" id=36:30.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2190">36:30.280</a></div>
+        <div class="t">所以你有一個attention的module,就是看一個vector進來,它會output一個scalar,決定說這個embedding它有多重要。所以把x1到x4通通丟到attention的module,得到α1到α4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:48.280" id=36:48.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2208">36:48.280</a></div>
+        <div class="t">一般你所知道的attention運作的機制差不多,那就把α1到α4對x1到x4做weighted上,加起來得到attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:00.280" id=37:00.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2220">37:00.280</a></div>
+        <div class="t">所以你把開頭的資訊取出來,結尾的資訊取出來,整個span裡面所有的embedding做weighted上,那你就得到這三個vector。把這三個vector串起來,就是這邊這個span feature extraction的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:15.280" id=37:15.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2235">37:15.280</a></div>
+        <div class="t">這個attention的機制可能是重要的,因為其實在一個mention裡面往往不是每一個token都重要。舉例來說,有一個mention叫湖邊小屋,你可能比較不在意這個小屋是不是在湖邊,你真正在意的是它的性質是一個小屋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:33.780" id=37:33.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2253">37:33.780</a></div>
+        <div class="t">到時候你看到其他的mention可能跟房屋有關的時候,你可能都可以推測說那些跟房屋有關的mention指的都是前面提過的湖邊小屋。如果你今天用這種attention的方法,可能就可以讓機器比較focus在小屋的資訊,比較不focus在這個小屋的特徵上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:53.280" id=37:53.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2273">37:53.280</a></div>
+        <div class="t">好,那這個是span feature的extraction。好,那剛才有講過說,我們今天如果真的要用這種end-to-end的方法做coreference resolution,運算量是一個不大不小的運算,有點大,它是句子長度,token sequence長度n的四次方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:16.280" id=38:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2296">38:16.280</a></div>
+        <div class="t">有沒有辦法讓它變得比較小一點呢?在實作上,你可能會這麼做來減少你的運算量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:24.780" id=38:24.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2304">38:24.780</a></div>
+        <div class="t">好,我們剛才有講說,我們在訓練整個end-to-end model的時候,其實其中有一塊是mention的detection。那我們其實可以把mention detection的部分先拔出來,先做mention detection。有trend的時候是end-to-end trend,但是在influence的時候,為了減少運算量,你其實可以把mention detection的部分拔出來,先做第一次的filtering。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:54.780" id=38:54.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2334">38:54.780</a></div>
+        <div class="t">所以你可以先把mention detection的部分拔出來,先跑n乘以n減1除以2次,先把你覺得可能是mention的地方框出來,然後再去決定說mention和mention間兩兩是不是屬於同一個cluster。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:13.280" id=39:13.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2353">39:13.280</a></div>
+        <div class="t">你可以先做一下filtering,先只filter出k個mention,再做接下來的process。假設這個k遠小於n的話,那你就可以大幅減少你的運算量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:25.780" id=39:25.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2365">39:25.780</a></div>
+        <div class="t">另外一個非常有用的、常用的來減少運算量的方法,是限制一下你的mention的長度。假設你的mention的長度沒有限制,那你在做mention detection的時候,你也要跑n乘以n減1除以2次,你也要跑n平方的complexity這麼多次的mention detection,那這可能也是頗花時間的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:48.280" id=39:48.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2388">39:48.280</a></div>
+        <div class="t">所以怎麼辦呢?你可以限制你的mention的長度,假設說你限制你的mention的長度最多不能超過10個token,那這個時候你的complexity就不會是n平方了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.280" id=39:59.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2399">39:59.280</a></div>
+        <div class="t">假設你決定說你的mention不可以超過10個token,那你的complexity就是10乘以n,就不是n平方的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:07.280" id=40:07.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2407">40:07.280</a></div>
+        <div class="t">所以你可以透過限制你的mention可能的長度這件事情,又再度減少運算量。你可以減少mention detection這個部分的運算量,從n平方到n乘以你的mention的長度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:22.280" id=40:22.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2422">40:22.280</a></div>
+        <div class="t">而且你已經做了filter,決定說有k個mention是我們真正要去考慮的,我們在第一階段先決定好說有k個time span是我們真正需要去考慮的,接下來完整的model就只需要跑k乘以k減1除以2次就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:44.280" id=40:44.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2444">40:44.280</a></div>
+        <div class="t">第一階段已經把絕對不可能的先filter掉,只保留比較有可能的span來跑完整的模型,決定它是不是一個span,決定這兩個span它們到底算不算是coreference的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:01.280" id=41:01.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2461">41:01.280</a></div>
+        <div class="t">這個就是coreference resolution,這個是文獻上的一個結果,各式各樣的拿來抽embedded方法都有人做過了,最早在還沒有BERT、還沒有ELMO的時代,coreference resolution就已經可以end-to-end train了,可以用LSTM。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:21.280" id=41:21.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2481">41:21.280</a></div>
+        <div class="t">後來當然有人用了ELMO,後來當然也有人用了BERT。這個是文獻上截出來的結果,這個結果還蠻有趣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:31.280" id=41:31.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2491">41:31.280</a></div>
+        <div class="t">舉例來說,給機器讀這個句子以後,機器看到a fire in a factory,那它知道a fire in a factory是一個mention,然後它知道the place,就這個火焰是一個mention,而且它知道a fire in a factory跟the place它是coreference的關係,它們指的是同樣一場火災。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:58.280" id=41:58.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2518">41:58.280</a></div>
+        <div class="t">而且今天這個小括號裡面代表一個mention,然後這個小括號裡面的顏色代表我們在做一個span feature extraction的時候的attention的weight,顏色越深代表attention的weight越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:16.280" id=42:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2536">42:16.280</a></div>
+        <div class="t">所以表示說你的模型知道在這個mention裡面最重要的詞彙是fire,在這個mention裡面最重要的詞彙是place,然後它知道說這個fire就是這個place,它們指的是同樣一場火災。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:32.280" id=42:32.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2552">42:32.280</a></div>
+        <div class="t">然後在這一個mention裡面,其實還有另外一個比較小的mention,就是factory,工廠本身是一個mention。而你的模型居然知道說這個factory跟the four-story building,跟這個四層樓的建築物指的是同一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:51.280" id=42:51.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2571">42:51.280</a></div>
+        <div class="t">而且它知道說在這一個mention裡面,factory是最關鍵的詞彙,在the four-story building裡面,這個building是最關鍵的詞彙,然後這個factory指的就是這個building。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:05.280" id=43:05.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2585">43:05.280</a></div>
+        <div class="t">這邊有第二個例子,第二個例子也是一個好的結果,machine知道說a region of central Italy跟the area,跟這邊的代名詞it指的是同樣的東西。當然machine也是會犯錯的,接下來兩個例子就是machine犯錯的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:25.280" id=43:25.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2605">43:25.280</a></div>
+        <div class="t">這邊machine覺得the flight attendants跟the pilots指的是同一個東西,但其實不是。雖然flight attendants跟pilots是有關係的,但他們並不是同一群人,但是machine不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:42.280" id=43:42.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2622">43:42.280</a></div>
+        <div class="t">作者在paper裡面有給一個comment,他覺得說這個是wear-embedding的問題,不過這個是從比較舊的,用LSTM的那個gloves跟LSTM的舊的paper解出來的,那我不知道今天用Bird的話結果會不會好一些就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:55.540" id=43:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2635">43:55.540</a></div>
+        <div class="t">而接下來有一個很難的問題,我覺得這個machine答錯感覺是情有可原的。在這個例子裡面,machine覺得說Prince Charlie and his new wife Camilla是一個mention,然後他們跟Lear指的是同一個東西,這個沒問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:16.540" id=44:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2656">44:16.540</a></div>
+        <div class="t">但是他又覺得說,Prince Charlie和Camilla和Prince Charlie和Diana是同一群人。對machine來說,他可能讀完這整篇文章覺得說,這邊都有Charlie,Diana和Camilla都是女生的名字,也許Diana就是Camilla的別名吧,所以這個mention跟這個mention是有co-reference的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:37.260" id=44:37.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2677">44:37.260</a></div>
+        <div class="t">但實際上我們知道說,Camilla和Diana不是同一個人,是不同的人。這個我覺得是需要對這個世界有更深的理解,需要對這個世界有一些background knowledge,有一些world knowledge,有一些common sense,才能夠真的把co-reference resolution這個問題做好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:57.100" id=44:57.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2697">44:57.100</a></div>
+        <div class="t">這個可能不是單純讀這篇文章就可以解決的問題。剛才講的co-reference resolution的model,還不夠end-to-end。有一個我覺得可能更end-to-end的想法是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:15.160" id=45:15.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2715">45:15.160</a></div>
+        <div class="t">這是一篇ACL19的文章,這篇文章的主軸並不是focus在要解這個co-reference resolution的問題。它是這樣講的,它是想要解在對話裏面,你的chatbot不容易考慮整個對話history的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:31.660" id=45:31.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2731">45:31.660</a></div>
+        <div class="t">舉例來說,現在人跟你的chatbot說,你的人說梅西有多高,然後chatbot說官方說法他的身高是5英尺7英寸。接下來人說,他和希羅誰是最好的球員?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:47.700" id=45:47.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2747">45:47.700</a></div>
+        <div class="t">如果你今天你的chatbot,他雖然可能是一個sequence-to-sequence的,但他只會看人輸進去現在的sequence,決定說他要output什麼樣的sequence。他就不太可能答對這個問題,因為他不知道他和希羅誰是最好的球員的他指的是誰。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:06.020" id=46:06.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2766">46:06.020</a></div>
+        <div class="t">所以這篇文章期待說,我們能不能夠把他用co-reference resolution的方法換成梅西,讓另外一個model去讀了這整段對話的記錄以後,知道這邊的他指的是梅西,把他直接換成梅西,把原來輸的句子他和希羅誰是最好的球員,直接改寫成梅西和希羅誰是最好的球員。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:34.560" id=46:34.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2794">46:34.560</a></div>
+        <div class="t">這樣,你在做一個chatbot回答這個問題的時候,你比較有可能得到正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:40.300" id=46:40.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2800">46:40.300</a></div>
+        <div class="t">這篇文章不是只focus在co-reference resolution上面,他們是想要general的解決對話沒有辦法考慮history資訊的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:49.540" id=46:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2809">46:49.540</a></div>
+        <div class="t">所以他們有處理另外一個這樣子的狀況,人說你最喜歡什麼電影,你的機器說泰坦尼克。如果今天你的機器不會看上下文,人問為什麼,機器就暈眩了,還不知道說要回什麼,不知道說為什麼什麼為什麼什麼什麼為什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:11.780" id=47:11.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2831">47:11.780</a></div>
+        <div class="t">你可以把這個句子根據上下文改成為什麼最喜歡泰坦尼克。這可能不是一個co-reference resolution標準的問題,不過這是一個更大的問題,把為什麼改成為什麼最喜歡泰坦尼克丟給你的機器看。這樣,機器比較有可能得到正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:34.760" id=47:34.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2854">47:34.760</a></div>
+        <div class="t">在這篇文章裡面,是怎麼做到這件事呢?是怎麼改寫這些句子呢?就是暴力收集data。暴力收集data,先告訴機器說,看到這個句子就要改成這樣,看到這個句子就要改成這樣,找很多工讀生把這些成對的資料都收集好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:57.500" id=47:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2877">47:57.500</a></div>
+        <div class="t">然後接下來,train一個sequence-to-sequence model,把這些對話讀進去,然後output新的句子,output修改後的句子,output把他換成梅西的句子,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:15.500" id=48:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2895">48:15.500</a></div>
+        <div class="t">從co-reference resolution的角度來看,這也許可以看作是co-reference resolution的一個新方法。我們知道,做co-reference resolution的目的,是為了在接下來的NLP downstream task做起來更容易,我們可以把一些代名詞換成它所真正指涉的名詞。這樣,接下來的NLP系統,比如說QA,就比較不會犯錯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:40.780" id=48:40.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2920">48:40.780</a></div>
+        <div class="t">在我們剛才的講法裡面,我們需要逗一個很複雜的模型,來偵測說哪些mention是屬於同一個cluster。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:50.980" id=48:50.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2930">48:50.980</a></div>
+        <div class="t">但我們其實也可以做得更簡單一點,假設我們今天的目的就是要把所有的代名詞換成某個名詞的話,那我們就標一組訓練data,這組訓練data就是把代名詞通通換成它正確所指涉的名詞。然後train一個sequence-to-sequence model,input是有代名詞的句子,output是把那個代名詞換成我們要它指涉的名詞的句子,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:13.180" id=49:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2953">49:13.180</a></div>
+        <div class="t">這樣感覺也是一個很簡單的,真的end-to-end,硬做暴力解coreference resolution的方法。在coreference resolution裡面,還有很多進階的問題是今天沒有cover的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:25.920" id=49:25.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2965">49:25.920</a></div>
+        <div class="t">一個問題是說,我們剛才在做clustering的時候,其實我們不是真的做clustering,我們是把mention兩兩拿出來看,然後決定說這兩個mention是不是指的是同樣的東西,只要是指同樣的東西,就把它們放到cluster裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:44.100" id=49:44.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=2984">49:44.100</a></div>
+        <div class="t">所以你今天可能會遇到一個這樣的問題,假設你在句子裡面已經確定有三個mention,一個是Mr. Lee,一個是Li,一個是Xu。如果你train一個mention detector,然後這個mention detector看這兩個mention,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:00.840" id=50:00.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3000">50:00.840</a></div>
+        <div class="t">決定說,你今天train一個coreference resolution的model,這個model看這兩個mention,決定它們是不是指的是同樣的東西,它可能會看Mr. Lee跟Li覺得它是同樣的東西,看Li跟Xu覺得它是同樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:19.260" id=50:19.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3019">50:19.260</a></div>
+        <div class="t">但是問題是,如果你把這三個mention擺在一起,把這三個mention都放到同一個cluster裡面的話,你會發現說這裡一定有問題,因為這三個東西根本沒辦法放到同一個cluster裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:33.840" id=50:33.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3033">50:33.840</a></div>
+        <div class="t">因為Mr. Lee已經告訴我們說,Li指的是一個男性,但這邊又講一個Xu,那就有問題啦,就很奇怪啊。所以怎麼辦呢?你需要在cluster的層級去決定說,今天你的coreference的結果對不對。當然,有一些文獻在考慮cluster層級的information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:57.620" id=50:57.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3057">50:57.620</a></div>
+        <div class="t">到目前為止,我們講的coreference resolution都是supervised的。也就是說,你要做coreference resolution,得有人先幫你標好資料,幫你標好哪些stand是mention,哪些mention應該放在同一個cluster裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:16.220" id=51:16.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3076">51:16.220</a></div>
+        <div class="t">有沒有可能做到unsupervised的coreference resolution呢?我覺得好像也不是不可能的。有一篇EMNLP19的paper裡面提出了這樣一個想法,我們能不能夠在做coreference resolution的時候,我們就把一些代名詞直接蓋住,然後用一個pre-trained的,比如說Bert的model,去決定被蓋住的部分應該是什麼詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:42.520" id=51:42.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3102">51:42.520</a></div>
+        <div class="t">舉例來說,這邊有一個句子是,Gina arrived, and she is furious with Dennis for not protecting Judy from Kingsley, as he was meant to be the parent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:55.720" id=51:55.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3115">51:55.720</a></div>
+        <div class="t">那he這個代名詞,指的到底是誰呢?he指的是Kingsley嗎?Judy嗎?Dennis嗎?還是Gina呢?不知道。我們要做coreference resolution來決定he指的是哪一個人名。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:10.220" id=52:10.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3130">52:10.220</a></div>
+        <div class="t">但是我們有沒有辦法unsupervised的做呢?也許不是不可能的。怎麼unsupervised的做呢?我們把hemask起來,然後丟給Bert。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:21.720" id=52:21.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3141">52:21.720</a></div>
+        <div class="t">Bert在做的事情不是就是把mask的部分補回去嗎?這個就是Bert最擅長的事情,就是Bert在training的時候所做的事情。Bert做的事情就是把某一個詞彙mask起來,然後把mask的地方補回去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:36.880" id=52:36.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3156">52:36.880</a></div>
+        <div class="t">我們就看Bert在補回去的時候,他補進去哪一個人名。如果他補進去Dennis,我們就說he指的就是Dennis,如果他補進去的是Kingsley,我們就說he指的是Kingsley。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:48.780" id=52:48.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3168">52:48.780</a></div>
+        <div class="t">你可能會問說,也許補進去的就還是he,你把he蓋起來,補進去的也許就還是he。我們就要求machine不准補代名詞。在所有不是代名詞的詞彙裡面,你覺得補哪一個詞彙機率最高,補哪一個詞彙是最正確的,你也許就可以用這個方法做到coreference resolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:11.520" id=53:11.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3191">53:11.520</a></div>
+        <div class="t">當然,單純這樣做可能會有些問題。舉例來說,he指的是一個token,你把他丟到Bert裡面,他也只會補一個token給你。如果你要指涉的東西是兩個token,那怎麼辦呢?這個算是一個未解的問題,這是一個還要上代研究的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:30.980" id=53:30.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=2BemmceHKOU&t=3210">53:30.980</a></div>
+        <div class="t">這個就是一些reference給大家參考。coreference resolution的部分我們就講到這邊,那就看看大家有沒有問題要問的。</div>
+    </div>
+    
+</body>
+</html>   

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】概述增強式學習 (Reinforcement Learning, RL) (五) - 如何從示範中學習？逆向增強式學習 (Inverse RL)</h2><a href=https://www.youtube.com/watch?v=75rZwxKBAf0><img src=https://i.ytimg.com/vi/75rZwxKBAf0/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGEogWyhlMA8=&rs=AOn4CLCsyZa-4NmGDenZuDdlRTmEPZ_GzQ></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1">00:01.000</a></div>
+        <div class="t">那有關 RL 的最後一個部分,我想要跟大家分享的是,假設今天如果我們連 reward 都沒有,該怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.000" id=00:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=12">00:12.000</a></div>
+        <div class="t">在剛才的課程裡面,我們是有 reward 的,只是有時候 reward 非常的 sparse,所以你要做 reward shaping。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=19">00:19.000</a></div>
+        <div class="t">但是假設今天連 reward 都沒有的話,到底該怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:25.000" id=00:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=25">00:25.000</a></div>
+        <div class="t">為什麼有時候會連 reward 都沒有呢?其實像 reward 這種東西,往往只在一些比較 artificial 的環境,比如說遊戲裡面,特別容易被定義出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:38.000" id=00:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=38">00:38.000</a></div>
+        <div class="t">在遊戲裡面有一個計分板,所以你特別容易去定義說在遊戲裡面怎麼樣的行為是好的,怎麼樣的行為是不好的,某一個行為有多好或某一個行為有多不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:49.000" id=00:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=49">00:49.000</a></div>
+        <div class="t">但是在真實的環境裡面,你要定義 reward 這件事情,有可能是非常的困難的。假設你今天要用 RL 的方法來叫自駕車學會在路上走,那到底在路上走做什麼樣的事情會得到什麼樣的 reward 呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07.000" id=01:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=67">01:07.000</a></div>
+        <div class="t">禮讓行人就給他加一百分嗎?還是應該加一千分?闖紅燈應該扣五十分,還是扣五萬分呢?像這種東西,你根本不知道要怎麼定義。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19.000" id=01:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=79">01:19.000</a></div>
+        <div class="t">所以在真實的環境中,有時候我們根本不知道要怎麼定義 reward 這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26.000" id=01:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=86">01:26.000</a></div>
+        <div class="t">而且有時候,雖然我們不知道要怎麼定義 reward,但我們可以憑著人類的智慧去想一些 reward 出來來 guide machine。像我們剛才講的那種 reward shaping 不就是一個很好的例子嗎?我們自己想一些 reward 出來,來叫 machine 學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.000" id=01:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=102">01:42.000</a></div>
+        <div class="t">但有時候你在想 reward 叫 machine 學的時候,如果你的 reward 沒想好,machine 可能會產生非常奇怪的行為,你無法預期的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:52.000" id=01:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=112">01:52.000</a></div>
+        <div class="t">這邊舉一個比較極端的例子。有一個電影叫做《機械公敵》。在《機械公敵》裡面,當然這就是未來的世界了,有一大堆機器人。那些機器人的行為必須符合三條原則。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.500" id=02:06.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=126">02:06.500</a></div>
+        <div class="t">這三條原則是,第一條不能夠傷害人類,也不能夠坐視人類被傷害。第二條是,在不違反第一條的前提之下,機器必須要聽從人類的命令。第三條是,機器必須要保護自己,在不違反第一條和第二條的前提之下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:27.000" id=02:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=147">02:27.000</a></div>
+        <div class="t">所以你可以想像,這三條規則就代表說,機器如果不違反這三條規則就得到 positive reward,違反這三條規則就得到非常 negative reward,然後有了這三條規則以後,機器就自己去發展、自己去學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.620" id=02:45.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=165">02:45.620</a></div>
+        <div class="t">但是最終機器就得到神邏輯,在不違反這三條規則的前提之下,要得到最大 reward 的方式就是把人類監禁起來,因為人類會自我傷害,所以應該把人類監禁起來,避免他們自我傷害,這樣機器就可以得到最高的 reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:03.060" id=03:03.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=183">03:03.060</a></div>
+        <div class="t">所以,這個例子告訴我們說,光定 reward 是不夠的,機器可能會有神邏輯,展現出你意想不到的行為。當然,機器的攻敵裡面是一個比較極端的例子。舉一個比較有可能發生的例子是,假設你訓練機器去收盤子,這個是我在文獻上實際看過的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:22.840" id=03:22.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=202">03:22.840</a></div>
+        <div class="t">你知道在文獻上有很多文獻是要用 reinforcement learning 的方法來訓練機器的手臂嘛。假設你今天要訓練機器把盤子擺到一個固定的位置,它把盤子放到指定的位置就得到 positive reward,這個是你定義的 reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:41.440" id=03:41.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=221">03:41.440</a></div>
+        <div class="t">然後你用 reinforcement learning 去學,發現機器會把盤子放到指定的位置,但它都非常大力用摔的,結果盤子都被摔破了。那是因為你根本沒有告訴機器說不能把盤子摔破啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:54.240" id=03:54.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=234">03:54.240</a></div>
+        <div class="t">所以,你就會發現說,機器沒有告訴它不能把盤子摔破的前提之下,它為了達成目標,可能就把盤子摔破了。這個時候你只好趕快再定新的 reward 說,如果摔破盤子就要扣 100 分。但問題是,盤子已經被摔破了,已經來不及了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:09.940" id=04:09.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=249">04:09.940</a></div>
+        <div class="t">所以,有時候人定的 reward 不見得是最好的。所以怎麼辦呢?在沒有 reward 的情況下,我們要怎麼訓練一個 agent 去跟環境互動呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.700" id=04:23.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=263">04:23.700</a></div>
+        <div class="t">在沒有 reward 的狀況下,讓機器跟環境互動的其中一個方法叫做 imitation learning。在 imitation learning 裡面,我們假設 actor 仍然可以跟環境互動,但它不會從環境得到 reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:39.880" id=04:39.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=279">04:39.880</a></div>
+        <div class="t">environment 仍然會送出 observation 給 actor, actor 仍然會做出回應,environment 仍然會隨著 actor 的回應給不同的 observation,但是沒有 reward 這個東西。沒有 reward 這個東西要怎麼學呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:53.960" id=04:53.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=293">04:53.960</a></div>
+        <div class="t">雖然沒有 reward,但是我們有另外一個東西,這個東西是 expert 的示範。我們找很多 expert,通常是人類,我們找很多人類也來跟環境互動。把人類跟環境的互動記錄下來,這些記錄就是 expert 的示範。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.400" id=05:16.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=316">05:16.400</a></div>
+        <div class="t">我們把這些 expert 的示範叫做 towhead,我們用 head 這個上標來代表人類的 expert 的示範。我們現在就是要憑藉著這些示範還有跟環境的互動來進行學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.840" id=05:31.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=331">05:31.840</a></div>
+        <div class="t">這樣講也許有點抽象,什麼叫做 expert 的示範呢?假設你今天要教機器開自駕車,人類駕駛的行駛記錄就是 expert 的示範。人類駕駛的行駛記錄可以告訴機器說,在這個路口你應該打一下方向盤等等,這些就是 expert 的示範。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:54.240" id=05:54.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=354">05:54.240</a></div>
+        <div class="t">或者是,你想要叫機器做一些指定的動作,比如說倒水、排碗盤,你可能會先拉著機器的手臂示範一次。人去拉著機器的手臂示範一次,這件事情就是 expert 的 demonstration,就是這邊的 towhead。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.000" id=06:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=372">06:12.000</a></div>
+        <div class="t">Imitation learning 要做的事情就是從這些 towhead 還有與環境的互動進行學習。講到這邊,可能有同學就會想說,這個問題聽起來好像挺簡單的,這個不就是 supervised learning 嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.520" id=06:27.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=387">06:27.520</a></div>
+        <div class="t">我們就把它當作 supervised learning 的問題來看待就好了。假設我們今天要訓練自駕車,你又有人類駕駛的記錄,也就是你有記錄說,人看到這樣子的路的畫面,人就會採取某一種 action,比如說他就會踩煞車或者是踩油門等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:46.080" id=06:46.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=406">06:46.080</a></div>
+        <div class="t">你有這樣子的一堆記錄,我們不是直接就用 supervised learning 來 learn 我們的 agent 就好了嗎?你就說,你已經有人類給的資料說,看到 S1 這樣的畫面,最好的行為就是 A1 head,S2 這樣的畫面,人類的行為就是 A2 head,你已經有這樣子的訓練資料,那你就直接叫機器去模仿人類的行為就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:08.080" id=07:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=428">07:08.080</a></div>
+        <div class="t">今天機器給他看 S1,然後他輸出 A1,你要讓他的 action A1 跟人類的 action A1 head 越接近越好,你就讓機器去模仿人類的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:20.160" id=07:20.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=440">07:20.160</a></div>
+        <div class="t">沒錯,當你有 expert 的示範的時候,這是一個做法。這種做法叫做 behavior cloning,就是複製人類的行為。但是光是讓機器去複製人類的行為,有可能有什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:36.720" id=07:36.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=456">07:36.720</a></div>
+        <div class="t">一個可能的問題是,因為人類跟機器他們可能可以觀察到的 S 會是不一樣的。什麼意思呢?舉例來說,假設我們一樣要叫機器學習開自駕車,它是跟人類的 expert 去學,人類的 expert 在轉彎的時候都可以輕鬆地轉過這個彎道,沒有人出車禍,沒有任何馬路煽暴,每一個 expert 都可以順利地向右轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:05.040" id=08:05.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=485">08:05.040</a></div>
+        <div class="t">所以對機器來說,它從來沒有看過失敗的狀態,它從來沒有看過一個車子快要撞牆的狀態。如果它從來沒有看過一個車子快要撞牆的狀態,它訓練資料裡面就沒有這種東西,它就不知道假設車子快要撞牆的時候應該要怎麼處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:22.800" id=08:22.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=502">08:22.800</a></div>
+        <div class="t">因為所有的 expert 都太厲害了,根本就不會讓車子靠近牆邊,根本就不會犯這種錯誤,那機器就不會學到說,在這種人類平常不會經歷的狀態下,到底應該要怎麼處理。所以這是第一個可能遇到的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.580" id=08:39.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=519">08:39.580</a></div>
+        <div class="t">第二個可能遇到的問題是,雖然人類在開車的時候可能很厲害,但也許不是每一個行為機器都需要亦步亦趨地去完全模仿。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:53.320" id=08:53.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=533">08:53.320</a></div>
+        <div class="t">也許有一些行為需要模仿,有一些行為是人類個人的特質,根本不需要模仿。但是機器它不知道什麼行為該模仿,什麼行為不該模仿,它只能完全複製人類的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:07.100" id=09:07.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=547">09:07.100</a></div>
+        <div class="t">什麼叫做完全複製人類、完全複製老師的行為呢?以下就是一個完全複製老師行為的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.100" id=09:38.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=578">09:38.100</a></div>
+        <div class="t">Word of Zing 是 Sheldon</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.100" id=09:41.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=581">09:41.100</a></div>
+        <div class="t">No, it's Word of Ming Zit 是 Sheldon</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:45.100" id=09:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=585">09:45.100</a></div>
+        <div class="t">Word of Ming Zit 是 Sheldon</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.100" id=09:49.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=589">09:49.100</a></div>
+        <div class="t">What's this?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.100" id=09:52.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=592">09:52.100</a></div>
+        <div class="t">That's what you did. I assumed as in a number of languages that the gesture was part of the phrase.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.100" id=09:59.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=599">09:59.100</a></div>
+        <div class="t">Well, it's not.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.100" id=10:01.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=601">10:01.100</a></div>
+        <div class="t">How am I supposed to know that? As the teacher, it's your obligation to separate your personal idiosyncrasies from the subject matter.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:07.100" id=10:07.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=607">10:07.100</a></div>
+        <div class="t">You know, I'm really glad you decided to learn Mandarin.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.100" id=10:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=610">10:10.100</a></div>
+        <div class="t">Why?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:11.100" id=10:11.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=611">10:11.100</a></div>
+        <div class="t">Once you're fluent, you'll have a billion more people to annoy instead of me.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.100" id=10:17.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=617">10:17.100</a></div>
+        <div class="t">好,所以剛才我們就是看到了一個 behavior cloning 的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.100" id=10:21.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=621">10:21.100</a></div>
+        <div class="t">對機器來說,它就跟穿綠色衣服的 Sheldon 一樣,它的老師教什麼,它就會有一模一樣的示範,它不知道什麼東西是需要學的,什麼東西是不需要學的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:33.100" id=10:33.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=633">10:33.100</a></div>
+        <div class="t">如果機器只是跟它老師採取一模一樣的行為,也許還沒有什麼問題,因為它跟老師採取一模一樣的行為就跟老師做一模一樣的事情,雖然它可能會有一些多餘的行為,但也許是無傷大雅。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:46.100" id=10:46.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=646">10:46.100</a></div>
+        <div class="t">但是我覺得更慘的另外一個狀況是,機器的能力可能是有限的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.100" id=10:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=651">10:51.100</a></div>
+        <div class="t">今天也許機器沒有辦法完全模仿老師的行為,它只能選擇部分的行為來進行模仿。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:59.100" id=10:59.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=659">10:59.100</a></div>
+        <div class="t">就好像說有一個人他想要變得跟賈伯斯一樣,他就去看了賈伯斯傳,然後把賈伯斯傳裡面賈伯斯的所有特質都列出來,比如列了二十個,包括有創意、脾氣暴躁、不修邊幅等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.100" id=11:17.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=677">11:17.100</a></div>
+        <div class="t">但他覺得說這些特質太多了,他只決定模仿一個而已,因為他能力有限,他只模仿一個而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:23.100" id=11:23.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=683">11:23.100</a></div>
+        <div class="t">如果他選擇有創意也許是好的,但也許他選到的是不修邊幅,那就沒有什麼用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:29.100" id=11:29.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=689">11:29.100</a></div>
+        <div class="t">所以假設機器能力是有限的情況下,behavior cloning也許會造成更大的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.100" id=11:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=695">11:35.100</a></div>
+        <div class="t">所以怎麼辦呢?有另外一個技術,叫做inverse reinforcement learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:41.100" id=11:41.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=701">11:41.100</a></div>
+        <div class="t">我們在這邊看一下有沒有同學有問題。剛才有同學問一個問題說,要不要用機器去定reward。沒錯,接下來reinverse reinforcement learning就是要讓機器自己來定reward了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.100" id=11:57.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=717">11:57.100</a></div>
+        <div class="t">那怎麼做呢?我們先看原來的reinforcement learning是怎麼運作的。原來的reinforcement learning是我們有reward、有環境,然後用RL的algorithm跟環境還有reward互動,然後你就學出一個actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.100" id=12:14.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=734">12:14.100</a></div>
+        <div class="t">但現在我們沒有reward了,我們有的只有expert專家的示範。我們現在要做的事情是一個叫inverse reinforcement learning的algorithm。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.100" id=12:27.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=747">12:27.100</a></div>
+        <div class="t">它是跟原來的reinforcement learning是相反的,它要做的事情並不是根據reward去學習,而是從expert的demonstration還有environment去反推reward應該長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.100" id=12:42.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=762">12:42.100</a></div>
+        <div class="t">也就是這邊的reward function是學出來的。學出一個reward function以後,你就可以直接用一般的reinforcement learning來學你的actor了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:54.100" id=12:54.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=774">12:54.100</a></div>
+        <div class="t">所以在inverse reinforcement learning裡面,我們的概念就是本來不知道reward function,從expert的示範去反推reward function應該長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:05.100" id=13:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=785">13:05.100</a></div>
+        <div class="t">有了reward function以後,我們就可以再訓練一個optimal的actor去根據這些reward function來進行學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.100" id=13:14.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=794">13:14.100</a></div>
+        <div class="t">那講到這邊,也許有人會有的疑惑是,這個reward function是學出來的,它會不會太簡單了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.100" id=13:22.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=802">13:22.100</a></div>
+        <div class="t">我們會不會沒有辦法學出非常複雜的reward function呢?因為畢竟reward function是學出來的,也許我們只能夠學出比較簡單的reward function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.100" id=13:32.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=812">13:32.100</a></div>
+        <div class="t">但是簡單的reward function並不代表根據這個reward function學出來的actor一定也會是簡單的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.100" id=13:41.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=821">13:41.100</a></div>
+        <div class="t">舉例來說,對一個人類而言,也許人類的reward是非常簡單的,也許人類的reward function就只有一條就是活下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.100" id=13:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=831">13:51.100</a></div>
+        <div class="t">當然是不是這樣子,這是一個見仁見智的問題了。也許人類的reward function只有活下來這件事,但是光是人類想活下來這件事情,就可以讓人類的行為有千變萬化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.100" id=14:03.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=843">14:03.100</a></div>
+        <div class="t">所以,簡單的reward function並不代表你一定會學出簡單的actor。有可能簡單的reward function,但學出來的actor仍然是複雜的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.100" id=14:13.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=853">14:13.100</a></div>
+        <div class="t">那這個是inverse reinforcement learning。inverse reinforcement learning的基本概念是什麼呢?怎麼找出reward function呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.100" id=14:21.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=861">14:21.100</a></div>
+        <div class="t">這邊最基本的概念就是,老師的行為是最棒的。但是我這邊要強調一下,所謂最棒並不代表你要完全去模仿老師的行為,而是你假設老師的行為可以取得最高的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.100" id=14:37.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=877">14:37.100</a></div>
+        <div class="t">老師的行為可以取得最高的reward這個假設跟完全模仿老師的行為,這兩件事情並不是等價的。也許我們看完這個algorithm,你會更清楚我想表達的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:47.100" id=14:47.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=887">14:47.100</a></div>
+        <div class="t">現在我們有一個actor,他一開始是什麼都不會,然後在每一個iteration裡面,這個actor會去跟環境進行互動,學習收集一些actor自己的trajectory。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:05.100" id=15:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=905">15:05.100</a></div>
+        <div class="t">然後接下來呢,我們要定義一個reward function。這個reward function怎麼定義呢?這個reward function定義的條件,這個learn這個reward function的條件是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:16.100" id=15:16.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=916">15:16.100</a></div>
+        <div class="t">今天老師的行為得到的reward必須要高於學生的行為。老師要跟環境互動,我們得到一堆老師的demonstration,我們得到一堆老師的trajectory。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:29.100" id=15:29.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=929">15:29.100</a></div>
+        <div class="t">當你用你認出來的reward function去計算老師的trajectory的時候,我們要定義一個reward function,去評估老師的trajectory的時候要給比較高的分數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:54.100" id=15:54.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=954">15:54.100</a></div>
+        <div class="t">去評估actor的trajectory的時候要給他比較低的分數。然後接下來呢,你再去更新你的actor,你要去重新訓練你的actor,更新你的actor的參數,讓他去maximize我們會得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.100" id=16:11.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=971">16:11.100</a></div>
+        <div class="t">然後接下來呢,就反覆執行這個步驟,你有新的actor,他會有新的trajectory,你再更新一次reward function,讓這個reward function評估老師的分數比較高,評估actor的分數比較低,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:24.100" id=16:24.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=984">16:24.100</a></div>
+        <div class="t">然後呢,actor再想辦法去maximize reward function,然後就反覆這個循環,最終你就會得到一個reward function,那這個就是我們用inverse reinforcement learning認出來的reward function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:38.100" id=16:38.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=998">16:38.100</a></div>
+        <div class="t">好,那如果剛才那個algorithm你沒有看得很懂的話,那這邊是用圖像化的方法來講一下inverse reinforcement learning,它的縮寫呢是irl。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.100" id=16:49.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1009">16:49.100</a></div>
+        <div class="t">好,那現在呢,有expert的demonstration寫成tau hat,有actor跟環境的互動寫成tau。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:58.100" id=16:58.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1018">16:58.100</a></div>
+        <div class="t">那接下來你要定一個reward function,這個reward function呢,會給tau hat,也就是expert的demonstration比較高的分數,給tau,也就是你的actor的trajectory比較低的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:10.100" id=17:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1030">17:10.100</a></div>
+        <div class="t">那有了這個r以後,你再去訓練你的actor,去maximize這個reward function,怎麼訓練actor去maximize這個剛學出來的reward function呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.100" id=17:22.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1042">17:22.100</a></div>
+        <div class="t">這邊你就要透過reinforcement learning的方法,好,接下來你有了新的actor,新的actor有新的行為,但這些新的行為仍然要得到比老師低的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:34.100" id=17:34.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1054">17:34.100</a></div>
+        <div class="t">你會去更新你的reward function,讓老師得到的分數仍然高過於actor得到的分數,然後就反覆反覆這個回圈,反覆反覆這個循環,最終你就可以把一個reward function認出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:47.100" id=17:47.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1067">17:47.100</a></div>
+        <div class="t">那這整個framework,你聽起來有沒有覺得有點熟悉呢?我們可以把actor想像成是GAN,Generated Adversarial Network裡面的generator,把reward function想像成是GAN裡面的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.100" id=18:03.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1083">18:03.100</a></div>
+        <div class="t">我們來很快複習一下GAN的framework,在GAN的framework裡面,你有一個generator,它會產生比較差的圖片,然後有一個discriminator,它要想辦法給真正的圖片高分,generator產生的圖片低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.100" id=18:17.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1097">18:17.100</a></div>
+        <div class="t">然後呢,你的這個generator會去想辦法騙過discriminator,產生新的圖片,discriminator又會update它的參數,想辦法去評價好的圖片跟generator產生出來的圖片的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:29.100" id=18:29.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1109">18:29.100</a></div>
+        <div class="t">然後這個discriminator跟這個generator就會反覆的update,那這個是GAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.100" id=18:34.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1114">18:34.100</a></div>
+        <div class="t">Inverse reinforcement learning跟GAN,其實根本就是一樣的東西,只是把generator跟discriminator的名字換掉而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:42.100" id=18:42.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1122">18:42.100</a></div>
+        <div class="t">actor產生一些行為,然後你要去定義一個reward function,給expert的trajectory高分,給actor的trajectory低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:51.100" id=18:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1131">18:51.100</a></div>
+        <div class="t">然後接下來actor想辦法去在這個reward function得到高分,那有了新的actor,有了新的行為,reward function又會被update,想辦法給expert高分,給actor低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.100" id=19:03.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1143">19:03.100</a></div>
+        <div class="t">所以reward function完全可以對應到discriminator,actor可以對應到generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:10.100" id=19:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1150">19:10.100</a></div>
+        <div class="t">所以你會發現GAN跟IRL,inverse reinforcement learning,它們有異曲同工之妙,好像是同一個framework,用不同的方法,不同的角度來描述。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.100" id=19:22.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1162">19:22.100</a></div>
+        <div class="t">像IRL這種方法常常被用來訓練機械手臂,那過去,如果你不是用reinforcement learning來訓練機械手臂的話,可能看起來是什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:35.100" id=19:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1175">19:35.100</a></div>
+        <div class="t">以下又是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:05.100" id=20:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1205">20:05.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.100" id=20:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1235">20:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.100" id=20:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1245">20:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:55.100" id=20:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1255">20:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.100" id=21:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1285">21:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:55.100" id=21:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1315">21:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:25.100" id=22:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1345">22:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:35.100" id=22:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1355">22:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:45.100" id=22:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1365">22:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:55.100" id=22:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1375">22:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.100" id=23:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1385">23:05.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:15.100" id=23:15.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1395">23:15.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:25.100" id=23:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1405">23:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.100" id=23:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1415">23:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:45.100" id=23:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1425">23:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:55.100" id=23:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1435">23:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:05.100" id=24:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1445">24:05.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:15.100" id=24:15.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1455">24:15.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:25.100" id=24:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1465">24:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:35.100" id=24:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1475">24:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.100" id=24:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1485">24:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:55.100" id=24:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1495">24:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.100" id=25:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1505">25:05.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:15.100" id=25:15.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1515">25:15.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.100" id=25:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1525">25:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:35.100" id=25:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1535">25:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.100" id=25:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1545">25:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:55.100" id=25:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1555">25:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:05.100" id=26:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1565">26:05.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:15.100" id=26:15.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1575">26:15.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.100" id=26:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1585">26:25.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:35.100" id=26:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1595">26:35.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:45.100" id=26:45.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1605">26:45.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:55.100" id=26:55.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=75rZwxKBAf0&t=1615">26:55.100</a></div>
+        <div class="t">這段是從Big Bang Theory裡面截出來的一段。</div>
+    </div>
+    
+</body>
+</html>   

@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】概述增強式學習 (Reinforcement Learning, RL) (三) - Actor-Critic</h2><a href=https://www.youtube.com/watch?v=kk6DqWreLeU><img src=https://i.ytimg.com/vi/kk6DqWreLeU/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGGUgZShlMA8=&rs=AOn4CLBOIjPKPPxvQHBSU6LVlMnFqWtjdA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1">00:01.000</a></div>
+        <div class="t">我們就開始上課吧。等一下的規劃是這樣,我們先把RL講到一個段落,然後再請助教公佈作業。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:13.000" id=00:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=13">00:13.000</a></div>
+        <div class="t">上一次RL的部分,我們講說我們要認一個actor,這一次我們要認另外一個東西,這個東西叫做critic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:26.000" id=00:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=26">00:26.000</a></div>
+        <div class="t">我會先解釋critic是什麽,然後我們再來講說這個critic對learn actor這個東西有什麽樣的幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:34.000" id=00:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=34">00:34.000</a></div>
+        <div class="t">我們先看critic是什麽。critic是什麽呢?critic是它的工作是要來評估一個actor的好壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.000" id=00:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=46">00:46.000</a></div>
+        <div class="t">你現在已經有一個actor,它的參數叫θ,critic的工作就是它要評估說,如果這個actor看到某個樣子的observation,看到某一個遊戲畫面,接下來它可能會得到多少的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04.000" id=01:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=64">01:04.000</a></div>
+        <div class="t">critic有好多種不同的變形,有的critic是只看遊戲畫面來判斷,有的critic是說看到某一個遊戲畫面,接下來又發現actor采取某一個action,在這兩者都具備的前提下,接下來會得到多少reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23.000" id=01:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=83">01:23.000</a></div>
+        <div class="t">這樣講還是有點抽象,所以我們講得更具體一點,我們直接介紹一個我們等一下會真的被用上,你在作業裡面真的派得上用場的critic,叫做value function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:37.000" id=01:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=97">01:37.000</a></div>
+        <div class="t">這個value function,我們這邊用大寫的V of S來表示,它的輸入是什麽?它的輸入是S,也就是現在遊戲的狀況,比如說遊戲的畫面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:53.000" id=01:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=113">01:53.000</a></div>
+        <div class="t">這邊要特別注意一下V,它是有一個上標θ的,這個上標θ代表什麽意思呢?代表這個V它觀察的對象是θ這個actor,它觀察的這個actor,它的參數是θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.000" id=02:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=129">02:09.000</a></div>
+        <div class="t">這個Vθ就是一個function,它的輸入是S,輸出是一個scalar,這邊用VθS來表示這個scalar。這個scalar這個數值有什麽樣的含義呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=145">02:25.000</a></div>
+        <div class="t">這個數值的含義是這一個actorθ,放在上標的這個actorθ,它如果看到observation S,如果看到輸入的這個S的遊戲畫面,接下來它得到的discounted cumulative reward是多少?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.000" id=02:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=164">02:44.000</a></div>
+        <div class="t">你還記得這個discounted cumulative reward是什麽嗎?記不記得我們之前說,在評估某一個action好壞的時候,你不能單看那個action執行完的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.000" id=02:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=176">02:56.000</a></div>
+        <div class="t">你要把那個action執行完的reward加上接下來所有的reward,得到一個cumulated reward叫G,這樣才能夠評估在某一個state執行某一個action的好壞的程度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:09.000" id=03:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=189">03:09.000</a></div>
+        <div class="t">但是我們又說,你把所有的R從執行某一個action開始到遊戲結束,所有的R直接都加在一起,並不是一個好的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:19.000" id=03:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=199">03:19.000</a></div>
+        <div class="t">你應該乘上一個discounted factor叫做γ,就今天得到的reward,如果離執行某一個action的時間越遠的話,那個reward就跟那個action越沒有關系,所以應該乘上一個discounted factor叫做γ,那我們得到G'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.000" id=03:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=214">03:34.000</a></div>
+        <div class="t">這個G'就是這邊所謂的discounted cumulative reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:39.000" id=03:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=219">03:39.000</a></div>
+        <div class="t">那這個value function它的工作就是要去估測說,對某一個actor來說,如果現在他已經看到某一個遊戲畫面,那接下來會得到的discounted cumulative reward應該是多少?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.000" id=03:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=235">03:55.000</a></div>
+        <div class="t">當然discounted cumulative reward你可以直接透過把遊戲玩到底,就是你看到某年你已經有了actor set,那假設他看到這個state S,那最後他到底會得到多少的這個G'呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:10.000" id=04:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=250">04:10.000</a></div>
+        <div class="t">你就把這個遊戲玩完,你就知道了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:12.000" id=04:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=252">04:12.000</a></div>
+        <div class="t">但是這邊這個value function它的能力就是他要未捕先知,未看先猜,遊戲還沒有玩完,只光看到S,就要預測這個actor他可以得到什麼樣的表現,那這個就是value function要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.000" id=04:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=267">04:27.000</a></div>
+        <div class="t">舉例來說呢,假設你給value function這個遊戲畫面,他就要直接預測說,看到這個遊戲畫面,接下來應該會得到很高的cumulative reward,為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:42.000" id=04:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=282">04:42.000</a></div>
+        <div class="t">因為這個遊戲畫面裡面還有很多的外星人,那假設你的這個actor他很厲害,他是個好的actor,他是能殺得了外星人的actor,那接下來他就會得到很多的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:51.000" id=04:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=291">04:51.000</a></div>
+        <div class="t">那像這個畫面,這已經是遊戲的中盤,遊戲的殘局,遊戲快結束了,剩下的外星人沒幾隻了,那可以得到的reward就比較少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:02.000" id=05:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=302">05:02.000</a></div>
+        <div class="t">那這些數值,你把整場遊戲玩完,你也會知道,但是value function想要做的事情就是未捕先知,在遊戲沒玩完之前就先猜應該會得到多少的discounted cumulative reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.000" id=05:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=316">05:16.000</a></div>
+        <div class="t">那這邊有一件要跟大家特別強調的事情是,這個value function是有一個上標setup的,這個value function跟我們觀察的actor是有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.000" id=05:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=327">05:27.000</a></div>
+        <div class="t">同樣的observation,同樣的遊戲畫面,不同的actor,他應該要得到不同的discounted cumulative reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:36.000" id=05:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=336">05:36.000</a></div>
+        <div class="t">我剛才在舉例子的時候說,假設我們有一個好的actor,看到這個遊戲畫面會有高的value,看到這個遊戲畫面會有低的value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:46.000" id=05:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=346">05:46.000</a></div>
+        <div class="t">但是假設你的actor其實很爛,他很容易被外星人殺死,那也許看到這個畫面,他的value也是低的,因為有一堆外星人他隨便動兩下他就被殺死了,他根本得不到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:57.000" id=05:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=357">05:57.000</a></div>
+        <div class="t">這個爛的actor在這個畫面,他可能拿到的v也是低的。所以value function的數值是跟觀察的對象有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.000" id=06:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=367">06:07.000</a></div>
+        <div class="t">這個是critic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.000" id=06:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=372">06:12.000</a></div>
+        <div class="t">那在講critic要怎麼被使用在reinforcement learning之前呢,我們來講一下critic是怎麼被訓練出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.000" id=06:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=381">06:21.000</a></div>
+        <div class="t">有兩種常用的訓練方法,第一種方法是multicolor based的方法,這邊縮寫成NC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:29.000" id=06:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=389">06:29.000</a></div>
+        <div class="t">那怎麼訓練出這個value的function呢,這個value的critic vseda呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:36.000" id=06:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=396">06:36.000</a></div>
+        <div class="t">如果是用NC的方法的話,非常直覺,你就這樣做,你就把actor拿去跟環境互動,互動很多輪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=404">06:44.000</a></div>
+        <div class="t">那actor跟環境互動以後呢,actor去玩這個遊戲以後呢,你就會得到一些遊戲的記錄。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:52.000" id=06:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=412">06:52.000</a></div>
+        <div class="t">你就會發現說,假設actor看到SA,那因為你已經把遊戲玩完了嘛,你可能玩了很多場遊戲,那你就知道說看到state,看到observation,SA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=424">07:04.000</a></div>
+        <div class="t">接下來的cumulative reward會是GA'. 我這邊把discounted省略掉了,反正你知道我的意思就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:11.000" id=07:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=431">07:11.000</a></div>
+        <div class="t">那這個時候呢,你的value function就得到一筆訓練資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.000" id=07:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=435">07:15.000</a></div>
+        <div class="t">這筆訓練資料告訴他說,如果看到SA作為輸入,他的輸出啊,這個vseda的SA啊,應該要跟GA'越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.000" id=07:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=447">07:27.000</a></div>
+        <div class="t">那假設你今天sample到另外一個observation,看到另外一個遊戲畫面,把遊戲玩完之後發現得到的cumulative reward是GB'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=458">07:38.000</a></div>
+        <div class="t">那這個時候呢,你的這個value function呢,輸入SA,他就應該得到vseda of SB,那這個vseda of SB就應該跟GB'越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.000" id=07:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=469">07:49.000</a></div>
+        <div class="t">那這個非常直覺,你就去觀察actor會得到的cumulative reward,那觀察完,你就有訓練資料,直接拿這些訓練資料來訓練value function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.000" id=08:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=482">08:02.000</a></div>
+        <div class="t">好,這個MC呢,是一個很直覺的做法。接下來我們來看另外一個沒有那麼直覺的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:09.000" id=08:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=489">08:09.000</a></div>
+        <div class="t">這個做法呢,叫做temporal difference approach,縮寫呢,是PD。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=495">08:15.000</a></div>
+        <div class="t">那temporal difference approach他希望做到的事情是,不用玩完整場遊戲,才能得到訓練value的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.000" id=08:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=504">08:24.000</a></div>
+        <div class="t">你只要在某一個observation,看到st的時候,你的actor執行了at,得到reward rt,然後接下來再看到st加1這樣的遊戲畫面,光看到這樣一筆資料就能夠訓練vs了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.000" id=08:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=524">08:44.000</a></div>
+        <div class="t">光看到這樣子的資料就可以拿來更新vs的參數了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=529">08:49.000</a></div>
+        <div class="t">那如果光看這樣一筆資料就可以更新vs的參數,有什麼樣的好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=534">08:54.000</a></div>
+        <div class="t">他的好處是,你想在MC裡面,你要玩完整場遊戲,你才能得到一筆訓練資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:01.000" id=09:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=541">09:01.000</a></div>
+        <div class="t">那有的遊戲其實很長啊,甚至有的遊戲也許他根本就不會結束,他都一直繼續下去,他永遠都不會結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:12.000" id=09:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=552">09:12.000</a></div>
+        <div class="t">那像這樣子的遊戲,你用MC就非常的不適合,那這個時候你可能就希望採用td的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:20.000" id=09:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=560">09:20.000</a></div>
+        <div class="t">那怎麼只看到這樣子的資料,就拿來訓練vs呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.000" id=09:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=565">09:25.000</a></div>
+        <div class="t">這邊舉一個例子,我們先來看一下V of st跟V of st加1他們之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.000" id=09:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=574">09:34.000</a></div>
+        <div class="t">那V of st是什麼?我們說V of st就是看到st之後的cumulative reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:42.000" id=09:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=582">09:42.000</a></div>
+        <div class="t">所以V of st就是Rt加上γRt加1加上γ²Rt加2,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:48.000" id=09:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=588">09:48.000</a></div>
+        <div class="t">然後V of st加1就是Rt加1加γRt加2,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:54.000" id=09:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=594">09:54.000</a></div>
+        <div class="t">那你發現說,這兩個V,V of st跟V of st加1啊,他們之間是有關係的,什麼樣的關係呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:02.000" id=10:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=602">10:02.000</a></div>
+        <div class="t">你可以把它寫成這樣一個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.000" id=10:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=606">10:06.000</a></div>
+        <div class="t">把V of st加1乘上γ再加Rt,把V of st加1每一項都乘γ再加上Rt,就會變成V of st。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.000" id=10:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=615">10:15.000</a></div>
+        <div class="t">所以V of st跟V of st加1中間有這樣子的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:20.000" id=10:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=620">10:20.000</a></div>
+        <div class="t">我們現在呢,有這樣一筆資料以後,我們就可以拿來訓練我們的value function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:28.000" id=10:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=628">10:28.000</a></div>
+        <div class="t">希望value function可以滿足這邊我們所寫的這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.000" id=10:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=634">10:34.000</a></div>
+        <div class="t">好,那什麼意思呢?就假設我們現在有這樣一筆資料,我們就把st帶到value function裡面,得到V of st。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:43.000" id=10:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=643">10:43.000</a></div>
+        <div class="t">我們有st加1,帶到value function裡面,得到V of st加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.000" id=10:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=647">10:47.000</a></div>
+        <div class="t">雖然我們不知道V of st是多少,我們也不知道V of st加1應該是多少,我們沒有這兩個東西的標準答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.000" id=10:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=655">10:55.000</a></div>
+        <div class="t">但我們知道它們相減應該是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:59.000" id=10:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=659">10:59.000</a></div>
+        <div class="t">根據上面這一個式子,我們把V of st加1乘上γ,然後再去減V of st。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=667">11:07.000</a></div>
+        <div class="t">把V of st減掉γ乘V of st加1,應該要跟Rt越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.000" id=11:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=673">11:13.000</a></div>
+        <div class="t">Rt呢,在這邊我們是有收集到Rt這筆資料的,我們又知道V of st跟V of st加1之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.000" id=11:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=681">11:21.000</a></div>
+        <div class="t">所以我們知道V of st減掉γ乘上V of st加1,應該跟Rt越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.000" id=11:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=687">11:27.000</a></div>
+        <div class="t">所以你就有了這樣子的訓練資料,輸入st,輸入st加1,它們都通過Vset,然後把它們相減,然後要跟Rt越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.000" id=11:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=698">11:38.000</a></div>
+        <div class="t">這個就是TD的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:41.000" id=11:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=701">11:41.000</a></div>
+        <div class="t">好,所以我們介紹了兩個訓練value function的方法,介紹了兩個訓練critic的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.000" id=11:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=708">11:48.000</a></div>
+        <div class="t">一個叫NC,一個叫TD。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:52.000" id=11:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=712">11:52.000</a></div>
+        <div class="t">這兩個方法,其實你拿來計算同樣的觀察到的結果,同樣的資料,同樣的setup,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:04.000" id=12:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=724">12:04.000</a></div>
+        <div class="t">你用NC跟TD來觀察,你算出來的value function很有可能會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.000" id=12:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=732">12:12.000</a></div>
+        <div class="t">那這邊呢,就舉一個例子,這個例子是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=736">12:16.000</a></div>
+        <div class="t">我們觀察某一個actor,這個actor跟環境互動,玩了某一個遊戲八次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=743">12:23.000</a></div>
+        <div class="t">當然這邊為了簡化計算,我們假設這些遊戲都非常簡單,都一個回合,到兩個回合就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:32.000" id=12:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=752">12:32.000</a></div>
+        <div class="t">所以那個actor第一次玩遊戲的時候,他先看到SA這個畫面,得到reward0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:38.000" id=12:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=758">12:38.000</a></div>
+        <div class="t">接下來看到SB這個畫面,得到reward0,遊戲結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=762">12:42.000</a></div>
+        <div class="t">接下來呢,有連續六場遊戲,都是看到SB這個畫面,得到reward1,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=770">12:50.000</a></div>
+        <div class="t">最後一場遊戲,看到SB這個畫面,得到reward0,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.000" id=12:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=775">12:55.000</a></div>
+        <div class="t">那我們這邊呢,先無視actor,為了簡化起見,無視actor,我們也假設γ就等於1,也就是沒有做discount。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:04.000" id=13:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=784">13:04.000</a></div>
+        <div class="t">好,那這個SB應該是多少呢?V of SB應該是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:10.000" id=13:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=790">13:10.000</a></div>
+        <div class="t">我們知道這個V of SB它的意思就是,看到SB這個畫面,你會得到的reward的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=803">13:23.000</a></div>
+        <div class="t">那SB這個畫面呢,我們在這八次遊戲中總共看到了八次,每次遊戲都有看到SB這個畫面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=812">13:32.000</a></div>
+        <div class="t">看到SB這個畫面之後會得到多少reward呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=816">13:36.000</a></div>
+        <div class="t">八次遊戲裡面,有六次得到1分,兩次得到0分,所以平均是4分之3分,沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:44.000" id=13:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=824">13:44.000</a></div>
+        <div class="t">所以V of SB就是4分之3,妥妥的沒有爭議。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:49.000" id=13:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=829">13:49.000</a></div>
+        <div class="t">那V of SA應該是多少呢?你覺得看到SA,接下來應該要得到多少reward呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=840">14:00.000</a></div>
+        <div class="t">根據這八筆訓練資料,看到SA,接下來應該得到多少reward呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.000" id=14:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=845">14:05.000</a></div>
+        <div class="t">給大家十秒鐘的時間,你把你的答案寫在留言板上,你把你的答案打在留言區上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.000" id=14:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=853">14:13.000</a></div>
+        <div class="t">我們趁著這個機會來回答一下同學們的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:28.000" id=14:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=868">14:28.000</a></div>
+        <div class="t">如果大家有問題的話,你就可以打在聊天室裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:31.000" id=14:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=871">14:31.000</a></div>
+        <div class="t">接下來給大家一點時間想想看,你覺得V of SA根據我們看到的這八筆訓練資料,它應該是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:40.000" id=14:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=880">14:40.000</a></div>
+        <div class="t">把你的答案寫在聊天室裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.000" id=14:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=884">14:44.000</a></div>
+        <div class="t">我看這個聊天室到底能不能用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.000" id=15:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=900">15:00.000</a></div>
+        <div class="t">我看到了好多答案,幾乎所有人都說是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:07.000" id=15:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=907">15:07.000</a></div>
+        <div class="t">有別的答案嗎?好,幾乎沒有其他答案,所有人都說是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:14.000" id=15:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=914">15:14.000</a></div>
+        <div class="t">多數同學都說是0,0是不是一個正確的答案呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:24.000" id=15:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=924">15:24.000</a></div>
+        <div class="t">它既對,也不對。其實還有另外一個可能的答案,是四分之三。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.000" id=15:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=931">15:31.000</a></div>
+        <div class="t">我看沒有人寫四分之三,等一下來解釋為什麼有可能算出四分之三,但0也是一個合理的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:39.000" id=15:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=939">15:39.000</a></div>
+        <div class="t">為什麼你會覺得應該是0呢?0是用Monte Carlo的想法得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:46.000" id=15:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=946">15:46.000</a></div>
+        <div class="t">為什麼是0?因為我們看到SA只有一次啊,看到SA以後會得到多少reward?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.000" id=15:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=952">15:52.000</a></div>
+        <div class="t">就是0啊,看到SA以後得到reward0,再看到SB得到reward還是0,所以accumulated reward就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.000" id=16:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=960">16:00.000</a></div>
+        <div class="t">所以如果從Monte Carlo的角度來看,我們看到SA,接下來算出來的G應該是多少?就是0啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:08.000" id=16:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=968">16:08.000</a></div>
+        <div class="t">所以V of SA應該就是0,妥妥的,沒問題,幾乎所有同學都得到了正確答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.000" id=16:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=975">16:15.000</a></div>
+        <div class="t">但如果你用TD,你算出來的可會是不一樣的結果哦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:20.000" id=16:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=980">16:20.000</a></div>
+        <div class="t">怎麼說呢?因為V of SA跟V of SB中間有這樣子的一個關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.000" id=16:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=987">16:27.000</a></div>
+        <div class="t">V of SA應該要等於V of SB加上reward,就是你在看到SA之後得到reward,接下來進入SB。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:39.000" id=16:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=999">16:39.000</a></div>
+        <div class="t">那這個V of SA應該等於V of SB加上這個reward,這邊notation沒有用得非常好啦,這個R指的是這邊這個R。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.000" id=16:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1013">16:53.000</a></div>
+        <div class="t">所以按照這個想法,V of SB是多少?4分之3,這個R是多少?是0,但V of SA應該是4分之3啦,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:03.000" id=17:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1023">17:03.000</a></div>
+        <div class="t">按照TD的想法,V of SA應該是4分之3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1029">17:09.000</a></div>
+        <div class="t">你可能會問說,那到底Monte Carlo跟TD誰算出來是對的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1036">17:16.000</a></div>
+        <div class="t">都可以說是對的,他們只是背後的假設是不同的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.000" id=17:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1043">17:23.000</a></div>
+        <div class="t">對Monte Carlo而言,他就是直接看我們觀察到的資料,SA之後接SB得到的accumulated reward就是0啦,所以V of SA當然是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:34.000" id=17:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1054">17:34.000</a></div>
+        <div class="t">但對於TD而言,他背後的假設是SA跟SB是沒有關係的,看到SA之後再看到SB並不會影響看到SB的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1072">17:52.000</a></div>
+        <div class="t">你現在看這8筆訓練資料給你一種錯覺,覺得說V of SA應該是0,那只是因為你sample到的資料太少了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.000" id=18:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1081">18:01.000</a></div>
+        <div class="t">看到SB應該可以期望的reward是4分之3,只是因為你今天正好運氣不好,看完SA以後再看SB,正好R是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.000" id=18:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1093">18:13.000</a></div>
+        <div class="t">但是其實期望值應該是4分之3,你一直正好運氣不好,看到R是0,你才會覺得SA是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.000" id=18:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1099">18:19.000</a></div>
+        <div class="t">但是看到SB以後得到的期望reward應該是4分之3,所以看到SA以後你會看到SB,那你得到的期望reward也應該是4分之3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:32.000" id=18:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1112">18:32.000</a></div>
+        <div class="t">所以從TD的角度來看,SB會得到多少reward跟SA是沒有關係的,所以SA的accumulated reward應該是4分之3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:45.000" id=18:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1125">18:45.000</a></div>
+        <div class="t">那對於Monte Carlo而言,他並不覺得SA跟SB是沒有關係的,也許SA就是一個待賽的observation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1133">18:53.000</a></div>
+        <div class="t">看到SA以後你就影響了SB會得到的reward,也許看到SA以後SB就是會得到reward等於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:00.000" id=19:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1140">19:00.000</a></div>
+        <div class="t">他們之間互相有影響的,看到SA以後SB就會等於0,那V of SA應該等於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.000" id=19:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1147">19:07.000</a></div>
+        <div class="t">所以總之用MC來計算,用TD來計算,會有微妙的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.000" id=19:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1161">19:21.000</a></div>
+        <div class="t">我來看看有沒有同學有問題,目前沒有,助教我統計一下說只有一個同學回答1,其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:29.000" id=19:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1169">19:29.000</a></div>
+        <div class="t">這個是MC跟TD,接下來我們就是要看說這個critic怎麼被用在訓練actor上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:43.000" id=19:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1183">19:43.000</a></div>
+        <div class="t">還記不記得我們上一次最後我們講到actor的方法的時候,我們說怎麼訓練一個actor,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:52.000" id=19:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1192">19:52.000</a></div>
+        <div class="t">就是先把actor跟環境互動得到一些reward,然後你得到一堆observation跟action的pair,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:00.000" id=20:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1200">20:00.000</a></div>
+        <div class="t">然後你要說在S1執行A1的時候多好呢,得到一個分數A1,我們說這個A1它是cumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:09.000" id=20:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1209">20:09.000</a></div>
+        <div class="t">上週也有同學問到說,難道cumulated reward不需要做normalization嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:14.000" id=20:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1214">20:14.000</a></div>
+        <div class="t">需要做normalization,所以我們說減掉一個B當作normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.000" id=20:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1221">20:21.000</a></div>
+        <div class="t">那這個B的值應該設多少呢?就不好說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:26.000" id=20:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1226">20:26.000</a></div>
+        <div class="t">那我這邊告訴大家說一個V合理的設法是把它設成V of S。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:34.000" id=20:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1234">20:34.000</a></div>
+        <div class="t">假設你現在認出了一個critic,就根據這些訓練資料,其實你也可以去認一個critic嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:41.000" id=20:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1241">20:41.000</a></div>
+        <div class="t">那你現在認出這個critic以後,這個critic給它一個state,它就會產生一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.000" id=20:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1247">20:47.000</a></div>
+        <div class="t">那你把這個分數當作B。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:52.000" id=20:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1252">20:52.000</a></div>
+        <div class="t">所以G1'就是要減掉V of Theta1,G2'就是減掉V of Theta2,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:00.000" id=21:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1260">21:00.000</a></div>
+        <div class="t">那再來的問題就是,為什麼減掉V是一個合理的選擇呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:07.000" id=21:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1267">21:07.000</a></div>
+        <div class="t">那我們在下一頁投影片來跟大家解釋一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.000" id=21:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1271">21:11.000</a></div>
+        <div class="t">好,那現在呢,我們已經知道說這個SA這個pair,它有多好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:18.000" id=21:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1278">21:18.000</a></div>
+        <div class="t">這個AT代表它有多好呢?我們是用G'減掉V of ST來定義這個A。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.000" id=21:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1286">21:26.000</a></div>
+        <div class="t">好,那我們先來看一下這個V of ST到底代表什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.000" id=21:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1291">21:31.000</a></div>
+        <div class="t">V of ST代表什麼意思呢?V of ST是看到某一個畫面ST以後,接下來會得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:40.000" id=21:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1300">21:40.000</a></div>
+        <div class="t">那它其實是一個期望值,因為假設你今天看到同一個畫面,接下來再繼續玩遊戲,遊戲有隨機性,你每次得到的reward都不太一樣的話,那V of ST其實是一個期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.000" id=21:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1312">21:52.000</a></div>
+        <div class="t">好,那在這個時候啊,在看到ST的時候啊,你的actor不一定會執行AT這一個action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:02.000" id=22:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1322">22:02.000</a></div>
+        <div class="t">那你說為什麼呢?為什麼它不一定執行AT這個action呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.000" id=22:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1326">22:06.000</a></div>
+        <div class="t">不要忘了actor本身是有隨機性的,在訓練的過程中,我們甚至鼓勵actor是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1334">22:14.000</a></div>
+        <div class="t">所以同樣的S,你的actor呢,它會輸出的這個action不一定是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:20.000" id=22:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1340">22:20.000</a></div>
+        <div class="t">我們說actor的輸出其實是一個probability的distribution,是一個在這個action的space上面的probability distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:29.000" id=22:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1349">22:29.000</a></div>
+        <div class="t">它給每一個action一個分數,你按照這個分數去做sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.000" id=22:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1353">22:33.000</a></div>
+        <div class="t">有些action被sample到的機率高,有些action被sample到的機率低,但每一次sample出來的action並不保證一定要是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:42.000" id=22:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1362">22:42.000</a></div>
+        <div class="t">所以看到ST之後,接下來有很多的可能,所以你會算出不同的cumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:53.000" id=22:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1373">22:53.000</a></div>
+        <div class="t">那當然如果你有discount的話,就是discounted cumulative reward,那我們這邊呢,是把discount這件事情暫時省略掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.000" id=23:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1381">23:01.000</a></div>
+        <div class="t">反正大家知道我的意思,我這邊沒有加上標ply,不過大家知道我的意思就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:09.000" id=23:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1389">23:09.000</a></div>
+        <div class="t">那把這些可能的結果平均起來,就是V of ST,這是V of ST這一項的含義。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.000" id=23:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1397">23:17.000</a></div>
+        <div class="t">那GTply這一項的含義是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:21.000" id=23:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1401">23:21.000</a></div>
+        <div class="t">GTply這一項的含義是,在ST這個位置,在ST這個畫面下,執行AT以後,接下來會得到的cumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.000" id=23:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1413">23:33.000</a></div>
+        <div class="t">就你執行AT以後,接下來呢,在一路玩下去,你會得到一個結果,得到一個reward,就是GTply。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:41.000" id=23:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1421">23:41.000</a></div>
+        <div class="t">那如果今天AT大於0是什麼意思?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:44.000" id=23:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1424">23:44.000</a></div>
+        <div class="t">如果AT大於0,代表說GTply大於V of ST,這個時候代表說呢,這個action是比我們random sample到的action還要好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:57.000" id=23:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1437">23:57.000</a></div>
+        <div class="t">在這邊,得到GTply的時候,我們確定是執行了AT,那在ST,在算這個V of ST的時候,我們不確定我們會執行哪一個action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:07.000" id=24:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1447">24:07.000</a></div>
+        <div class="t">所以我們執行action AT的時候,得到的reward大於隨便執行一個action得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.000" id=24:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1456">24:16.000</a></div>
+        <div class="t">所以當AT大於0的時候,代表說AT大於隨便執行的一個action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.000" id=24:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1461">24:21.000</a></div>
+        <div class="t">那這個時候,這個action AT它就是好的,所以我們給它一個大於0的AT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:27.000" id=24:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1467">24:27.000</a></div>
+        <div class="t">反之,如果AT小於0是什麼意思?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.000" id=24:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1470">24:30.000</a></div>
+        <div class="t">AT小於0代表說,這個平均的reward大過執行AT得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:37.000" id=24:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1477">24:37.000</a></div>
+        <div class="t">你隨機採取的action,按照某一個distribution sample出來的action,得到的這個cumulative reward的期望值大過採取AT這個action所得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:48.000" id=24:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1488">24:48.000</a></div>
+        <div class="t">那這個時候,AT就是壞的,所以要給它負的大AT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:52.000" id=24:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1492">24:52.000</a></div>
+        <div class="t">所以這樣就非常的直覺,為什麼我們應該把GTply減掉V of ST。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.000" id=24:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1498">24:58.000</a></div>
+        <div class="t">但講到這邊,你有沒有覺得有一些地方有點違和呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:04.000" id=25:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1504">25:04.000</a></div>
+        <div class="t">什麼地方有點違和呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:07.000" id=25:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1507">25:07.000</a></div>
+        <div class="t">這個GTply它是一個sample的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.000" id=25:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1512">25:12.000</a></div>
+        <div class="t">它是執行AT以後,一直玩玩玩,玩到遊戲結束,某一個sample出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:20.000" id=25:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1520">25:20.000</a></div>
+        <div class="t">而V of ST是很多條路徑,很多個可能性平均以後的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:26.000" id=25:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1526">25:26.000</a></div>
+        <div class="t">我們把一個sample去減掉平均,這樣會準嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:31.000" id=25:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1531">25:31.000</a></div>
+        <div class="t">也許這個sample特別好或特別壞啊,我們為什麼不是拿平均去減掉平均呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:38.000" id=25:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1538">25:38.000</a></div>
+        <div class="t">所以我們這一門課要講的最後一個版本,就是拿平均去減掉平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:44.000" id=25:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1544">25:44.000</a></div>
+        <div class="t">也就是說,我們執行完AT以後,得到rewardRT,然後跑到下一個畫面ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:53.000" id=25:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1553">25:53.000</a></div>
+        <div class="t">把這個ST加1接下來一直玩下去,有很多不同的可能,每個可能通通會得到一個reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:00.000" id=26:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1560">26:00.000</a></div>
+        <div class="t">把這些reward平均起來,把這些accumulated reward平均起來,是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.000" id=26:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1566">26:06.000</a></div>
+        <div class="t">其實就是V of ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:09.000" id=26:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1569">26:09.000</a></div>
+        <div class="t">本來你會需要玩很多場遊戲才能得到這個平均值,但沒關係,假設你訓練出一個好的critic,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.000" id=26:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1577">26:17.000</a></div>
+        <div class="t">那你直接帶V of ST加1,你就知道說,在ST加1這個畫面下,接下來會得到的accumulated reward期望值應該是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:31.000" id=26:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1591">26:31.000</a></div>
+        <div class="t">接下來再加上RT,代表說,在ST這個位置採取AT,跳到ST加1以後會得到的reward期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:43.000" id=26:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1603">26:43.000</a></div>
+        <div class="t">因為我們知道說,在ST這邊採取AT會得到rewardRT,再跳到ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.000" id=26:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1608">26:48.000</a></div>
+        <div class="t">然後ST加1會得到的期望值,期望的reward是V of ST加1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.000" id=26:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1612">26:52.000</a></div>
+        <div class="t">所以我們這邊再給它加上RT,代表說,在ST這邊執行AT以後會得到的reward期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:00.000" id=27:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1620">27:00.000</a></div>
+        <div class="t">接下來再把這兩個東西相減,再把RT V of ST加1減掉V of ST,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.000" id=27:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1628">27:08.000</a></div>
+        <div class="t">也就是我們把G'換成RT加V of ST加1,再減掉V of ST。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:14.000" id=27:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1634">27:14.000</a></div>
+        <div class="t">我們就知道說,採取AT這個action,接下來得到的期望reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:26.000" id=27:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1646">27:26.000</a></div>
+        <div class="t">減掉不採取AT而是隨便sample一個action,根據某個distributionsample一個action,會得到的reward,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:33.000" id=27:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1653">27:33.000</a></div>
+        <div class="t">兩者的期望值差距有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:36.000" id=27:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1656">27:36.000</a></div>
+        <div class="t">那如果RT加V of ST比較大,就代表AT比較好,它比隨便sample reward好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:43.000" id=27:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1663">27:43.000</a></div>
+        <div class="t">RT加V of ST小於V of ST就代表AT,它是lower than average,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:49.000" id=27:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1669">27:49.000</a></div>
+        <div class="t">它比從一個distributionsample到的action還要差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:53.000" id=27:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1673">27:53.000</a></div>
+        <div class="t">所以今天這個就是大名鼎鼎的一個常用的方法,叫做advantage的adequate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:01.000" id=28:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1681">28:01.000</a></div>
+        <div class="t">在advantage的adequate裡面,你是怎麼定義AT的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:06.000" id=28:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1686">28:06.000</a></div>
+        <div class="t">你就是RT加V of ST加1減掉V of ST,就是我們的AT了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:15.000" id=28:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1695">28:15.000</a></div>
+        <div class="t">那這邊有一個訓練adequate的小技巧,那你在作業裡面也不妨使用這個技巧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:24.000" id=28:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1704">28:24.000</a></div>
+        <div class="t">這個技巧是什麼呢?actor是一個network,critic也是一個network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:31.000" id=28:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1711">28:31.000</a></div>
+        <div class="t">actor這個network是一個遊戲畫面當作輸入,它的輸出是每一個action的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:39.000" id=28:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1719">28:39.000</a></div>
+        <div class="t">critic是一個遊戲畫面當作輸入,輸出是一個數值,代表接下來會得到的accumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:47.000" id=28:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1727">28:47.000</a></div>
+        <div class="t">這邊有兩個network,它們的輸入是一樣的東西,所以這兩個network它們應該有部分的參數可以共用吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.000" id=28:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1735">28:55.000</a></div>
+        <div class="t">尤其假設你的輸入又是一個非常複雜的東西,比如說遊戲畫面的時候,前面幾層應該都需要是CNN吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.000" id=29:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1742">29:02.000</a></div>
+        <div class="t">要了解這個遊戲畫面需要用的CNN也許是差不多的吧,所以actor跟critic它們可以共用前面幾個layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:11.000" id=29:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1751">29:11.000</a></div>
+        <div class="t">所以你今天在實作的時候往往你會把你的actor、critic設計成這個樣子,actor、critic它們有共用大部分的network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.000" id=29:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1761">29:21.000</a></div>
+        <div class="t">只是最後輸出不同的action就是actor,輸出一個scalar就是critic,這是一個訓練actor、critic的小技巧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:32.000" id=29:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1772">29:32.000</a></div>
+        <div class="t">其實今天講的並不是reinforcement learning的全部,其實在reinforcement learning裡面還有一個系列的做法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:43.000" id=29:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1783">29:43.000</a></div>
+        <div class="t">是直接採取critic,也就是直接用critic就可以決定要用什麼樣的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:50.000" id=29:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1790">29:50.000</a></div>
+        <div class="t">其中最知名的就是Deep Q Network,DQN,不過這邊我們就不細講DQN了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:57.000" id=29:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1797">29:57.000</a></div>
+        <div class="t">如果真的想知道DQN的話可以參考過去上課的錄影。DQN有非常非常多的變形,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:04.000" id=30:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1804">30:04.000</a></div>
+        <div class="t">這邊就是有一篇非常知名的paper叫做Rainbow,裡面就是試著去嘗試了各種DQN的變形,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:13.000" id=30:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1813">30:13.000</a></div>
+        <div class="t">試了七種,然後再把這七種變形集合起來,因為有七種變形集合起來所以它說它是一個彩虹,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:20.000" id=30:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1820">30:20.000</a></div>
+        <div class="t">所以它把它的方法叫做Rainbow,我也把這個paper留在這邊給你參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:25.000" id=30:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1825">30:25.000</a></div>
+        <div class="t">如果你想知道Rainbow裡面的每一個小技巧是怎麼做的話,你就參見上課錄影,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.000" id=30:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1831">30:31.000</a></div>
+        <div class="t">過去的課程有把Rainbow裡面的每一個小技巧都講過一遍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.000" id=30:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1835">30:35.000</a></div>
+        <div class="t">講到這邊正好告一個段落,我們先來看看有沒有同學有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:41.000" id=30:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1841">30:41.000</a></div>
+        <div class="t">我來回答一下同學們的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:51.000" id=30:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1851">30:51.000</a></div>
+        <div class="t">一個同學說,SA後面接的不一定是SB吧,這樣怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.000" id=30:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1859">30:59.000</a></div>
+        <div class="t">這是一個很好的問題,SA後面不一定接SB。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:04.000" id=31:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1864">31:04.000</a></div>
+        <div class="t">這個問題在剛才我們看到的那個例子裡面就沒有辦法處理,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.000" id=31:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1869">31:09.000</a></div>
+        <div class="t">因為在剛才我們看到那個只有八個episode的例子裡面,SA後面就只會接SB,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:17.000" id=31:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1877">31:17.000</a></div>
+        <div class="t">所以我們沒有觀察到其他的可能性,所以我們沒辦法處理這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:22.000" id=31:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1882">31:22.000</a></div>
+        <div class="t">所以這就告訴我們說,在做reinforcement learning的時候,sample這件事情是非常重要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:29.000" id=31:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1889">31:29.000</a></div>
+        <div class="t">你reinforcement learning最後learn得好不好,跟你在sample的時候sample得好不好,關係非常大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:35.000" id=31:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1895">31:35.000</a></div>
+        <div class="t">所以這個reinforcement learning是一個非常吃人品的方法啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:40.000" id=31:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1900">31:40.000</a></div>
+        <div class="t">你在作業裡面你可以體驗一下,你sample到的結果對你最後training的結果有非常大的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:47.000" id=31:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1907">31:47.000</a></div>
+        <div class="t">下一個問題,所以每一個V都需要對應到固定的環境發生順序嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:07.000" id=32:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1927">32:07.000</a></div>
+        <div class="t">我先說一下,王大華同學其實是助教啦,那這不是他的本名啦,但是王大華同學是助教。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:19.000" id=32:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1939">32:19.000</a></div>
+        <div class="t">每一個V都需對應到固定的環境發生順序嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:33.000" id=32:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1953">32:33.000</a></div>
+        <div class="t">我沒有很確定你的問題,但是我試著回答一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:38.000" id=32:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1958">32:38.000</a></div>
+        <div class="t">每一個V不會對應到固定的環境發生順序,也就是如果你的遊戲有隨機性的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:48.000" id=32:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1968">32:48.000</a></div>
+        <div class="t">那V其實是代表了一個期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:52.000" id=32:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1972">32:52.000</a></div>
+        <div class="t">它想要算的就是給某一個observation,看到某一個遊戲畫面以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:58.000" id=32:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1978">32:58.000</a></div>
+        <div class="t">接下來你會得到的cumulative reward的平均值,它的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.000" id=33:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1984">33:04.000</a></div>
+        <div class="t">如果你的遊戲有隨機性的話,V代表的是期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:07.000" id=33:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1987">33:07.000</a></div>
+        <div class="t">你看到某一個遊戲畫面以後,接下來會發生什麼事情,不見得是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:12.000" id=33:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=1992">33:12.000</a></div>
+        <div class="t">但把所有的可能性都平均起來取它的期望值,這個就是V所代表的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:29.000" id=33:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2009">33:29.000</a></div>
+        <div class="t">看到某一個observation後面出現的observation確實是不固定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:35.000" id=33:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2015">33:35.000</a></div>
+        <div class="t">如果有些狀況,某些observation你沒觀察到的話,那你真的就沒辦法訓練了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:45.000" id=33:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2025">33:45.000</a></div>
+        <div class="t">有同學問說,就是拿V當一般人的實力,超過它就是猛,沒超過就是爛嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:51.000" id=33:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2031">33:51.000</a></div>
+        <div class="t">對,就是這樣。V就是平均的實力,超過V就是好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:57.000" id=33:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2037">33:57.000</a></div>
+        <div class="t">想請問這個distribution要從哪裡知道呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:01.000" id=34:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2041">34:01.000</a></div>
+        <div class="t">我想你這個distribution問的是actor的distribution,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:06.000" id=34:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2046">34:06.000</a></div>
+        <div class="t">我們說action的distribution,action是從某一個distribution sample出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:12.000" id=34:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2052">34:12.000</a></div>
+        <div class="t">那個distribution是誰呢?那個distribution是這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:15.000" id=34:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2055">34:15.000</a></div>
+        <div class="t">就是你的actor不是像是一個classifier嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:18.000" id=34:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2058">34:18.000</a></div>
+        <div class="t">你的actor像是一個classifier,然後你把s丟進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:22.000" id=34:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2062">34:22.000</a></div>
+        <div class="t">每一個action都會有一個分數,你把這個分數通過solvemax就做一個normalize,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:29.000" id=34:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2069">34:29.000</a></div>
+        <div class="t">它就變得像機率一樣,然後按照那個機率去做sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:33.000" id=34:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=kk6DqWreLeU&t=2073">34:33.000</a></div>
+        <div class="t">那這個就是actor從distribution sample出來的這句話的意思。</div>
+    </div>
+    
+</body>
+</html>   

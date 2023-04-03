@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Speech Recognition (1/7) - Overview</h2><a href=https://www.youtube.com/watch?v=AIKu43goh-8><img src=https://i.ytimg.com/vi_webp/AIKu43goh-8/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=0">00:00.000</a></div>
+        <div class="t">語音辨識</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=30">00:30.000</a></div>
+        <div class="t">J.R. Peirce 是一個大名鼎鼎的人物,他是如何的知名呢?他發明的電晶體,電晶體就是他命名的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00.000" id=01:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=60">01:00.000</a></div>
+        <div class="t">他對語音辨識的感覺,他覺得語音辨識就是騙錢,大家應該好好想一下語音辨識這個東西是不是真的有可能做出來,他覺得他把語音辨識跟一些其他的東西畫上等號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.360" id=01:15.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=75">01:15.360</a></div>
+        <div class="t">他把語音辨識跟什麼東西畫上等號呢?他說語音辨識就像是想要把水變成汽油,想要從大海中逃經,想要治療癌症,想要登陸月球,三不五輪那幾年後就登陸月球了,總之是一個不太可能做出來,你可能要花非常大的力氣才能夠做出來的東西,要深深思考是不是值得做語音辨識這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.040" id=01:43.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=103">01:43.040</a></div>
+        <div class="t">據說他這篇文章使得FailLab停止了對語音辨識相關的研究,不過這是五十年前的人的觀點,今天你不會再說語音辨識是不可行的,我也不需要再舉例證告訴你說語音辨識可行不可行,每一支手機都可以做語音辨識了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:04.480" id=02:04.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=124">02:04.480</a></div>
+        <div class="t">語音辨識怎麼做呢?如果把它想得簡單一點,語音辨識就是我們需要一個model,我們需要一個function,它的輸入就是聲音訊號,它的輸出就是文字,而對這個語音辨識系統而言,它輸入和輸出的聲音和文字可以表示成什麼樣子呢?我們先來看聲音的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:31.040" id=02:31.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=151">02:31.040</a></div>
+        <div class="t">對語音辨識系統而言,輸入的聲音會被表示成一串的向量,這些向量的長度我們用大D來表示,這些向量的dimension我們用小D來表示,聲音訊號是一串的向量,等一下我會講說所謂的聲音訊號是一串的向量是怎麼一回事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.880" id=02:56.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=176">02:56.880</a></div>
+        <div class="t">文字呢?文字是一個token的sequence,這個token的sequence,我們說它的長度是大N,然後我們說總共會有第一種不同的token,這個是機器輸出的文字長得什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:17.440" id=03:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=197">03:17.440</a></div>
+        <div class="t">對機器來說,輸出一個句子,輸出一段文字,我們要把這段文字想成是一串的token,它有N個token,而token會有一個固定的種類,有大V種不同的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.480" id=03:32.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=212">03:32.480</a></div>
+        <div class="t">一般而言,語音辨識系統的輸入是遠比輸出要長的,也就是說t通常會遠比N還要大,這個是語音辨識的輸入和輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.320" id=03:47.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=227">03:47.320</a></div>
+        <div class="t">接下來我們就來仔細看一下,輸出有哪些可能的不同的變形,輸入有哪些可能性。我們先看輸出的部分,我們說輸出就是我們要把文字想成是一個一個的token,到底這邊所謂的token指的是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.720" id=04:06.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=246">04:06.720</a></div>
+        <div class="t">這邊的token有很多種不同的樣貌,舉例來說,在做語音辨識的時候常用的一種token叫做封鈴。什麼是封鈴呢?封鈴是發音的基本單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:22.480" id=04:22.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=262">04:22.480</a></div>
+        <div class="t">而如果你這邊有點沒有辦法想像封鈴是什麼,你沒有辦法具體想像它是什麼,你就把它想成是音標。我們國中的時候學英文的時候都會學音標,你可以把封鈴想成就是音標。但這樣的比喻不完全對,因為有些音標它其實不止一個封鈴,它是超過一個封鈴所組成的,有些音標其實不是發音的基本單位,而封鈴是發音的基本單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:49.140" id=04:49.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=289">04:49.140</a></div>
+        <div class="t">所以封鈴長得大概像是這個樣子。說一句話,如果今天機器輸出的單位、輸出的token是封鈴的話,那看起來語音辨識的結果會像是怎麼樣?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:00.280" id=05:00.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=300">05:00.280</a></div>
+        <div class="t">這邊的每一個符號都是一個發音的基本單位,所以每一個符號就對應到一種聲音,比如說看到p,它顯然就是p,看到ch,它顯然就是ch。但是這種封鈴,如果你語音辨識系統拗不出來是封鈴,你看不懂,它輸出這種符號,你根本不知道今天這句話說的是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.120" id=05:24.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=324">05:24.120</a></div>
+        <div class="t">所以你需要一個東西,這個東西叫做lexicon,叫做辭典。這個lexicon裡面記錄了文字和封鈴間的關係,這個lexicon會告訴你說,cat是由三個封鈴組成的,gert是由三個封鈴組成的,man是由三個封鈴組成的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:42.120" id=05:42.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=342">05:42.120</a></div>
+        <div class="t">那你今天語音辨識系統拗出這樣子的東西以後,拗出一個串封鈴以後,你要根據你手上有的lexicon,再寫個成字,再把封鈴轉成文字。所以這句話就是one punch man,就是一拳超人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.120" id=05:58.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=358">05:58.120</a></div>
+        <div class="t">封鈴是一個可能輸出的token,是一種可能的token。過去,尤其在深度學習還沒有那麼流行之前,封鈴是一種常見的選擇。為什麼封鈴是一種常見的選擇呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.620" id=06:14.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=374">06:14.620</a></div>
+        <div class="t">因為如果你今天只要求你的語音辨識系統輸出封鈴,封鈴跟聲音之間的關係是非常明確的。封鈴就是發音的基本單位嘛,所以每一個封鈴就對應到固定樣子的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.620" id=06:28.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=388">06:28.620</a></div>
+        <div class="t">看到p就是p,它沒有別的樣子了,它可能會有一些各式各樣的變化,但是那個變化不會太大。所以封鈴跟聲音訊號之間的關係是比較明確的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:38.420" id=06:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=398">06:38.420</a></div>
+        <div class="t">在過去深度學習還沒有那麼流行的時候,也許封鈴是一個比較常見的選擇,但它的壞處是,你需要一個lexicon,lexicon哪來?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.560" id=06:48.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=408">06:48.560</a></div>
+        <div class="t">這個東西不會憑空冒出來,你需要有比較懂語言學的人告訴你說,這個語言裡面有哪些詞彙,然後幫你把每一個詞彙的封鈴把它標出來,你才有辦法進行語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.960" id=07:02.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=422">07:02.960</a></div>
+        <div class="t">而封鈴這個東西也不是自然而然你就知道的,一個語言有哪些封鈴?一般人可能沒有辦法直接看這個語言的文字、聽這個語言的聲音就知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.860" id=07:15.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=435">07:15.860</a></div>
+        <div class="t">你要有語言學家幫你對這個語言進行分析,告訴你說,這個語言裡面有哪些封鈴。不同的語言學家會告訴你不同的答案,所以我也沒有辦法告訴你說英文有幾個封鈴,因為不同的文獻會給你不同的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:29.200" id=07:29.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=449">07:29.200</a></div>
+        <div class="t">所以,你要使用封鈴這種東西當作輸出的單位,你需要一些語言學的知識,不是你隨便蒐集一些文字、蒐集一些聲音訊號就有辦法使用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:39.240" id=07:39.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=459">07:39.240</a></div>
+        <div class="t">第二個我們要講的單位叫做Graphic。Graphic是什麼?Graphic是書寫的基本單位。什麼叫做書寫的基本單位呢?在英文裡面,所謂書寫的基本單位就是英文字母,就是你的書寫的基本單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:00.580" id=08:00.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=480">08:00.580</a></div>
+        <div class="t">但是在做語音辨識的時候,光是把所有的英文字母當作你的token是不夠的,你還要至少加入一個符號叫做空白,因為我們知道說英文的詞彙和詞彙之間是用空白做分隔的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:19.120" id=08:19.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=499">08:19.120</a></div>
+        <div class="t">所以今天如果你是用Graphic,也就是用英文的字母來當作你的語音辨識的單位的話,除了那些英文字母以外,你還需要加上空白這個符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:31.540" id=08:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=511">08:31.540</a></div>
+        <div class="t">所以機器今天在輸出的時候,它不只可以輸出英文的字母,當它覺得它輸出一個完整的詞彙,比如說它已經輸出ONE1以後,它覺得這是一個完整的詞彙,接下來要換一個新的詞彙了,它必須要自己判斷說,好,我現在要輸出一個空白,然後接下來輸出的就是下一個詞彙的字母。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:50.280" id=08:50.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=530">08:50.280</a></div>
+        <div class="t">如果今天在這個例子裡面有幾個Token呢?就算一下,字母的數目加上空白的數目總共三個,所以今天這個One Punch Man這一串文字,如果把它用Graphic來當作單位來表示的話,它有N等於13,它有13個Token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:09.180" id=09:09.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=549">09:09.180</a></div>
+        <div class="t">那有幾種不同的Graphic呢?我們剛才說會大於26,除了26個英文字母以外,你還需要包括空白,甚至加上一些標點符號、逗號、句號、驚嘆號、問號等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.460" id=09:22.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=562">09:22.460</a></div>
+        <div class="t">你把這些標點符號加到你的Token裡面,今天機器在做語音辨識的時候,它就有機會自動輸出這些標點符號,你就不需要事後再做process,不需要機器先輸出文字以後再用別的方法把標點符號加進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.040" id=09:37.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=577">09:37.040</a></div>
+        <div class="t">讓機器自動判斷什麼時候應該要下一個標點符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.880" id=09:41.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=581">09:41.880</a></div>
+        <div class="t">這是英文的狀態,如果是中文的話,中文的基本的書寫單位,你可以用方塊字來當作基本的書寫單位,所以如果是一拳超人,它是由四個方塊字組成的,那N就等於4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:58.900" id=09:58.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=598">09:58.900</a></div>
+        <div class="t">中文有多少的方塊字呢?如果你查一些康熙詞典,可能有超過一萬個以上的方塊字,不過一般人可能比較常用的就是四千多個方塊字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.800" id=10:10.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=610">10:10.800</a></div>
+        <div class="t">中文跟英文有一個不一樣的地方就是,英文它有空白,英文需要把空白加入你的graphic裡面,你的token的set裡面需要一個空白來當作詞彙和詞彙之間的分隔,中文不需要,中文的Grammar和詞彙之間是沒有空白的,中文的句子裡面是沒有空白的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.560" id=10:32.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=632">10:32.560</a></div>
+        <div class="t">用Graphing的厲害的地方就是,它是lexicon-free,所以你就不需要去想辦法弄一個lexicon來了。如果你今天要做一個新的語言的語音辨識,用Graphing可能是一個非常直接的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.160" id=10:47.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=647">10:47.160</a></div>
+        <div class="t">如果你今天要用Graphing當作單位來做語音辨識,你只要搜集那個語言的文字,然後看看文字裡面書寫的基本單位是什麼,看看這個語言裡面有哪些字母把它拿出來,你就可以做語音辨識。你不需要再去找個語言學家幫你建個詞典,你不需要再去找個語言學家告訴你說這個語言的風鈴有哪些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.460" id=11:07.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=667">11:07.460</a></div>
+        <div class="t">拿到一個新的語言的語音跟文字,你就可以直接開始做語音辨識了,這是Graphing的好處。那Graphing還有另外一個好處就是,今天就算某些詞彙在訓練資料裡面從來沒有出現過,你也可能可以期待說,這些機器可以自己拼寫出,靠著聽力拼寫出它從來沒有聽過的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.160" id=11:30.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=690">11:30.160</a></div>
+        <div class="t">當然,用Graphing有比較大的挑戰,因為Graphing這些書寫的符號跟聲音之間,它們的關係可能會是比較複雜的。舉例來說,當聽到k的聲音的時候,在英文裡面,它可以是對應到k這個Graphing,它也可以對應到c這個Graphing,到底對應哪一個,它們關係非常複雜,可能要看很長的上下文體、很長的聲音才能夠決定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:55.940" id=11:55.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=715">11:55.940</a></div>
+        <div class="t">那你的模型顯然必須要比較有能力,它才能夠解這樣比較複雜的問題。所以用Graphing是比較難的。用Graphing還有一種風險是,機器必須要自己把,如果是英文你用Graphing的話,機器必須自己學會一個詞彙裡面有哪些Graphing,它必須要自己把詞彙拼出來,所以它有時候有可能會拼錯字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.600" id=12:21.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=741">12:21.600</a></div>
+        <div class="t">一般人可能很難接受說,我今天做一個語音辨識系統,語音辨識系統絕對比人類還不如我,偶爾還會拼錯字,所以很難接受這樣子的結果。所以用Graphing比較困難,有一定程度的風險。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:33.100" id=12:33.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=753">12:33.100</a></div>
+        <div class="t">還有一個比Graphing更大的單位,就是Word,對英文而言英文的詞是非常明確的,用空白分隔的就是詞。One Punch Man有兩個空白,所以它是三個詞。英文的詞彙非常的多,至少有多過十萬個以上,而且人名、地名等等都是新的詞彙,對英文來說要創造新的詞彙也是很方便的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.600" id=12:59.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=779">12:59.600</a></div>
+        <div class="t">對中文而言,要討論詞彙這件事就比較困難,因為中文並沒有用空白來進行詞彙間的分隔,所以一個中文的句子裡面有幾個詞彙,我們就很難說明清楚。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.260" id=13:13.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=793">13:13.260</a></div>
+        <div class="t">用詞彙來當作語音辨識的單位,往往不是一個非常好的選擇,為什麼?對某些語言來說,它的詞彙的數量可能會非常非常巨大。中文有這個問題,還有很多其他的語言有這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.680" id=13:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=812">13:32.680</a></div>
+        <div class="t">舉個土耳其文的例子,是來自《土女時代》一個介紹土耳其相關事情的中文網站。土耳其文這個語言,它是可以不斷地在一個詞彙後面加字根,去產生新的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.160" id=13:52.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=832">13:52.160</a></div>
+        <div class="t">舉個具體的例子,這個詞彙,我也不會唸,所以我就不硬唸它,這個詞彙是成功的形容詞。在這個詞彙後面再加i y e t,變成名詞,代表成功。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.180" id=14:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=847">14:07.180</a></div>
+        <div class="t">在後面再加s i z,代表不成功。在後面再加l e s,這個其實不是s,這是土耳其文裡面一個特殊的符號,這個意思變成變得不成功。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.400" id=14:21.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=861">14:21.400</a></div>
+        <div class="t">再加t i r,就是死,變得不成功。所以你可以不斷地在一個詞彙後面加上新的字根,湊出新的字根進去,你就可以不斷創造新的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:33.920" id=14:33.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=873">14:33.920</a></div>
+        <div class="t">所以最終你可以產生這樣子的詞彙,它有七十個character。這個詞彙是什麼意思呢?我看了很久,還是不太確定它是什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:45.120" id=14:45.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=885">14:45.120</a></div>
+        <div class="t">它的意思是,如果你是我們當中不容易變成不成功的其中一個。我不知道這個到底是成功還是不成功。好像是,你不容易變成不成功,就好像是一件好事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.900" id=14:59.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=899">14:59.900</a></div>
+        <div class="t">不成功是一件壞事,但是你不容易變成不成功,好像是一件好事。然後你是一群人當中不容易變成不成功的,所以是不錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.280" id=15:10.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=910">15:10.280</a></div>
+        <div class="t">但是它是如果,它是假設,它不見得是真的。托爾齊文是這個樣子。托爾齊文的詞彙是沒有辦法窮舉的,因為你永遠可以創造出新的詞彙出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:24.860" id=15:24.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=924">15:24.860</a></div>
+        <div class="t">所以像這樣子的語言,你用詞彙當作語音辨識的單位,那可能就不是一個太明智的選擇,因為你沒有辦法窮舉出所有的詞,沒有辦法窮舉出所有的word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.420" id=15:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=938">15:38.420</a></div>
+        <div class="t">還有一個可以拿來作為辨識的單位叫做morphic。那morphic是什麼呢?morphic是這個語言裡面可以傳達意思的最小單位,這樣講可能有點模糊,它是一個比詞還要小、比word還要小,但是比graphic還要大的單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:01.600" id=16:01.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=961">16:01.600</a></div>
+        <div class="t">什麼意思呢?舉例來說,在英文裡面unbreakable這個word,它可以拆解成三個morphic,un、break跟able三個morphic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:13.500" id=16:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=973">16:13.500</a></div>
+        <div class="t">這三個morphic它們本身都有意思,比如說我們知道un是有意思的、break有意思的、able是有意思的。那break跟able它們本身也是詞,但是un本身它就不是一個詞,它比詞還要小一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:29.560" id=16:29.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=989">16:29.560</a></div>
+        <div class="t">但是這些東西又比graphic還要大,graphic就是字母,而字母本身是沒有什麼語意的意思的,是沒有什麼含義的。但是morphic是幾個字母湊起來,它還沒有到word那麼大、比word還要小,但它是有意思的,它可以簡單把它理解成自首自根。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:51.020" id=16:51.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1011">16:51.020</a></div>
+        <div class="t">所以你可以用一些morphic湊出一個新的詞彙,這個詞彙英文裡面不見得常見,但是你也可以猜出它的意思,比如說re-killable是由re跟kill跟able這三個morphic所組成的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.400" id=17:05.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1025">17:05.400</a></div>
+        <div class="t">那你之前可能沒有看過這個詞彙,但你也可以想像說它的意思就是一個可以反覆被殺的東西,那我猜可能就是類似阿寧這樣子,周而每其都會被殺一次,然後又再復活。所以你可能沒有看過re-killable這個詞彙,你也可以大概猜出它的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.140" id=17:22.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1042">17:22.140</a></div>
+        <div class="t">但是morphic要怎麼來呢?給你一個語言,你怎麼知道它可以表示意思的最小單位到底是什麼呢?通常有兩個路徑,那這邊我們就不細講。一個路徑是,請一些語言學家來告訴你說這個語言裡面有哪些morphic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:40.140" id=17:40.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1060">17:40.140</a></div>
+        <div class="t">另外一個可能是,憑藉著統計的方式,收集大量這個語言的文字,然後再看看說這個語言的文字裡面有沒有哪些pattern常常出現。那些常常出現的pattern也許就是morphic,但是你沒有辦法保證說那些常出現的pattern一定就是morphic,那些常出現的pattern一定就有意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.200" id=17:57.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1077">17:57.200</a></div>
+        <div class="t">你可以用統計的方法達到一些比較不清確的結果,這個我們這邊就不細講,這邊就是列出各式各樣可能的輸出的單位給你參考。還有一個最狂的方法,直接用by當單位。什麼叫做直接用by當單位呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.140" id=18:17.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1097">18:17.140</a></div>
+        <div class="t">就舉例來說,我們知道說每一個符號,多數語言的符號,都可以用utf-8來表示,比如說前字號就對應到一個by,或者是這個韓文的這個字,它就對應到這三個by,這個我也不知道是什麼字,它就對應到四個by。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.880" id=18:38.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1118">18:38.880</a></div>
+        <div class="t">所以各種不同語言的各種不同的符號,都可以用byte的sequence來描述它。所以如果你今天把所有不同的語言都用byte的sequence來描述它,那你的語音辨識的輸出就可以是language independent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:56.620" id=18:56.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1136">18:56.620</a></div>
+        <div class="t">像我們剛才在討論各種不同可能輸出的單位的時候,我們都還要想一下說,也許不同的單位適用於不同的語言,不同語言它有本身自己的特性,它適用不同的單位。但是如果你要byte的話,它就是language independent,所有的語言直接都用utf-8來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.420" id=19:15.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1155">19:15.420</a></div>
+        <div class="t">你可以做一個語音辨識系統,輸入一段聲音,如果聽到的是日文,輸出utf-8,然後把這個utf-8轉出來就是日文。聽到中文,輸出一段utf-8,然後根據utf-8查表,就是中文,它可以做到language independent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.880" id=19:31.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1171">19:31.880</a></div>
+        <div class="t">而它的token size不會太大,utf-8這個byte,它可能的可能性就是256個不同的可能而已。有沒有人這麼做呢?有人這麼做。這邊引用了一篇去年的ITX的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.260" id=19:50.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1190">19:50.260</a></div>
+        <div class="t">這邊這個藍色的中花號裡面的東西,代表引用一篇文章。這些引用的文章,你都可以在投影片的最後一頁,找到它的開頭,在這篇文章有興趣,你就可以直接google它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.020" id=20:06.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1206">20:06.020</a></div>
+        <div class="t">那大家通常喜歡用哪什麼樣的token呢?這邊請助教群做了一個非常辛苦的統計。這邊請助教群看了19年的Interspeech、19年的ITX跟19年的ASRU總計超過100篇跟語音辨識相關的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:26.100" id=20:26.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1226">20:26.100</a></div>
+        <div class="t">看看說在這100篇文章裡面,人們,這些做語音辨識的人,他們最喜歡用的輸出的token是什麼樣的單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.100" id=20:38.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1238">20:38.100</a></div>
+        <div class="t">在語音這個領域,一年就是有三個國際會議了。有Interspeech、ITX是固定每年都會有的國際會議、ASRU跟SLD是兩年辦一次。所以在語音領域裡面,最重要的國際會議一年有三個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:54.020" id=20:54.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1254">20:54.020</a></div>
+        <div class="t">那我們就請助教google看過這三個國際會議裡面超過100篇跟語音辨識有關的論文,然後做一下統計,讓我們知道去年19年的大趨勢是怎麼樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:06.740" id=21:06.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1266">21:06.740</a></div>
+        <div class="t">去年19年的大趨勢是什麼樣子呢?最多人使用拿來做語音辨識的單位是Graphic,我們說Graphic這個單位非常容易使用,你蒐集到一個語言的文字,你就可以知道它有哪些Graphic,你不需要請語言學家幫忙,非常的無腦,所以Graphic非常受歡迎,佔了41%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.620" id=21:25.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1285">21:25.620</a></div>
+        <div class="t">也有很多人會使用Phoning,它佔了32%,用Phoning的好處是,Phoning跟聲音之間的關係比較明確,所以語音辨識這個部分比較簡單,但你之後要有比較好的詞典,把Phoning轉成文字,這個部分佔32%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:43.140" id=21:43.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1303">21:43.140</a></div>
+        <div class="t">Morphing,介於Graphic跟Word之間的單位有17%,Word則是最少有人用的,這個地方讓大家知道一下語音辨識的大趨勢是什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:55.940" id=21:55.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1315">21:55.940</a></div>
+        <div class="t">除了剛才講的那些輸出的可能性以外,還有很多很狂的想法,舉例來說,有沒有可能直接輸入聲音訊號就直接輸出Word embedding呢?是有可能的,有可能直接從聲音訊號拉到Word embedding這個語意的層級。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:15.140" id=22:15.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1335">22:15.140</a></div>
+        <div class="t">其實今年我們CNC在ICAS2020就有一篇這樣子的文章。也有可能直接把語音辨識跟翻譯直接塞在一起,你輸入One Punch Man,輸出直接就是它的翻譯的結果,一拳超人,也有可能這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.100" id=22:32.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1352">22:32.100</a></div>
+        <div class="t">你也有可能把語音辨識跟Intent Translocation放在一起。Intent Translocation的意思是說,你對機器說一句話,它要判斷你的意圖。通常你在做這種對話系統的時候,你可能會需要Intent Translocation的功能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:48.740" id=22:48.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1368">22:48.740</a></div>
+        <div class="t">你可以把Intent Translocation跟語音辨識放在一起,有人說,我要買一張去臺北的車票,然後你不是輸出語音辨識的結果,反正我們也不care語音辨識的結果,我們就想知道這個人想幹嘛,你直接輸出他的意圖,就是他要買一張車票。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.860" id=23:05.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1385">23:05.860</a></div>
+        <div class="t">或者是,你可以把語音辨識跟slot feeling直接接在一起。slot feeling是什麼?你在做對話系統的時候,你會常常做slot feeling這件事。slot feeling簡單來說,做的事情就是給一段文字,然後判斷說這個文字裡面有哪些東西是我們要的slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:22.420" id=23:22.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1402">23:22.420</a></div>
+        <div class="t">舉例來說,你可能說,你要做一個訂票的系統,你要聽一句話,找出哪些部分對應到時間,哪些部分對應到地點,時間、地點就是你要的slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.800" id=23:35.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1415">23:35.800</a></div>
+        <div class="t">所以你可以做一個語音辨識系統,它不是跑語音辨識,而是聽一段聲音說,one ticket to Taipei on March 2nd,這邊有七個詞彙,它這邊就直接輸出七個token,但它的token不是文字,它的token是有可能的slot,比如說地點,比如說時間,或者是不屬於任何slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:58.920" id=23:58.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1438">23:58.920</a></div>
+        <div class="t">所以你也有可能把語音辨識跟slot feeling直接塞在同一個model裡面,讓你的模型直接outputslot feeling的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:06.980" id=24:06.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1446">24:06.980</a></div>
+        <div class="t">上述這些事,在文獻上都有做過,也不算是特別。今天如果你在語音的會議看到這些東西,也不會覺得特別,算是石破天驚的結果就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:17.420" id=24:17.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1457">24:17.420</a></div>
+        <div class="t">接下來我們來看輸入的部分。剛才說輸入一段聲音訊號,我們會把它描述成一個vector sequence,這個vector sequence的長度是t,它的高度,它的dimension是d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:35.020" id=24:35.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1475">24:35.020</a></div>
+        <div class="t">我們怎麼把一段聲音訊號變成一個vector sequence呢?做法是這樣,一段聲音訊號進來,我們會取一個window,這個window它的長度通常是25ms。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:51.260" id=24:51.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1491">24:51.260</a></div>
+        <div class="t">接下來我們會把25ms這個範圍內的聲音訊號,用一個向量來描述這段聲音訊號裡面的特徵。通常這一個向量叫做一個frame,中文可能翻譯成音框,叫做一個音框。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.700" id=25:08.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1508">25:08.700</a></div>
+        <div class="t">有哪些方法來描述這一小個window,這一小個範圍內的聲音訊號呢?最無腦的方法就是啥也沒幹,直接把這裡面的sample拿出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.140" id=25:21.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1521">25:21.140</a></div>
+        <div class="t">25ms裡面有多少個sample呢?假設你的聲音的sampling rate是16kHz,那25ms的window裡面就有400個sample. 這邊有400個點,有400個數值,你說我直接把這400個數值就拿出來排成一排當作一個向量,這個向量有400微,這個d有400微,可不可以呢?可以,也有人這麼做,但這不是一個特別推薦的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:51.220" id=25:51.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1551">25:51.220</a></div>
+        <div class="t">過去在人民海域風行之前常用的一個東西叫做NFCC,它有39微。我們不會細講NFCC是什麼,你只要知道說,這邊給你25ms的聲音訊號,有一個detection的方法可以把它表示成39微,這個39微的向量叫做NFCC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:15.300" id=26:15.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1575">26:15.300</a></div>
+        <div class="t">近年來一個特別流行的叫做filterbate的output,它有80微,它已經逐漸取代了NFCC了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:24.180" id=26:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1584">26:24.180</a></div>
+        <div class="t">我們今天只取了這個地方的資訊,我們把這25ms裡面的聲音訊號表示成向量,接下來我們會移動這個window,我們會移動這個框框,把它往右移,通常是往右移10個ms。所以這個window和window之間,它們其實是有重疊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.980" id=26:48.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1608">26:48.980</a></div>
+        <div class="t">我們通常往右移的這個移動的距離會移動10ms,所以今天如果說是有1秒鐘的聲音訊號,我們會有多少個frame呢?會有100個frame。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:03.780" id=27:03.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1623">27:03.780</a></div>
+        <div class="t">所以今天你說1秒鐘的話,它會被轉成100個向量,所以這個資料量很大,1秒鐘的話會被轉成100個向量。所以你可以想像說,其實你們向量跟它的每一個鄰居向量和向量間的資訊,其實是頗為相近的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:23.140" id=27:23.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1643">27:23.140</a></div>
+        <div class="t">這個是改進模型節省運算量的其中一個要點。所以這邊就是給大家感覺一下,一段聲音訊號進來,就算只是1秒鐘,它也會被描述成100個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:38.180" id=27:38.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1658">27:38.180</a></div>
+        <div class="t">這些向量有多少dimension呢?它可能可以有400位,可能有39位,可能有80位,取決於你想要用哪一種抽feature,用哪一種表示聲音特徵的方式。如果你想要知道更多有關NLCC跟Fuel Time Bank的細節,請參見蘇格蘭處理的第七章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:57.380" id=27:57.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1677">27:57.380</a></div>
+        <div class="t">這邊我就只用一張圖來說明一下,這些聲音訊號,這些feature是怎麼被抽出來的,只是給大家一些感覺,哪些feature比較複雜,哪些feature比較簡單。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:10.500" id=28:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1690">28:10.500</a></div>
+        <div class="t">一段聲音訊號進來,首先我們會把一個window裡面的聲音訊號做fuel reaction form,得到spectrum,得到動物。那做fuel reaction form這些事情,其實頗為重要,因為聲音的訊號,如果你是看這個訊號,看這個waveform,其實頗為複雜。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:32.820" id=28:32.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1712">28:32.820</a></div>
+        <div class="t">同樣,人聽起來一模一樣的聲音,他的聲音訊號、他的waveform可以非常非常的不同。但spectrogram就不一樣,spectrogram跟聲音訊號之間的關聯性是比較明確的,明確到什麼程度呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.100" id=28:48.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1728">28:48.100</a></div>
+        <div class="t">明確到甚至有人可以練成特別的技能,就是直接讀這個spectrogram就知道它的內容是什麼,這個叫spectrogram reading。我2013年到2014年的時候在NIT visit,NIT的雲團有一個傳統,就是做spectrogram reading。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:05.200" id=29:05.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1745">29:05.200</a></div>
+        <div class="t">他們每中午的下午有一個時段,就是把整個實驗室的人聚集起來,然後就拿出一個評譜,然後大家開始猜說這個評譜的內容是什麼。spectrogram reading聽起來很強,但你也不要想像它是拿出一張紙一看就知道,嗯,這句話是好啊,也沒那麼厲害。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.200" id=29:23.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1763">29:23.200</a></div>
+        <div class="t">通常要猜一個小時左右,不過通常得到的結果都會是對的。你要花很多的時間猜說,這一小段聲音訊號聽起來像是個R嗎?聽起來像是個O嗎?這個聲音訊號聽起來像是個S嗎?聽起來像是個Z嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:38.560" id=29:38.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1778">29:38.560</a></div>
+        <div class="t">然後再把每一段聲音訊號猜測的結果拼湊起來,看看怎樣組成的意思、句子是對的。如果其中有一個詞彙你本來就不知道的話,你就永遠都猜不出來。我們通常不會拿聲音訊號做語音辨識,太難了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:54.240" id=29:54.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1794">29:54.240</a></div>
+        <div class="t">但是拿spectrogram做語音辨識倒不是完全沒有機會,因為有些人類都可以做到,人類都可以看spectrogram知道說它是什麼樣的聲音,所以機器也有機會可以做到。好,但是spectrogram並不是拿來做語音辨識的主流,你通常會把這些spectrogram通過一些filter,這些filter叫做filter bank,它就是一排filter,得到一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:18.240" id=30:18.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1818">30:18.240</a></div>
+        <div class="t">這些filter是怎麼來的呢?這些filter是根據解剖的一些哺乳類的器官和對人類的生學器官的理解所設計出來的filter,這是古聖先賢所設計出來的filter,非常的強,通常改了就是會壞掉,古聖先賢設計出了非常強的filter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:37.880" id=30:37.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1837">30:37.880</a></div>
+        <div class="t">你把spectrogram通過這些filter以後,得到filter bank的output,然後通常會取log,取log這件事你可能覺得只是一個不知道哪裡來的東西,這個部分我不會講,但是如果你熟知聲音訊號的處理的話,你會發現這個log非常非常重要,通常都會取log,很少有人不取log就直接拿去做其他事情,通常都要取log。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:06.760" id=31:06.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1866">31:06.760</a></div>
+        <div class="t">如果你熟悉訊號處理的話,這個log非常的重要,你瞭解訊號處理的話,你會知道說,哇,這古聖先賢的智慧真的是不可思議,取一個log就有無窮的妙用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:18.480" id=31:18.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1878">31:18.480</a></div>
+        <div class="t">從這邊可以知道,Waveform是最簡單的,Spectrogram複雜一點,filter bank的output再複雜一點,NMCC是最複雜的。這些東西我們叫做Acoustic Feature,這些Acoustic Feature哪些比較受歡迎呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:40.080" id=31:40.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1900">31:40.080</a></div>
+        <div class="t">這邊我們來看一下2019年的大趨勢。當然過去,比如說2010年之前,NMCC當然是主流,語音電視就是用NMCC啦,難道你想用別的東西嗎?就是用NMCC啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:55.120" id=31:55.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1915">31:55.120</a></div>
+        <div class="t">那你想說自己想一些什麼新的怪招,都是比較爛的啦,NMCC很強。但是有了Deep Learning以後,大家發現NMCC逐漸有被取代的趨勢。我記得2014年在新加坡的InterSpeech,那時候微軟的鄧力他給了Keynote,他在Keynote裡面他就大聲地說一個大膽的預言,就是拜拜NMCC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.740" id=32:17.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1937">32:17.740</a></div>
+        <div class="t">他說NMCC會越來越少,直到它從我們的視野中完全消失。那我們來看看他的預言是不是對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:26.580" id=32:26.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1946">32:26.580</a></div>
+        <div class="t">現在是2019年統計的結果啦,鄧力說拜拜NMCC過了五年,我們來看看現在的變化如何。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:35.680" id=32:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1955">32:35.680</a></div>
+        <div class="t">有75%的人會用Fuel2Bank的output當作語音電視的輸入,而NMCC現在只剩18%。那Spectrogram跟Wayfone真的是很少用啦,我們發現少於10%的人會想要用Spectrogram跟Wayfone,但是Fuel2Bank的output可以說是已經取代NMCC成為語音電視的主流了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:59.040" id=32:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1979">32:59.040</a></div>
+        <div class="t">所以今天你可以少說一個步驟,Fuel2Bank的output做DCT以後,再加上Delta跟Delta,那這個我們都不講了,反正就變成NMCC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.640" id=33:06.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1986">33:06.640</a></div>
+        <div class="t">那今天不需要那些東西,直接用Fuel2Bank的output就足夠了。好,這個是Aperture的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.840" id=33:14.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=1994">33:14.840</a></div>
+        <div class="t">好,接下來我們知道說你要Intraining Filing就是要收集資料,你要收集那個語音電視系統輸入的聲音訊號輸出文字,你就需要聲音跟文字之間的對應關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:26.560" id=33:26.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2006">33:26.560</a></div>
+        <div class="t">你不只需要收集大量聲音訊號,這些聲音訊號都還要有文字的標註,你才有辦法做語音電視。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:33.840" id=33:33.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2013">33:33.840</a></div>
+        <div class="t">到底會需要多少有標註文字的聲音訊號才足夠讓我們訓練一個語音電視的系統呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:42.000" id=33:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2022">33:42.000</a></div>
+        <div class="t">我們這邊列舉了一些英文上常常用來訓練語音電視系統的語藥庫來跟大家講一下,讓大家有一個基本的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:52.680" id=33:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2032">33:52.680</a></div>
+        <div class="t">在這些語藥庫裡面最小的是Timmy,再來有Word3Journal有80個小時,Switchboard有300個小時,LinguistBeach有960個小時,Feature跟Compass有2000個小時。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:05.440" id=34:05.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2045">34:05.440</a></div>
+        <div class="t">LinguistBeach是免費的,你在網路上就可以直接載到,所以今天你要做一個語音電視系統,也許從960個小時的LinguistBeach是一個很合理的起始點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:15.800" id=34:15.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2055">34:15.800</a></div>
+        <div class="t">Timmy非常的小,它只有4個小時,它就是語音領域的at least,我們知道如果做影像的話,你想的什麼心梗都是先用at least做一下嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:25.800" id=34:25.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2065">34:25.800</a></div>
+        <div class="t">那at least非常非常小,所以你可能十幾分鐘就可以跑完。Timmy它的地位就有點像是語音的at least,你想的什麼心梗你就先在Timmy上試試看,看看它work不work啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:37.280" id=34:37.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2077">34:37.280</a></div>
+        <div class="t">Timmy上做得起來,你再去試別的比較大的Compass。可能會說這個4個小時很小,但是你想想看,如果我們把at least換算成語音的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.280" id=34:49.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2089">34:49.280</a></div>
+        <div class="t">我們把at least當作一個語音的Compass的話,它有多長呢?你可能覺得這句話很奇怪,什麼叫做把at least當作一個語音的Compass?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:57.760" id=34:57.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2097">34:57.760</a></div>
+        <div class="t">我們先來算算看at least裡面,如果我們把它裡面所有的圖片,把它統計一下所有的圖片總共有幾個pixel,總共有幾個pixel呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:09.480" id=35:09.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2109">35:09.480</a></div>
+        <div class="t">at least裡面的圖片是28x28的大小,那它是黑白的,所以它只有一個圈,總共有6萬張的訓練資料,所以有幾個pixel呢?有這麼多的pixel,28x28的大小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.080" id=35:23.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2123">35:23.080</a></div>
+        <div class="t">那每一個pixel它就是一個數值,所以at least的數據量是這麼多。那語音呢?語音是每一秒鐘有16k個sample point,所以每一秒鐘有1萬6千個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:40.080" id=35:40.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2140">35:40.080</a></div>
+        <div class="t">所以如果我們把at least的這個數字除以1萬6,就把這個at least的Compass當作一個語音的Compass來看,它有多長呢?它其實只有49分鐘而已,所以是pixel的四分之一再更小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:55.080" id=35:55.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2155">35:55.080</a></div>
+        <div class="t">那CyberTen呢?比at least的大一點,CyberTen的image是32x32的大小,每一個pixel用三個數字,三個channel來表示,RGB三個channel來表示,有5萬張的訓練資料,所以它的數據量有這麼多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:11.080" id=36:11.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2171">36:11.080</a></div>
+        <div class="t">除以16k,把它當作是一個16kHz的聲音訊號來看的話,它相當於兩小時又四十分鐘的語音的量。所以這個at least跟CyberTen呢?它們其實都還比Tiny還要更小一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:28.080" id=36:28.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2188">36:28.080</a></div>
+        <div class="t">這邊用這個雙引號來代表說,它其實不是語音的Compass,是說我們把這個Compass假想成聲音訊號的話,相當於多少聲音訊號的數據量。那at least跟CyberTen是比語音領域的最小的Compass,Tiny比語音領域的at least還要再更小一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:48.080" id=36:48.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2208">36:48.080</a></div>
+        <div class="t">但是當然我知道說在影像上也有非常大的Compass,比如說ISLVRC,那就是ImageNet的那個Compass。那如果把這個ImageNet的那個Compass換算成語音的話,它有4096個小時那麼多,那是比現在可以輕易載到LibrisPitch還要大四倍了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:09.080" id=37:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2229">37:09.080</a></div>
+        <div class="t">不過如果你看這個大企業,比如說Google跟Facebook它們發表的文章的話,Google的voice search它們在這個文獻上,在它們發表出來的論文裡面說,用了一萬兩千多個小時的聲音訊號,有標注的聲音訊號進行訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:25.080" id=37:25.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2245">37:25.080</a></div>
+        <div class="t">Facebook說,它們拿來辨識Facebook上的video的那個影片系統用超過一萬三千個小時的聲音訊號。不過我要稍微說明一下,這都只是文獻上可以找到的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.080" id=37:41.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2261">37:41.080</a></div>
+        <div class="t">我聽說,對這些大公司而言,它們真的拿來使用的、真的拿來用在它們的產品裡面的系統用的訓練資料,都是它們文獻上的十倍到二十倍以上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:57.080" id=37:57.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2277">37:57.080</a></div>
+        <div class="t">所以這邊用了一萬小時,但是實際上用的資料量很有可能是超過二十萬小時了。但是這個是文獻裡面呈現的結果,實際上用的數據量可能遠比文獻裡面要呈現的還要多個十倍到二十倍左右。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:14.080" id=38:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2294">38:14.080</a></div>
+        <div class="t">接下來我們就來進入語音辨識常用的模型。這邊我們會從兩個不同的觀點來看待我們等一下要講的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:27.080" id=38:27.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2307">38:27.080</a></div>
+        <div class="t">這兩個觀點,一個是從sequence-to-sequence model的角度來看,就是從你最熟知的那一個拿來做很多很多任務的sequence-to-sequence model開始講起,再說它是怎麼一步一步的進行改造。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:44.080" id=38:44.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2324">38:44.080</a></div>
+        <div class="t">我們也會從Hidden Mark of Model的角度講起,看說Hidden Mark of Model跟現有的模型間會有什麼樣的關聯性。今天因為時間有限的關係,我們就只能講走半步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:59.080" id=38:59.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2339">38:59.080</a></div>
+        <div class="t">我預計跟大家分享五個模型。第一個模型叫做Listen-Attent-And-Fail,第二個模型叫做CTC,第三個叫做RNNT。這三個模型應該是今天比較常用的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:14.080" id=39:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2354">39:14.080</a></div>
+        <div class="t">有兩個是比較新的,Neural Transducer 跟 Mocha,是比較新的,來稍微跟大家講一下。今天因為時間的關係,恐怕講第一個模型我們就要請主教來講一下作業了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:26.080" id=39:26.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2366">39:26.080</a></div>
+        <div class="t">我們在講這每一個模型實際的內容之前,我們先來看一下2019年的大趨勢,大家最愛用的模型是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:37.080" id=39:37.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2377">39:37.080</a></div>
+        <div class="t">2019年的大趨勢是這個樣子,有40%的人用LAS,Listen-Attent-And-Fail LAS的模型。實際上LAS這個模型是什麼呢?它就是你所知道的那一個Sequence-to-Sequence Model,腦中浮現的一個Sequence-to-Sequence Model,就是那一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:00.080" id=40:00.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2400">40:00.080</a></div>
+        <div class="t">這個是大家都最知道的、大家最熟悉的,所以難怪採用的是最廣的。40%的人用LAS,24%的人用CTC。有趣的是,LAS加CTC這樣子的想法也是有一席之地,有佔11%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:18.080" id=40:18.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2418">40:18.080</a></div>
+        <div class="t">RNNT可能是一個未來發展的趨勢,不過目前文獻上沒有那麼多,不過我們也會花不少的時間來跟大家講一下RNNT,因為它可能是未來一個非常重要的方式,所以它目前只佔10%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.080" id=40:33.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2433">40:33.080</a></div>
+        <div class="t">這邊有15%是講H&M的Hybrid,所以H&M的Hybrid並不是H&M,它是H&M加Deep Learning。今天做語音辨識,沒有不用Deep Learning的,大概從2013年開始,用Deep Learning的Paper越來越多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:53.080" id=40:53.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2453">40:53.080</a></div>
+        <div class="t">一開始還會分說,這邊都是做Deep Learning的Paper在發表,這邊都是做不是Deep Learning的Paper在發表,你才發現說Deep Learning那邊的Paper,哇靠,人好多啊,然後不是Deep Learning那邊的Paper,人就沒有那麼多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:09.080" id=41:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2469">41:09.080</a></div>
+        <div class="t">不過現在你已經找不到沒有用Deep Learning的Paper,每篇Paper都送Deep Learning,反而是如果有一篇Paper沒有用Deep Learning,圍好多人啊,就會看說這個怎麼那麼奇怪,它到底是怎麼回事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:23.080" id=41:23.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=AIKu43goh-8&t=2483">41:23.080</a></div>
+        <div class="t">所以現在所謂的H&M Hybrid並不是說沒有用Deep Learning,而是說它是把Deep Learning還有加H&M在裡面,這個部分還有佔15%。這個是2019年在文獻上的大趨勢。</div>
+    </div>
+    
+</body>
+</html>   

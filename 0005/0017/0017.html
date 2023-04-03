@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] BERT and its family - Introduction and Fine-tune</h2><a href=https://www.youtube.com/watch?v=1_gRK9EIQpc><img src=https://i.ytimg.com/vi_webp/1_gRK9EIQpc/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=0">00:00.000</a></div>
+        <div class="t">接下來,我們就是要跟大家講一下NLPA領域鼎鼎大名的Bert和他的好朋友們。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:08.480" id=00:08.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=8">00:08.480</a></div>
+        <div class="t">過去在NLPA領域通常是一個任務一個模型,但是今天已經逐漸邁向希望能夠讓機器先general的了解人類的語言以後,再去解各式各樣NLPA的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:25.680" id=00:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=25">00:25.680</a></div>
+        <div class="t">我們今天在NLPA領域一個常見的做法是,我們能不能夠訓練一個模型。這個模型是根據大量的文字訓練出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.560" id=00:35.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=35">00:35.560</a></div>
+        <div class="t">你去網絡上排一大堆文章,這些文章沒有任何標註,可能也跟任何NLPA的任務沒有直接關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:42.620" id=00:42.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=42">00:42.620</a></div>
+        <div class="t">但是我們透過這些大量文字的標註,能不能夠訓練出一個模型,這個模型是可以讀懂人類文字的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.040" id=00:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=51">00:51.040</a></div>
+        <div class="t">當然什麼叫做讀懂,這個我們等一下再講。這個過程往往叫做pre-training,就是我們在讓機器解某個任務之前先訓練一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02.680" id=01:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=62">01:02.680</a></div>
+        <div class="t">接下來針對你想要機器解的某一個特殊任務,你可能可以收集部分少量的資料,接下來你只需要用這些少量的資料去微調你的模型,微調一個可以讀懂人類語言的模型,然後就可以讓機器解各式各樣的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.960" id=01:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=82">01:22.960</a></div>
+        <div class="t">在這個投影片上,你可能有三個任務要解,藍色、綠色、灰色的任務。這三個任務,你只需要把原來的模型再加上一些少少的修改,用有限的只跟某一個任務有關的資料去訓練,期待它就可以得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:39.400" id=01:39.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=99">01:39.400</a></div>
+        <div class="t">這個其實也比較接近人類學習語言的過程。我們知道說,今天要測驗你的英文能力的好壞,你去考個托福亞斯多益,裡面有各式各樣的任務,有聽說讀寫,有各種各樣的提醒,有填空,有選擇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:55.120" id=01:55.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=115">01:55.120</a></div>
+        <div class="t">但是你學習英文的方法,並不是說你去做大量的選擇題,然後最後三號你就學會英文了。而是,你可能是閱讀大量的英文文章,所以你in general的知道、了解每一個詞彙的意思,你只需要做少量的考古題,就可以通過某一個語言能力的檢定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:18.100" id=02:18.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=138">02:18.100</a></div>
+        <div class="t">這個比較像是今天NLP的領域所追求的目標。期待可以訓練一個模型,它真的了解人類的語言,接下來要讓它解各式各樣的任務的時候,只需要稍微微調一下,給它看一點考古題,它就知道怎麼解這些任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:36.860" id=02:36.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=156">02:36.860</a></div>
+        <div class="t">講到這一種pre-trained的model,最知名的就是Bert。常常有人說,NLP的領域今天都是芝麻街,因為這些pre-trained的model很多都以芝麻街的人物來命名。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.100" id=02:54.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=174">02:54.100</a></div>
+        <div class="t">為什麼要放這張照片呢?這個是死肥仔本人,因為女朋友送我一件芝麻街的衣服,希望我在講到Bert的時候穿。不過現在都是線上課程,所以你也不知道我現在穿什麼樣的衣服。所以我特別放這張照片,跟你講說我有一件芝麻街的T恤。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.600" id=03:13.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=193">03:13.600</a></div>
+        <div class="t">這張照片的圖比較小,所以我們把它放大來看,是這個樣子的。這些是芝麻街的人物啦,不過很多知名的pre-trained的model都是用芝麻街的人物來命名。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:25.600" id=03:25.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=205">03:25.600</a></div>
+        <div class="t">最早的是Elmo,Elmo是Embedding from Language Model的縮寫,這個沒有問題。後來又有了我覺得知名度最高的Bert,Bert是Bidirectional Encoder Representation from Transformer的縮寫,這個也沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:44.980" id=03:44.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=224">03:44.980</a></div>
+        <div class="t">到後面我覺得就湊得很硬了,像Ernie,Ernie是Enhanced Representation through Knowledge Integration的縮寫。我第一次知道說今天產生縮寫的時候是可以不用取詞彙的第一個字母的,這根本就是為了要湊Ernie,為湊而湊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.960" id=04:01.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=241">04:01.960</a></div>
+        <div class="t">你根本就是想先想好要用Ernie來命名,再去硬是從你的模型裡面抽一些相關的字母出來就組成Ernie。這個Ernie居然是從Knowledge的第二個字母出來的,今天IE居然是從Integration的第四個字母抽出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:17.180" id=04:17.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=257">04:17.180</a></div>
+        <div class="t">這個非常的硬,但是反正他就是Ernie,Ernie是Bert的好朋友,所以有Bert以後就是要有Ernie。這個藍色的東西是Cookie Monster,沒有人去湊Cookie Monster的模型,Cookie Monster顯然太難湊了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:34.400" id=04:34.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=274">04:34.400</a></div>
+        <div class="t">但是有另外一個藍色的角色,這個角色叫做Grover,也有人湊出了Grover,Grover是Generating Article by Only Viewing Meta-Records。這個也是湊得非常的硬,這個R跟E也不是詞彙的第一個字母,但他湊出了Grover。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:56.400" id=04:56.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=296">04:56.400</a></div>
+        <div class="t">還有人湊Bert and Pails,Bert跟他的好朋友們,這個Pails是Projected Attention Layers的縮寫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.400" id=05:05.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=305">05:05.400</a></div>
+        <div class="t">那我比較在意的是,怎麼沒有人去湊這隻鳥啊?這隻鳥叫做Big Bert,Big Bert明明就非常好湊啊,怎麼會沒有人去湊這隻鳥呢?這個Bert應該是很好湊啊,這個By可以是Bidirectional啊,R可以是很多的Recurrent啊,Recursive啊,Reduce啊,都可以,有很多詞彙可以用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.140" id=05:28.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=328">05:28.140</a></div>
+        <div class="t">D可以是Decoder啊,你可以湊一些什麼Big,就Big就是很大,參數量很多就是Big,Binary,Recursive,Decoder就是Big Bert,我不知道為什麼怎麼沒有人去湊這個Big Bert呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.900" id=05:41.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=341">05:41.900</a></div>
+        <div class="t">不過其實基本上今天還有很多人物啦,那些人物都還沒有模型對應啦,就等著大家來湊梗就是了。還有很多人物還沒有被湊,還有什麼Oscar啊,還有一個公爵啊,那個目前為止都還是沒有人去湊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.140" id=05:56.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=356">05:56.140</a></div>
+        <div class="t">好,那接下來呢,我們這一個飯桶影片裡面要跟大家講三件事。第一件事情呢,是到底今天我們所謂的可以讀人類語言的Portrait Model,它是長什麼樣?它可以做什麼事?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:15.140" id=06:15.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=375">06:15.140</a></div>
+        <div class="t">接下來我們再講說,這樣的Portrait Model假設你手上有一個以後,你怎麼拿它來做Finetune?然後我們最後呢,再講說這樣的Portrait Model要怎麼被訓練出來?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.140" id=06:28.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=388">06:28.140</a></div>
+        <div class="t">好,那這個Portrait Model長什麼樣子呢?那在過去啊,在還沒有Bert和Elmo這一套之前,其實就已經有Portrait Model了。Portrait Model做的事情就是,我們希望把輸入的每一個token表示成一個embedding的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.140" id=06:50.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=410">06:50.140</a></div>
+        <div class="t">這個vector應該包含了這個token的語意,意思比較相近的token,它們應該要有比較相近的embedding,這些embedding裡面的某一些維度應該可以看出跟語意的關聯性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:05.140" id=07:05.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=425">07:05.140</a></div>
+        <div class="t">那像這樣子的Model啊,它們過去在還沒有Elmo和Bert這一套東西之前,通常就是吃一個token輸出一個向量,就結束了。那怎麼樣吃一個token就輸出一個向量呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:23.140" id=07:23.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=443">07:23.140</a></div>
+        <div class="t">那吃一個token輸出一個向量有非常多的做法,舉例來說,你可以有一個table,這個table裡面存的呢,就是每一個你輸入的token都有一個對應的向量,羊有一個向量,貓有一個,狗有一個,雞有一個,豬有一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.140" id=07:38.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=458">07:38.140</a></div>
+        <div class="t">然後再看你輸入什麼樣的token,輸出就是什麼樣的向量。但像過去這樣子的技術,它最大的問題就是只要是同樣的token,那它就會有一樣的向量。像這樣子的模型,是不考慮每一個token它的上下文的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.140" id=07:57.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=477">07:57.140</a></div>
+        <div class="t">我們並不在意一個token它上下文接了什麼樣其他的token,同樣的token就是同樣的embedding,就對應到同樣的向量。那像這樣的技術呢,有很多非常非常知名,今天你路上隨便拉一個人都知道的東西,比如說word to vector,比如說growth。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:17.140" id=08:17.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=497">08:17.140</a></div>
+        <div class="t">那我們這邊呢,就不會再跟大家細講word to vector,growth這些東西了,因為這個很有可能都是你已經知道的事情。除了word to vector跟growth以外,還有什麼樣的技術呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.140" id=08:32.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=512">08:32.140</a></div>
+        <div class="t">如果你今天考慮的是英文,如果你的token是英文的word,那你可能會遇到一個問題,就是英文的word實在太多了,你不可能窮取所有英文的詞彙,每一個詞彙都給它一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.140" id=08:49.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=529">08:49.140</a></div>
+        <div class="t">因為太多英文的詞彙不斷的被創造出來,如果你只是有一個table裡面存了所有英文詞彙的向量,那你永遠會有新的詞彙,你永遠會有table裡面找不到對應向量的詞彙。所以怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.140" id=09:04.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=544">09:04.140</a></div>
+        <div class="t">也許我們可以把model改成輸入是英文的character,輸出就是一個向量。也許你期待你的model,就可以讀這個英文詞彙的自首自根,可以從英文詞彙的自首自根判斷一個沒有看過的詞彙的意思。具有代表性的其中一個模型就是鼎鼎大名的fastex。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:28.140" id=09:28.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=568">09:28.140</a></div>
+        <div class="t">如果是中文,中文還可以有特別的解法。我們說在中文裡面,你可以有邊讀邊。中文裡面,部首也是跟語意有關係的,看到毀部就跟蟲有關,看到水部就跟水有關,看到木部就跟植物有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:48.140" id=09:48.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=588">09:48.140</a></div>
+        <div class="t">我們又說中文,其實每一個詞彙就像是一個圖畫。我們能不能夠就把中文的一個token,中文的一個字,就當作是一個image,比如說中文寫信這個方塊字,它就是一個解析度60x60的image,然後把這個image丟到一個CNN裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.140" id=10:13.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=613">10:13.140</a></div>
+        <div class="t">一看到image處理image,你就知道是CNN嘛。把這個image丟到CNN裡面,期待這個CNN也許可以學會它看到人字邊、看到言,就知道人言為信,輸出信對應的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.140" id=10:29.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=629">10:29.140</a></div>
+        <div class="t">這個不見得能真的做到我剛才講的人言為信、紙歌為文這樣子的理解,它不見得能夠做到這麼高端的理解,但這樣的模型還是可能可以帶來一些幫助,至少它可以認一下詞彙的部首偏旁等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.140" id=10:45.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=645">10:45.140</a></div>
+        <div class="t">這個是過去。像這樣的模型,最大的問題就是它不會考慮每一個token的context。所以,對於這樣的模型來說,養殖狗的狗跟單身狗的狗,它們所對應的向量就是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.140" id=11:03.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=663">11:03.140</a></div>
+        <div class="t">我們知道,雖然這兩個token都是狗,就像這個總裁大人說的,大家聽我說,我們都是狗,但是這兩個狗的意思是不一樣的。在過去還沒有embed這一套想法之前,那時候有人會想說,也許我們就給不同意思的狗,就給它當作不同的token來看待。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.140" id=11:27.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=687">11:27.140</a></div>
+        <div class="t">我們可以給這個狗加一個下標1,給這個狗加一個下標2,因為它們是不同的token,也許就可以給它不同的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.140" id=11:38.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=698">11:38.140</a></div>
+        <div class="t">但是這樣的想法又不是一個非常好的solution,因為這兩個狗雖然它的意思不一樣,但它的意思也是有相關的。為什麼說單身就是狗呢?為什麼不是單身貓呢?為什麼不是單身豬呢?為什麼不是單身雞呢?為什麼不是單身獅子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:53.140" id=11:53.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=713">11:53.140</a></div>
+        <div class="t">不知道為什麼,狗就是有時候會讓人輕見。比如說,我們常常會說,狐群狗黨或豬朋狗友的狗常常有負面的意思,也許是因為這樣單身才會被叫做是狗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.140" id=12:09.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=729">12:09.140</a></div>
+        <div class="t">所以這兩個狗又不是意思完全不一樣,所以把它們當作不同的token也不太對。所以後來就有了contextualized embedding這樣的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.140" id=12:23.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=743">12:23.140</a></div>
+        <div class="t">我們剛才講的Elmo、Bert等等,它們就是contextualized embedding。contextualized embedding跟過去的,我們說word embedding、growth、text text等等模型不同的地方就是,過去的模型吃一個token就要圖一個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.140" id=12:41.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=761">12:41.140</a></div>
+        <div class="t">現在這些contextualized word embedding,Elmo、Bert等等,它們都是吃一整個句子,把一整個句子都看過以後再給每一個tokenembedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.140" id=12:53.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=773">12:53.140</a></div>
+        <div class="t">雖然它們也是一個token就給它一個embedding,但是它們是在看過這個token的上下文,看過這個token的上下文以後再給它embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:01.140" id=13:01.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=781">13:01.140</a></div>
+        <div class="t">所以對machine來說,它就有機會知道這兩個狗因為上下文不同,也許就應該給它不同的embedding。像這樣子contextualized word embedding的model應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:15.140" id=13:15.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=795">13:15.140</a></div>
+        <div class="t">因它的模型的架構,它的network架構應該長什麼樣子呢?其實你只要找到一個模型的架構,它可以給你input一個token的sequence,output一串vector的sequence,就可以了,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.140" id=13:31.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=811">13:31.140</a></div>
+        <div class="t">像這樣的模型怎麼訓練出來,這個我們之後再講。簡單來說,你需要的就是一個像是我們之前在講sequence-to-sequence model的時候的encoder這樣子的東西,你需要的就是一個encoder,把這個encoder輸入一個token的sequence,輸出就是給每一個token一個vector,一個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.140" id=13:51.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=831">13:51.140</a></div>
+        <div class="t">像這樣子的model,今天往往都非常的deep,它沒有很多個layer,6層、12層、24層等等,今天往往是非常的deep。至於network的架構,你可以用LSTM,你也可以用self-attention的layer,比如說Elmo就是用LSTM,那Bert就是用self-attention的layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.140" id=14:13.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=853">14:13.140</a></div>
+        <div class="t">有人可能會覺得說,我們今天既然處理的是文字,比如說詞彙和詞彙之間會遵守某些文法的關係,也許應該要把文法的數考慮進來吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.860" id=14:25.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=865">14:25.860</a></div>
+        <div class="t">所以,你也可以考慮用一些tree-based model,把文法的資訊引扣在你的模型裡面。不過,像這樣子的想法,今天並沒有非常的流行。也許你應該反過來說,這些self-attention的layer跟LSTM,它們在pre-train以後也許就已經學到了文法的資訊,也許不見得需要再給它tree-based model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.400" id=14:49.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=889">14:49.400</a></div>
+        <div class="t">那這個tree-based model,如果你想知道它是什麼的話,你可以參考以下的上課錄影。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:56.240" id=14:56.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=896">14:56.240</a></div>
+        <div class="t">像這樣子的contextualized way of embedding,它確實可以做到同樣的token,不同的意思就給它不同的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.440" id=15:08.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=908">15:08.440</a></div>
+        <div class="t">以下是一個實際的例子,我實際使用了中文的button來讓它處理一些句子以後的結果。我這邊有十個句子,每一個句子裡面都有瓶這個字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.780" id=15:27.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=927">15:27.780</a></div>
+        <div class="t">只是前五個句子的瓶指的是蘋果。今天買了蘋果來吃,進口蘋果平均每公斤下降12.3%,蘋果茶真難喝等等。這前五個句子,它們的瓶指的都是蘋果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.720" id=15:42.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=942">15:42.720</a></div>
+        <div class="t">接下來的五個句子,它們的瓶指的都是那一家公司。它們也都是蘋果,但是指的是蘋果那一家公司,比如蘋果即將下月發表新版iPhone,蘋果獲得新的Face ID的專利等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.280" id=15:57.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=957">15:57.280</a></div>
+        <div class="t">我們現在把這十個句子裡面的瓶,通通把它的embedding抽出來,然後兩兩之間去計算它的相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.180" id=16:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=967">16:07.180</a></div>
+        <div class="t">在演講裡面講的是說,我們把這十個句子裡面的瓶,通通都把它的embedding拿出來,兩兩去算相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.580" id=16:17.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=977">16:17.580</a></div>
+        <div class="t">那你就會發現說,前五個句子的瓶,它們就是比較像,後五個句子的瓶,它們就是比較像。代表機器知道說,這前五個句子的瓶指的跟後五個句子的瓶指的是不同的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:32.520" id=16:32.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=992">16:32.520</a></div>
+        <div class="t">所以它確實可以做到contextualize the word embedding,它確實可以做到同一個詞彙,會有不同的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.300" id=16:40.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1000">16:40.300</a></div>
+        <div class="t">有同學問了一個問題,是因為tree-based model不好寫嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.620" id=16:49.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1009">16:49.620</a></div>
+        <div class="t">我想要問的問題就是說,為什麼今天大家比較少用tree-based model,是不是因為它不好寫的原因?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:00.380" id=17:00.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1020">17:00.380</a></div>
+        <div class="t">當然好不好寫是一個問題,但是如果它非常厲害的話,那自然會有人寫出它的module放到TensorFlow或PyTorch裡面,有人把它寫成module以後,你就好寫了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.220" id=17:14.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1034">17:14.220</a></div>
+        <div class="t">我覺得tree-based model之所以不流行的一個原因是因為,其實當年在經過一番驗證以後,tree-based model好像沒有特別強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.580" id=17:25.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1045">17:25.580</a></div>
+        <div class="t">有了tree-based model,一開始大家會覺得,哇,好潮哦,處理文字就是要考慮文法資訊啊,所以我們就是需要tree-based model啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:36.620" id=17:36.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1056">17:36.620</a></div>
+        <div class="t">但是後來實際上有人拿很多任務來比較tree-based model跟LSTM以後發現,在很多任務上LSTM往往比較強,tree-based model就算有贏,也是小勝沒有大勝。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.760" id=17:51.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1071">17:51.760</a></div>
+        <div class="t">那tree-based model什麼時候最強呢?它在process那種文法結構真的非常清楚的問題的時候會比較強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.700" id=18:03.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1083">18:03.700</a></div>
+        <div class="t">什麼時候你的文法結構會非常清楚、非常嚴謹呢?比如說有人就拿tree-based model去process數學式,如果你今天要learn一個model,這個model輸入就是數學式,輸出是數學式的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.780" id=18:19.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1099">18:19.780</a></div>
+        <div class="t">這個時候tree-based model是可以明顯贏過LSTM的,但是general的任務你只是要做NLI,做一些summarization,做一些QA,結果發現tree-based model並沒有達勝LSTM,這個LSTM往往比較強,所以這就是為什麼tree-based model沒有流行起來的原因。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:39.160" id=18:39.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1119">18:39.160</a></div>
+        <div class="t">今天的流行趨勢就是model越來越大,有點像是在蓋高樓大廈跟金字塔一樣。這個圖有點小,但這個圖上的資訊沒有特別重要,大家可以看一下這個連結就行了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.040" id=18:53.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1133">18:53.040</a></div>
+        <div class="t">一開始Elmo很小,然後有GPT,有BERT,有GPT-2,跟今天的大模型比起來都很小。以前剛有GPT-2的時候大家就覺得,哇,怎麼這麼大,太大了吧,它有上億個參數,好大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.620" id=19:09.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1149">19:09.620</a></div>
+        <div class="t">但是NVIDIA後來出了一個Megatron,它有GPT-2的大概八倍大。後來Microsoft又出了Turing-NLG,它有Megatron的至少兩倍大,所以現在的模型就是變得越來越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.040" id=19:25.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1165">19:25.040</a></div>
+        <div class="t">有同學說,那堆感覺只有大公司可以用。對哦,所以除了讓模型越來越大以外,另外一個方向就是窮人在做的,讓模型變小。BERT非常的巨大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:43.040" id=19:43.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1183">19:43.040</a></div>
+        <div class="t">那我們能不能夠讓模型變小呢?那就有一系列的研究是做窮人做的BERT,窮人用的BERT,窮人的薔薇。比如說有DigitalBERT,TinyBERT,MobileBERT,這一聽就覺得他們是很小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:00.040" id=20:00.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1200">20:00.040</a></div>
+        <div class="t">其中最有名的就是Albert。Albert神奇的地方就是,它跟原來的BERT架構幾乎是一樣的。不一樣的地方是,原來BERT的十二層二十四層通通都是不同的參數,它十二層二十四層都是一樣的參數,而且它的Performance不只沒有掉,還比原來的BERT稍微好了一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.040" id=20:27.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1227">20:27.040</a></div>
+        <div class="t">所以這是個神奇的模型,它叫Albert。我覺得在這系列的模型裡面,Albert是特別知名的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.040" id=20:35.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1235">20:35.040</a></div>
+        <div class="t">那怎麼把模型變小呢?其實現在用來讓這些pre-trained模型變小的技術,這個都是我們之前在機器學習那門課講Network compression的時候講過的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.040" id=20:49.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1249">20:49.040</a></div>
+        <div class="t">比如說Network Pointing、Knowledge Desolation、Parameter Quantization、Architecture Design等等。那我們這邊就不再細講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:58.040" id=20:58.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1258">20:58.040</a></div>
+        <div class="t">那如果你想知道有哪些模型他們用了什麼樣的技術,那我找到一個非常好的Reference,裡面記載了很多各式各樣的模型還有他們壓縮的技術給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.040" id=21:08.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1268">21:08.040</a></div>
+        <div class="t">那這邊我們就不再贅述你在Reference裡面可以找到的東西。除了用一些我們講的Network的壓縮方法讓Network變小以外,在Network的Architecture上面近年來也有一些突破。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.040" id=21:26.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1286">21:26.040</a></div>
+        <div class="t">那這些Architecture的Design,我覺得他們設計的目標都是為了要讓Machine可以讀非常長的Sequence。這些Model本身都是General的,也就是說你不一定只能用在文字上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:43.040" id=21:43.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1303">21:43.040</a></div>
+        <div class="t">但是我認為他們的出現很大一部分來自於今天我們希望我們的Pretrained Model可以讀非常長的句子,可以讀不只一整篇文章,甚至是一整本書這樣子的長度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:58.040" id=21:58.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1318">21:58.040</a></div>
+        <div class="t">所以有了一些Model,它的出現就是為了要處理非常長的Sequence。舉例來說Transformer的XL,過去Transformer也就是像Burke這樣的Model,一次只能讀一串Token,比如說512個Token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.040" id=22:16.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1336">22:16.040</a></div>
+        <div class="t">那Transformer的XL讓Machine可以讀跨Segment的Token。那至於實際上怎麼做,這個我就把文獻留在這邊給大家自己參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.040" id=22:28.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1348">22:28.040</a></div>
+        <div class="t">近年來還有一些新的變化,叫做Reformer或者是Longformer。Reformer跟Longformer他們想做的事情是想要減少Self-Attention所帶來的運算量。我們知道Self-Attention它的運算量是N平方。這個N是什麼?這個N是你的Sequence的長度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:49.040" id=22:49.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1369">22:49.040</a></div>
+        <div class="t">所以隨著你的Sequence越來越長,長到一定地步以後,舉例來說一整本書,也許你要Self-Attention要做N平方這樣的Complexity就會有問題了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:00.040" id=23:00.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1380">23:00.040</a></div>
+        <div class="t">所以有Reformer或Longformer這樣的想法出現,它們存在的目的是為了要減低Self-Attention的Complexity。至於實際上它們是怎麼做的,一樣把文獻留在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:14.040" id=23:14.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1394">23:14.040</a></div>
+        <div class="t">以上這些是Neural Architecture近年來新的進展。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:19.040" id=23:19.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1399">23:19.040</a></div>
+        <div class="t">接下來我們就進入Finetune的部分。我們說我們有一個Pre-trained Model以後,我們希望在這個Pre-trained Model上面再疊一些Test-specific的部分,然後接下來讓這個Model就可以用在特定的NLP任務上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.040" id=23:40.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1420">23:40.040</a></div>
+        <div class="t">那怎麼把Pre-trained Model,也就是輸入一個Token Sequence,輸出一堆Vector Sequence這樣的Model,改造成在所有的NLP的任務上都可以使用呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:51.040" id=23:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1431">23:51.040</a></div>
+        <div class="t">首先我們先來看一下NLP任務的分類,這是我們在前一堂課才剛看過的東西。我們說根據輸入可以分成兩類,根據輸出可以分成四類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.040" id=24:01.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1441">24:01.040</a></div>
+        <div class="t">接下來我們就是要看一下怎麼把Pre-trained Model做一下修改,讓它可以來解這些問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.040" id=24:08.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1448">24:08.040</a></div>
+        <div class="t">我們先看輸入的部分,輸入的部分如果是一個句子,那這個沒有什麼問題,就把一個句子丟到你的Pre-trained Model裡面就結束了。如果是多個句子怎麼辦呢?那今天常見的一個解法是這樣,你有兩個Sentence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:22.040" id=24:22.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1462">24:22.040</a></div>
+        <div class="t">舉例來說,什麼時候你會用到兩個Sentence呢?如果是QA的問題,可能你的Sentence1是Query,你的Sentence2是Document。如果今天是NLI,可能你的Sentence1就是Premise,你的Sentence2就是Hypothesis。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.040" id=24:42.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1482">24:42.040</a></div>
+        <div class="t">那你會在這兩個Sentence之間加上一個特殊的符號叫做SEP,代表說這兩個Sentence不是同一個Sentence,中間給它一個分格的符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.040" id=24:54.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1494">24:54.040</a></div>
+        <div class="t">當然你要讓機器認得這個分格符號的意思,那顯然你今天在訓練你的Pre-trained Model的時候,你是需要給它看過SEP這樣的分格符號的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.040" id=25:05.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1505">25:05.040</a></div>
+        <div class="t">這個我們之後講到Pre-trained Model實際上怎麼Pre-trained出來的時候,再跟大家說明。那接下來就沒有什麼了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:15.040" id=25:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1515">25:15.040</a></div>
+        <div class="t">現在把兩個句子中間的SEP分格,它變成了一個很長的句子,再把這個很長的句子丟到你的Model裡面,Model會把每一個Token抽出Embedding,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.040" id=25:25.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1525">25:25.040</a></div>
+        <div class="t">剛才講的是輸入的部分,輸入的部分我們已經處理完了,接下來看輸出的部分。我們說輸出的部分就是四個可能,我們就把這四個可能一個一個的看過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:38.040" id=25:38.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1538">25:38.040</a></div>
+        <div class="t">第一個可能是輸出一個class,機器讀一整個句子以後輸出一個class。那要怎麼讓機器讀一整個句子以後輸出一個class呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:50.040" id=25:50.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1550">25:50.040</a></div>
+        <div class="t">在原來的BERT的paper裡面,它的解法是這個樣子。你在輸入的時候,要加一個特別的Token叫做CLS。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:00.040" id=26:00.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1560">26:00.040</a></div>
+        <div class="t">那你在Pre-trained的時候,你要告訴機器說看到CLS的Token,就是要產生跟整個句子有關的Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:10.040" id=26:10.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1570">26:10.040</a></div>
+        <div class="t">原來你的Model都是看到一個Token,它產生一個代表這個Token的Embedding。但是現在你希望你的CLS的Token輸入進去的時候,這是一個特殊的符號,這個特殊的符號輸入進去的時候,你的Model的輸出是跟整個句子有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:28.040" id=26:28.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1588">26:28.040</a></div>
+        <div class="t">那至於怎麼實際上做到這件事,講到Pre-trained的時候我們再講。那怎麼讓機器輸出一個class呢?你就把這個跟整個句子有關的Embedding再丟到一個Model裡面去,然後你的Model就做一下分類的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:44.040" id=26:44.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1604">26:44.040</a></div>
+        <div class="t">那證明這個Model是什麼,那就看你要做得多複雜,在原來的Paper裡面這個Model可以,甚至就是一個Linear的Transform就足夠了。那如果你覺得Linear的Transform太簡單,也許你可以說多疊幾個Layer,也完全是可以的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:59.040" id=26:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1619">26:59.040</a></div>
+        <div class="t">那另外一個做法是說,也許你在訓練的時候它就沒有CLS這個Token了,怎麼辦?那你可以說,我今天有一個Text-specific的Model,它就是把所有Token輸出的Embedding都讀進來。比如說這個Text-specific的Model是一個RNN,把這些Embedding都讀進來,然後輸出一個class就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.040" id=27:20.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1640">27:20.040</a></div>
+        <div class="t">或者甚至是說,這些Embedding統統平均起來,直接丟到這個Model裡面輸出是什麼class,也許就結束了。所以這個是處理只要輸出一個class的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.040" id=27:32.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1652">27:32.040</a></div>
+        <div class="t">接下來下一個是,每一個Token都給它一個class。怎麼每一個Token都給它一個class呢?那你就需要有一個Model,這個Model把每一個Token對應的Embedding都吃進去,然後再給每一個Embedding一個class就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:50.040" id=27:50.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1670">27:50.040</a></div>
+        <div class="t">這個Text-specific的Model,比如說它可以是一個LSTM,把這個Token的sequence都讀進來,然後給每一個Token一個class就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:02.040" id=28:02.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1682">28:02.040</a></div>
+        <div class="t">第三個case,怎麼從輸入做copy呢?完全從輸入做copy的任務是沒有那麼多,最經典的就是Extraction-based的QA。Extraction-based的QA需要的就是,你有一篇文章,你有一個問題,你把文章跟問題丟給你的QA Model,你的QA Model就只要輸出兩個integer告訴你。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:28.040" id=28:28.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1708">28:28.040</a></div>
+        <div class="t">到現在告訴你說,現在輸出S這個integer跟E這個integer,代表說我們要從這個文章裡面的第S個word到第E個word把它取出來,就是我們的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:41.040" id=28:41.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1721">28:41.040</a></div>
+        <div class="t">舉例來說,現在假設你的答案是within the cloud,它是在整篇文章裡面的第77個word跟第79個word,那你希望你的Model就是輸出77跟79這兩個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.040" id=28:53.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1733">28:53.040</a></div>
+        <div class="t">那實際上,這樣子的模型是怎麼做到的呢?我們這邊用原來BERT裡面的做法給大家做舉例。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:01.040" id=29:01.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1741">29:01.040</a></div>
+        <div class="t">因為現在是Extraction-based的QA,所以你會input一個question跟一個document。然後接下來,你的test-specific的Model在BERT裡面,在BERT拿來做QA的時候,你的test-specific的Model就是兩個vector,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.040" id=29:23.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1763">29:23.040</a></div>
+        <div class="t">它是專門負責偵測star的位置。怎麼偵測star的位置呢?假設這個紅色的vector是專門偵測star的位置,那就把這個紅色的vector拿出來,跟document這邊輸出的這個黃色的每一個vector做搭花袋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.040" id=29:40.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1780">29:40.040</a></div>
+        <div class="t">然後做完搭花袋以後,你再過一個solve-max,然後看看誰的值最大,他就是star的point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:47.040" id=29:47.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1787">29:47.040</a></div>
+        <div class="t">這是原來BERT的做法。如果你想要做得更複雜一點也可以,你可能會覺得說,一個向量太簡單了吧,也許我需要一個LSTM把它讀過去,然後再決定說哪一個位置是star的point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.540" id=30:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1801">30:01.540</a></div>
+        <div class="t">也可以,這完全取決於你要怎麼設計你的test-specific的Model。這邊只是給大家一個例子說,如果是Extraction的QA,如果你用BERT的話,有這樣子的做法,在原始的BERT的paper裡面提供了這樣的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:15.040" id=30:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1815">30:15.040</a></div>
+        <div class="t">這個藍色的向量代表了偵測answer結束的位置的test-specific的Model。那就把藍色的向量跟這些黃色的向量,藍色的向量跟這些黃色的向量做搭花袋,然後再通過solve-max,然後看說這個位置的分數最高,那這個位置就是endpoint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:33.540" id=30:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1833">30:33.540</a></div>
+        <div class="t">那我們就知道說star是第二個word,end是第三個word,所以star是第二個word,end是第三個word,所以第二第三就是我們的answer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:43.540" id=30:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1843">30:43.540</a></div>
+        <div class="t">最後一個問題是,怎麼讓這樣子pre-trained的Model輸出general的sequence呢?也就是說,怎麼把這種pre-trained的Model用在sequence-to-sequence的Model裡面呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.540" id=30:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1859">30:59.540</a></div>
+        <div class="t">最簡單的做法,最直覺的做法是這樣。我們現在這些Model就是input一串word sequence,input一串token sequence,會給每一個token一個embedding。這樣子的東西正好適合拿來做sequence-to-sequenceModel裡面的encoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:16.540" id=31:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1876">31:16.540</a></div>
+        <div class="t">那你的test-specificModel就是你的decoder,然後接下來呢,你就跟一般的sequence-to-sequenceModel一樣做一下attention,然後讓你的test-specific的Model也就是decoder輸出一串token sequence就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.540" id=31:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1890">31:30.540</a></div>
+        <div class="t">但這樣的壞處就是,你這個test-specific的Model就沒有pre-trained到。一般呢,我們今天test-specific的label data會很少,不會太多。所以我們會期待說,今天test-specific的Model越小越好,希望整個模型裡面多數的參數都是pre-trained過。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:52.540" id=31:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1912">31:52.540</a></div>
+        <div class="t">但如果像今天這個投影片這樣的設計,就代表說你的整個decoder完全沒有pre-trained過,那也許這不一定是最好的設計。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.540" id=32:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1921">32:01.540</a></div>
+        <div class="t">那今天如果你想要把pre-trained的Model用在sequence-to-sequenceModel裡面,其實還有另外一個可行的做法。這個是version2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:14.540" id=32:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1934">32:14.540</a></div>
+        <div class="t">這個version2是怎麼做的呢?現在這個W1、W2是你的input sequence,那我們希望今天這個Model呢,它可以input一個sequence以後,output一個general的sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.540" id=32:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1948">32:28.540</a></div>
+        <div class="t">怎麼用pre-trainedModel做到這件事情呢?你先把W1、W2你的input sequence丟到pre-trainedModel以後,接下來你給它一個特別的符號。你給機器一個特別的符號,它看到這個特別的符號以後呢,它輸出一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:44.540" id=32:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1964">32:44.540</a></div>
+        <div class="t">這個vector,你再給它丟到一個text-specific的Model,然後讓它output產生出來的sequence的第一個詞彙。接下來你再把這個詞彙丟到你的Model裡面,然後接下來呢,再產生一個embedding,再把這個embedding丟到text-specific的Model裡面,再產生下一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.540" id=33:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1984">33:04.540</a></div>
+        <div class="t">因為現在你的Model會的東西就是,給它一個token,output一個embedding。所以你今天確實可以先給它一個分格的符號,先給它一個特別的token,讓它輸出現在要輸出句子的第一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:18.540" id=33:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=1998">33:18.540</a></div>
+        <div class="t">然後再把這個token當作輸入,再把W3這個token當作輸入,讓它輸出下一個token。然後這個同樣的process呢,就反覆下去。現在產生W4這個token,把W4這個token再拿進來,一樣可以產生一個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:36.540" id=33:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2016">33:36.540</a></div>
+        <div class="t">再丟到text-specific的Model裡面,又產生W5,然後就跟原來的sequence-to-sequence Model一樣,再把W5丟進去,直到text-specific Model產生end of sentence,就結束你的decoding的process。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:49.540" id=33:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2029">33:49.540</a></div>
+        <div class="t">所以今天我們其實也有機會把pre-trained Model當作decoder來使用。剛才講的是怎麼把pre-trained Model加上一些東西以後,讓它可以使用在各式各樣不同的NLP的任務裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:08.540" id=34:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2048">34:08.540</a></div>
+        <div class="t">我們講說NLP的任務,input有兩種可能,output有四種可能,乘起來總共八種可能,那我們剛才通通都已經講過了。好,那接下來呢,假設你有一些text-specific的label data,你怎麼來finetune你的模型呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:27.540" id=34:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2067">34:27.540</a></div>
+        <div class="t">這邊有兩個做法。第一個做法是,你的pre-trained Model它出生以後,它訓練完以後就固定住了,它變成一個feature的extractor。你輸入一個token sequence,抽出一大堆的feature,抽出一大堆embedding,它們代表了某些feature,把這些feature丟到text-specific的部分,我們指finetune text-specific的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.540" id=34:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2089">34:49.540</a></div>
+        <div class="t">另外一個做法是,我們把pre-trained Model跟text-specific的部分接在一起,在finetune的時候,我們不只會調text-specific的部分,我們也會finetune pre-trained Model。也就是你把pre-trained的部分跟text-specific的部分合起來,當作是我們有一個巨大的Model,我們用這個巨大的Model來解決我們想要解的NLP的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:15.540" id=35:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2115">35:15.540</a></div>
+        <div class="t">一般如果你直接train這樣巨大的Model,往往很容易overfit,但是今天因為你的這個Model的本體,最主要的部分已經pre-trained過了,它不是隨機的,它的參數不是隨機初始化的,text-specific的部分的參數是隨機初始化的,pre-trained的部分它不是隨機初始化的,所以也許就沒有那麼容易overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:39.540" id=35:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2139">35:39.540</a></div>
+        <div class="t">那今天在文獻上看來,finetune整個Model往往你得到的performance會比把pre-trained Model固定住,只trained text-specific Model performance還要好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:52.540" id=35:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2152">35:52.540</a></div>
+        <div class="t">但是如果我們現在採取的是finetune整個Model的話,會遇到什麼樣的問題呢?你可能會遇到這樣子的問題。我們現在有三個不同的任務,每個任務裡面我們都有pre-trained好的Model,你把它加上text-specific的部分,接下來你finetune整個Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:14.540" id=36:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2174">36:14.540</a></div>
+        <div class="t">所以這些pre-trained的Model在不同的任務裡面,通過finetune以後,它們都會變得不一樣。本來都是一樣的,所以我這邊用黃色來表示,但是有三個不同的任務,所以訓練完以後,一個就變藍色的,一個就變綠色的,一個就變灰色的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:30.540" id=36:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2190">36:30.540</a></div>
+        <div class="t">每一個任務你都需要存一個新的這樣子的Model,這樣子的Model今天往往非常的巨大。我們剛才已經在前面在講這個Model大小的時候說,有的Model居然有上億個參數,十億個參數,太大了,這些Model太大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:49.540" id=36:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2209">36:49.540</a></div>
+        <div class="t">你說NLP有這麼多的任務,每個任務你都要存一個巨大的Model,也許是行不通的。所以怎麼辦呢?所以有了adapter的概念。也就是說,我們今天想要調這個pre-trained的Model,但我們能不能只調pre-trained的Model的一部分就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:08.540" id=37:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2228">37:08.540</a></div>
+        <div class="t">我們在pre-trained的Model裡面加入一些layer,這些layer叫做adapter,我用apt來代表adapter的縮寫,刻意把它畫得比較小一點,代表說這些layer是整個模型中非常少量的一小部分的參數而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:27.540" id=37:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2247">37:27.540</a></div>
+        <div class="t">我們在fine-tune的時候,你也許會想要調pre-trained的模型,但是我們只調adapter的部分。pre-trained的模型大部分是維持原樣的,你會發現它顏色沒有變,但是只有adapter的顏色變了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:44.540" id=37:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2264">37:44.540</a></div>
+        <div class="t">那你到時候在存你的模型的時候,假設你現在有三個任務要解,但是你並不需要把所有的參數都存下來,你只需要存原來模型裡面不會被調的部分,還有每一個pre-trained Model裡面的adapter就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:02.540" id=38:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2282">38:02.540</a></div>
+        <div class="t">所以這樣你需要儲存的參數量就會比每一個任務都要存一個完整的pre-trained Model還要少得多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:15.540" id=38:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2295">38:15.540</a></div>
+        <div class="t">這邊就是給大家一個文獻上的例子來參考,像這樣子的研究也有好幾篇文章了,每篇文章的解法不見得是都不太一樣,至於怎麼樣解才是好的,這個其實還是一個值得研究的問題,這邊只是舉一個例子給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:33.540" id=38:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2313">38:33.540</a></div>
+        <div class="t">舉例來說在ICML19的paper裡面,它是怎麼做的呢?它們的做法是說,這個是transformer的layer,我們知道今天pre-trained Model的主體往往就是一層一層的self-attention,也就是transformer的layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:48.540" id=38:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2328">38:48.540</a></div>
+        <div class="t">你可能會先做一些self-attention,然後通過一些feedforward的network,然後它把adapter插在feedforward network的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:05.540" id=39:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2345">39:05.540</a></div>
+        <div class="t">pre-trained的時候是沒有adapter的,adapter是準備fine-tune的時候才插進去,fine-tune的時候只調adapter的參數,其他部分,什麼attention的參數,這邊feedforward的layer都是不動的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:19.540" id=39:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2359">39:19.540</a></div>
+        <div class="t">adapter就很簡單,有一個feedforward的network,然後有一個bottleneck的layer,又有另外一個feedforward的network,它的參數量會把它調到不會太多,會盡量讓它的參數量少一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:34.540" id=39:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2374">39:34.540</a></div>
+        <div class="t">那在這篇ICM的paper裡面呢,它確實提供了非常好的結果,這個結果是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:41.540" id=39:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2381">39:41.540</a></div>
+        <div class="t">這個accuracy的delta代表說,這個0代表說,如果我們fine-tune整個model的時候會得到的performance,因為今天往往fine-tune整個pre-trained model得到的performance是最好的,所以fine-tune整個pre-trained model的結果呢,我們當作是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.540" id=39:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2399">39:59.540</a></div>
+        <div class="t">那如果你只fine-tune一部分的參數,fine-tune整個model的performance往往會掉一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:04.540" id=40:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2404">40:04.540</a></div>
+        <div class="t">那藍色這條線呢,是如果我們只fine-tune最後幾個layer,就是越往右邊參數是越多啦,越往右邊參數是越多,所以橫軸呢代表我們fine-tune的時候的參數量,越往右邊參數是越多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:22.540" id=40:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2422">40:22.540</a></div>
+        <div class="t">所以最左邊這個點代表只fine-tunetop layer,這是fine-tune最後一個layer跟倒數第一個layer,這是fine-tune最後一個layer倒數第一個layer跟倒數第二個layer,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:32.540" id=40:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2432">40:32.540</a></div>
+        <div class="t">那fine-tune的參數越多,當然performance越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:36.540" id=40:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2436">40:36.540</a></div>
+        <div class="t">那如果你只fine-tune最後一個layer,雖然你已經fine-tune很多參數了,但是performance相較於fine-tune整個model,相較於0這邊是有一個非常顯著的差距的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:45.540" id=40:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2445">40:45.540</a></div>
+        <div class="t">那今天這個藍色的range啊,其實代表的是,就在這個paper裡面有試驗了各式各樣不同的任務,我們今天用這種pre-trained model就是要解多個任務,這才是pre-trained model的目標。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:57.540" id=40:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2457">40:57.540</a></div>
+        <div class="t">那它是把不同的任務,它得到的performance的drop呢,都呈現出來,就是這個藍色的區間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:05.540" id=41:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2465">41:05.540</a></div>
+        <div class="t">但是如果使用adapter的概念的話,你就會發現說,如果我們只train adapter,那你當然還是可以調整一下adapter的參數,但如果只train adapter的話,performance呢不會掉太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:19.540" id=41:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2479">41:19.540</a></div>
+        <div class="t">但是至於這個adapter實際上要怎麼設計,要插在任務的哪裡,我覺得這個其實是還有蠻大的研究的空間的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:27.540" id=41:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2487">41:27.540</a></div>
+        <div class="t">這邊是要講說,我們在剛才講到目前為止啊,我們都是讓整個model輸入token sequence,然後最後一個layer,你可能有12個layer、24個layer,然後就吐出每一個token所對應的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:50.540" id=41:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2510">41:50.540</a></div>
+        <div class="t">然後再把這個embedding丟到downstream的task裡面,丟到specific的layer裡面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:58.540" id=41:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2518">41:58.540</a></div>
+        <div class="t">但是還有另外一個做法,因為也許每一層所抽取的資訊是不一樣的,所以有一個做法呢,是把不同層的feature把它weighted上起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:10.540" id=42:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2530">42:10.540</a></div>
+        <div class="t">也就是說,第一層的feature同樣是輸入同一個token,第一層的feature呢,輸出一個x1,第二層呢,輸出一個x2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:20.540" id=42:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2540">42:20.540</a></div>
+        <div class="t">我們可以把x1跟x2呢,把它weighted上起來,把w1一個weight乘上x1,加上w2乘上x2,得到一個新的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:29.540" id=42:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2549">42:29.540</a></div>
+        <div class="t">這個embedding同時綜合了第一層的輸出跟第二層輸出的資訊,然後再把這個綜合每一層資訊的embedding丟到接下來的任務裡面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:40.540" id=42:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2560">42:40.540</a></div>
+        <div class="t">那這個w1、w2應該要設多少呢?這個w1、w2可以是學出來的,你可以把w1、w2視為是test specific layer參數的一部分,test specific layer的參數你需要在接下來NLP的任務裡面,接下來的downstream task裡面被學出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:00.540" id=43:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2580">43:00.540</a></div>
+        <div class="t">那這個w1、w2可以跟著這個test specific layer一起被學出來。所以你就是說,不同的layer也許抽了不同的feature,他們關注不同的資訊,那在不同的任務,我們就可以使用不同layer抽取出來的不同資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:18.540" id=43:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2598">43:18.540</a></div>
+        <div class="t">那哪一個layer比較重要?用w1、w2來決定。那這個是weighted feature的方法。那為什麼我們需要這些pre-trained model呢?一個簡單的回答是,這些pre-trained model真的帶給我們比較好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:36.540" id=43:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2616">43:36.540</a></div>
+        <div class="t">我們剛才在上一堂課看到了groo這個東西,groo這個東西是要檢測一個模型in general了解人類語言的能力。那在這個圖上,黑色這條線代表人類的能力,而每一個color代表一個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:57.540" id=43:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2637">43:57.540</a></div>
+        <div class="t">這邊每一個點代表這個模型在不同任務上的performance,藍色這條線,虛線,代表不同任務的平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:08.540" id=44:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2648">44:08.540</a></div>
+        <div class="t">那這是最早有elmo以後的結果,那後來就有GPT-2,有BERT等等,有各式各樣的模型,直到今天,有了這種pre-trained模型以後,這個機器的performance居然已經跟人不相上下了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:25.540" id=44:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2665">44:25.540</a></div>
+        <div class="t">所以這顯示,groo在有了這種pre-trained model以後,在groo這個codebase上確實帶來了一些進步。當然,不敢說就是有這樣的模型以後,機器它到底它理解語言的能力真的跟人類相提並論了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:41.540" id=44:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2681">44:41.540</a></div>
+        <div class="t">但至少在groo這個codebase上,在groo這個benchmark codebase上,機器它得到performance居然已經可以跟人相提並論了。那還有很多其他的分析是你可以在文獻上找到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:55.540" id=44:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2695">44:55.540</a></div>
+        <div class="t">有很多其他的文章會告訴我們說為什麼pre-trained model比較好,這種pre-trained model帶給我們什麼樣的好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:03.540" id=45:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2703">45:03.540</a></div>
+        <div class="t">那這邊我是引用一篇ENNLP2019的paper,在這篇paper裡面其實做了非常完整的分析,那我這邊只截了兩個實驗結果來給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:14.540" id=45:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2714">45:14.540</a></div>
+        <div class="t">第一個實驗結果是,今天在training的時候,有沒有pre-trained到底會帶給我們什麼樣的不同?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:22.540" id=45:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2722">45:22.540</a></div>
+        <div class="t">在這個圖上有這個虛線,虛線代表的是這個沒有pre-trained的結果,也就是我們有一個巨大的模型,這個巨大的模型直接random initialize,然後train from scratch。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:38.540" id=45:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2738">45:38.540</a></div>
+        <div class="t">那實現呢?實現代表有pre-trained,我們先pre-trained好一個model,在接下來的downstream test我們只微調這個模型的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:47.540" id=45:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2747">45:47.540</a></div>
+        <div class="t">那你會發現說這些實現,他們在training的時候他們的loss都非常快下降,而這些虛線,他們在training的時候他們的loss比較難下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:01.540" id=46:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2761">46:01.540</a></div>
+        <div class="t">而且這些模型其實他們的大小是一樣的,就這些虛線,就沒有pre-trained的model跟有pre-trained的model他們的模型大小是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:10.540" id=46:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2770">46:10.540</a></div>
+        <div class="t">照理說這個模型大小是一樣的,他們去fit那個training data的能力會不會其實是差不多的呢?他們模型是一樣的啊,所以capacity這個模型的能力應該是一樣的啊,所以fit training data也許是差不多容易的啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:24.540" id=46:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2784">46:24.540</a></div>
+        <div class="t">但是如果你是隨機開始的話,你會發現說你很難fit你的training data,如果你已經有pre-trained,那你fit training data就會容易很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:35.540" id=46:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2795">46:35.540</a></div>
+        <div class="t">好,那這個是training的時候。那我們知道說光看training的performance也不見得有用,光看training的loss可以壓得很低,搞不好是overfitting啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:46.540" id=46:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2806">46:46.540</a></div>
+        <div class="t">那如果testing的時候如何呢?machine generalized的能力在他沒有看過的測試資料的狀況下是如何呢?那這篇paper裡面也分析了一下machine generalized的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:01.540" id=47:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2821">47:01.540</a></div>
+        <div class="t">那怎麼看machine generalized的能力呢?那你可以看一下我的課程的youtube頻道裡面有講過一些deep learning的theory,那裡面有講了一些分析machine generalized能力的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:16.540" id=47:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2836">47:16.540</a></div>
+        <div class="t">那這邊呢,就只是給大家看一下這個文件上面所做出來的一些觀察。那這個圖啊,代表什麼意思呢?這個圖代表說你給模型不同參數的時候,模型的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:34.540" id=47:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2854">47:34.540</a></div>
+        <div class="t">那你可能會說,這個圖怎麼得到的啊?因為我們今天一個模型裡面的參數不是有上億個嗎?那你怎麼能夠用兩個dimension就來表示你的模型呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:46.540" id=47:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2866">47:46.540</a></div>
+        <div class="t">那像這樣的圖怎麼畫出來的,就請參考過去上課的錄影。那假設我們現在,就假設大家知道說,啊,你的模型我們可以用二維來表示啦,然後這邊每一個點,這個二維的平面上XY軸所形成的這個平面上每一個點就代表了不同的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:06.540" id=48:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2886">48:06.540</a></div>
+        <div class="t">然後這個海拔的高度,就代表這個模型呢,可以在訓練資料上面的loss。好,那在訓練的時候,起始點,假設你今天是train from scratch,你的起始點呢,在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:19.540" id=48:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2899">48:19.540</a></div>
+        <div class="t">有random,隨機的參數的話,起始點在這個地方。經過一番訓練以後呢,它就跑到endpoint,就是這個地方。好,那如果今天有fine-tune的話,你的起始點在這個地方,那你的endpoint呢,在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:34.540" id=48:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2914">48:34.540</a></div>
+        <div class="t">那這兩個圖有什麼不同呢?你想,不是都是從一個地方開始,一個地方結束,一個地方開始,一個地方結束,都找到一個比較低的地方嗎?結束在一個類似這個local minima的地方嗎?結束在一個local minima的地方嗎?那它們有什麼不同呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:51.540" id=48:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2931">48:51.540</a></div>
+        <div class="t">我們從一個local minima的這個山凹的寬度啊,其實有機會看出一個模型generalize的能力。這個山凹的寬度跟模型generalize能力的關係是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:09.540" id=49:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2949">49:09.540</a></div>
+        <div class="t">如果今天這個山凹越陡峭,那模型generalize的能力往往就越差。如果這個山凹這個盆地越平滑,那你的模型一般化的能力就會越強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:24.540" id=49:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2964">49:24.540</a></div>
+        <div class="t">所以,如果你今天跑到的那個local minima,就這兩個點同樣是local minima,如果你跑到那個local minima是一個峽谷,那一般化的能力會比較差。如果你跑到這個local minima是一個盆地,那一般化的能力往往就比較強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:54.540" id=49:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=1_gRK9EIQpc&t=2994">49:54.540</a></div>
+        <div class="t">那看看大家有沒有問題想要問的呢?</div>
+    </div>
+    
+</body>
+</html>   

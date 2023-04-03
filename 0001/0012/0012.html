@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【生成式AI】大模型 + 大資料 = 神奇結果？(3/3)：另闢蹊徑 — KNNLM</h2><a href=https://www.youtube.com/watch?v=V-3ksGCjehU><img src=https://i.ytimg.com/vi_webp/V-3ksGCjehU/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=0">00:00.000</a></div>
+        <div class="t">這邊要介紹一個不一樣的想法,就是你今天看到文獻上都是模型越來越大,但是你也可以想想,還有沒有其他不一樣的做法?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:10.760" id=00:10.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=10">00:10.760</a></div>
+        <div class="t">這邊就介紹一個不一樣的做法,這個做法叫做KNNLM。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:17.400" id=00:17.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=17">00:17.400</a></div>
+        <div class="t">在講KNNLM之前,也許我應該先幫大家很快複習一下一個一般的語言模型,比如說你要用Transformer來做這個語言模型的時候,實際上它是怎麼運作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.480" id=00:31.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=31">00:31.480</a></div>
+        <div class="t">不過這個在課程錄影裡面其實也是有的,這邊只是幫大家複習一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.880" id=00:35.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=35">00:35.880</a></div>
+        <div class="t">我們其實已經知道說,我們今天在做文字接龍的時候,其實語言模型真正做的就是一個分類的問題。比如說你輸入臺灣大,接下來接什麼字呢?把它當作一個分類的問題,把下一個字預測出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.680" id=00:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=52">00:52.680</a></div>
+        <div class="t">對一個Transformer來說,它是怎麼解這樣的問題的呢?你就是把臺灣大輸入給這個Transformer,接下來它會吐出一個項量,這個項量我們用H來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06.440" id=01:06.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=66">01:06.440</a></div>
+        <div class="t">然後就根據這個H來做一個分類的問題,把這個H過一個Linear Transformer,過一個Softmax,然後接下來得到一個機率分布。然後你再根據這個機率分布去Sample出你的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24.440" id=01:24.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=84">01:24.440</a></div>
+        <div class="t">那這個就是一般的語言模型運作的方式。輸入一個Sequence,然後你有一個Transformer,它會讀過這個Sequence產生一個Representation,一個項量,然後把這個項量過Linear Transform,然後把它當作一個分類的問題,預測出你要的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:41.560" id=01:41.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=101">01:41.560</a></div>
+        <div class="t">這個是一般的語言模型。那KNLM就採取了一個不太一樣的做法,我們來看看它是怎麼做的。KNLM保留的地方是,你輸入一個Sequence,要輸出一個項量這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.840" id=01:54.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=114">01:54.840</a></div>
+        <div class="t">當然這個模型仍然是要Learn的啦,這邊你仍然需要一個Transformer把一個Sequence讀進去,吐出一個項量出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:03.080" id=02:03.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=123">02:03.080</a></div>
+        <div class="t">所以在這個圖上,這個圖是從KNLM原始的論文所截出來的,在這個圖上,這個部分放在藍底的部分就是你Input給Transformer的文字,然後這個紅色的部分就是Transformer輸出的Representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:20.360" id=02:20.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=140">02:20.360</a></div>
+        <div class="t">那這邊不一定要Transformer啦,你用一般的RNN、LSDN,其實也都可以達到類似的效果,Input一個Sequence,Output一個Representation。所以這個圖上呢,藍底的部分是你模型的輸入,這個紅色的銅底的部分是這個Representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:37.720" id=02:37.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=157">02:37.720</a></div>
+        <div class="t">那只有這個Representation是沒辦法得到結果的,如果是原來的Language Model的話,這個Representation要過一個Linear Transform,再預測出下一個字是哪一個字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:48.760" id=02:48.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=168">02:48.760</a></div>
+        <div class="t">但是如果是KNLM的話,它的做法是這樣,先把訓練資料裡面所有的句子,所有句子的前半段不管是多少字,通通都拿出來,丟到這個模型裡面,讓它OutputRepresentation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.200" id=03:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=188">03:08.200</a></div>
+        <div class="t">你就把所有你訓練資料裡面的句子,通通做一樣的事情,得到一堆Representation,還有這些Representation應該要對應到的詞彙是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:19.400" id=03:19.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=199">03:19.400</a></div>
+        <div class="t">然後接下來呢,你就把這個Representation跟訓練資料裡面所有的Representation,去計算一個相似度,或計算一個Distance,計算一個距離。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.320" id=03:31.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=211">03:31.320</a></div>
+        <div class="t">這邊這個數字是153,就代表這個距離。所以這個向量跟這個向量距離是遠的,跟這三個向量距離是近的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:40.520" id=03:40.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=220">03:40.520</a></div>
+        <div class="t">把比較近的K個向量挑出來,然後再看看這K個向量本來對應的字應該是什麼。第一個向量對應的是Hawaii,第二個對應的是Illinois,第三個對應的也是Hawaii。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:53.080" id=03:53.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=233">03:53.080</a></div>
+        <div class="t">接下來把這個距離轉成一個機率分佈,這個就是看你要怎麼轉都可以啦。反正就把這個距離Normalize過後,變成一個機率的分佈。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.040" id=04:04.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=244">04:04.040</a></div>
+        <div class="t">比如說Hawaii距離最近的給它0.7分,Illinois給它0.2分,Hawaii給它0.1分。再把Hawaii出現兩次加起來,你就得到Hawaii是0.8,Illinois是0.2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:16.280" id=04:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=256">04:16.280</a></div>
+        <div class="t">這個就是你的模型輸出的機率。這個方法有點像是說,我們來看在訓練資料裡面有哪些相似的representation,再看這些representation應該對應到什麼樣的詞彙,用一個example-based的方法來找出你的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:37.400" id=04:37.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=277">04:37.400</a></div>
+        <div class="t">這樣的好處就是,假設有一些非常冷僻的詞彙,你的模型甚至不需要去真的記住那些冷僻的詞彙,它在輸出的時候甚至不需要把那些冷僻的詞彙當作分類的一個類別,只要你的訓練資料裡面有那個冷僻的詞彙,都有機會讓模型可以輸出那個冷僻的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.080" id=04:59.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=299">04:59.080</a></div>
+        <div class="t">今天實際上在使用的時候,這一招在文獻上看起來是沒辦法單獨用的,都還是要搭配原來的語言模型。原來我們會把這個項量過一個linear transform,得到一個分類的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:12.920" id=05:12.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=312">05:12.920</a></div>
+        <div class="t">現在在文獻上看起來,單是用KNN-LM是不夠的,你還是要用一般的語言模型也得到一個機率,然後把KNN-LM的機率跟一般的語言模型得到的機率,做一下weighted sum,做一下加權平均,得到你最終的結果。這樣得到的語言模型的結果才會是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:35.080" id=05:35.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=335">05:35.080</a></div>
+        <div class="t">KNN-LM還有另外一個好處就是,你放在這裡的資料不一定只是你的訓練資料,你可以把所有你找得到的資料通通都丟在這裡,只要你有足夠的運算資源,把他們這邊這些項量都算出來,你有足夠的運算資源去計算這個KNN-LM,這邊的資料可以比一般訓練language model的時候用的資料更為巨大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:04.520" id=06:04.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=364">06:04.520</a></div>
+        <div class="t">KNN-LM其實是一個比較早期的論文,它其實是2019年發表的。過去在KNN-LM之前也有蠻類似的概念,叫做pointer network。我們今天就先不講pointer network,這也是過去的三段錄影有講過的東西,我就把影片的連結放在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=385">06:25.000</a></div>
+        <div class="t">那KNN-LM會帶來什麼樣神奇的結果呢?因為這是2019年的論文,所以當時用的資料量還有模型今天看起來其實都蠻小的。但是我們可以看一下KNN-LM它有什麼樣的好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.720" id=06:39.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=399">06:39.720</a></div>
+        <div class="t">我們先看一下紅色這一條線,這個縱軸是propensity。propensity是什麼?你就想成propensity是跟你在做文字接龍的時候預測的正確率乘反比的一個東西,所以propensity越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.040" id=07:02.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=422">07:02.040</a></div>
+        <div class="t">propensity越小代表你在做文字接龍的時候,你的模型的預測越正確。實際上propensity的公式就留給大家自己再做一下搜尋,自己再做一下學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.640" id=07:15.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=435">07:15.640</a></div>
+        <div class="t">總之你就記得說這個值越小代表你的language model做文字接龍的時候,它的能力越好。紅色這一條線是100M的資料量,100M的token來訓練你的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.040" id=07:34.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=454">07:34.040</a></div>
+        <div class="t">如果你是用3B的token數目來訓練你的模型,當然你得到的結果會更好一點。但是KNN-LM神奇的地方是,你訓練的時候只用了100M的資料,因為KNN-LM還是要訓練一個模型去把一個input的sequence變成representation,所以它還是需要一些訓練資料的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.080" id=07:57.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=477">07:57.080</a></div>
+        <div class="t">但是除此之外,到時候你給KNN-LM算distance的那些資料可以遠比你的訓練資料還要大。所以這邊的橫軸是什麼?這邊的橫軸就是拿來給KNN-LM做nearest neighbor算distance時候的資料量,你的資料量可以從0一直到3個billion那麼多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.160" id=08:21.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=501">08:21.160</a></div>
+        <div class="t">那你發現說你外加的資料越多,KNN-LM它表現的結果就越好。雖然KNN-LM只用了100M的token來做訓練,但是只要你外加的資料多到3個billion那麼多,它可以比直接拿3個billion的資料來訓練模型得到的結果還要更好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.840" id=08:44.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=524">08:44.840</a></div>
+        <div class="t">那這個就是KNN-LM可以帶來的一個好處。你不需要真的用非常大量的資料去訓練你的KNN-LM,KNN-LM也可以有好的表現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.120" id=08:56.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=536">08:56.120</a></div>
+        <div class="t">那右邊這個圖是什麼?右邊這個圖其實是說橫軸是指你的資料量,你拿來給KNN-LM算distance的資料量越來越多的時候,那如果你要得到最好的結果的時候,這個浪達的值應該要設多少?浪達的值是什麼意思?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:12.920" id=09:12.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=552">09:12.920</a></div>
+        <div class="t">我剛才講說,KNN-LM沒有辦法單獨被使用,它必須要跟一個一般的language model得到的機率做interpolation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.760" id=09:22.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=562">09:22.760</a></div>
+        <div class="t">那這個浪達指的是KNN-LM它output的那個機率的權重有多大,那這個值越大就代表說KNN-LM在最後做決定的時候,最終輸出的那個機率的時候,KNN-LM扮演的角色越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.840" id=09:38.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=578">09:38.840</a></div>
+        <div class="t">那你在做k-nearest neighbor的時候,可以算distance的資料越多,那KNN-LM那邊輸出的機率就越準,那這個時候KNN-LM可以給的權重就越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.640" id=09:51.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=591">09:51.640</a></div>
+        <div class="t">這個圖,這個浪達是要告訴我們說,當你可以給KNN-LM算distance的資料越多的時候,KNN-LM它算出來的結果就越精確。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:02.200" id=10:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=602">10:02.200</a></div>
+        <div class="t">KNN-LM這個模型,你會發現,我剛才講了它的好些好處,那它怎麼沒有紅起來呢?它現在在做check GPD的時候,怎麼不適用KNN-LM呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:16.280" id=10:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=616">10:16.280</a></div>
+        <div class="t">因為它有一個顯而易見的問題,就是它在使用的時候,在influence的時候,太花時間了。哪一步驟花時間呢?算distance這個步驟花時間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:28.440" id=10:28.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=628">10:28.440</a></div>
+        <div class="t">你在這裡需要一個非常大的database,你需要把你模型輸出的representation跟database裡面的representation去算相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.720" id=10:37.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=637">10:37.720</a></div>
+        <div class="t">當然,這些representation、database裡面的representation可以事先算好,但是算相似度這件事情必須是模型在influence的時候直接現場做的,而這個步驟可能會非常地花時間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.880" id=10:53.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=653">10:53.880</a></div>
+        <div class="t">所以右邊這個圖是文件上的結果,橫軸是這個模型每秒鐘可以生出多少個token,所以越往右就代表這個模型的速度越快。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:06.040" id=11:06.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=666">11:06.040</a></div>
+        <div class="t">縱軸是我們剛才看過的propensity,數值越小代表模型文字接龍做得越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:11.880" id=11:11.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=671">11:11.880</a></div>
+        <div class="t">NLM是一般的language model,雖然它的propensity比較高,代表它文字接龍做得沒有KNNLM好,但是你會發現說它的速度比較快,它每秒可以處理三千個以上的token,而KNNLM每秒處理不到三百個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:32.680" id=11:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=692">11:32.680</a></div>
+        <div class="t">所以你知道說KNNLM它的速度只有一般language model的十分之一,如果你現在都已經嫌棄GPT-3或是嫌棄Chair-GPT跑得不夠快的話,換成KNNLM,它的速度是Chair-GPT的十倍慢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.480" id=11:49.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=709">11:49.480</a></div>
+        <div class="t">這個你能夠接受嗎?太慢了吧!所以就有很多人開發各式各樣的方法,細節就留給大家自己再去研究,開發各式各樣的方法,想辦法去加速KNNLM。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.080" id=12:03.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=723">12:03.080</a></div>
+        <div class="t">還有另外一個跟KNNLM很像的模型,這個是DeepMind的Retro,從它的名字你大概可以猜測它在做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.880" id=12:13.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=733">12:13.880</a></div>
+        <div class="t">Retro是Retrieve Enhanced Transformer,像這種模型它的好處就是它可以回答一些需要記憶的能力,跟理解沒有什麼關係,需要十倍才能答對的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.480" id=12:27.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=747">12:27.480</a></div>
+        <div class="t">在DeepMind那篇paper裡面就展示了一個Retro這樣的結果,假設你input的數字是π等於3.14,然後後面大串數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.120" id=12:36.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=756">12:36.120</a></div>
+        <div class="t">你叫一般的一個CBN的模型去得到這個結果,它得不出正確的結果。其實CBN的模型很強了,它前兩個數字居然是對的,後面才開始錯起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:49.400" id=12:49.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=769">12:49.400</a></div>
+        <div class="t">Retro厲害的地方就是它可以完全記得π小數點下面很多位數的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.600" id=12:56.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=776">12:56.600</a></div>
+        <div class="t">對它來說,為什麼它記得呢?它就是去搜尋得到的結果,它並沒有真的記得π的數字,它是去查找了它手上的資料以後,去翻了一下書以後,翻到π的數字,然後再把那些數字貼出來給你看而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.080" id=13:13.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=V-3ksGCjehU&t=793">13:13.080</a></div>
+        <div class="t">所以這個就是Canon LM或Retro這種模型的好處,它可以不用讓模型浪費時間去處理一些你需要記憶才能夠答對的問題,讓模型可以專注在一些其他理解的任務上面。</div>
+    </div>
+    
+</body>
+</html>   

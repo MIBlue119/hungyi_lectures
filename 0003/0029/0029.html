@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】概述增強式學習 (Reinforcement Learning, RL) (二) – Policy Gradient 與修課心情</h2><a href=https://www.youtube.com/watch?v=US8DFaAZcp4><img src=https://i.ytimg.com/vi/US8DFaAZcp4/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGDcgPyh_MA8=&rs=AOn4CLAyzAJu9jeVfajfI7LSd3e5xzC83g></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=0">00:00.000</a></div>
+        <div class="t">整理&字幕由Amara.org社區提供</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=30">00:30.000</a></div>
+        <div class="t">整理&字幕由Amara.org社區提供</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00.000" id=01:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=60">01:00.000</a></div>
+        <div class="t">在剛才我們講的那個例子裡面,Space Invader它有向左、向右跟開火三個action。假設你希望它今天還有一個可能的action是,可能的狀況是不向左也不向右也不開火就留在原地的話,那你必須要把這件事情也當作一個action,當機器來選。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.000" id=01:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=80">01:20.000</a></div>
+        <div class="t">那不希望它做A的意思就是希望它去做其他的action,比如說你不希望它向左,那就是向右、開火都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.000" id=01:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=89">01:29.000</a></div>
+        <div class="t">那有同學問說,可以在一個環境同時決定想做的動作與不想做的動作嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:36.000" id=01:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=96">01:36.000</a></div>
+        <div class="t">可以,你可以說在某一個環境下,我想要開火然後不想要向右,那它就會開火的分數非常非常大,非常想開火,然後不想向右就是向右的分數非常非常小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:52.000" id=01:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=112">01:52.000</a></div>
+        <div class="t">那你今天action是隨機sample的嘛,所以action你給那個observation的時候每次決定的action其實也不會是一樣的,但是這些action的分數會決定它出現的可能性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:04.000" id=02:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=124">02:04.000</a></div>
+        <div class="t">所以假設你說非常想要開火、非常不想向右,那就想要開火的分數很大,想要開火的機率就會變得很高,那向右的機率就會變得很低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:13.000" id=02:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=133">02:13.000</a></div>
+        <div class="t">同學問說,actor做A1的話會有正的分數,那希望最大化所有action的分數的話,為什麼不用乘負號?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:43.000" id=02:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=163">02:43.000</a></div>
+        <div class="t">不好意思,我其實沒有完全理解這個問題。我們並不是要最大化所有action的分數,我們要最大化的是所有的action執行完之後,我們可以得到正的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=179">02:59.000</a></div>
+        <div class="t">我們並不是要最大化所有action的分數,我們要最大化的是所有的action執行完之後,我們可以得到正的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:29.000" id=03:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=209">03:29.000</a></div>
+        <div class="t">好,那我們就繼續吧。講到目前為止,你可能覺得跟supervised learning沒有什麼不同,那確實就是沒有什麼不同。接下來真正的重點是在我們怎麼定義A上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:52.000" id=03:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=232">03:52.000</a></div>
+        <div class="t">接下來的重點就是怎麼定義A了。先講一個最簡單的,但是其實是不正確的版本,這個其實也是助教的sample code的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:07.000" id=04:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=247">04:07.000</a></div>
+        <div class="t">這個不正確的版本是怎麼做的呢?這個不正確的版本是這個樣子的。首先,我們還是需要收集一些訓練資料,就是需要收集S跟A的pair。怎麼收集這個S跟A的pair呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=264">04:24.000</a></div>
+        <div class="t">你需要先有一個actor,這個actor去跟環境做互動,它就可以收集到S跟A的pair。這個actor是哪裡來的呢?你可能覺得很奇怪,我們今天的目標不就是要訓練一個actor嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:38.000" id=04:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=278">04:38.000</a></div>
+        <div class="t">那你就說,你需要拿一個actor去跟環境做互動,然後把這個actor的S跟A記錄下來,那這個actor是哪裡來的呢?你先把這個actor想成就是一個隨機的actor好了。它就是一個隨機的東西,看到S1,然後它執行的行為就是亂七八糟的,就是隨機的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=299">04:59.000</a></div>
+        <div class="t">但是我們會把它在每一個S執行的行為A通通都記錄下來。通常我們在這個收集資料的話,你不會只把actor跟環境做一個episode,通常會做多個episode,然後期待你可以收集到足夠的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.000" id=05:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=321">05:21.000</a></div>
+        <div class="t">比如說在助教sample code裡面,可能就是跑了五個episode,然後才收集到足夠的資料。所以我們就是去觀察某一個actor它跟環境互動的狀況,把這個actor它在每一個observation執行的action都記錄下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:40.000" id=05:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=340">05:40.000</a></div>
+        <div class="t">接下來,我們就去評價每一個action它到底是好還是不好。評價完以後,我們就可以拿我們評價的結果來訓練我們的actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.000" id=05:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=352">05:52.000</a></div>
+        <div class="t">怎麼評價呢?我們剛才有說,我們會用A這個東西來評價在每一個state,我們希不希望我們的actor採取某一個行為。最簡單的評價方式是,假設在某一個state S1,我們執行了A1,然後得到reward R1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:13.000" id=06:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=373">06:13.000</a></div>
+        <div class="t">那reward如果是正的,也許就代表這個action是好的。那如果reward是負的,也許就代表這個action是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=385">06:25.000</a></div>
+        <div class="t">那我們就把這個reward R1 R2當作是A。A1就是R1,A2就是R2,A3就是R3,AN就是RN。那這樣等同於你就告訴machine說,如果我們執行完某一個action A1,那得到的reward是正的,那這就是一個好的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.000" id=06:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=405">06:45.000</a></div>
+        <div class="t">你以後看到S1就要執行A1。如果今天在S2執行A2得到reward是負的,就代表A2是不好的A2,所以以後看到S2的時候就不要執行A2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:59.000" id=06:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=419">06:59.000</a></div>
+        <div class="t">那這個version0它並不是一個好的版本。為什麼它不是一個好的版本呢?因為你用這個方法,你把A1設為R1,A2設為R2,這個方法認出來的network,它是一個短視近利的actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:23.000" id=07:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=443">07:23.000</a></div>
+        <div class="t">它就是一個只知道會一時爽的actor,它完全沒有長程規劃的概念。怎麼說呢?因為我們知道說,每一個行為其實都會影響互動接下來的發展。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:39.000" id=07:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=459">07:39.000</a></div>
+        <div class="t">也就是說,actor在S1執行A1得到R1,這個並不是互動的全部,因為A1影響了我們接下來會看到S2,S2會影響到接下來會執行A2,也影響到接下來會產生R2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.000" id=07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=477">07:57.000</a></div>
+        <div class="t">所以A1也會影響到我們會不會得到R2。所以每一個行為並不是獨立的,每一個行為都會影響到接下來發生的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:14.000" id=08:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=494">08:14.000</a></div>
+        <div class="t">而且,我們今天在跟環境做互動的時候,有一個問題叫做reward delay。什麼是reward delay呢?就是有時候你需要犧牲短期的利益,以換取更長程的目標。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:31.000" id=08:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=511">08:31.000</a></div>
+        <div class="t">如果在下圍棋的時候,如果你有看天龍八部的時候,你就知道說,虛竹在破解真龍棋局的時候毒死自己一筷子,讓自己被殺了很多次以後,最後反而贏了整局棋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.000" id=08:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=524">08:44.000</a></div>
+        <div class="t">如果是在Space Invaders的遊戲裡面,你可能需要先左右移動一下進行瞄準,然後射擊,才會得到分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=534">08:54.000</a></div>
+        <div class="t">而左右移動這件事情是沒有任何reward的,左右移動這件事情得到的reward是0,只有射擊才會得到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:03.000" id=09:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=543">09:03.000</a></div>
+        <div class="t">但是並不代表左右移動是不重要的,我們會先需要左右移動進行瞄準,那我們的射擊才會有效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=551">09:11.000</a></div>
+        <div class="t">所以有時候我們會需要犧牲一些近期的reward,而換取更長程的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.000" id=09:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=558">09:18.000</a></div>
+        <div class="t">所以今天假設我們用version 0,那會發生什麼事呢?會發生說,今天Machine只要是採取向左跟向右,它得到的reward會是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=569">09:29.000</a></div>
+        <div class="t">如果它採取開火,它得到的reward才會是正的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:40.000" id=09:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=580">09:40.000</a></div>
+        <div class="t">那這樣Machine就會學到,它只有瘋狂開火才是對的,因為只有開火這件事才會得到reward,其他行為都不會得到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=589">09:49.000</a></div>
+        <div class="t">所以其他行為都是不被鼓勵的,只有開火這件事是被鼓勵的。那version 0就只會學到瘋狂開火而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:58.000" id=09:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=598">09:58.000</a></div>
+        <div class="t">那version 0是助教的範例程式,那這個當然也是可以執行的啦,只是它的結果不會太好而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:05.000" id=10:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=605">10:05.000</a></div>
+        <div class="t">那助教範例程式之所以是version 0是因為,我不知道為什麼這個version 0好像是大家,如果你自己在implement RL的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=613">10:13.000</a></div>
+        <div class="t">你特別容易犯的錯誤,你特別容易拿自己implement的時候就直接使用version 0,但是得到一個很差的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.000" id=10:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=621">10:21.000</a></div>
+        <div class="t">所以接下來怎麼辦呢?我們開始正式進入RL的領域,真正來看policy gradient是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.000" id=10:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=629">10:29.000</a></div>
+        <div class="t">所以我們需要有version 1,在version 1裡面,A1它有多好,不是在取決於R1,而是取決於A1之後所有發生的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.000" id=10:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=644">10:44.000</a></div>
+        <div class="t">我們會把執行完A1以後,所有得到的reward,R1、R2、R3到RN,通通集合起來,通通加起來,得到一個數值叫做G1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:57.000" id=10:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=657">10:57.000</a></div>
+        <div class="t">然後我們會說A1就等於G1,我們拿這個G1來當作評估一個action好不好的標準。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=667">11:07.000</a></div>
+        <div class="t">剛才是直接拿R1來評估,現在不是,拿G1來評估。把接下來所有發生的R通通加起來,拿來評估A1的好壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.000" id=11:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=677">11:17.000</a></div>
+        <div class="t">因為我們執行完A1以後就發生這麼一連串的事情嘛,那這麼一連串的事情加起來也許就可以評估A1到底是不是一個好的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.000" id=11:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=687">11:27.000</a></div>
+        <div class="t">所以以此類推,A2它有多好呢?就把執行完A2以後所有的R、R2到RN通通加起來,得到G2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:37.000" id=11:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=697">11:37.000</a></div>
+        <div class="t">那A3它有多好呢?就把執行完A3以後所有的R通通加起來,就得到G3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:47.000" id=11:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=707">11:47.000</a></div>
+        <div class="t">所以把這些東西通通都加起來,那這些這個G叫做cumulated reward,叫做累積的reward,把未來所有的reward加起來來評估一個action的好壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:01.000" id=12:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=721">12:01.000</a></div>
+        <div class="t">那像這樣的方法聽起來就合理多了,所以這個G是cumulated reward。那G是什麼呢?G就是GT是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:10.000" id=12:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=730">12:10.000</a></div>
+        <div class="t">就是從T這個時間點開始,我們把RT一直加到RN全部合起來,就是cumulated reward,GT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.000" id=12:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=740">12:20.000</a></div>
+        <div class="t">那我們用這個cumulated reward來評估一個action的好壞。好,那當我們用cumulated reward以後,我們就可以解決version0遇到的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=751">12:31.000</a></div>
+        <div class="t">因為你可能向右移動以後進行瞄準,接下來開火就打中外星人,那這樣向右這件事情它也有accumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.000" id=12:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=761">12:41.000</a></div>
+        <div class="t">雖然向右這件事情沒有立即的reward,假設A1是向右,那R1可能是0,但接下來可能會因為向右這件事導致有瞄準導致有打到外星人,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:51.000" id=12:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=771">12:51.000</a></div>
+        <div class="t">那cumulated reward就會是正的,那我們就會知道說其實向右也是一個好的action,這個是version1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:00.000" id=13:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=780">13:00.000</a></div>
+        <div class="t">但是你仔細想一想,會發現version1好像也有點問題。有什麼樣的問題呢?這個假設這個遊戲非常的長,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:11.000" id=13:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=791">13:11.000</a></div>
+        <div class="t">你把RN歸功於A1,好像不太合適吧。當我們採取A1這個行為的時候,立即有影響的是R1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=803">13:23.000</a></div>
+        <div class="t">接下來有影響到R2,接下來有影響到R3,那假設這個過程非常非常的長的話,那我們說因為有做A1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=812">13:32.000</a></div>
+        <div class="t">導致我們可以得到RN,這個可能性應該很低吧,也許得到RN的功勞不應該歸功於A1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.000" id=13:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=823">13:43.000</a></div>
+        <div class="t">所以怎麼辦呢?有第二個版本的cumulated reward,我們這邊用G'來表示cumulated reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.000" id=13:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=834">13:54.000</a></div>
+        <div class="t">我們會在R前面乘一個discount factor,這個discount factorγ,你會設一個小於1的值,可能會設比如說0.9或0.99之類的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:06.000" id=14:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=846">14:06.000</a></div>
+        <div class="t">所以這個G1'相較於G1有什麼不同呢?G1是R1加R2加R3,那G1'是R1加γR2加γ²R3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.000" id=14:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=858">14:18.000</a></div>
+        <div class="t">就是距離採取這個action越遠,我們γ平方向就越多,所以R2距離A1一步就成個γ,R3距離A1兩步就成γ²。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.000" id=14:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=870">14:30.000</a></div>
+        <div class="t">那這樣一直加到RN的時候,RN對G1'就幾乎沒有影響力了,因為γ乘了非常非常多次嘛,γ是一個小於1的值,就在你設0.9。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.000" id=14:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=879">14:39.000</a></div>
+        <div class="t">0.9的比如說十次方,那其實值也很小啦,所以你用這個方法就可以把離A1比較近的那些reward給它比較大的權重,離A1比較遠的那些reward給它比較小的權重。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:53.000" id=14:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=893">14:53.000</a></div>
+        <div class="t">所以我們現在有一個新的A,這個評估action好壞的這個A,我們現在用G1'來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:03.000" id=15:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=903">15:03.000</a></div>
+        <div class="t">那它的式子可以寫成這個樣子,這個GT'就是summation over N等於T到N,然後我們把RN乘上γ的N減T次方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:14.000" id=15:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=914">15:14.000</a></div>
+        <div class="t">所以離我們現在採取的action越遠的那些reward,它的γ就變成越多次,它對我們的G1'的影響就越小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:24.000" id=15:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=924">15:24.000</a></div>
+        <div class="t">這是第二個版本。聽到這邊,你是不是覺得合理多了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:30.000" id=15:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=930">15:30.000</a></div>
+        <div class="t">我們來看看大家有沒有問題要問的。有同學說,怎麼有點像蒙地卡羅。不錯哦,等一下會講到蒙地卡羅。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.000" id=16:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=960">16:00.000</a></div>
+        <div class="t">請問一個大括號是一個episode,還是這樣藍色框住的多個大括號是一個episode?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.000" id=16:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=975">16:15.000</a></div>
+        <div class="t">好,一個大括號不是一個episode哦,一個大括號是我們在這一個observation執行這一個action的時候,這個是一筆資料,它不是一個episode。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:30.000" id=16:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=990">16:30.000</a></div>
+        <div class="t">episode是很多次的observation跟很多次的action,才合起來才是一個episode。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:45.000" id=16:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1005">16:45.000</a></div>
+        <div class="t">有一個同學問說,G1需不需要做標準化之類的動作?這個問題太棒了,為什麼呢?因為這個就是version3。好,那我們就繼續講version3吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:01.000" id=17:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1021">17:01.000</a></div>
+        <div class="t">這邊還有一個問題是,越早的動作就會累積到越多的分數嗎?越晚的動作累積的分數就越少?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:18.000" id=17:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1038">17:18.000</a></div>
+        <div class="t">沒錯,是,在這一個設計的情境裡面,是,越早的動作就會累積到越多的分數。但是這個其實也是一個合理的情境,因為你想想看,比較早的那些動作對接下來的影響比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:35.000" id=17:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1055">17:35.000</a></div>
+        <div class="t">到遊戲的終局,沒什麼外星人可以殺了,你可能做什麼事對結果影響都不大,所以比較早的那些observation,他們的動作是我們可能需要特別在意的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.000" id=17:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1066">17:46.000</a></div>
+        <div class="t">不過像這種A要怎麼決定呢?有很多種不同的方法。如果你不想要比較早的動作action比較大,你完全可以改變這個A的定義。事實上,不同的RL的方法其實就是在A上面下文章,有不同的定義A的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.000" id=18:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1083">18:03.000</a></div>
+        <div class="t">看來仍然不適合用在圍棋之類的遊戲,畢竟圍棋這種遊戲只有結尾才有分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.000" id=18:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1096">18:16.000</a></div>
+        <div class="t">好,這是一個好問題。我們現在講的這些方法,到底能不能夠處理這種結尾才有分數的遊戲呢?也不是不行,其實也是可以的。假設今天只有RN有分數,其他通通都是0,那會發生什麼事?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:40.000" id=18:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1120">18:40.000</a></div>
+        <div class="t">那會發生說,今天我們採取了一連串的action,只要最後贏了,這一串的action都是好的。如果輸了,這一連串的action通通都算是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:54.000" id=18:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1134">18:54.000</a></div>
+        <div class="t">而你可能會覺得這樣做,感覺train network應該會很難train吧?確實很難train,但是就我所知,最早的那個版本的AlphaGo是這樣train的。很神奇,它就是這樣做的,它裡面有用到這樣子的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:12.000" id=19:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1152">19:12.000</a></div>
+        <div class="t">當然還有一些其他的方法,比如說value network等等,這個等一下也會講到。最早AlphaGo有採取這樣子的技術來做學習,它有試著採取這樣的技術,看起來也是學得起來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:24.000" id=19:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1164">19:24.000</a></div>
+        <div class="t">拿預估的目差當reward。有一個同學說,其實AlphaGo可以拿預估的目差當reward,那你要有一個辦法先預估目差,那你才拿它來當reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.000" id=19:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1184">19:44.000</a></div>
+        <div class="t">有沒有辦法事先預估我們接下來會得到多少的reward呢?有,這個在之後的版本裡面會有這樣的技術,但我目前還沒有講到那一塊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:55.000" id=19:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1195">19:55.000</a></div>
+        <div class="t">好,那我們接下來就講version 3。version 3就是像剛才同學問的,要不要做標準化呢?要。為什麼呢?因為好或壞是相對的啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.000" id=20:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1212">20:12.000</a></div>
+        <div class="t">怎麼說好或壞是相對的呢?假設今天在這個遊戲裡面,你每次採取一個行動的時候,最低分就預設是10分,那你其實得到10分的reward根本算是差的啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:29.000" id=20:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1229">20:29.000</a></div>
+        <div class="t">就好像說,今天你說你在某一門課得到60分,這個叫做好或不好還是不好呢?沒有人知道,因為那要看別人得到多少分數啊。如果別人都是40分,你是全班最高分,那你很厲害。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.000" id=20:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1242">20:42.000</a></div>
+        <div class="t">如果別人都是80分,你是全班最低分,那就很不厲害嘛。所以reward這個東西是相對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.000" id=20:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1249">20:49.000</a></div>
+        <div class="t">所以如果我們只是單純的把G算出來,你可能會遇到一個問題,假設這個遊戲裡面從永遠都是拿到正的分數,每一個行為都會給我們正的分數,只是有大有小的不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:03.000" id=21:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1263">21:03.000</a></div>
+        <div class="t">那你這邊G算出來通通都會是正的,有些行為其實是不好的,但是你仍然會鼓勵你的model去採取這些行為。所以怎麼辦?我們需要做一下標準化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:15.000" id=21:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1275">21:15.000</a></div>
+        <div class="t">這邊先講一個最簡單的方法,就是把所有的G'都減掉一個b。這個b在RL的文線上通常叫做baseline。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:27.000" id=21:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1287">21:27.000</a></div>
+        <div class="t">這個跟我們作業的baseline有點不像,但是反正在RL的文線上就叫做baseline就對了。我們把所有的G'都減掉一個b,目標就是讓G'有正有負。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.000" id=21:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1299">21:39.000</a></div>
+        <div class="t">特別高的G'讓它是正的,特別低的G'讓它是負的。但是這邊會有一個問題就是,那要怎麼樣設定這個baseline呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:51.000" id=21:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1311">21:51.000</a></div>
+        <div class="t">我們怎麼設定一個好的baseline讓G'有正有負呢?這個我們在接下來的版本裡面還會再提到,但目前為止我們先講到這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:03.000" id=22:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1323">22:03.000</a></div>
+        <div class="t">有一個同學說,需要一個比較好的heuristic function。對,需要一個。就是說,在下圍棋的時候,假設今天你的reward非常的sparse,那你可能會需要一個好的heuristic function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:20.000" id=22:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1340">22:20.000</a></div>
+        <div class="t">如果你有看過最原始的那個深藍的那篇paper,就是在G7下圍棋打爆人類之前,現在已經在西洋棋上打爆人類了嘛,那個就叫深藍嘛。深藍就有蠻多heuristic function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:34.000" id=22:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1354">22:34.000</a></div>
+        <div class="t">它就不是只有下到遊戲的中盤才得到reward,中間會有蠻多的狀況它都會得到reward的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:43.000" id=22:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1363">22:43.000</a></div>
+        <div class="t">好,那接下來剛才講的是大概念,接下來就會實際告訴你說policy gradient是怎麼操作的。那你可以仔細讀一下助教的程式,助教就是這麼操作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:59.000" id=22:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1379">22:59.000</a></div>
+        <div class="t">首先呢,你要先random初始化,隨機初始化你的actor,你就給你的actor一個隨機初始化的參數,叫做θ0。然後接下來呢,你進入你的training iteration,假設你要跑大T一個training iteration。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:18.000" id=23:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1398">23:18.000</a></div>
+        <div class="t">好,那你就拿你現在手上有的actor,一開始是θ0,一開始他什麼都不會,他採取的行為都是隨機的,當然他會越來越好。你拿你的actor去跟環境做互動,那你就得到一大堆的S跟A。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:36.000" id=23:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1416">23:36.000</a></div>
+        <div class="t">你就把他互動的過程記錄下來,得到這些S跟A。那接下來你就要進行評價,你用A1到A2來決定說,這些action到底是好還是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:48.000" id=23:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1428">23:48.000</a></div>
+        <div class="t">你先拿你的actor去跟環境做互動,收集到這些觀察,接下來你要進行評價,看這些action是好的還是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:55.000" id=23:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1435">23:55.000</a></div>
+        <div class="t">那你真正需要在意的地方,你最需要把它改動的地方,就是在評價這個過程裡面。那助教程式這個A就直接設成immediate reward,那你寫著要改這一段,你才有可能得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:09.000" id=24:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1449">24:09.000</a></div>
+        <div class="t">好,設完這個A以後,就結束了,你就把loss定義出來,然後update你的model,這個update的過程就跟gradient descent是一模一樣的,你會去計算大L的gradient,前面乘上learning rate,然後拿這個gradient去update你的model,就把θi-1update成θi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:31.000" id=24:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1471">24:31.000</a></div>
+        <div class="t">但是這邊有一個神奇的地方是,一般的training,在我們到目前為止的training,data collection都是在for回圈之外的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:43.000" id=24:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1483">24:43.000</a></div>
+        <div class="t">比如說,我有一堆資料,然後把這堆資料拿來做training,拿來updatemodel很多次,然後最後得到一個收斂的參數,然後拿這個參數來做testing。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.000" id=24:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1494">24:54.000</a></div>
+        <div class="t">但在RL裡面不是這樣,你發現收集資料這一段居然是在for回圈裡面的。假設這個for回圈,你打算跑400次,那你就得收集資料400次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:11.000" id=25:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1511">25:11.000</a></div>
+        <div class="t">或者是我們用一個圖像化的方式來表示,這個是你收集到的資料,就是你觀察了某一個actor,他在每一個state執行的action,然後接下來你給予一個評價,要用什麼評價,要用哪一個版本,這個是你自己決定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:28.000" id=25:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1528">25:28.000</a></div>
+        <div class="t">你給予一個評價,說每一個action是好或不好。你有了這些資料、這些評價以後,拿去訓練你的actor。你拿這些評價,可以定義出一個loss,然後你可以更新你的參數一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:42.000" id=25:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1542">25:42.000</a></div>
+        <div class="t">但是有趣的地方是,你只能更新一次而已。一旦更新完一次參數以後,接下來你就要重新去收集資料了。更新一次參數以後,你就要重新收集資料,才能更新下一次參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:01.000" id=26:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1561">26:01.000</a></div>
+        <div class="t">這就是為什麼RLR往往的訓練過程非常花時間。收集資料這件事情,居然是在復活圈裡面的。你每次更新完一次參數以後,你的資料就要重新再收集一次,再去更新參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.000" id=26:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1577">26:17.000</a></div>
+        <div class="t">更新完一次以後,又要再重新收集資料。如果你參數要更新400次,那你的資料就要收集400次。這個過程顯然非常花時間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:28.000" id=26:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1588">26:28.000</a></div>
+        <div class="t">那你接下來就會問說,為什麼會這樣呢?為什麼我們不能夠一組資料就拿來update模型update400次,然後就結束了呢?為什麼每次update完我們的模型參數以後,update完network參數以後,就要重新再收集資料呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.000" id=26:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1607">26:47.000</a></div>
+        <div class="t">這邊一個比較簡單的比喻是,一個人的食物可能是另外一個人的毒藥。這些資料是由SEDA i-1所收集出來的,這是SEDA i-1跟環境互動的結果,這個是SEDA i-1的經驗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:09.000" id=27:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1629">27:09.000</a></div>
+        <div class="t">這些經驗可以拿來更新SEDA i-1,可以拿來update SEDA i-1的參數,但它不一定適合拿來update SEDA i-1的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:22.000" id=27:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1642">27:22.000</a></div>
+        <div class="t">或者是我們舉一個具體的例子,這個例子來自奇魂的第八集。大家看過奇魂吧,我應該就不需要解釋奇魂的劇情了吧。這個是靜騰光,他在跟佐維下棋。靜騰光就下一步,在小馬步飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.000" id=27:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1662">27:42.000</a></div>
+        <div class="t">小馬步飛具體是什麼,我其實也沒有非常的確定,但這邊有解釋一下。棋子斜放一個叫做小馬步飛,斜放好幾格叫做大馬步飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.000" id=27:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1672">27:52.000</a></div>
+        <div class="t">靜騰光下完棋以後,佐維就說,這個時候不要下小馬步飛,而是要下大馬步飛。靜騰光說,為什麼要下大馬步飛呢?我覺得小馬步飛也不錯啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:06.000" id=28:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1686">28:06.000</a></div>
+        <div class="t">這個時候佐維就解釋了,如果大馬步飛有100手的話,小馬步飛只有99手。接下來是重點,之前走小馬步飛是對的,因為小馬步飛的後續比較容易預測,也比較不容易出錯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:23.000" id=28:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1703">28:23.000</a></div>
+        <div class="t">但是大馬步飛的下法會比較複雜,但是阿光假設想要變強的話,他應該要學習下大馬步飛,或者是阿光變得比較強以後,他應該要下大馬步飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:36.000" id=28:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1716">28:36.000</a></div>
+        <div class="t">同樣的一個行為,同樣是做下小馬步飛這件事,對不同棋力的棋士來說,也許他的好是不一樣的。對於比較弱的阿光來說,下小馬步飛是對的,因為他比較不容易出錯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:56.000" id=28:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1736">28:56.000</a></div>
+        <div class="t">但對於已經變強的阿光來說,應該要下大馬步飛比較好,下小馬步飛反而是比較不好的。所以同一個action,同一個行為,對於不同的actor而言,他的好是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.000" id=29:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1755">29:15.000</a></div>
+        <div class="t">所以今天假設我們用θi-1收集了一堆的資料,這個是θi-1的trajectory,這些資料只能拿來訓練θi-1,不能拿這些資料來訓練θi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.000" id=29:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1773">29:33.000</a></div>
+        <div class="t">為什麼不能拿這些資料來訓練θi呢?因為假設就算是同θi-1跟θi,他們在S1都會採取A1好了,但之後到了S2以後,他們可能採取的行為就不一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:50.000" id=29:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1790">29:50.000</a></div>
+        <div class="t">所以假設今天θi是看θi-1的trajectory,那θi-1會執行的trajectory跟θi會採取的行為根本就不一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:04.000" id=30:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1804">30:04.000</a></div>
+        <div class="t">所以你拿θi-1接下來會得到的reward來評估θi接下來會得到的reward,其實是不合適的。如果再回到剛才棋魂的那個例子,同樣是假設這個A1就是下小馬步飛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.000" id=30:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1821">30:21.000</a></div>
+        <div class="t">對於變強以前的阿光,這是一個合適的走法,但是對於變強以後的阿光,他可能就不是一個合適的走法。所以今天我們在收集資料來訓練你的θ的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:36.000" id=30:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1836">30:36.000</a></div>
+        <div class="t">你要注意,收集資料的那個actor要跟被訓練的那個actor最好就是同一個。當你的actor更新以後,你就最好要重新去收集資料。這就是為什麼Gradient Descent非常花時間的原因。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:07.000" id=31:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1867">31:07.000</a></div>
+        <div class="t">剛才我們說,要被訓練的actor要拿來跟環境互動的actor最好是同一個。當我們訓練的actor跟互動的actor是同一個的時候,這種叫做unpolicyed learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:35.980" id=31:35.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1895">31:35.980</a></div>
+        <div class="t">我們剛才示範的那個policy gradient的整個algorithm,它就是unpolicyed learning。但是還有另外一種狀況叫做off-policyed learning。off-policyed learning我們今天就不會細講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:50.980" id=31:50.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1910">31:50.980</a></div>
+        <div class="t">off-policyed learning期待能夠做到的事情是,我們能不能夠讓要訓練的那個actor還有跟環境互動的那個actor是分開的兩個actor呢?我們要訓練的actor能不能夠根據其他actor跟環境互動的經驗來進行學習呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:10.980" id=32:10.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1930">32:10.980</a></div>
+        <div class="t">off-policyed learning有什麼好處呢?有一個非常顯而易見的好處。我們剛才說,θi-1收集到的這些資料不能拿來訓練θi,如果你是unpolicyed learning的話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:22.980" id=32:22.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1942">32:22.980</a></div>
+        <div class="t">但是有一些比較特別的方法,它是off-policyed learning,它可以想辦法讓θi去根據θi-1所收集的資料來進行學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:34.980" id=32:34.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1954">32:34.980</a></div>
+        <div class="t">雖然θi跟θi-1是不一樣的,它們能力是不一樣的,但是我們可以用一些方法來讓θi可以根據θi-1所收集到的資料、所收集到的互動的結果進行學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:47.980" id=32:47.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1967">32:47.980</a></div>
+        <div class="t">這樣的好處就是,你就不用一直收集資料了。剛才說reinforcement learning,一個很卡的地方就是,每次更新一次參數就要收集一次資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.980" id=32:57.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1977">32:57.980</a></div>
+        <div class="t">你看助教的示範歷程是更新400次參數,400次參數相較於你之前trained的network可能沒有很多,但我們要收集400次資料,跑起來也已經是很卡了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.980" id=33:06.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1986">33:06.980</a></div>
+        <div class="t">如果我們可以收一次資料,就update參數很多次,這樣不是很好嗎?所以off-policy,它有不錯的優勢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:15.980" id=33:15.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=1995">33:15.980</a></div>
+        <div class="t">但是off-policy要怎麼做呢?我們這邊就不細講。有一個非常經典的off-policy的方法叫做proximal policy optimization,縮寫式PPO,這個是今天蠻常使用的一個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:29.980" id=33:29.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2009">33:29.980</a></div>
+        <div class="t">它也是一個蠻常使用的方法。今天這個off-policy的重點是什麼呢?off-policy的重點就是,你在訓練的那個network要知道自己跟別人之間的差距,它要有意識地知道說它跟環境互動的那個actor是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:51.980" id=33:51.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2031">33:51.980</a></div>
+        <div class="t">至於細節,我們就不細講。我有留上課錄影的連結在投影片的下方,等一下大家如果有興趣的話再自己去研究PPO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:01.980" id=34:01.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2041">34:01.980</a></div>
+        <div class="t">如果要舉個比喻的話,就好像是你去問克里斯·伊凡,就是美國隊長,怎麼追一個女生。克里斯·伊凡就告訴你說,他就示範給你看,他就是actor to interact,他就是負責去示範的那個actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.480" id=34:16.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2056">34:16.480</a></div>
+        <div class="t">他說,他只要去告白,從來沒有失敗過。但是你要知道說,你跟克里斯·伊凡其實還是不一樣的。人帥真好,人醜吃草。你跟克里斯·伊凡是不一樣的,所以克里斯·伊凡可以採取的招數,你不一定能夠採取,你可能要打一個折扣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:38.060" id=34:38.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2078">34:38.060</a></div>
+        <div class="t">這個就是off-policy的精神,你的actor to trend要知道actor to interact跟他是不一樣的。所以actor to interact示範的那些經驗,有些可以採納,有些不一定可以採納。至於細節怎麼做,過去的上課錄影留在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:01.320" id=35:01.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2101">35:01.320</a></div>
+        <div class="t">還有另外一個很重要的概念,叫做exploration。exploration指的是什麼呢?我們剛才有講過說,我們今天的這個actor,他在採取行為的時候,他是有一些隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:20.780" id=35:20.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2120">35:20.780</a></div>
+        <div class="t">而這個隨機性其實非常重要,很多時候你隨機性不夠,你會trend不起來。為什麼呢?舉一個最簡單的例子,假設你一開始初始的actor,他永遠都只會向右移動,他從來都不會知道要開火。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:41.160" id=35:41.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2141">35:41.160</a></div>
+        <div class="t">如果他從來沒有採取開火這個行為,你就永遠不知道開火這件事情到底是好還是不好。唯有今天某一個actor去試圖做開火這件事得到reward,你才有辦法去評估這個行為好或不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:57.960" id=35:57.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2157">35:57.960</a></div>
+        <div class="t">假設有一些action從來沒被執行過,那你根本就無從知道這個action好或不好。所以你今天在訓練的過程中,這個拿去跟環境互動的actor,他本身的隨機性是非常重要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:13.480" id=36:13.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2173">36:13.480</a></div>
+        <div class="t">你其實會期待說,跟環境互動的這個actor,他的隨機性可以大一點,這樣我們才能夠收集到比較多的、比較豐富的資料,才不會有一些狀況他的reward是從來不知道的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:27.180" id=36:27.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2187">36:27.180</a></div>
+        <div class="t">那為了要讓這個actor的隨機性大一點,甚至你在training的時候,你會刻意加大他的隨機性。比如說actor的output不是一個distribution嗎,有人會刻意加大這個distribution的entropy,讓他在訓練的時候比較容易sample到那些機率比較低的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:46.560" id=36:46.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2206">36:46.560</a></div>
+        <div class="t">或者是有人會直接在這個actor他的參數上面加noise,直接在actor參數上面加noise,讓他每一次採取的行為都不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:57.300" id=36:57.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2217">36:57.300</a></div>
+        <div class="t">好,那這個就是exploration。那exploration其實也是RL training的過程中一個非常重要的技巧。如果你在訓練的過程中,你沒有讓network盡量去試不同的action,你很有可能也會train不出好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.020" id=37:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2232">37:12.020</a></div>
+        <div class="t">好,那我們來看一下,其實這個PPO這個方法,DeepMind跟OpenAI都同時提出了PPO的想法。那我們來看一下DeepMind的PPO的demo的影片,它看起來是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:42.020" id=37:42.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2262">37:42.020</a></div>
+        <div class="t">好,那我們來看一下DeepMind的PPO的demo的影片,它看起來是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:12.020" id=38:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2292">38:12.020</a></div>
+        <div class="t">好,那我們來看一下DeepMind的PPO的demo的影片,它看起來是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:42.020" id=38:42.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2322">38:42.020</a></div>
+        <div class="t">好,那我們來看一下DeepMind的PPO的demo的影片,它看起來是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:12.020" id=39:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2352">39:12.020</a></div>
+        <div class="t">好,那這個是DeepMind的PPO,那就是可以用PPO這個方法,用這個reinforcement learning的方法,去learn什麼蜘蛛型的機器人或人型的機器人做一些動作,比如說跑起來或者是蹦跳或者是跨過圍牆等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:35.020" id=39:35.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2375">39:35.020</a></div>
+        <div class="t">好,那接下來是OpenAI的PPO,它這個影片就沒有剛才那個槽,它沒有那個配音,不過我幫它配個音好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:45.020" id=39:45.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2385">39:45.020</a></div>
+        <div class="t">這個影片我叫它修機器學習的你,我修了一門課叫做機器學習,但在這門課裡面有非常多的障礙,我一直遇到挫折。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.020" id=39:59.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2399">39:59.020</a></div>
+        <div class="t">那個紅色的球是baseline,這個baseline一個接一個永遠都不會停止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:07.020" id=40:07.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2407">40:07.020</a></div>
+        <div class="t">然後呢,我train一個network很久啊,我colab就掉線了,train了三個小時,model不見了,但我仍然是爬起來繼續的向前。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:18.020" id=40:18.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2418">40:18.020</a></div>
+        <div class="t">我想開一個比較大的模型,看看可不可以train得比較好一點,但是結果發生什麼事情呢?out of memory啊,那個圈圈一直在轉啊,它就是不跑啊,怎麼辦啊,怎麼辦啊,但我還是爬起來繼續向前。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:35.020" id=40:35.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2435">40:35.020</a></div>
+        <div class="t">結果private set跟public set的結果不一樣啊,真的是讓人覺得非常的生氣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:55.020" id=40:55.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2455">40:55.020</a></div>
+        <div class="t">那講到這邊呢,正好告一個段落,那其他部分呢,我們就只好下週再講啦。那其實呢,到目前為止講的東西,其實做作業也算是蠻足夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:08.020" id=41:08.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=US8DFaAZcp4&t=2468">41:08.020</a></div>
+        <div class="t">好,那今天就感謝大家線上收聽,那正好也已經快到六點了。</div>
+    </div>
+    
+</body>
+</html>   

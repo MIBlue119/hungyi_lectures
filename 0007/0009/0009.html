@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 5: Logistic Regression</h2><a href=https://www.youtube.com/watch?v=hSXFuypLukA><img src=https://i.ytimg.com/vi_webp/hSXFuypLukA/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=0">00:00.000</a></div>
+        <div class="t">好,我們要講logistic regression,在logistic regression裡面呢,我們在上一份投影片裡面,我們都已經知道說,OK,我們要找的東西呢,是一個機率,是一個posterior probability,如果這個posterior probability它大於0.5的話,那就alpha class 1,否則呢,就alpha c2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:23.820" id=00:23.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=23">00:23.820</a></div>
+        <div class="t">我們知道這個posterior probability,假設你覺得你想要用Gaussian的話,其實很多其他的posterior probability化解以後,也都可以得到同樣的結果,假設你覺得你想要用Gaussian的話,那你可以說這個posterior probability就是sigma of z,它的這個function呢,長得是右邊這個樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:48.380" id=00:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=48">00:48.380</a></div>
+        <div class="t">那這個z呢,是w跟x的inner product加上b,那所謂w跟x的inner product呢,是說這個w,它是一個vector,OK,它的每一個dimension呢,我們就用下標i來表示,那這個w呢,是一個vector,每一個x呢,都有一個它對應的w下標i,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09.580" id=01:09.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=69">01:09.580</a></div>
+        <div class="t">你把所有的xi跟w下標i相乘,summation起來再加上b,你就得到自己代進sigmoid,代進這個sigmoid function,你就得到機率,好,所以我們的function set是長這樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.580" id=01:22.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=82">01:22.580</a></div>
+        <div class="t">我們的function set,f下標w,b,x,增加下標w,b的意思就是說,我們現在的這個function set是受w和b所控制的,就是你可以選不同的w跟b,你就得到不同的function,所有w跟b可以產生的function集合起來,就是一個function set,那這一項,它的含義呢,就是一個posterior probability,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:48.980" id=01:48.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=108">01:48.980</a></div>
+        <div class="t">given x它是屬於c1的機率,好,如果我們用圖像化的方式來表示它的話呢,它長這樣,我們的這個function呢,它裡面有兩組參數,一組是w,這個我們稱之為weights,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.580" id=02:06.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=126">02:06.580</a></div>
+        <div class="t">然後weights呢,有一整排,然後有一個constant b,這個我們稱之為bias,然後有一個sigmoid function,而如果我們今天的input是x1,x小i到x大i,我們就把x1,x小i跟x大i分別乘上w1,wi跟w大i,然後再加上b呢,你就得到z,這個z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.980" id=02:32.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=152">02:32.980</a></div>
+        <div class="t">我發現我寫錯一個地方,在後面這邊呢,應該是要加b的,你把x1乘w1加xi乘wi加到xi乘上xi再加上b,你得到z,z呢,通過我們剛才看到的sigmoid function,它的output值呢,就是機率,就是posterior probability,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.180" id=02:54.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=174">02:54.180</a></div>
+        <div class="t">這個是整個模型長這個樣子,這個這件事呢,叫做logistic regression,那我們可以把logistic regression跟我們在第一堂課就講的linear regression做一下比較,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:10.980" id=03:10.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=190">03:10.980</a></div>
+        <div class="t">logistic regression把每一個feature乘上一個w,summation起來加上b再通過sigmoid function,當作function的output,那它的output因為有通過sigmoid function,所以一定是介於0到1之間的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:25.780" id=03:25.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=205">03:25.780</a></div>
+        <div class="t">那linear regression呢,它就把feature乘上w再加上b,它沒有通過sigmoid function,所以它的output呢,就可以是任何值,可以是正的,可以是負的,負從大到正無從大,那等一下呢,我們說模型learning就是三個step,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.580" id=03:42.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=222">03:42.580</a></div>
+        <div class="t">等一下我們會一個一個step比較logistic regression跟linear regression它的差別,接下來呢,我們要決定一個function的好壞,那我們的training data呢,因為我們今天要做的是classification,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:00.180" id=04:00.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=240">04:00.180</a></div>
+        <div class="t">所以我們的training data呢,就是假設有大N筆training data,那每一筆training data你都要標說它是屬於哪一個class,比如說x1屬於class1,x2屬於class1,x3屬於class2,x4屬於class1等等,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.180" id=04:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=254">04:14.180</a></div>
+        <div class="t">那接下來呢,我們假設這筆training data是從我們的function所定義出來的這個posterior probability所產生的,就這組training data是根據這個posterior probability所產生的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:35.180" id=04:35.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=275">04:35.180</a></div>
+        <div class="t">那給我們一個w跟b,我們就決定了這個posterior probability,那我們就可以去計算某一組w跟b產生這大N筆training data的機率,某一個w跟b產生這大N筆training data的機率怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.180" id=04:57.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=297">04:57.180</a></div>
+        <div class="t">這個很容易,就是假設x1是屬於c1,那它根據某一個w跟b產生的機率就是f of x1,假設x2屬於class1,那它被產生的機率就是f of x2,假設x3屬於class2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.180" id=05:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=316">05:16.180</a></div>
+        <div class="t">我們知道說x3如果屬於c1的機率就是f of x3,我們這邊算的是c1的機率嘛,但是x3屬於x2,所以它的機率就是1減掉f of x3,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.180" id=05:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=330">05:30.180</a></div>
+        <div class="t">那最有可能的參數w跟b,我們覺得最好的參數w跟b,就是那一個有最大的可能性,最大的機率,可以產生這個training data的那一組w跟b,我們把它叫做w star跟b star。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.180" id=05:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=352">05:52.180</a></div>
+        <div class="t">w star跟b star就是那一個可以最大化這個機率的w跟b。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:01.180" id=06:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=361">06:01.180</a></div>
+        <div class="t">那我們在這邊做一個數學式上的轉換,我們原來是要找一組w跟b最大化L of wb,最大化這個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:13.180" id=06:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=373">06:13.180</a></div>
+        <div class="t">但是這件事情等同於我們找一個w跟b minimize負log這個function,我們知道取log,它的order是不會變的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:24.180" id=06:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=384">06:24.180</a></div>
+        <div class="t">取加上一個負號,那你就從本來找最大的變成找最小的,所以我們就是要找一個w跟b最小化負log L of wb,這可以讓計算變得容易一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.180" id=06:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=397">06:37.180</a></div>
+        <div class="t">左式跟右式是一樣,根據左式跟右式你找出來的w跟b,w star跟b star是同一個w star跟同一個b star。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.180" id=06:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=405">06:45.180</a></div>
+        <div class="t">那負log這一項怎麼做呢?你知道取負log的好處就是把它相乘嘛,現在都變成相加,所以就可以把它展開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:55.180" id=06:55.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=415">06:55.180</a></div>
+        <div class="t">所以這一項就是負log f of x1,負log f of x2,負log 1-f of x3,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.180" id=07:04.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=424">07:04.180</a></div>
+        <div class="t">好,那這件事情讓你寫式子有點難寫,你沒有辦法寫一個summation over,因為對不同的x,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:14.180" id=07:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=434">07:14.180</a></div>
+        <div class="t">如果它屬於不同class,我們就要用不同的方法來處理它,所以沒有辦法summation over x,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.180" id=07:21.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=441">07:21.180</a></div>
+        <div class="t">我們做一個符號上的轉換,我們說如果某一個x它屬於class 1,我們就說它的target是1,如果它屬於class 2,我們就說它的target是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:36.180" id=07:36.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=456">07:36.180</a></div>
+        <div class="t">我們之前在做linear regression的時候,每一個x它都有一個對應的y hat,然後那個對應的y hat是一個real number,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.180" id=07:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=465">07:45.180</a></div>
+        <div class="t">在這邊呢,每一個x也都有一個對應的y hat,這個對應的y hat它的number就代表說現在這個x屬於哪一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:54.180" id=07:54.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=474">07:54.180</a></div>
+        <div class="t">如果屬於class 1,我怎麼會犯這麼弱智的錯誤?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.180" id=08:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=482">08:02.180</a></div>
+        <div class="t">大家有發現嗎?在投影片上有一個錯,應該是110,我怎麼會犯這麼弱智的錯誤?屬於class 1就是1,所以應該是110。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:16.180" id=08:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=496">08:16.180</a></div>
+        <div class="t">沒關係,你不要無視這邊,你就看這裡就好。屬於class 1就是1,屬於class 2就是0。如果你做這件事的話,那你就可以把這邊的每一個式子都寫成這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:36.180" id=08:36.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=516">08:36.180</a></div>
+        <div class="t">這看起來有點複雜,但是你可以仔細算一下,就會發現說左邊和右邊是相等的。每一個-log f of x,你都可以寫成-的中括號,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:52.180" id=08:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=532">08:52.180</a></div>
+        <div class="t">它的y1 hat,它的y hat乘上log f of x,加上1-y hat乘上log 1-f of x。就實際上算一下,比如說x1,x2都是屬於c1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:07.180" id=09:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=547">09:07.180</a></div>
+        <div class="t">所以它對應的y hat是1,所以y1 hat和y2 hat是1,1-y1 hat和1-y2 hat就是0。0的話,它乘上後面那一下,你就不要管它,把它拿掉,所以你會發現它等於它,它等於它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:24.180" id=09:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=564">09:24.180</a></div>
+        <div class="t">這邊因為空間的關係,我就把w跟b省略掉。有時候放w跟b只是為了強調說這個f是w跟b的function。因為這個寫不下,所以就把它省略掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.180" id=09:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=577">09:37.180</a></div>
+        <div class="t">好,那這個y3呢?這個x3它屬於class 2,class 2是0,所以y3 hat是0,1-y3 hat就是1。前面這個部分可以拿掉,你會發現右邊這個也是等於左邊這個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:54.180" id=09:54.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=594">09:54.180</a></div>
+        <div class="t">然後我們把這個likelihood的function取負的natural log,然後再假設說class 1就是1,class 2就是0以後,我們就可以把我們要去minimize的對象寫成一個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.180" id=10:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=614">10:14.180</a></div>
+        <div class="t">我們就會把我們要去minimize的對象寫成summation over n-y1 hat乘上log f of xn加上1-y1 hat乘上log 1-f of xn。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:28.180" id=10:28.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=628">10:28.180</a></div>
+        <div class="t">那其實這個summation over的這一項,這個sigma後面的這一整項,它其實是兩個Bernoulli distribution的cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.180" id=10:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=644">10:44.180</a></div>
+        <div class="t">這一項其實是一個cross entropy,所以等一下我們就會說它是cross entropy,雖然它的來源跟information theory沒有太直接的關係,我們剛才看到它是從,我們剛才看過它的推導的過程。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:02.180" id=11:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=662">11:02.180</a></div>
+        <div class="t">但是如果你把,你假設有兩個distribution P跟Q,這個P這個distribution,它是說x等於1的機率是y1 hat,x等於0的機率是1-y1 hat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.180" id=11:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=676">11:16.180</a></div>
+        <div class="t">另外Q這個distribution,它等於1的機率是f of xn,這個x等於0的機率是1-f of xn的話,那你把這兩個distribution算cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:32.180" id=11:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=692">11:32.180</a></div>
+        <div class="t">如果你不知道什麼是cross entropy的話沒有關係,反正就是帶個式子,summation over所有的x,P of x乘上log Q of x,前面有個負號,這個就是cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.180" id=11:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=703">11:43.180</a></div>
+        <div class="t">所以如果你把這兩個distribution算他們之間的cross entropy,這個cross entropy代表的含義是這兩個distribution有多接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:53.180" id=11:53.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=713">11:53.180</a></div>
+        <div class="t">如果今天這兩個distribution一模一樣的話,那他們算出來的cross entropy就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.180" id=12:00.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=720">12:00.180</a></div>
+        <div class="t">所以你把這兩個distribution算一下cross entropy,你把y1 hat乘上log f of xn,1-y1 hat乘上log 1-f of xn,你得到的就是這一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.180" id=12:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=733">12:13.180</a></div>
+        <div class="t">所以它跟,如果你有修過information theory的話,它這個式子寫出來跟cross entropy是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.180" id=12:22.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=742">12:22.180</a></div>
+        <div class="t">所以在logistic regression裡面,我們怎麼定義一個function它的好壞呢?我們定義的方式是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.180" id=12:31.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=751">12:31.180</a></div>
+        <div class="t">有一堆training data,我們有xn,有y1 hat這樣的pair,如果屬於class 1的話,y1 hat就等於1,如果是class 2的話,y1 hat就等於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.180" id=12:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=763">12:43.180</a></div>
+        <div class="t">那我們定義的這個loss function,我們要去minimize的對象是所有的example,它的cross entropy的總和。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:57.180" id=12:57.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=777">12:57.180</a></div>
+        <div class="t">也就是說,假設你把f of x當作一個Bernoulli distribution,把y1 hat當作另外一個Bernoulli distribution,它們的cross entropy,你把它算出來,這個東西是我們要去minimize的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.180" id=13:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=793">13:13.180</a></div>
+        <div class="t">所以就直觀來講,我們要做的事情是,我們希望function的output跟它的target,如果你都把它看作是Bernoulli distribution的話,這兩個Bernoulli distribution,它們越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:29.180" id=13:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=809">13:29.180</a></div>
+        <div class="t">如果我們比較一下linear regression的話,linear regression這邊,這個你大概很困惑了,如果你今天是第一次聽到的話,你大概是聽得一頭霧水。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.180" id=13:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=823">13:43.180</a></div>
+        <div class="t">如果你是看linear regression的話,這個很簡單,我們把f of xn減掉它的target,y1 hat的平方,就是我們要去minimize的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:59.180" id=13:59.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=839">13:59.180</a></div>
+        <div class="t">不知道怎麼來的,那你可能就會有一個想法說,為什麼在左邊這個,在logic regression裡面,我們跟linear regression一樣,用square arrow就好了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.180" id=14:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=853">14:13.180</a></div>
+        <div class="t">這邊其實也可以用square arrow,沒有什麼理由,你不能用square arrow,不是嗎?對不對?因為你完全可以算說,這個f of xn跟y1 hat的square arrow,你就把這個f of xn跟y1 hat帶到右邊去,你一樣可以定一個loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:36.180" id=14:36.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=876">14:36.180</a></div>
+        <div class="t">這個loss function聽起來也是頗合理的,為什麼不這麼做呢?為什麼不這麼做呢?我們等一下會試著給大家一點解釋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:47.180" id=14:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=887">14:47.180</a></div>
+        <div class="t">到目前為止,這個東西就是很複雜,有些記者說必須要這麼做。接下來我們要做的事情就是找一個最好的function,就是要去minimize,我們現在要minimize的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.180" id=15:08.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=908">15:08.180</a></div>
+        <div class="t">那怎麼做呢?你就用gradient descent就好了,這個很簡單,接下來都只是一些數學式的無聊的運算而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.180" id=15:18.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=918">15:18.180</a></div>
+        <div class="t">我們就算它對某一個w的這個vector裡面的某一個element的微分就好,我們就算這個式子對wi的微分就好,剩下的部分其實就可以交給大家自己來做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:33.180" id=15:33.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=933">15:33.180</a></div>
+        <div class="t">好,那我們要算這個東西對w的偏微分,那我們只需要能夠算log f of x對w的偏微分跟log e-f of x對w的偏微分就行了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:46.180" id=15:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=946">15:46.180</a></div>
+        <div class="t">那log f of x對w的偏微分怎麼算呢?我們知道說,我們把這個f寫在下面,f受到z這個variable的影響,z這個variable是從w、x、b所產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:08.180" id=16:08.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=968">16:08.180</a></div>
+        <div class="t">所以你就知道說,我們可以把這個偏微分拆開,把partial wi、partial log f of x拆解成partial z分之partial log f of x乘上partial wi分之partial z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.180" id=16:27.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=987">16:27.180</a></div>
+        <div class="t">那這個partial wi分之partial z是什麼呢?partial wi分之partial z,這個z的式子我們寫在這邊了,只有一項是跟wi有關的,只有wi乘xi那一項是跟wi有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.180" id=16:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1000">16:40.180</a></div>
+        <div class="t">所以partial wi分之partial z就是xi,那這一項是什麼呢?這一項這個太簡單了,我們把f of x換成sigma of z,把這個換成sigma of z,然後做一下微分,這個log sigma of z做微分,就sigma of z分之一,然後再算partial z分之partial sigma of z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:03.180" id=17:03.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1023">17:03.180</a></div>
+        <div class="t">那partial z分之partial sigma of z是什麼呢?這個sigma of z是sigma of a function,sigma of a function的微分,其實你可以直接就背起來,就是sigma of z乘上1-sigma of z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.180" id=17:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1034">17:14.180</a></div>
+        <div class="t">如果你要看比較直觀的結果的話,你就把它圖畫出來,sigma of z這邊顏色可能有點淡,這個是綠色這一條線,sigma of z是綠色這一條線,那如果你對它做,對z呢,橫軸是z,對z做偏微分的話,是在這個接近頭跟尾的地方,它的斜率很小,所以對z做微分的時候是接近於0的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:41.180" id=17:41.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1061">17:41.180</a></div>
+        <div class="t">在中間的地方斜率最大,所以這個地方斜率最大,所以把這一項對z做偏微分的話,你得到的結果是長得像這樣,長得像這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.180" id=17:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1072">17:52.180</a></div>
+        <div class="t">這一項其實就是sigma of z乘上1-sigma of z,那你可以把sigma of z消掉,那你就得到說這一項就是1-sigma of z乘上xi,那sigma of z其實就是f of x,所以這一項就是1-f of x乘上xi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.180" id=18:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1096">18:16.180</a></div>
+        <div class="t">右邊這一項呢,這個也是trivial,你把log1-f of x對wi做偏微分,那就可以猜成先對z做偏微分,然後wi再對z做偏微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.180" id=18:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1110">18:30.180</a></div>
+        <div class="t">右邊這一項,partial wi-partial z,我們知道它就是xi。左邊這一項呢,你就把log裡面的值放到分母,然後這邊是-sigma of z,所以前面有個負號,然後這邊呢,要算sigma of z的偏微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:52.180" id=18:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1132">18:52.180</a></div>
+        <div class="t">那sigma of z做偏微分以後,得到的結果是這樣,把1-sigma of z消掉,就剩下sigma of z,所以這一項就是xi乘上sigma of z,把它放上來,就是這個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.180" id=19:09.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1149">19:09.180</a></div>
+        <div class="t">好,那我們就把這一項放進來,把這一項放進來,整理一下以後,你得到的結果就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.180" id=19:22.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1162">19:22.180</a></div>
+        <div class="t">然後接下來呢,你整理一下,把xi提到右邊去,把括號的部分展開,裡面有一樣的,把它拿掉,最後你得到一個很直觀的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:39.180" id=19:39.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1179">19:39.180</a></div>
+        <div class="t">這個式子看起來有點複雜,有點崩潰,但是你對它做偏微分以後,得到的結果呢,卻是neat的,卻是容易理解的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:52.180" id=19:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1192">19:52.180</a></div>
+        <div class="t">你得到的結果呢,每一項都是負的ynhat減掉f of xn,再乘上xn的第i個component。如果你用quadrant descent來update它的話,你的式子就很單純,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.180" id=20:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1212">20:12.180</a></div>
+        <div class="t">Wi呢,是原來Wi減掉learning rate,乘上summation over all the training sample,ynhat減掉f of xn,乘上xn在i位的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:25.180" id=20:25.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1225">20:25.180</a></div>
+        <div class="t">這件事情它代表了什麼意思呢?它代表什麼含義呢?如果你看這個括號內的這個式子的話,現在呢,你的W的update呢,取決於三件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.180" id=20:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1242">20:42.180</a></div>
+        <div class="t">一個是learning rate,這個是你自己調的。一個是xi,這個是來自於data。第三項呢,就是這個ynhat減f of xn。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:56.180" id=20:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1256">20:56.180</a></div>
+        <div class="t">ynhat減f of xn是什麼意思呢?ynhat減f of xn代表說你現在這個f的output跟理想的這個目標,它的差距有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:13.180" id=21:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1273">21:13.180</a></div>
+        <div class="t">ynhat是目標,這個f of xn呢,是現在你的model的output,這兩項之間的差距,這兩個之間相減它的差呢,就代表了說它們的差距有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:29.180" id=21:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1289">21:29.180</a></div>
+        <div class="t">那如果今天你的目標越遠,那你的update的量呢,就應該要越大。所以這個結果呢,看起來是頗為合理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.180" id=21:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1304">21:44.180</a></div>
+        <div class="t">好,那接下來呢,我們就來比較一下linear regression跟logistic regression跟linear regression,它們在做gradient descent的時候,它們參數的update的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:59.180" id=21:59.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1319">21:59.180</a></div>
+        <div class="t">我們已經看到logistic regression它的update的式子是長這個樣子。那神奇的是linear regression,大家應該都順利做完作業一了,所以linear regression的這個gradient descentupdate的式子你應該是很熟。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.180" id=22:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1334">22:14.180</a></div>
+        <div class="t">它們其實是一模一樣的。你看喔,就是它們都算ynhat減掉f of xn,唯一不一樣的地方是logistic regression你的target一定是0或1,你的這個f呢,一定是介於0到1之間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.180" id=22:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1357">22:37.180</a></div>
+        <div class="t">但是如果是linear regression的話,你的time yhat,它可以是任何real number,而你這個output呢,也可以是任何value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.180" id=22:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1366">22:46.180</a></div>
+        <div class="t">但是它們update的這個方式呢,是一樣的。那作業二我們需要做logistic regression,你甚至八成都不用改code了,秒做就可以把它做出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:58.180" id=22:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1378">22:58.180</a></div>
+        <div class="t">大家作業一做得還順利嗎?我相信你在,你應該是遇到了種種特別的問題啦,比如說如果你在做gradient descent的話,你會發現說,雖然教科書上跟你講gradient descent的時候,你對它是不屑一顧的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:12.180" id=23:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1392">23:12.180</a></div>
+        <div class="t">然後你覺得說,一個convex的這個surface,我應該是用gradient descent應該是可以輕易地找到它的最佳解。但是你會發現說,實際上做起來是沒有那麼容易的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.180" id=23:23.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1403">23:23.180</a></div>
+        <div class="t">我其實可以出一個那種教科書上的問題來做linear regression,但是我們用真實的example,就會讓你知道說,在真實的世界,你會碰到什麼樣的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:34.180" id=23:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1414">23:34.180</a></div>
+        <div class="t">事實上,因為今天我們做的是linear regression,我看你八成可以用這個,解那個least square error的方式去偷偷找一下它的最佳解,然後再從那個最佳解當initialization開始找,對吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:48.180" id=23:48.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1428">23:48.180</a></div>
+        <div class="t">大家聽得懂我在說什麼嗎?有這麼做的人舉手一下。沒有人這麼做,還是不敢舉手。要是我就這麼做這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:00.180" id=24:00.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1440">24:00.180</a></div>
+        <div class="t">但是,如果你在做deep learning,等我們做到deep learning的時候,你就不能這麼做啦,因為deep learning你沒有任何方法可以去找它的最佳解,到時候你才會真正的卡翻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.180" id=24:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1456">24:16.180</a></div>
+        <div class="t">好,那在下課之前,我想要講一下,我們今天的計畫是這樣子啦,我們就講完logistic regression以後,我們就會進入deep learning,然後等一下第三堂呢,助教會來講一下作業二。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.180" id=24:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1470">24:30.180</a></div>
+        <div class="t">那我們現在問的問題是這樣,為什麼logistic regression不能加square error?我為什麼可以用square error?當然可以用square error啊,我們如果用square error的話會怎樣?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.180" id=24:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1482">24:42.180</a></div>
+        <div class="t">我們做logistic regression的時候,我的式子長這樣,我當然可以做square error啊,我把我的function的output減掉ynk的平方,summation起來當作我的loss function,我一樣用gradient descent去minimize它,有什麼不可以呢?當然沒有什麼不可以這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:00.180" id=25:00.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1500">25:00.180</a></div>
+        <div class="t">好,如果我們算一下它的這個微分的話,你會發現說,如果我們把括號裡面,summation後面這個式子,對wi做偏微分的話,它得到的結果呢,是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.180" id=25:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1512">25:12.180</a></div>
+        <div class="t">然後這個這個這個2呢,提到前面去,所以到f of x之間,y hat,然後呢,把f of x對z做偏微分,把w呢,對z做偏微分,把它們都乘起來,然後這一項,這個地方沒有寫錯,就是這一項,就是這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:40.180" id=25:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1540">25:40.180</a></div>
+        <div class="t">把z對f of x做偏微分,因為f of x是sigmoid function,做偏微分以後,就是f of x乘上1-f of x,partial w分之partial z就是xi,那當然你可以用gradient descent去update你的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.180" id=25:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1558">25:58.180</a></div>
+        <div class="t">但是你現在你會發現你遇到一個問題,假設y n hat等於1,假設第n筆data是class 1,當我的f of x已經等於1的時候,當我的第n筆data是class 1,而我f of x已經等於1的時候,我已經達到perfect的狀態了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:20.180" id=26:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1580">26:20.180</a></div>
+        <div class="t">這個時候沒有什麼問題,因為你f of x等於1,y n等於1的時候,你把這兩個數值帶進這個function裡面,你會發現說至少這一項,f of x減y n hat是0,所以你的微分會變成0,這件事情是很合理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.180" id=26:38.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1598">26:38.180</a></div>
+        <div class="t">但是如果今天是另外一個狀況,f of xn等於0,意味著說你現在離你的目標仍然非常的遠,因為你的目標是希望f of xn的output是1,但你現在output是0,你的離目標還很遠。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:56.180" id=26:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1616">26:56.180</a></div>
+        <div class="t">但是如果你把這個式子帶到這裡面的話,你會發現說這邊有乘一個f of xn,而f of xn等於0,這時候你會變成你微分的結果算出來也是0。如果你離目標很近,微分算出來是0沒有問題,但是你離目標很遠,微分算出來也是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:14.180" id=27:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1634">27:14.180</a></div>
+        <div class="t">這個是class 1的例子。如果我們舉class 2的例子,看起來結果也是一樣,假設y n hat等於0,假設現在距離目標很遠,假設距離目標很遠的時候,f of xn等於1,你帶進去至少最後這個式子是0,就你微分算出來也是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.180" id=27:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1652">27:32.180</a></div>
+        <div class="t">距離目標很近的時候,微分算出來也是0。這會造成什麼問題呢?如果我們把參數的變化對total loss做圖的話,你會發現說如果你選擇cost entropy跟你選擇square error,參數的變化跟loss的變化看起來是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:56.180" id=27:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1676">27:56.180</a></div>
+        <div class="t">黑色的是cost entropy,紅色的是square error。我們剛才講說cost entropy在距離目標很近的地方,假設現在這個中心最低的這個點,就是距離目標很近的地方,你的微分值是很小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:16.180" id=28:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1696">28:16.180</a></div>
+        <div class="t">但是距離目標很遠的地方,你的微分值也是很小的。所以在距離目標很遠的地方,你會非常的平坦。這會造成什麼問題呢?如果是cost entropy的話,你距離目標越遠,你的微分值就越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:35.180" id=28:35.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1715">28:35.180</a></div>
+        <div class="t">那沒有問題,所以你距離目標越遠,你參數update的時候就越快,你的參數更新的速度就越快,參數update的時候的變化量就越大,這個沒有問題。距離你的目標越遠,你當然步伐應該要差越大一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:51.180" id=28:51.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1731">28:51.180</a></div>
+        <div class="t">但是如果你選square error的話,你就會很卡,因為當你距離目標遠的時候,你的微分是非常非常小的,就變成說你離目標遠的時候,你移動的速度是非常慢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:07.180" id=29:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1747">29:07.180</a></div>
+        <div class="t">所以如果你用隨機,你random找一個初始值,那你通常離目標的距離是非常遠的。如果你今天用square error,你其實可以自己在作業裡面試試看,如果你用square error,你選一個起始值,你算出來微分很小,你一開始就卡住了,參數都不update,你就永遠卡在那邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:29.180" id=29:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1769">29:29.180</a></div>
+        <div class="t">他參數update的速度很慢,你等好幾個小時了,他都跑不出來。你可能會想說,我們可以說看到微分值很小的時候就把它的learning rate設大一點,可是問題是微分值很小的時候,你也有可能其實距離你的目標很近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:49.180" id=29:49.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1789">29:49.180</a></div>
+        <div class="t">如果距離目標很近的時候,這個時候你應該把它的微分值設小一點。但是你現在搞不清楚說,到底歸點小的時候,到底微分值算出來小的時候,你是距離目標很近,還是距離目標很遠。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:03.180" id=30:03.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1803">30:03.180</a></div>
+        <div class="t">因為做歸點decline的時候,你是在玩世紀帝國這個遊戲,你不知道你距離目標到底是很近還是很遠,所以你就會卡翻了,不知道你的learning rate應該設大還是設小。所以你選square error,在實作上你當然可以這麼做,但你可以在作業裡面試試看,你是不容易得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:20.180" id=30:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1820">30:20.180</a></div>
+        <div class="t">用cross entropy可以讓你的training順很多。我們在這邊休息十分鐘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.180" id=30:50.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1850">30:50.180</a></div>
+        <div class="t">我們在這邊休息十分鐘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.180" id=31:10.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1870">31:10.180</a></div>
+        <div class="t">好,我們來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:23.180" id=31:23.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1883">31:23.180</a></div>
+        <div class="t">我們接下來要講的是,這個logistic regression的方法,我們稱它為discriminative的方法。而剛才我們用Gaussian來描述posterior probability這件事,我們稱之為generative的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:43.180" id=31:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1903">31:43.180</a></div>
+        <div class="t">實際上,它們的function,它們的model,function set是一模一樣的。不管你是用我們在這份投影片講的logistic regression,還是前一份投影片講的機率模型,只要你在做機率模型的時候,你把covariance matrix設成是shared,那它們的model其實是一模一樣的,都是sigma of w乘上x加b。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:12.180" id=32:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1932">32:12.180</a></div>
+        <div class="t">那你可以找不同的w跟不同的b,就得到不同的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.180" id=32:17.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1937">32:17.180</a></div>
+        <div class="t">那我們可以直接去把w跟b找出來,如果你今天是用logistic regression的話,你可以直接把w跟b找出來,就用gradient descent的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:35.180" id=32:35.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1955">32:35.180</a></div>
+        <div class="t">如果今天是generative model的話,那首先我們會去算μ1,μ2跟σ的inverse,然後我們可以把w算出來,把b算出來,你算出μ1,μ2跟covariance matrix,接下來你就把這些項帶到這裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:01.180" id=33:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1981">33:01.180</a></div>
+        <div class="t">這邊這個σ1跟σ2應該都是等於σ,這邊應該把它都改成σ,就把它算出來,就可以得到w跟b。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:11.180" id=33:11.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=1991">33:11.180</a></div>
+        <div class="t">現在的問題來了,如果我們比較左邊跟右邊求w跟求b的方法,我們找出來的w跟b會是同一組嗎?你覺得它是同一組的同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:31.180" id=33:31.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2011">33:31.180</a></div>
+        <div class="t">你覺得它是不同的同學舉手一下。謝謝,手放下。好,多數同學覺得它是不同的。沒錯,你找出來的結果不會是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:42.180" id=33:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2022">33:42.180</a></div>
+        <div class="t">所以今天當我們用logistic regression,還是用剛才的probability listing的generative model,我們用的其實是同一個model,其實是同一個function set,也就是我們function的pool,我們可以挑的function candidate,其實是同一個set。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:03.180" id=34:03.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2043">34:03.180</a></div>
+        <div class="t">但是因為我們做了不同的假設,所以我們最後找出來的,根據同組training data,找出來的參數會是不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:14.180" id=34:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2054">34:14.180</a></div>
+        <div class="t">在這個logistic regression裡面,其實我們就沒有做任何假設,我們沒有對這個probability distribution有任何的描述,我們就是單純去找一個w跟b。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:27.180" id=34:27.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2067">34:27.180</a></div>
+        <div class="t">那在generative model裡面,我們對probability distribution是有假設,比如說假設它是Gaussian,假設它是Bernoulli,假設它是不是Naive Bayes,等等,我們做了種種的假設。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:45.180" id=34:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2085">34:45.180</a></div>
+        <div class="t">根據這些假設,我們可以找到另外一組w跟b,左右兩邊找出來的w跟b不會是同一組。那問題就是,哪一個找出來的w跟b是比較好的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:01.180" id=35:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2101">35:01.180</a></div>
+        <div class="t">如果我們比較generative model跟discriminative model的話,那我們先看一下我們之前講的defense跟special defense的例子。如果用generative model的話,我們的這兩個class,藍色的是水系的神奇寶貝,紅色的是一般系的寶可夢,他們之間的boundary是這一條。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.180" id=35:23.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2123">35:23.180</a></div>
+        <div class="t">如果你是用logistic regression的話,你找出來的boundary是這一條。其實從這個結果上你很難看出來說誰比較好。但是如果我們比較說,我們都用七個feature的這個case,我們會發現說如果用generative model的話,我們剛才說我們得到的正確率是73%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:45.180" id=35:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2145">35:45.180</a></div>
+        <div class="t">如果是用discriminative model的話,在同樣的data set上面,我們只是用不同的假設,所以找了不同的w跟b,但是我們找出來的結果是比較好的,它的正確率有79%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:01.180" id=36:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2161">36:01.180</a></div>
+        <div class="t">我相信在文獻上會常常聽到有人說discriminative model會比generative model,常常會performance還要更好。為什麼會這樣呢?我們來舉一個toy的example。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:16.180" id=36:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2176">36:16.180</a></div>
+        <div class="t">現在假設你有一筆training data,你有兩個class,那你這筆training data裡面總共有每一筆data有兩個feature,然後你總共有1加4加4加4,總共有13筆data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:39.180" id=36:39.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2199">36:39.180</a></div>
+        <div class="t">所以第一筆data是兩個feature的value都是1,接下來有四筆data是第一個feature是1,第二個feature是0,接下來有四筆data是第一個feature是0,第二個feature是1,接下來有四筆data是兩個feature都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:53.180" id=36:53.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2213">36:53.180</a></div>
+        <div class="t">然後我們給第一筆data的label是1,我們給剩下12筆data的label都是class 2。假設你現在不做機器學習,做人類的學習,給你一個testing data,它的兩個feature都是1,你覺得它是class 1還是class 2呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:16.180" id=37:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2236">37:16.180</a></div>
+        <div class="t">我們來問一下大家意見吧,如果你覺得它是class 1的同學舉手一下,手放下來,你覺得它是class 2的同學舉手一下,沒有人覺得是class 2,大家都覺得是class 1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:28.180" id=37:28.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2248">37:28.180</a></div>
+        <div class="t">那如果我們來問一下naive base,他覺得是class 1還是class 2,他會怎麼說呢?所謂的naive base就是我們假設所有的feature,它產生的機率是independent。所以P of X從某一個class產生出來的機率,等於從某一個class產生X1的機率,成這樣從某一個class產生X2的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:56.180" id=37:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2276">37:56.180</a></div>
+        <div class="t">那我們用naive base來算一下,首先算一下higher的probability。class 1它出現的probability是多少?總共13筆data是sample到一次,是class 1,所以是13分之1。class 2的機率是多少呢?總共13筆data,總共有12筆是class 2,所以它是13分之12,它比較多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:19.180" id=38:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2299">38:19.180</a></div>
+        <div class="t">接下來我們算說,在class 1裡面,X1等於1的機率,在class 1裡面,X1等於1的機率就是1。在class 1裡面,X2等於1的機率也是1,因為class 1就是這筆data嘛,那X1是1,X2是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:38.180" id=38:38.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2318">38:38.180</a></div>
+        <div class="t">所以如果你用機率來統計的話,在class 1裡面,X1等於1的機率是1,在class 1裡面,X2等於1的機率也是1。接下來我們看,我發現我犯了一個錯誤,這邊應該是C2,不好意思,這邊應該是C2,這邊應該是C2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:56.180" id=38:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2336">38:56.180</a></div>
+        <div class="t">好,如果我們看class 2的話,如果我們看右邊的這個,這是2筆class 2的data,在class 2裡面,X1等於1的機率是多少呢?是三分之1,對不對?只有三分之1的data是class 2等於1的,而是X1等於1的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:16.180" id=39:16.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2356">39:16.180</a></div>
+        <div class="t">那再來我們看X2,X2等於1的機率在class 2裡面有多少呢?在class 2裡面只有三分之1的data,X2等於1,所以它的機率是三分之1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:29.180" id=39:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2369">39:29.180</a></div>
+        <div class="t">好,如果我們把這些機率通通算出來以後,給你一個testing data,你就可以去估測它是來自class 1的機率,也可以估測它是來自class 2的機率。我們就算這筆training data X呢,它來自class 1的機率是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:46.180" id=39:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2386">39:46.180</a></div>
+        <div class="t">我們就把它帶到這個Bayesian的這個function裡面算一下,C1的quiet probability是三分之1,P of X given C1的機率是1乘以1,什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:02.180" id=40:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2402">40:02.180</a></div>
+        <div class="t">這一筆data X從C1裡面generate出來的機率,等於這個機率乘上這個機率,就是1乘以1。下面這一項你算過了,這是13分之1,這個是1乘以1。那這一項呢,P of C2是13分之12,P of X given C2,從C2裡面sample出,根據C2的distribution,sample出這一筆data的機率是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:24.180" id=40:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2424">40:24.180</a></div>
+        <div class="t">是三分之1乘三分之1,因為X1等於1的機率在C1裡面是三分之1,X2等於1的機率在C2裡面是三分之1,所以這一項是三分之1乘以三分之1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:38.180" id=40:38.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2438">40:38.180</a></div>
+        <div class="t">如果你實際去做一下運算,你實際算一發,你就知道說,這個是小於0.5的。所以對naive Bayes來說,給他這樣子的training data,他認為這一筆testing data應該是屬於class 2而不是class 1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:02.180" id=41:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2462">41:02.180</a></div>
+        <div class="t">所以這跟我們大家的直覺比起來是相反的。其實我們很難知道說,我們其實不知道說這一筆data到底是產生來自於class 1還是class 2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:18.180" id=41:18.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2478">41:18.180</a></div>
+        <div class="t">就比較合理的假設,你會覺得說,因為class 1裡面,通通都是X1和X2都是等於1的,所以這筆data應該是要來自class 1才對吧?可是對naive Bayes來說,他不考慮不同dimension之間的correlation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:34.180" id=41:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2494">41:34.180</a></div>
+        <div class="t">所以對naive Bayes來說,這兩個dimension是independent所產生的。在class 2裡面之所以沒有sample到這樣的data,之所以沒有觀察到這樣的data,是因為你sample的夠多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:48.180" id=41:48.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2508">41:48.180</a></div>
+        <div class="t">如果你sample的夠多,搞不好就有都是1的data,也是有機率被產生出來的,只是因為我們data不夠多,所以沒有觀察到這件事而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:04.180" id=42:04.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2524">42:04.180</a></div>
+        <div class="t">所以今天這個generative model跟discriminative model的差別就在於,這個generative model它有做了某些假設。它假設你的data來自於一個機率模型,它做了某些假設。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:22.180" id=42:22.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2542">42:22.180</a></div>
+        <div class="t">也就是說,它其實做了腦補這一件事情。腦補是什麼,大家知道嗎?就是如果你看了一部動漫,那裡面沒有發生某一些事情,比如說兩個男女主角其實沒有在一起,但是你心裡想像他們是在一起的,這個就是腦補。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:40.180" id=42:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2560">42:40.180</a></div>
+        <div class="t">所以這個generative model它做的事情就是腦補。如果我們在data裡面明明沒有觀察到在class 2裡面,有都是1的這樣的example出現,但是對naive base來說,它想像它看到了這件事情,所以它就會做出一個跟我們人類直覺的想法不一樣的判斷結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:06.180" id=43:06.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2586">43:06.180</a></div>
+        <div class="t">那到底腦補是不是一件好的事情呢?通常腦補可能不是一件好的事情,因為你的data沒有告訴你這件事情,你卻腦補出這樣的結果。但是如果今天在data很少的情況下,腦補有時候也是有用的,如果你得到的情報很少,腦補可以給你更多的情報。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:26.180" id=43:26.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2606">43:26.180</a></div>
+        <div class="t">所以其實discriminative model並不是在所有的情況下都可以贏過generative model。有些時候generative model也是有優勢的,什麼時候會有優勢呢?如果你今天的training data很少,你可以比較說在同一個範圍下,你給discriminative model和generative model不同量的training data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:52.180" id=43:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2632">43:52.180</a></div>
+        <div class="t">你會發現discriminative model完全沒有做任何假設,它是看著data說話,所以它的performance的變化量會受你的data量影響很大。假設現在由左到右是data越來越多,然後縱軸是error rate,discriminative model受到data影響很大,所以data越來越多,error就越來越小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:18.180" id=44:18.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2658">44:18.180</a></div>
+        <div class="t">如果你是看generative model的話,它受data的影響是比較小的,因為它有一個它自己的假設,它有時候會無視data而遵從它自己內心的假設,內心腦補的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:34.180" id=44:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2674">44:34.180</a></div>
+        <div class="t">所以如果你看data量的影響的話,在data少的時候,generative model有時候是可以贏過discriminative model,只有在data慢慢增加的時候,generative model才會輸給discriminative model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:50.180" id=44:50.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2690">44:50.180</a></div>
+        <div class="t">這個其實是case by case,但是你可以在作業裡面做做實驗,看看你能不能觀察到這樣子的現象。有時候generative model是有用的可能是,你今天的data是noisy的,你的label本身就有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:10.180" id=45:10.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2710">45:10.180</a></div>
+        <div class="t">你自己做一些腦補,做一些假設,反而可以把data裡面有問題的部分忽視掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:20.180" id=45:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2720">45:20.180</a></div>
+        <div class="t">那我們在做discriminative model的時候,我們是直接假設了一個posterior probability,然後去找posterior probability裡面的參數,但是我們在做generative model的時候,我們把整個formulation裡面拆成prior跟class dependent probability這兩項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:40.180" id=45:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2740">45:40.180</a></div>
+        <div class="t">這樣做有時候是有好處的,如果你把你的整個function拆成prior跟class dependent probability這兩項的話,有時候會有幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:54.180" id=45:54.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2754">45:54.180</a></div>
+        <div class="t">因為這個prior跟class dependent probability,它們可以是來自於不同的來源。舉例來說,以語音辨識為例,大家可能都知道語音辨識現在都是用neural network,它是一個discriminative的方法,但事實上整個語音辨識的系統是一個generative的system,DNN只是其中的一塊而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:20.180" id=46:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2780">46:20.180</a></div>
+        <div class="t">所以說,該怎麼說呢?全部都是用DNN這件事情,並不是那麼的精確,它整個model其實是discriminative。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:31.180" id=46:31.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2791">46:31.180</a></div>
+        <div class="t">為什麼會這樣呢?因為它還是要去算一個prior的probability,因為prior的probability是某一句話被說出來的機率,而你要estimate某一句話被說出來的機率,你並不需要有聲音的data,你只要去網路上爬很多很多的文字,你就可以計算某一段文字出現的機率,你不需要聲音的data,這個就是language model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:56.180" id=46:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2816">46:56.180</a></div>
+        <div class="t">所以在語音辨識裡面,我們整個model反而是generative,因為你可以把class dependent的部分和prior的部分拆開來考慮,而prior的部分你就用文字的data來處理,class dependent的部分才需要有聲音和文字的配合,這樣子你可以把priorestimate得更精確,而這一件事情在語音辨識裡面是很關鍵的,現在還幾乎沒有辦法擺脫這個架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:20.180" id=47:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2840">47:20.180</a></div>
+        <div class="t">接下來我們要講的,我們剛才舉的例子通通都是只有兩個class的例子,接下來我們要講的是,如果是有兩個以上的class,我們等一下舉的例子是三個class的,那應該要怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:37.180" id=47:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2857">47:37.180</a></div>
+        <div class="t">那等一下我就只講過程,不講原理,那如果你想要知道原理的話,你可以看一下psharp的教科書,那這個原理跟我們剛才從只有兩個class的情況幾乎是一模一樣的,我相信你自己也可以推導出來,所以我就不想要重複一個你覺得很trivial的東西,那我們就直接看它的操作是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:04.180" id=48:04.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2884">48:04.180</a></div>
+        <div class="t">假設我有三個class,C1,C2,C3,現在每一個class都有一組自己的weight和自己的bias,這邊W1,W2,W3分別代表三個vector,B1,B2,B3代表三個scalar。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:25.180" id=48:25.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2905">48:25.180</a></div>
+        <div class="t">那接下來,input一個X,這個是你要分類的對象,你把X跟W1做inner product加上B1,你把X跟W2做inner product加上B2,你把X跟W3做inner product加上B3,你得到Z1,Z2跟Z3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:42.180" id=48:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2922">48:42.180</a></div>
+        <div class="t">這個Z1跟Z2、Z3它可以是任何值,它可以是負無窮大到正無窮大的任何值。接下來,我們把Z1跟Z2、Z3丟進一個softmax的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:59.180" id=48:59.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2939">48:59.180</a></div>
+        <div class="t">這個softmax的function它做的事情是這樣,把Z1、Z2、Z3都取exponential,得到exponential Z1、exponential Z2、exponential Z3。接下來,把exponential Z1、exponential Z2、exponential Z3summation起來,你得到他們的total sum。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:19.180" id=49:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2959">49:19.180</a></div>
+        <div class="t">然後你再把這個total sum分別除掉這三項,把total sum分別除掉這三項,得到softmax function的output Y1、Y2跟Y3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:30.180" id=49:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2970">49:30.180</a></div>
+        <div class="t">如果你覺得有點複雜的話,我們舉一個數字的例子,假設Z1等於3,Z2等於1,Z3等於負3。做完exponential以後,exponential 3是很大的,是20,exponential 1是2.7,exponential 負3很小,是0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:48.180" id=49:48.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=2988">49:48.180</a></div>
+        <div class="t">接下來,你把這三項合起來,再分別去除掉,也就是做normalization,那你得到的結果,20就變成0.88,2.7是0.12,0.05就會變成趨近於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:04.180" id=50:04.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3004">50:04.180</a></div>
+        <div class="t">當你做完softmax以後,原來input Z1、Z2、Z3它可以是正和式,但是做完softmax以後,你的output會被限制住。第一個,你的output值一定是介於0到1之間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:19.180" id=50:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3019">50:19.180</a></div>
+        <div class="t">首先你的output值一定是正的,不管你Z1、Z2、Z3是正的還是負的exponential以後,都變成是正的。那今天它的total sum一定是1,你的output和一定是1,因為你在這個地方做了一個normalization,所以total sum一定是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:37.180" id=50:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3037">50:37.180</a></div>
+        <div class="t">為什麼這個東西叫softmax呢?因為如果是max的話,你就取最大的值,但是你做softmax的意思是說你會對最大的值做強化,因為你今天有取了exponential。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:54.180" id=50:54.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3054">50:54.180</a></div>
+        <div class="t">你取了exponential以後,大的值和小的值之間的差距會被拉得更開,強化大的值,所以這件事情叫做softmax。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:07.180" id=51:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3067">51:07.180</a></div>
+        <div class="t">你把這邊的每一個yi當作input的x是第一個class的posterior probability,所以今天講的你y1是0.88,就意思是說你input x,你input x,屬於class1的機率是88%,屬於class2的機率是12%,屬於class3的機率是趨近於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:30.180" id=51:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3090">51:30.180</a></div>
+        <div class="t">這個softmax的output就是拿來估計posterior probability。那你可能會問說,為什麼會這樣呢?事實上這件事情是有辦法推導的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:44.180" id=51:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3104">51:44.180</a></div>
+        <div class="t">如果在外面有人演講問我說為什麼是exponential,我就會回答說你也可以用別的,因為我用別的你也會問同樣的問題。但是這個事情是有辦法講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:00.180" id=52:00.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3120">52:00.180</a></div>
+        <div class="t">你可以去翻一下psharp的教科書,這件事情是可以解釋的。如果你今天有三個class,假設那三個class通通都是Gaussian的distribution,他們又共用同一個covariance metric,在這個情況下,你做一番推導以後,你得到的就會是這個softmax的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:22.180" id=52:22.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3142">52:22.180</a></div>
+        <div class="t">這個就留給大家自己做。如果你想要知道更多,你還可以google一個叫做maximum entropy的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:32.180" id=52:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3152">52:32.180</a></div>
+        <div class="t">maximum entropy也是一種classifier,它其實跟logistic regression是一模一樣的東西,只是換個名字而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:40.180" id=52:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3160">52:40.180</a></div>
+        <div class="t">它是從另外一個觀點來切入為什麼我們的classifier長這個樣子。我們剛才是說我們可以從機率的觀點,假設我們用的是Gaussian distribution觀點來經過一番推導以後,你可以得到softmax這個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:57.180" id=52:57.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3177">52:57.180</a></div>
+        <div class="t">你可以從另外一個角度,從information theory的角度去推導,你也會得到softmax這個function。這個就留給大家自己研究,你就googlemaximum entropy,你就可以找到答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:11.180" id=53:11.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3191">53:11.180</a></div>
+        <div class="t">我們複習一下剛才做的事情,你就有一個x當作input,分別乘上三組不同的weight,加上三組不同的bias,得到三個不同的z。通過softmax function,你就得到y1,y2,y3,分別是這三個class的posterior probability。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:32.180" id=53:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3212">53:32.180</a></div>
+        <div class="t">可以把它合起來,當作是y。那你這個訓練,你要有一個target,它的target是什麼呢?它的target是y hat,每一維,你有三個class,那你的output就是三維,這三維分別就對應到y1 hat,y2 hat和y3 hat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:53.180" id=53:53.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3233">53:53.180</a></div>
+        <div class="t">我們要去minimize的對象,是y所形成的這個probability distribution。它是一個probability distribution嘛,對不對?當你做完softmax的時候,它就變成了,你就可以把它當作一個probability distribution來看待。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:06.180" id=54:06.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3246">54:06.180</a></div>
+        <div class="t">你可以去計算這個y和y hat它們之間的cross entropy,它的這個cross entropy的式子呢,我就發現我寫錯了這樣子,這邊前面應該要有一個負號,真是不好意思,這前面應該要有一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:24.180" id=54:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3264">54:24.180</a></div>
+        <div class="t">好,所以這兩個probability的cross entropy,它們的式子就是y1 hat乘上logy1,y2 hat乘上logy2,加上y3 hat乘上logy3,在前面再加一個負號,就是它們之間的cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:43.180" id=54:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3283">54:43.180</a></div>
+        <div class="t">如果我們要計算y和y hat的cross entropy的話,y hat顯然也必須要是一個probability distribution,我們才能夠算cross entropy。怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:55.180" id=54:55.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3295">54:55.180</a></div>
+        <div class="t">假設x是屬於class1的話,在training data裡面,我們已經知道x是屬於class1的話,它的target就是100,如果是屬於class2的話,它的target就是010,如果屬於class3的話,它的target就是001。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:13.180" id=55:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3313">55:13.180</a></div>
+        <div class="t">我們之前有講過說,如果你設class1的target是1,class2的target是2,class3的target是3,這樣會有問題,因為等於是假設說1跟2比較近,2跟3比較近,1跟3比較遠,這樣做會有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:26.180" id=55:26.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3326">55:26.180</a></div>
+        <div class="t">但是如果你今天是換一個假設,你今天是假設如果x是屬於class1的話,它的目標就是100,屬於class2就是010,屬於class3就是001,那你就沒有假設這個class和class之間,誰跟誰比較近,誰跟誰比較遠的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:46.180" id=55:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3346">55:46.180</a></div>
+        <div class="t">至於這個式子哪來的呢?其實這個式子也是去maximize likelihood,我們剛才在講binary的case的時候,我們講說我們的cross entropy這個function,minimize cross entropy這件事情,其實是來自於maximize likelihood。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:08.180" id=56:08.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3368">56:08.180</a></div>
+        <div class="t">那在有多個class的情況下,也是一模一樣的,它是一模一樣的,你就把maximize likelihood那個function列出來,經過一番整理,你也會得到minimize cross entropy,這件事就交給大家自己做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:25.180" id=56:25.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3385">56:25.180</a></div>
+        <div class="t">接下來我要講的是,這個logistic regression其實它是有非常強的限制的,怎麼樣的限制呢?我們今天假設這樣一個case,現在有四筆data,他們每一筆data都有兩個feature,他們都是binary的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:46.180" id=56:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3406">56:46.180</a></div>
+        <div class="t">那class2有兩筆data,分別是0011,class1有兩筆data,就是0110,如果我們把它畫出來的話,class1的兩筆data是在這裡跟這裡,class2的兩筆data是在這裡跟這裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:02.180" id=57:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3422">57:02.180</a></div>
+        <div class="t">如果我們想要用logistic regression對它做分類的話,我們能做到這件事情嗎?我們能做到這件事情嗎?你會發現說,這件事情我們是辦不到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:19.180" id=57:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3439">57:19.180</a></div>
+        <div class="t">如果我們今天要做logistic regression的話,我們會希望說對logistic regression的output而言,這兩個屬於class1的data,它的機率要大於0.5,另外兩個屬於class2的data,它的機率要小於0.5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:38.180" id=57:38.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3458">57:38.180</a></div>
+        <div class="t">但這件事情對logistic regression來說,它卡翻了,它沒有辦法做到這件事,因為logistic regression兩個class之間的boundary就是一條直線,所以你要分兩個class的時候,你只能在你的feature的平面上畫一條直線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:59.180" id=57:59.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3479">57:59.180</a></div>
+        <div class="t">你要嘛畫這邊,要嘛畫這邊,但不管你怎麼畫,你都沒有辦法把紅色的放一邊,藍色的放一邊,不管你怎麼畫,你都沒有辦法把紅色的放一邊,藍色的放一邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:10.180" id=58:10.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3490">58:10.180</a></div>
+        <div class="t">這個直線可以隨便亂畫,你可以調整w跟b,你可以調整你的weight跟bias,使得你的logistic regression的兩個class之間的boundary是任何樣,它可以是這樣,可以是這樣,怎麼畫都可以,這直線,整個boundary是一條直線,怎麼畫都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:26.180" id=58:26.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3506">58:26.180</a></div>
+        <div class="t">但你永遠沒有辦法把今天這個example的紅色的點和藍色的點分成兩邊,怎麼辦呢?怎麼辦呢?假設你還是堅持要用logistic regression的話,有一招叫做feature transformation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:40.180" id=58:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3520">58:40.180</a></div>
+        <div class="t">你原來的feature定得不好,原來x1、x2這個feature定得不好,我們可以做一些轉化以後,找一個比較好的feature space,這個比較好的feature space是讓logistic regression是可以處理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:58.180" id=58:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3538">58:58.180</a></div>
+        <div class="t">我們把x1跟x2轉到另外一個space上面,轉到x1'跟x2'上面,x1'是,這個怎麼做feature transformation,這是很curious的東西,就想一個你喜歡的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:15.180" id=59:15.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3555">59:15.180</a></div>
+        <div class="t">舉例來說,我這邊定x1'就是某一個點到0,0的距離,x2'就是某一個點到1,1的距離。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:28.180" id=59:28.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3568">59:28.180</a></div>
+        <div class="t">如果我們把它畫出來的話,如果我們把這個點畫出來,我們先看左下角這個點好了,如果我們看左下角0,0這個點,它的x1'應該是0,因為它跟0,0的距離,跟自己的距離就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:47.180" id=59:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3587">59:47.180</a></div>
+        <div class="t">它跟1,1的距離,0,0跟1,1的距離是√2,所以x2'就是√2,所以經過這個transformation,0,0這個點跑到這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:58.180" id=59:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3598">59:58.180</a></div>
+        <div class="t">經過這個transformation,1,1這個點跑到右下角,因為它跟0,0的距離是√2,跟1的距離是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:07.180" id=01:00:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3607">01:00:07.180</a></div>
+        <div class="t">經過這個transformation,0,1和1,0它們跟0,0和1,1之間的距離都是一樣的,0,1跟0,0之間的距離是1,0,1和1,1之間的距離是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:25.180" id=01:00:25.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3625">01:00:25.180</a></div>
+        <div class="t">所以經過這個transformation以後,這兩個紅色的點會重疊在一起,都變成是1,1。這個時候對logistic regression來說,它可以處理這個問題了,因為它可以找一個boundary,比如說可能在這個地方,把藍色的點跟紅色的點分開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:42.180" id=01:00:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3642">01:00:42.180</a></div>
+        <div class="t">但是麻煩的問題是這樣子,麻煩的問題是,我們不知道要怎麼做future transformation,如果花太多力氣來做future transformation,那就不是機器學習了,就不是人工智慧了,就都是人的智慧了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:57.180" id=01:00:57.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3657">01:00:57.180</a></div>
+        <div class="t">所以有時候我們不知道要怎麼找一個好的transformation,所以我們會希望說這個transformation是由機器自己產生的,怎麼讓機器自己產生這樣的transformation呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:12.180" id=01:01:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3672">01:01:12.180</a></div>
+        <div class="t">所以我們就把很多的logistic regressioncascade起來,把很多的logistic regression接起來,我們就可以做到這樣的事情。假設input是x1,x2,我們有一個logistic regression的model,我們這邊就把bias等於給掉,讓圖看起來比較簡單一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:33.180" id=01:01:33.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3693">01:01:33.180</a></div>
+        <div class="t">我們裡面有一個logistic regression的model,它對x1乘一個weight,對x2乘一個weight加起來,得到自己透過sigmoid function,它的output,我們就說它是新的transform的第一維,x1'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:46.180" id=01:01:46.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3706">01:01:46.180</a></div>
+        <div class="t">我們有另外一個logistic regression的model,它的x1乘上一個weight,對x2乘上另外一組weight,得到dq,再通過sigmoid function得到x2',我們說它是transform後的另外一維。如果我們把x1跟x2經過這兩個logistic regression model的transform,得到x1'跟x1'、x2'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:08.180" id=01:02:08.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3728">01:02:08.180</a></div>
+        <div class="t">而在這個新的transform上面,class1和class2是可以用一條直線分開的,那麼最後只要再接另外一個logistic regression的model,它的input就是x1'和x2'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:20.180" id=01:02:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3740">01:02:20.180</a></div>
+        <div class="t">對它來說,x1'和x2'就是每一個example的feature,不是x1跟x2,是x1'跟x2'.它根據x1'和x2'這個新的feature,它就可以把class1和class2分開。所以前面這兩個logistic regression它做的事情,就是做feature transform這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:43.180" id=01:02:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3763">01:02:43.180</a></div>
+        <div class="t">它先把feature transform好以後,再由後面的紅色的這個logistic regression的model來做分類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:52.180" id=01:02:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3772">01:02:52.180</a></div>
+        <div class="t">如果舉比較實際的例子的話,我們看剛才那一個例子,我們在x1和x2平面上有四個點,我們可以調整藍色的這個logistic regression它的位置的參數,讓它的posterior probability的output長得像是這個圖上的顏色這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:13.180" id=01:03:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3793">01:03:13.180</a></div>
+        <div class="t">因為這個boundary一定是一條直線嘛,所以posterior probability的output一定是長這樣子的,它這個等高線一定是直的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:23.180" id=01:03:23.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3803">01:03:23.180</a></div>
+        <div class="t">在左上角的地方,output的值比較大,在右下角的地方,output的值比較小。你可以調整參數,讓這個藍色的logistic regression,它input x1,x2的時候,對這四個點,它的output是0.73,0.27,0.27,0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:44.180" id=01:03:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3824">01:03:44.180</a></div>
+        <div class="t">這件事情是它做得到的。對綠色這個點來說,你也可以調整它的參數,讓它對右下角這個紅色點的output是0.73,對藍色點是0.27,0.27,對左邊這個點,左上角這個點,它是0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:02.180" id=01:04:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3842">01:04:02.180</a></div>
+        <div class="t">Logistic regression它的boundary一定是一條直線,它這個直線可以有任何的畫法,你可以是左邊高右邊低,也可以是左上高右下低,也可以是右下高左上低,這個都是做得到的,你在調整參數就做得到這些事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:19.180" id=01:04:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3859">01:04:19.180</a></div>
+        <div class="t">所以現在有了前面這兩個logistic regression以後,我們就可以把input的每一筆data做feature transform,得到另外一組feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:32.180" id=01:04:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3872">01:04:32.180</a></div>
+        <div class="t">也就是說,原來左上角這個點,它本來在S1,S2的平面上是01,但是在S1'和S2'的平面上,它變成是0.73,0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:49.180" id=01:04:49.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3889">01:04:49.180</a></div>
+        <div class="t">如果我們看右下角這個紅色的點,在S1'和S2'的平面上,它就是0.05,0.73。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:02.180" id=01:05:02.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3902">01:05:02.180</a></div>
+        <div class="t">那S1'和S2'是不是畫反了呢?我看一下,對,畫反了,不好意思,這個S1'和S2'應該是畫反了,因為你看這個是0.05,然後這個縱軸比較小的才是0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:20.180" id=01:05:20.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3920">01:05:20.180</a></div>
+        <div class="t">所以這個S1'和S2'這邊的level應該要是反過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:32.180" id=01:05:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3932">01:05:32.180</a></div>
+        <div class="t">然後我們現在把紅色的點變到0.73,0.05的位置,紅色的點變到0.05,0.73的位置,把這兩個藍色的點變到0.27,0.27的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:44.180" id=01:05:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3944">01:05:44.180</a></div>
+        <div class="t">我們做了這樣的轉換以後,我們就可以用紅色的這個logistic regression,畫一條boundary,把藍色的點和紅色的點分開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:59.180" id=01:05:59.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3959">01:05:59.180</a></div>
+        <div class="t">所以如果我們只有一個logistic regression,我們沒有辦法把這個example處理好,但是如果我們有三個logistic regression,它們被接在一起的話,那我們就可以把這件事情處理好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:14.180" id=01:06:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3974">01:06:14.180</a></div>
+        <div class="t">所以把這些logistic regression的model疊在一起,它還蠻有用的,我們可以有某一個logistic regression它的model,它的input是來自於其他logistic regression的output,而某一個logistic regression的output,它也可以是其他logistic regression的input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:34.180" id=01:06:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=3994">01:06:34.180</a></div>
+        <div class="t">我們可以把它前後相連起來,就變得感覺很powerful,我們可以給它一個新的名字,我們把每一個logistic regression叫做一個neural,把這些logistic regression串起來,所成的neural network就叫做類神經網路。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:52.180" id=01:06:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=4012">01:06:52.180</a></div>
+        <div class="t">換了一個名字以後,它整個就吵起來了,你就可以騙麻瓜,你就可以跟麻瓜講說,我們是在模擬人類大腦的運作,然後麻瓜就會覺得你做的東西實在是太棒了,這個東西就是deep learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:09.180" id=01:07:09.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=hSXFuypLukA&t=4029">01:07:09.180</a></div>
+        <div class="t">所以我們就進入deep learning。</div>
+    </div>
+    
+</body>
+</html>   

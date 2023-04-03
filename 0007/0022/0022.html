@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 14: Unsupervised Learning - Word Embedding</h2><a href=https://www.youtube.com/watch?v=X7PH3NuYW0Q><img src=https://i.ytimg.com/vi_webp/X7PH3NuYW0Q/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.500" id=00:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=0">00:00.500</a></div>
+        <div class="t">好,各位同學大家好,那我們就來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:09.000" id=00:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=9">00:09.000</a></div>
+        <div class="t">那今天的規劃是這樣子,就是我們今天等一下會公告final。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:14.000" id=00:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=14">00:14.000</a></div>
+        <div class="t">那final有三個選擇,所以是需要花時間跟大家講一下的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=19">00:19.000</a></div>
+        <div class="t">那所以今天的規劃是,我們等一下上課大概上到一點二十以後下課。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:27.000" id=00:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=27">00:27.000</a></div>
+        <div class="t">不是一點二十,腦殘了,是十一點二十吧,不是十一點二十,大概十點二十的時候下課。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:36.000" id=00:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=36">00:36.000</a></div>
+        <div class="t">然後等一下就剩下的時間就讓助教來把三個final都跟大家講完。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.000" id=00:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=46">00:46.000</a></div>
+        <div class="t">好,那今天我們要講的是word embedding,那我們之前已經講了dimension reduction。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:55.000" id=00:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=55">00:55.000</a></div>
+        <div class="t">那word embedding其實是dimension reduction一個非常好,非常廣為人知的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03.000" id=01:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=63">01:03.000</a></div>
+        <div class="t">好,那如果我們今天要你用一個vector來表示一個word,你會怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.000" id=01:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=71">01:11.000</a></div>
+        <div class="t">最typical的做法叫做one-of-a-kind encoding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.000" id=01:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=75">01:15.000</a></div>
+        <div class="t">也就是每一個word呢,我們用一個vector來表示,這個vector的dimension就是這個世界上可能有的word的數目。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24.000" id=01:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=84">01:24.000</a></div>
+        <div class="t">假設這個世界上可能有十萬個word,那one-of-a-kind encoding的dimension呢,就是十萬維。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.000" id=01:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=90">01:30.000</a></div>
+        <div class="t">那每一個word呢,對應到其中一維。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.000" id=01:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=94">01:34.000</a></div>
+        <div class="t">所以apple它就是第一維是1,其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.000" id=01:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=98">01:38.000</a></div>
+        <div class="t">beg就是第二維是1,cat就是第三維是1,以此類推等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.000" id=01:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=102">01:42.000</a></div>
+        <div class="t">那如果你用這種方式來描述一個word,你的這個vector呢,一點都不informative。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:48.000" id=01:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=108">01:48.000</a></div>
+        <div class="t">你這個每一個word呢,它的vector呢,都是不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:52.000" id=01:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=112">01:52.000</a></div>
+        <div class="t">所以從這個vector裡面,你沒有辦法得到任何的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.000" id=01:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=116">01:56.000</a></div>
+        <div class="t">你沒有辦法知道說,比如說beg跟cat,而beg跟cat沒什麼關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:01.000" id=02:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=121">02:01.000</a></div>
+        <div class="t">比如說cat跟dog,它們都是動物這件事,你沒有辦法知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.000" id=02:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=126">02:06.000</a></div>
+        <div class="t">那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.000" id=02:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=129">02:09.000</a></div>
+        <div class="t">有一個方法呢,叫做建wordcast。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:13.000" id=02:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=133">02:13.000</a></div>
+        <div class="t">也就是你把不同的word,有同樣性質的word,把它們cluster成一群一群的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:20.000" id=02:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=140">02:20.000</a></div>
+        <div class="t">然後就用那一個word所屬的class來表示這個word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=145">02:25.000</a></div>
+        <div class="t">這個就是我們之前呢,在做dimension reduction的時候呢,講的clustering的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:31.000" id=02:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=151">02:31.000</a></div>
+        <div class="t">比如說,dog、cat跟bird,它們都是class1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:35.000" id=02:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=155">02:35.000</a></div>
+        <div class="t">red呢,jump、walk是class2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:38.000" id=02:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=158">02:38.000</a></div>
+        <div class="t">然後flower、tree、apple是class3等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:41.000" id=02:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=161">02:41.000</a></div>
+        <div class="t">但是光用class呢,是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.000" id=02:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=164">02:44.000</a></div>
+        <div class="t">我們之前有講過說,光做clustering是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.000" id=02:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=167">02:47.000</a></div>
+        <div class="t">因為如果光做clustering的話呢,我們會少了一些information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:52.000" id=02:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=172">02:52.000</a></div>
+        <div class="t">比如說呢,dog跟,比如說這個是屬於動物的class,這個是屬於植物的class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:57.000" id=02:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=177">02:57.000</a></div>
+        <div class="t">它們都是屬於生物,但在class裡面沒有辦法呈現這些事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:01.000" id=03:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=181">03:01.000</a></div>
+        <div class="t">或者是說,class1是動物,而class2代表是動物可以做的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:07.000" id=03:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=187">03:07.000</a></div>
+        <div class="t">但是這個class3是植物,class2裡面的行為是class3沒有辦法做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:12.000" id=03:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=192">03:12.000</a></div>
+        <div class="t">所以class2感覺跟class1是有一些關聯的,也沒有辦法用word class呈現出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.000" id=03:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=198">03:18.000</a></div>
+        <div class="t">所以怎麼辦呢?我們需要的是word embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:23.000" id=03:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=203">03:23.000</a></div>
+        <div class="t">word embedding是這樣,把每一個word呢,都project到一個high dimensional space上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.000" id=03:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=210">03:30.000</a></div>
+        <div class="t">把每一個word呢,都project到一個high dimensional space上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:33.000" id=03:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=213">03:33.000</a></div>
+        <div class="t">雖然這邊說這個space是high dimensional的,但是它其實遠比one of encoding的dimension才要低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:39.000" id=03:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=219">03:39.000</a></div>
+        <div class="t">one of encoding,你這個vector通常是,比如說英文有十萬個詞彙,這個就十萬位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.000" id=03:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=225">03:45.000</a></div>
+        <div class="t">但如果說word embedding的話呢,通常比如說五十位,一百位,這樣子的dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=231">03:51.000</a></div>
+        <div class="t">所以這是一個從one of encoding到word embedding,這是dimension reduction的process。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.000" id=03:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=238">03:58.000</a></div>
+        <div class="t">那我們希望在這個word embedding的圖上呢,我們可以看到的結果是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.000" id=04:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=244">04:04.000</a></div>
+        <div class="t">同樣類似semantic,類似語意的詞彙,它們能夠在這個圖上是比較接近的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:11.000" id=04:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=251">04:11.000</a></div>
+        <div class="t">而且在這個high dimensional space裡面呢,在這個word embedding的space裡面呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:16.000" id=04:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=256">04:16.000</a></div>
+        <div class="t">每一個dimension可能都有它特別的含義。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.000" id=04:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=260">04:20.000</a></div>
+        <div class="t">比如說,假設我們現在做完word embedding以後呢,每一個word的feature vector長得是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.000" id=04:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=268">04:28.000</a></div>
+        <div class="t">那你可能就可以知道說,這個dimension代表了生物和其他的東西之間的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:38.000" id=04:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=278">04:38.000</a></div>
+        <div class="t">那這個dimension呢,可能就代表了,比如說,這是會動的,跟動作有關的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.000" id=04:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=284">04:44.000</a></div>
+        <div class="t">比如動物是會動的,還有這個是動作,跟動作有關的東西和不會動的,是靜止的東西的差別等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:52.000" id=04:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=292">04:52.000</a></div>
+        <div class="t">那怎麼做word embedding呢?那word embedding呢,它是一個unsupervised approach。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=299">04:59.000</a></div>
+        <div class="t">也就是我們怎麼讓machine知道每一個詞彙的含義是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.000" id=05:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=303">05:03.000</a></div>
+        <div class="t">你只要透過讓machine閱讀大量的文章,你只要讓machine透過閱讀大量的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:09.000" id=05:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=309">05:09.000</a></div>
+        <div class="t">它就可以知道呢,每一個詞彙,它的這個embedding的feature vector呢,應該長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.000" id=05:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=316">05:16.000</a></div>
+        <div class="t">那這是一個unsupervised problem,因為我們要做的事情就是,任一個neural network找一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.000" id=05:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=324">05:24.000</a></div>
+        <div class="t">那你的input是一個詞彙,output就是那一個詞彙所對應的word embedding,它所對應的word embedding的那一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:33.000" id=05:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=333">05:33.000</a></div>
+        <div class="t">而我們手上有的training data就是一大堆的文字,所以我們只有input,我們只有input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.000" id=05:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=341">05:41.000</a></div>
+        <div class="t">但是我們沒有output,我們不知道每一個word embedding應該長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:50.000" id=05:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=350">05:50.000</a></div>
+        <div class="t">所以對我們要找的function,我們只有單想,我們只知道輸入,不知道輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=356">05:56.000</a></div>
+        <div class="t">所以這是一個unsupervised learning的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:01.000" id=06:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=361">06:01.000</a></div>
+        <div class="t">那這個問題要怎麼解呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:05.000" id=06:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=365">06:05.000</a></div>
+        <div class="t">我們之前有講過一個deep learning based dimensional reduction的方法,叫做autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:11.000" id=06:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=371">06:11.000</a></div>
+        <div class="t">也就是任一個network,讓它輸入等於輸出,中間某個hidden layer拿出來,就是dimensional reduction的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.000" id=06:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=378">06:18.000</a></div>
+        <div class="t">在這個地方,你覺得你可以用autoencoder嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.000" id=06:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=382">06:22.000</a></div>
+        <div class="t">給大家一秒鐘的時間想一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=385">06:25.000</a></div>
+        <div class="t">你覺得這邊可以用autoencoder的同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:29.000" id=06:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=389">06:29.000</a></div>
+        <div class="t">你覺得不能用autoencoder的同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:32.000" id=06:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=392">06:32.000</a></div>
+        <div class="t">好,謝謝,手放下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:35.000" id=06:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=395">06:35.000</a></div>
+        <div class="t">大多數的同學都覺得不能用autoencoder來處理這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:38.000" id=06:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=398">06:38.000</a></div>
+        <div class="t">沒錯,這個問題你沒辦法用autoencoder來解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=404">06:44.000</a></div>
+        <div class="t">這件事情有點難解釋,或許讓大家自己回去想想。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.000" id=06:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=408">06:48.000</a></div>
+        <div class="t">你可以想想看,如果你是用one-off encoding當作它的input,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:54.000" id=06:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=414">06:54.000</a></div>
+        <div class="t">對one-off encoding來說,每一個詞彙都是independent的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=418">06:58.000</a></div>
+        <div class="t">你把這樣的vector做autoencoder,你其實沒有辦法認出任何informative的information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:06.000" id=07:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=426">07:06.000</a></div>
+        <div class="t">所以在we-embedded這個task裡面,用autoencoder是沒有辦法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:13.000" id=07:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=433">07:13.000</a></div>
+        <div class="t">如果你這邊input是one-off encoding,用autoencoder是沒有辦法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.000" id=07:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=437">07:17.000</a></div>
+        <div class="t">除非你說你用character,比如說你用character的engram來描述一個word,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.000" id=07:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=444">07:24.000</a></div>
+        <div class="t">或許它可以抓到一些自首自根的含義,不過基本上現在大家並不是這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:31.000" id=07:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=451">07:31.000</a></div>
+        <div class="t">那怎麼找這個we-embedded呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=454">07:34.000</a></div>
+        <div class="t">這邊的做法是這樣子,它基本的精神就是,你要如何了解一個詞彙的含義呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.000" id=07:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=461">07:41.000</a></div>
+        <div class="t">你要看這個詞彙的context,每一個詞彙的含義可以根據它的上下文來得到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.000" id=07:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=471">07:51.000</a></div>
+        <div class="t">舉例來說,假設機器讀了一段文字是說,馬英九520宣誓就職。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.000" id=07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=477">07:57.000</a></div>
+        <div class="t">它又讀了另外一段新聞說,蔡英文520宣誓就職。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.000" id=08:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=481">08:01.000</a></div>
+        <div class="t">對機器來說,雖然它不知道馬英九指的是什麼,它不知道蔡英文指的是什麼,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:07.000" id=08:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=487">08:07.000</a></div>
+        <div class="t">但是馬英九後面有接520宣誓就職,蔡英文後面也有接520宣誓就職。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:13.000" id=08:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=493">08:13.000</a></div>
+        <div class="t">對機器來說,只要它讀了大量的文章,發現說馬英九跟蔡英文後面都有類似的context,它前後都有類似的文字,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.000" id=08:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=503">08:23.000</a></div>
+        <div class="t">機器就可以推論說,蔡英文跟馬英九代表了某種有關係的object,它們是某些有關係的物件。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.000" id=08:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=512">08:32.000</a></div>
+        <div class="t">雖然它可能也不知道它們是人,但它知道說,蔡英文跟馬英九這兩個詞彙代表了可能有同樣地位的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:40.000" id=08:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=520">08:40.000</a></div>
+        <div class="t">那怎麼來體現這件事呢?怎麼用這個精神來找出這個raw embedding的vector呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=529">08:49.000</a></div>
+        <div class="t">有兩個不同體系的做法,一個做法叫做counting-based的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.000" id=08:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=536">08:56.000</a></div>
+        <div class="t">那counting-based的方法是這樣,是說,如果我們現在有兩個詞彙Wi,Wj,它們常常在同一個文章中出現,它們常常一起扣curve,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:12.000" id=09:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=552">09:12.000</a></div>
+        <div class="t">那它們的work vector,我們用V of Wi來代表Wi的work vector,我們用V of Wj來代表Wj的work vector,如果Wi跟Wj它們常常一起出現的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.000" id=09:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=574">09:34.000</a></div>
+        <div class="t">V of Wi跟V of Wj它們就會比較接近。那這種方法,一個很代表性的例子叫做globe vector,我把它的reference附在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.000" id=09:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=591">09:51.000</a></div>
+        <div class="t">那這個方法的原則是這樣子,假設我們知道Wi的work vector是V of Wi,Wj的work vector是V of Wj,那我們可以計算它的inner product。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.000" id=10:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=606">10:06.000</a></div>
+        <div class="t">那假設Nij是Wi跟Wj,它們扣curve在同樣的文章裡面的次數,那我們就希望為Wi找一組vector,為Wj找一組vector,然後希望這兩件事情越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.000" id=10:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=631">10:31.000</a></div>
+        <div class="t">你會發現說這個概念跟我們之前講的LSAR,跟我們講的metric factorization的概念其實是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:43.000" id=10:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=643">10:43.000</a></div>
+        <div class="t">那另外一個方法叫做prediction-based的方法,我發現我這邊拼錯了,這應該是prediction-based的方法。我不知道說,就我所知好像沒有人很認真的比較過說prediction-based的方法跟counting-based的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:06.000" id=11:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=666">11:06.000</a></div>
+        <div class="t">它們有什麼樣非常不同的差異,或者是誰優誰劣。如果你有知道這方面的information,或許你可以貼在我們的社團上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.000" id=11:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=676">11:16.000</a></div>
+        <div class="t">好,我講一下prediction-based的方法是怎麼做的呢?prediction-based的方法它的想法是這樣,我們來認一個neural network,它做的事情是prediction。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:29.000" id=11:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=689">11:29.000</a></div>
+        <div class="t">它predict什麼呢?這個neural network做的事情是given前一個word,假設給我一個sentence,這邊每一個w代表一個word,given word wi-1,這個prediction的model,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:44.000" id=11:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=704">11:44.000</a></div>
+        <div class="t">這個neural network它的工作是要predict下一個可能出現的word是誰。那我們知道說,每一個word我們都用1-of-encoding,可以把它表示成一個feature vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:59.000" id=11:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=719">11:59.000</a></div>
+        <div class="t">所以,如果我們要做prediction這件事情的話,我們就是要認一個neural network,它的input就是wi-1-of-encoding的feature vector,1-of-encoding的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:15.000" id=12:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=735">12:15.000</a></div>
+        <div class="t">那它的output呢?它的output就是下一個word wi是某一個word的機率,也就是說,這個model它的output的dimension就是less than的size,假設現在世界上有十萬個word,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=751">12:31.000</a></div>
+        <div class="t">這個model的output就是十萬回,每一回代表了某一個word是下一個word的機率,每一回代表某一個word是會被當作wi,它會是下一個word wi的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.000" id=12:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=766">12:46.000</a></div>
+        <div class="t">所以input跟output都是less than size,它們代表的意思是不一樣的,input是1-of-encoding,output是下一個word的機率。好,那假設這就是一個一般我們所熟知的multilayer perceptron,一個deep neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:06.000" id=13:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=786">13:06.000</a></div>
+        <div class="t">那你把它丟進去的時候,你把這個input feature vector丟進去的時候,通過很多hidden layer,通過一些hidden layer,那你就會得到output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.000" id=13:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=797">13:17.000</a></div>
+        <div class="t">那接下來呢,我們把第一個hidden layer的input拿出來,我們把第一個hidden layer的input拿出來,假設第一個hidden layer的input呢,我們這邊寫作,它第一個dimension是z1,第二個dimension是z2,以此類推,我們先把它寫作z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=816">13:36.000</a></div>
+        <div class="t">那我們用這個z呢,就可以代表一個word,input不同的1-of-encoding,這邊的z呢,就會不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.000" id=13:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=828">13:48.000</a></div>
+        <div class="t">所以呢,我們就把這邊的z呢,拿來代表一個詞彙,你input同一個詞彙,它有同樣的1-of-encoding,在這邊它的z呢,就會一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=840">14:00.000</a></div>
+        <div class="t">那你input不同的詞彙,這邊的z呢,就會不一樣。所以我們就用這個z呢,這個input 1-of-encoding得到的z的這個vector,來代表一個word,來當作那個word的embedding,你就可以得到這個現象,你就可以得到這樣的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.000" id=14:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=858">14:18.000</a></div>
+        <div class="t">為什麼用這個prediction-based的方法,就可以得到這樣的vector呢?這個prediction-based的方法,是怎麼體現我們說的可以根據一個詞彙的上下文,來了解一個詞彙的含義這件事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.000" id=14:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=872">14:32.000</a></div>
+        <div class="t">那這邊是這樣子的,假設我們的training data裡面呢,有一個文章是告訴我們說是蔡英文宣誓就職,那另外一個是馬英九宣誓就職。那在第一個句子裡面,蔡英文是wi-1,宣誓就職是wi,在另外一篇文章裡面,馬英九是wi-1,宣誓就職是wi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:54.000" id=14:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=894">14:54.000</a></div>
+        <div class="t">那你在訓練這個prediction model的時候,不管是input蔡英文還是馬英九,不管是input蔡英文還是馬英九的wi-1 encoding,你都會希望認出來的結果是宣誓就職的機率是比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:11.000" id=15:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=911">15:11.000</a></div>
+        <div class="t">因為馬英九和蔡英文後面,這些宣誓就職的機率都是高的,所以你會希望說input馬英九跟蔡英文的時候,它output是output對應到宣誓就職那個詞彙,它的那個dimension,它的機率是高的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.000" id=15:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=927">15:27.000</a></div>
+        <div class="t">那蔡英文和馬英九雖然是不同的input,但是為了要讓最後在output的地方得到一樣的output,那你就必須在讓中間的hidden layer做一些事情。中間的hidden layer必須要學到說,這兩個不同的詞彙,必須要把它們project到,必須要通過這個weight的轉換以後,必須要通過這個參數的轉換以後,把它們對應到同樣的空間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:56.000" id=15:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=956">15:56.000</a></div>
+        <div class="t">在input進入hidden layer之前,必須把它們對應到接近的空間,這樣子我們最後在output的時候,它們才能夠有同樣的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.000" id=16:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=966">16:06.000</a></div>
+        <div class="t">所以,當我們learn一個prediction model的時候,考慮一個world context這件事情,就自動地被考慮在這個prediction的model裡面。所以我們把這個prediction model的第一個hidden layer拿出來,我們就可以得到我們想要找的這種world embedding的特性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:26.000" id=16:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=986">16:26.000</a></div>
+        <div class="t">那你可能會想說,如果只用wi-1去predict wi,好像學得太弱,就算是人給一個詞彙要predict下一個詞彙,感覺也很難,因為如果只看一個詞彙,下一個詞彙的可能性是千千萬萬的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.000" id=16:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1004">16:44.000</a></div>
+        <div class="t">那怎麼辦呢?你可以拓展這個問題,比如說你可以拓展說,我希望machine learn的是input前面兩個詞彙,wi-2跟wi-1,然後predict下一個word wi,你可以輕易地把這個model拓展到n個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:06.000" id=17:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1026">17:06.000</a></div>
+        <div class="t">那一般我們如果你真的要認這樣的word vector的話呢,你的input可能通常是至少十個詞彙,你這樣才能夠認出比較reasonable的結果,只input一個或者是兩個,這都太少了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.600" id=17:19.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1039">17:19.600</a></div>
+        <div class="t">但我們這邊用input兩個word當作例子,那你可以輕易地把這個model拓展到十個word。那這邊要注意的地方事情是這樣子的,本來如果是一般的neural network,你就把input wi-2和wi-1的one of n calling的vector,把它接在一起,變成一個很長的vector,直接丟到neural network裡面當作input就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:47.440" id=17:47.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1067">17:47.440</a></div>
+        <div class="t">但是實際上呢,你在做的時候,你會希望這個wi-2的word vector跟它相連的位置,和wi-1相連的位置,它們是被tie在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.800" id=18:02.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1082">18:02.800</a></div>
+        <div class="t">所謂的tie在一起的意思是說,wi-2的第一個dimension跟第一個hidden layer的第一個neural它們中間連的位置,和wi-1的第一個dimension和第一個hidden layer的neural它們之間連的位置,這兩個位置必須是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:24.080" id=18:24.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1104">18:24.080</a></div>
+        <div class="t">所以我這邊故意用同樣的顏色來表示它。這個dimension它連到這個的位置,跟這個第一個dimension連到這邊的位置,它必須是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.800" id=18:36.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1116">18:36.800</a></div>
+        <div class="t">所以我這邊故意用同樣的顏色來表示它,然後這個dimension它連到它的位置,跟它連到它的位置,必須是一樣的,以此類推,以此類推,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.960" id=18:46.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1126">18:46.960</a></div>
+        <div class="t">這樣就讓大家知道我的意思。為什麼要這樣做呢?一個顯而易見的理由是說,如果我們不這麼做,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.960" id=19:04.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1144">19:04.960</a></div>
+        <div class="t">你把同一個word放在wi-2的位置,跟放在wi-1的位置,通過這個transform以後,它得到的embedding就會不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.960" id=19:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1162">19:22.960</a></div>
+        <div class="t">如果你必須要讓這一組weight和這一組weight是一樣的,那你把一個word放在這邊,通過這個transform,跟把一個weight放在這邊,通過transform,它們得到的weight才會是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:36.480" id=19:36.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1176">19:36.480</a></div>
+        <div class="t">當然另外一個理由你可以說,我們做這件事情的好處是,我們可以減少參數量,因為input這個dimension很大,它是十萬維,所以這個feature vector就在你這邊是五十維,它還是一個碩大無窮的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:52.080" id=19:52.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1192">19:52.080</a></div>
+        <div class="t">這個有一個你已經覺得夠卡了,所以有兩個更是吃不消,更何況說我們現在input往往是十個word,所以如果我們強迫讓所有的one-off encoding後面接的weight是一樣的,那你就不會隨著你的context的增長而需要更多的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.960" id=20:12.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1212">20:12.960</a></div>
+        <div class="t">或許我們用formulation來表示會更清楚一點。現在假設wi-2的one-off encoding就是x2,wi-1的one-off encoding就是x1,那它們的長度都是v的絕對值,長度我這邊都寫成v的絕對值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:34.560" id=20:34.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1234">20:34.560</a></div>
+        <div class="t">那這個hidden layer的input,我們把它寫成一個vector z,而z的長度是z的絕對值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.280" id=20:47.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1247">20:47.280</a></div>
+        <div class="t">那我們把這個x i-2跟x i-1有什麼樣的關係呢?z它等於x i-2乘以w1加上x i-1乘以w2,你把x i-2乘以w1加上x i-1乘以w2,你會得到這個z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:09.360" id=21:09.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1269">21:09.360</a></div>
+        <div class="t">那現在這個w1跟w2呢,它們都是一個z乘上v dimension的一個weight matrix,那在這邊我們做的事情是,我們強制讓w1要等於w2,要等於一個一模一樣的matrix w。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.880" id=21:26.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1286">21:26.880</a></div>
+        <div class="t">所以呢,我們今天實際上在處理這個問題的時候呢,你可以把x i-2跟x i-1直接先加起來,因為w1跟w2是一樣的,你可以把w提出來,你可以把x i-1跟x i-2先加起來,再乘上w的這個transform就會得到z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:47.800" id=21:47.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1307">21:47.800</a></div>
+        <div class="t">那你今天如果要得到一個word的vector的時候,你就把一個word1的分encoding乘上這個w,你就可以得到那個word的word embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:00.760" id=22:00.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1320">22:00.760</a></div>
+        <div class="t">那這邊會有一個問題就是,我們在實作上,如果你真的自己要實作的話,你怎麼讓這個w1跟w2它們的weight一定都要一樣呢?而事實上我們在這個train CNN的時候,也有一樣類似的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:23.320" id=22:23.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1343">22:23.320</a></div>
+        <div class="t">我們在train CNN的時候,我們也要讓某一些參數它們的weight必須是一樣的,那怎麼做呢?這個做法是這樣子,假設我們現在有兩個weight,wi跟wj,那我們希望wi跟wj它的weight是一樣的,那怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:45.860" id=22:45.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1365">22:45.860</a></div>
+        <div class="t">首先你要給wi跟wj一樣的initialization,在訓練的時候給它們一樣的初始值,接下來你計算wi對你最後cos的範圍分,然後update wi,然後你計算wj對cos的範圍分,然後update wj。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:07.040" id=23:07.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1387">23:07.040</a></div>
+        <div class="t">那你可能會說,wi跟wj如果它們對c的範圍分是不一樣的,那做了update以後,它們的值不就不一樣了嗎?所以如果你只有列這樣的式子,wi跟wj經過一次update以後,它們的值就不一樣了,initialize值一樣也沒有用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:24.260" id=23:24.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1404">23:24.260</a></div>
+        <div class="t">那怎麼辦呢?我們就把wi再減掉wj對c的範圍分,把wj再減掉wi對c的範圍分,也就是說wi有這樣的update,wj也要有一個一模一樣的update,wj有這樣的update,wi也要有一個一模一樣的update。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:47.160" id=23:47.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1427">23:47.160</a></div>
+        <div class="t">如果你用這樣的方法的話,你就可以確保wi跟wj它們是在這個update的過程中,在訓練的過程中,它們的weight永遠都是被拼在一起的,永遠都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:00.920" id=24:00.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1440">24:00.920</a></div>
+        <div class="t">好,那要怎麼訓練這個network呢?這個network的訓練完全是unsupervised的,也就是說你只要collect一大堆文字的data,collect文字的data很簡單,就寫個程式上網去爬就好,比如說寫個程式爬一下八卦版的data,你就可以爬到一大堆文字這樣,然後接下來你就可以train你的model,怎麼train呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:28.100" id=24:28.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1468">24:28.100</a></div>
+        <div class="t">比如說你這邊有個句子就是,潮水退了就知道誰沒穿褲子,你就讓你的model,你會讓你的neural network input潮水跟退了,然後希望它的output就是舊,那你會希望你的output跟舊的這個cross entropy,舊也是用one-off encoding來表示的,所以你希望你的network的output跟舊的one-off encoding是minimize cross entropy,然後再來就input退了跟舊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:55.960" id=24:55.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1495">24:55.960</a></div>
+        <div class="t">然後希望它的output跟知道越接近越好,然後output舊跟知道,然後就希望它跟誰越接近越好,那剛才講的只是最基本的型態,那其實這個prediction-based model可以有種種的變形,那目前我還不確定說在各種變形之中哪一種是比較好的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:20.920" id=25:20.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1520">25:20.920</a></div>
+        <div class="t">感覺它的performance在不同的task上互有勝負,所以很難說哪一種方法是一定是比較好的,那有一招叫做continuous back-of-word sebo,那sebo是這樣子的,sebo是說,我們剛才是說拿前面的詞彙去predict接下來的詞彙,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:40.940" id=25:40.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1540">25:40.940</a></div>
+        <div class="t">那sebo的意思是說,我們拿某一個詞彙的context去predict中間這個詞彙,我們拿wi-1跟wi-1去predict wi,用wi-1跟wi-1去predict wi,那skipware是說,我們拿中間的詞彙去predict接下來的context,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:02.020" id=26:02.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1562">26:02.020</a></div>
+        <div class="t">我們拿wi去predict wi-1跟wi-1,也就是given中間的word,我們要去predict它的周圍會是長什麼樣子,那假如這邊大家有問題嗎,假如這邊常常會有人問我一個問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:21.020" id=26:21.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1581">26:21.020</a></div>
+        <div class="t">假設你有讀過word vector相關的文獻的話,你可能會說,其實這個network它不是定的,雖然常常有人在講deep learning的時候,大家都會提到word vector,把它當做deep learning的一個application,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:36.020" id=26:36.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1596">26:36.020</a></div>
+        <div class="t">但是如果你真的有讀過word vector的文獻的話,你會發現說,這個neural network它不是定的,它其實就是一個hidden layer,它其實就是一個linear的hidden layer,了解嗎,就是這個neural network它只有一個hidden layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:51.020" id=26:51.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1611">26:51.020</a></div>
+        <div class="t">所以你把word input以後,你就得到word embedding,那你就直接再從那個hidden layer就可以得到open,它不是定的,為什麼呢,為什麼常常有人問我這個問題,那為了回答這個問題,我邀請了Thomas Nikolov來台灣玩,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:09.020" id=27:09.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1629">27:09.020</a></div>
+        <div class="t">Thomas Nikolov就是propose word vector的作者,所以如果你有問我word vector的toolkit的話,你可能有聽過他的名字,那就問他說,為什麼這個model不是定的呢,他給了我兩個答案,他說首先第一個就是,他並不是第一個propose word vector的人,在過去就有很多這樣的概念,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:30.020" id=27:30.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1650">27:30.020</a></div>
+        <div class="t">那他最famous的地方是,他把他寫的一個非常好的toolkit放在網路上,那他在他的QR code裡面看他的code的話,他有種種的tip,所以你自己做的時候你是做不出他那個performance的,他是一個非常非常強的engineer,他有各種他自己直覺的sense,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.020" id=27:48.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1668">27:48.020</a></div>
+        <div class="t">所以你自己做,你做不出他那個performance,你用他的toolkit跑出來的performance,就是特別好,所以他這是一個他非常厲害的地方,那他說在他之前其實就有很多人做過word vector要提出類似的概念,他說他寫的,他有一篇word vector的文章跟toolkit,他想要verify的最重要的一件事情是說,過去其實其他人就是用tip的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:15.020" id=28:15.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1695">28:15.020</a></div>
+        <div class="t">那他想要講的是說,其實這個test不用tip就做得起來了,那不用tip的好處就是減少運算量,所以他可以跑很大量很大量很大量的data,那我就聽他這樣講,我就想起來說,其實過去確實是有人已經做過word vector,過去確實已經有做過word vector這件事情,只是那些結果沒有紅起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:38.020" id=28:38.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1718">28:38.020</a></div>
+        <div class="t">那我記得說我大學的時候就看過類似的paper了,我大學的時候就有看過,其實就是一樣就是predict,就是任一個prediction model predict下一個word的做法,只是那個時候是tip的,你知道在我大學的時候那個時候tip的也還不紅,然後看那篇paper的時候他裡面最後講說,我train了這個model,我花了三周,然後我沒有辦法把實驗跑完,所以結果不是很好這樣子,就其他方法他可以跑很多個iteration,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.020" id=29:06.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1746">29:06.020</a></div>
+        <div class="t">然後我就想說這個neural network的方法,我跑了五個iteration,五個epa,花了三周,我實在做不下去了,就沒有特別好,然後我就想說這什麼荒謬的做法這樣,但是現在運算量不同了,所以現在要做這些事情都沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.020" id=29:23.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1763">29:23.020</a></div>
+        <div class="t">其實像word embedding這個概念在語音界是大概2010年的時候開始紅起來的,那個時候我們把它叫做continuous的language model,而一開始的時候也不是用neural network來得到這個word embedding,因為neural network運算量比較大,所以一開始並不是選擇neural network,而是用一些其他方法來,一些比較簡單的方法來得到這個word embedding,只是大家後來逐漸發現說,用neural network得到的結果才是最好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.020" id=29:51.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1791">29:51.020</a></div>
+        <div class="t">過去其他不是neural network的方法就逐漸的式微,通通都變成neural network based的方法了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:57.020" id=29:57.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1797">29:57.020</a></div>
+        <div class="t">我還有一個勵志的故事,就是Thomas Mikolov那個word vector paper不是非常famous嗎,他citation搞不好都有一萬,他說他第一次投那篇paper的時候,他先投到一個我已經忘記名字了,很小很小的會,assembly of 70%,然後就被reject了,然後他還得到了一個comment就是,這個是什麼東西,我覺得這個東西一點用都沒有,所以這是一個非常勵志的故事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:27.020" id=30:27.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1827">30:27.020</a></div>
+        <div class="t">好,那我們知道說word vector可以得到一些有趣的特性,我們可以看到說呢,如果你把同樣類型的東西的word vector擺在一起,比如說我們把這個Italy跟它的首都Rome擺在一起,我們把Germany跟它首都Berlin擺在一起,我們把這個Japan跟它首都Tokyo擺在一起,你會發現說它們之間是有某種固定的關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:57.020" id=30:57.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1857">30:57.020</a></div>
+        <div class="t">或者是你把一個動詞的三態擺在一起,你會發現說這個動詞的三態,同一個動詞的三態,它們中間有某種固定的關係成為這個三角形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.020" id=31:09.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1869">31:09.020</a></div>
+        <div class="t">而所以從這個word vector裡面,你可以discover你不知道的word和word之間的關係。比如說,還有人發現說,如果你今天把兩個word,word vector和word vector之間兩兩相減,這個結果是把word vector和word vector之間兩兩相減,然後project到一個two-dimensional的space上面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:31.020" id=31:31.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1891">31:31.020</a></div>
+        <div class="t">那你會發現說,在這一區,如果今天word vector兩兩相減,它得到的結果是落在這個位置的話,那這兩個word,word vector之間,它們就有比如說某一個word是包含於某一個word之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:47.180" id=31:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1907">31:47.180</a></div>
+        <div class="t">比如說,你把海豚跟會轉彎的白海豚相減,它的vector落在這邊。比如說,你把演員跟主角相減,落在這邊。你把工人跟木匠相減,落在這邊。你把職員跟售貨員相減,落在這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:06.660" id=32:06.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1926">32:06.660</a></div>
+        <div class="t">你把羊跟公羊相減,落在這邊。就如果某一個東西是屬於另外一個東西的話,你把它們兩個word vector相減,它們的這個結果會是很類似的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.380" id=32:17.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1937">32:17.380</a></div>
+        <div class="t">那所以用word vector的這個概念呢,我們可以做一些簡單的推論。舉例來說,因為我們知道說,比如說heart的word vector減掉heart的word vector,會很接近beaker的word vector減掉beak的vector,或是rome的vector減掉italy的vector,會很接近berlin的vector減掉germany的vector,或是queen的vector減掉queen的vector,會很接近uncle的vector減掉end的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:42.980" id=32:42.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1962">32:42.980</a></div>
+        <div class="t">如果有人問你說,羅馬之於義大利,就好像是berlin之於什麼,智力測驗都會考這樣的問題。機器可以回答這種問題的,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:52.660" id=32:52.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1972">32:52.660</a></div>
+        <div class="t">因為我們知道說,今天這個問題的答案germany,它的vector會很接近berlin的vector減掉rome的vector加italy的vector。因為這四個word vector中間有這樣的關係,所以你可以把germany放在一邊,把另外三個vector放在右邊,所以germany的vector會接近berlin的vector減掉rome的vector再加上italy的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:15.380" id=33:15.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=1995">33:15.380</a></div>
+        <div class="t">所以如果你要回答這個問題,假設你不知道答案是germany的話,那你要做的事情就是計算berlin的vector再減掉rome的vector再加italy的vector,然後看看它跟哪一個vector最接近,你可能得到的答案就是germany。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:32.660" id=33:32.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2012">33:32.660</a></div>
+        <div class="t">這邊有一個word vector的demo,就是讓機器讀了大量ptt的文章以後,word vector還可以做很多其他事情,比如說你可以把不同語言的word vector把它拉在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:52.900" id=33:52.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2032">33:52.900</a></div>
+        <div class="t">如果你今天有一個中文的copen,有一個英文的copen,你各自去分別去train一組word vector,你會發現說中文跟英文的word vector它是完全沒有任何的關係的,它們的每一個dimension對應的含義並沒有任何關係,為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:11.700" id=34:11.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2051">34:11.700</a></div>
+        <div class="t">因為你要trainword vector的時候,它憑藉的就是上下文之間的關係,所以如果今天你的copen裡面沒有中文跟英文的句子混雜在一起,沒有中文跟英文的詞彙混雜在一起,那machine就沒有辦法判斷中文的詞彙跟英文的詞彙它們之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:30.500" id=34:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2070">34:30.500</a></div>
+        <div class="t">但是今天假如你已經事先知道說,某幾個中文的詞彙和某幾個英文的詞彙它們是對應在一起的,你先得到一組中文的vector,再得到一組英文的vector,接下來你可以再任一個model它把中文和英文對應的詞彙,比如說我們知道加大對應到enlarge,下疊對應到full。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:53.860" id=34:53.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2093">34:53.860</a></div>
+        <div class="t">你把對應的詞彙通過這個projection以後,把它們project在space上面的同一個點,在這個圖上這個綠色,然後下面又有這個綠色的英文的代表是已經知道對應關係的中文和英文的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:13.300" id=35:13.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2113">35:13.300</a></div>
+        <div class="t">如果你做這個transform以後,接下來有新的中文的詞彙跟新的英文的詞彙,你都可以用同樣的projection把它們project到同一個space上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:24.060" id=35:24.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2124">35:24.060</a></div>
+        <div class="t">比如說你就可以自動知道說,中文的降低跟英文的reduce,它們都應該落在差不多的位置等等,你就可以自動做到類似翻譯這樣子的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:43.580" id=35:43.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2143">35:43.580</a></div>
+        <div class="t">這個embedding不只限於文字,你也可以對影像做embedding。這邊有一個很好的例子,這個例子是這樣做的,它說我們先已經找到一組word vector,比如說dog的vector、horse的vector、auto的vector和cat的vector,它們分佈在空間上是這樣的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:04.380" id=36:04.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2164">36:04.380</a></div>
+        <div class="t">接下來你認一個model,它是input一張image,output是一個跟word vector一樣dimension的vector,你會希望說狗的vector就散佈在狗的周圍,馬的vector就散佈在馬的周圍,車輛的vector就散佈在auto的周圍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:22.380" id=36:22.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2182">36:22.380</a></div>
+        <div class="t">假設有一些image,你是已經知道它們是屬於哪一類的,你已經知道說這個是狗、這個是馬、這個是車,你可以把它們project到它們所對應到的word vector附近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:35.180" id=36:35.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2195">36:35.180</a></div>
+        <div class="t">這個東西有什麼用呢?假如你今天有一個新的image進來,比如說這個東西,它是個貓,但是你不知道它是什麼貓,機器不知道它是什麼貓,但是你通過它們的projection,把它project到這個space以上以後,神奇的事,你就會發現它可能就在貓的附近,那你的machine就會自動知道說這個東西叫做貓。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:57.180" id=36:57.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2217">36:57.180</a></div>
+        <div class="t">你知道我們一般在做影像分類的時候,大家都已經有做過這個作業3,這是一個影像分類的問題,在做影像分類的問題的時候,你的machine其實很難去處理新增加的,它沒有辦法看過的object。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:13.180" id=37:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2233">37:13.180</a></div>
+        <div class="t">舉例來說,在作業3裡面,我們就是先已經定好10個class,你認出來的model就是只能分這10個class,那如果今天有一個新的東西,不在這10個class裡面,你的model是完全無能為力的,它根本不知道它叫做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:29.180" id=37:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2249">37:29.180</a></div>
+        <div class="t">但是如果你用這個方法的話,就算有一張image是你在training的時候你沒有看過的class,比如說貓的這個image,它從來都沒有看過,但是如果貓的這個image可以project到cat的vector附近的話,你就會知道說這張image叫做cat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:47.180" id=37:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2267">37:47.180</a></div>
+        <div class="t">你可以做到這件事的話,就好像是machine先閱讀了大量的文章以後,它知道說每一個詞彙指的是什麼意思,它知道說狗、貓、馬它們之間有什麼樣的關係,它透過閱讀大量的文章先了解詞彙間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:06.180" id=38:06.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2286">38:06.180</a></div>
+        <div class="t">接下來在看image的時候,它就可以根據它已經閱讀得到的知識去mapping每一個image所應該對應的東西,這樣就算是它看到它沒有看過的東西,它也可能可以把它的名字叫出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:19.180" id=38:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2299">38:19.180</a></div>
+        <div class="t">剛才講的都是word的embedding,也可以做document的embedding,也就不只是把一個word變成一個vector,也可以把一個document變成一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:34.180" id=38:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2314">38:34.180</a></div>
+        <div class="t">那怎麼把一個document變成一個vector呢?最簡單的方法我們之前已經講過了,就是把一個document變成一個back of word,然後用autoencoder,你就可以認出這個document的semantic embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:50.180" id=38:50.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2330">38:50.180</a></div>
+        <div class="t">但光這麼做是不夠的,我們光用back of word來描述一篇document是不夠的,為什麼呢?因為我們知道說詞彙的順序代表了很重要的含義。舉例來說,這邊有兩個詞彙,有兩個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:07.180" id=39:07.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2347">39:07.180</a></div>
+        <div class="t">一個是white blood cell destroying an infection,另外一個是infection destroying white blood cell。這兩句話,如果你看它的back of word的話,它們的back of word是一模一樣的,因為它們都有出現這六個詞彙,只是順序是不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:27.180" id=39:27.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2367">39:27.180</a></div>
+        <div class="t">但是因為它們的順序是不一樣的,所以上面這句話,白血球消滅了傳染病,這個是positive,下面這句話,它是negative。雖然說它們有同樣的back of word,它們在語意上完全是不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:41.180" id=39:41.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2381">39:41.180</a></div>
+        <div class="t">所以光只是用back of word來描述一篇document是非常不足的,那麼back of word會失去很多重要的information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:58.180" id=39:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2398">39:58.180</a></div>
+        <div class="t">那怎麼做呢?我們這邊就不細講了,這邊就列了一大堆reference給大家參考。上面這三個方法是unsupervised,也就是說你只要collect一大堆的document,你就可以讓它自己去學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:13.180" id=40:13.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2413">40:13.180</a></div>
+        <div class="t">下面這幾個方法算是supervised,因為在這些方法裡面,你需要對每一個document進行額外的label。你不用label說每一個document它對的vector是什麼,但是你要給它其他的label才能夠認這些vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:30.180" id=40:30.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=X7PH3NuYW0Q&t=2430">40:30.180</a></div>
+        <div class="t">所以下面不算完全是unsupervised。那我把reference列在這邊給大家參考。</div>
+    </div>
+    
+</body>
+</html>   

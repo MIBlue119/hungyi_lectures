@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】自編碼器 (Auto-encoder) (下) – 領結變聲器與更多應用</h2><a href=https://www.youtube.com/watch?v=JZvEzb5PV3U><img src=https://i.ytimg.com/vi/JZvEzb5PV3U/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGHIgVCg2MA8=&rs=AOn4CLA1g24ooFWOJj9FzejHYwgenbgnSA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1">00:01.000</a></div>
+        <div class="t">好,那我們接下來,除了AutoEncoder可以用來做Downstream的任務以外,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:09.000" id=00:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=9">00:09.000</a></div>
+        <div class="t">我還想跟大家分享一下AutoEncoder其他有意思的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.000" id=00:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=15">00:15.000</a></div>
+        <div class="t">那我跟大家講這個Feature的Disentanglement。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:20.000" id=00:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=20">00:20.000</a></div>
+        <div class="t">好,Feature的Disentanglement是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:23.000" id=00:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=23">00:23.000</a></div>
+        <div class="t">什麼是Disentangle呢?Disentangle的意思就是把一堆本來糾纏在一起的東西把它解開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:32.000" id=00:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=32">00:32.000</a></div>
+        <div class="t">這個東西就叫做Disentangle。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.000" id=00:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=35">00:35.000</a></div>
+        <div class="t">那為什麼會有Disentangle這個議題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:38.000" id=00:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=38">00:38.000</a></div>
+        <div class="t">我們來想想看AutoEncoder它在做的事情是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:42.000" id=00:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=42">00:42.000</a></div>
+        <div class="t">AutoEncoder在做的事情是,如果是圖片的話,就是把一張圖片變成一個Code,再把Code變回圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.000" id=00:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=51">00:51.000</a></div>
+        <div class="t">既然這個Code可以變回圖片,代表說這個Code裡面有很多的資訊,包含圖片裡面所有的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00.000" id=01:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=60">01:00.000</a></div>
+        <div class="t">舉例來說,圖片裡面有什麼樣的東西啊,圖片的色澤紋理啊等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06.000" id=01:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=66">01:06.000</a></div>
+        <div class="t">AutoEncoder這個概念也不是只能用在影像上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09.000" id=01:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=69">01:09.000</a></div>
+        <div class="t">如果用在語音上,你可以把C段聲音丟到Encoder裡面變成相量,再丟回Decoder變回原來的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16.000" id=01:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=76">01:16.000</a></div>
+        <div class="t">代表這個相量包含了語音裡面所有重要的資訊,包括這句話的內容是什麼,就是Content的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=85">01:25.000</a></div>
+        <div class="t">還有這句話是誰說的,就是Speaker,語者的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.000" id=01:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=90">01:30.000</a></div>
+        <div class="t">那如果今天是一篇文章丟到Encoder裡面變成相量,這個相量通過Decoder會變回原來的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:37.000" id=01:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=97">01:37.000</a></div>
+        <div class="t">那這個相量裡面有什麼?它可能包含文章裡面文句的句法資訊,也包含了語意的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:45.000" id=01:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=105">01:45.000</a></div>
+        <div class="t">但是這些資訊是全部糾纏在一個相量裡面,我們並不知道一個相量的哪些維代表了哪些資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.000" id=01:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=114">01:54.000</a></div>
+        <div class="t">舉例來說,如果我們今天把一段聲音訊號丟進Encoder,它會給我們一個相量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:00.000" id=02:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=120">02:00.000</a></div>
+        <div class="t">但是這個相量裡面哪些維度代表了這句話的內容,哪些維度代表這句話的語者,也就是誰說的,我們沒有這樣的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:10.000" id=02:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=130">02:10.000</a></div>
+        <div class="t">而Feature Disentangler想要做到的事情就是,我們有沒有可能想辦法在Train一個Autoencoder的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:18.000" id=02:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=138">02:18.000</a></div>
+        <div class="t">同時有辦法知道Representation,或又叫做Embedding,或又叫做Code,它們是一樣的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:26.000" id=02:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=146">02:26.000</a></div>
+        <div class="t">我們這個Embedding的哪些維度代表了哪些資訊呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:31.000" id=02:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=151">02:31.000</a></div>
+        <div class="t">我們有沒有可能做到Encoder輸出一個,舉例來說,100維的相量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:36.000" id=02:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=156">02:36.000</a></div>
+        <div class="t">我們知道說前50維就代表了這句話的內容,後50維就代表了這句話說話人的特徵呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.000" id=02:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=165">02:45.000</a></div>
+        <div class="t">那這樣子的技術就叫做Feature Disentangler。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.000" id=02:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=169">02:49.000</a></div>
+        <div class="t">那Feature Disentangler其實有很多各式各樣的技術,那實際上是怎麼做的?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:55.000" id=02:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=175">02:55.000</a></div>
+        <div class="t">我本來想要講,後來猶豫一下,想說我們先不要講這件事情好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=179">02:59.000</a></div>
+        <div class="t">我們主要就是想告訴大家說,Feature Disentangler是有辦法做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.000" id=03:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=185">03:05.000</a></div>
+        <div class="t">那至於實際上怎麼做,我在這邊就列幾篇論文給有興趣的同學參考,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.000" id=03:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=191">03:11.000</a></div>
+        <div class="t">那如果沒有興趣的話,你就知道說這件事情是可行的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:14.000" id=03:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=194">03:14.000</a></div>
+        <div class="t">我們有可能知道Autoencoder裡面每一個Dimension代表了什麼樣的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.000" id=03:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=200">03:20.000</a></div>
+        <div class="t">好,那製作Feature Disentangler有什麼樣的應用呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:25.000" id=03:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=205">03:25.000</a></div>
+        <div class="t">那你可以想想看有什麼樣的應用嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:27.000" id=03:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=207">03:27.000</a></div>
+        <div class="t">這邊舉一個語音上的應用,這個應用叫做Voice Conversion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.000" id=03:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=212">03:32.000</a></div>
+        <div class="t">那什麼是Voice Conversion呢?Voice Conversion的中文叫做愚者轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:38.000" id=03:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=218">03:38.000</a></div>
+        <div class="t">所以也許你沒有聽過愚者轉換這個詞彙,但是你一定看過它的應用,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.000" id=03:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=225">03:45.000</a></div>
+        <div class="t">它就是柯南的領結變聲器,這個在20年前阿利博士就已經做得很成功了啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=231">03:51.000</a></div>
+        <div class="t">那只是過去阿利博士在做這個Voice Conversion的時候,我們需要成對的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:59.000" id=03:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=239">03:59.000</a></div>
+        <div class="t">也就是假設你要把A的聲音轉成B的聲音,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.000" id=04:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=242">04:02.000</a></div>
+        <div class="t">你必須把A跟B都找來,叫它唸一模一樣的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.000" id=04:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=246">04:06.000</a></div>
+        <div class="t">就A說How are you,B也說How are you,A說Good morning,B也說Good morning,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:11.000" id=04:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=251">04:11.000</a></div>
+        <div class="t">它們兩個各說一樣的句子,說個一千句。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.000" id=04:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=254">04:14.000</a></div>
+        <div class="t">接下來呢,就結束了,就是supervised learning的問題啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:17.000" id=04:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=257">04:17.000</a></div>
+        <div class="t">沒有成對的資料,train一個supervised model,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.000" id=04:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=260">04:20.000</a></div>
+        <div class="t">把A的聲音丟進去,輸出就變成B的聲音,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=264">04:24.000</a></div>
+        <div class="t">但是如果A跟B都需要唸一模一樣的句子,唸個五百一千句,顯然是不切實際的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:31.000" id=04:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=271">04:31.000</a></div>
+        <div class="t">舉例來說,假設我想要把我的聲音轉成心源結一的聲音,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:34.000" id=04:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=274">04:34.000</a></div>
+        <div class="t">我得把心源結一找來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:36.000" id=04:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=276">04:36.000</a></div>
+        <div class="t">更退一萬步說,假設我真的把心源結一找來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:39.000" id=04:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=279">04:39.000</a></div>
+        <div class="t">它也不會說中文啊,所以它沒有辦法跟我唸一模一樣的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:43.000" id=04:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=283">04:43.000</a></div>
+        <div class="t">而今天有了feature disentangle的技術以後,也許我們期待機器可以做到,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:49.000" id=04:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=289">04:49.000</a></div>
+        <div class="t">就給它A的聲音,給它B的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:52.000" id=04:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=292">04:52.000</a></div>
+        <div class="t">A跟B不需要唸同樣的句子,甚至不需要講同樣的語言,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.000" id=04:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=297">04:57.000</a></div>
+        <div class="t">機器也有可能學會把A的聲音轉成B的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.000" id=05:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=303">05:03.000</a></div>
+        <div class="t">那實際上是怎麼做的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:06.000" id=05:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=306">05:06.000</a></div>
+        <div class="t">假設我們收集到一大堆人類的聲音訊號,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:10.000" id=05:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=310">05:10.000</a></div>
+        <div class="t">然後拿這堆聲音訊號去train一個autoencoder,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:14.000" id=05:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=314">05:14.000</a></div>
+        <div class="t">同時我們又做了feature disentangle的技術,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.000" id=05:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=317">05:17.000</a></div>
+        <div class="t">所以我們知道在encoder的輸出裡面,哪些維度代表了語音的內容,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:23.000" id=05:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=323">05:23.000</a></div>
+        <div class="t">哪些維度代表了語者的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.000" id=05:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=327">05:27.000</a></div>
+        <div class="t">接下來,我們就可以做語音的轉換了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.000" id=05:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=331">05:31.000</a></div>
+        <div class="t">怎麼說呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:32.000" id=05:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=332">05:32.000</a></div>
+        <div class="t">因為在encoder裡面,我們已經知道哪些部分代表內容,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:36.000" id=05:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=336">05:36.000</a></div>
+        <div class="t">哪些部分代表語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:39.000" id=05:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=339">05:39.000</a></div>
+        <div class="t">接下來,我們就可以把兩句話聲音跟內容的部分互換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.000" id=05:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=345">05:45.000</a></div>
+        <div class="t">舉例來說,這邊是我的聲音,我說How are you丟進encoder以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:50.000" id=05:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=350">05:50.000</a></div>
+        <div class="t">那你就可以抽出,你就知道這個encoder裡面某些維度代表How are you的內容,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=356">05:56.000</a></div>
+        <div class="t">某些維度代表我的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.000" id=05:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=358">05:58.000</a></div>
+        <div class="t">今天你把你老婆的聲音丟進encoder,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.000" id=06:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=362">06:02.000</a></div>
+        <div class="t">他就知道某一些維度代表你老婆說的話的內容,某一些維度代表你老婆聲音的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.000" id=06:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=369">06:09.000</a></div>
+        <div class="t">接下來,我們只要把我說話的內容的部分取出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.000" id=06:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=374">06:14.000</a></div>
+        <div class="t">把你老婆說話的聲音的部分、聲音特徵的部分取出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.000" id=06:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=378">06:18.000</a></div>
+        <div class="t">把它拼起來丟到encoder裡面,就可以用你老婆的聲音講我說的話的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=385">06:25.000</a></div>
+        <div class="t">這件事情真的有可能辦到嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:29.000" id=06:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=389">06:29.000</a></div>
+        <div class="t">以下是真正的例子,聽起來像是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:36.000" id=06:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=396">06:36.000</a></div>
+        <div class="t">這個是我的聲音啦,就是問你要不要念博班啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.000" id=06:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=399">06:39.000</a></div>
+        <div class="t">在這門課裡面,我們就是要冷不防開始業配念博班這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=404">06:44.000</a></div>
+        <div class="t">把我的聲音丟到encoder裡面以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.000" id=06:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=408">06:48.000</a></div>
+        <div class="t">你可以想像說在encoder裡面,我們知道哪些維度代表了念博班這件事,哪些維度代表了我的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.000" id=06:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=416">06:56.000</a></div>
+        <div class="t">為了簡化起見,你就想像說他輸出100維的相量,前50維代表內容,後50維代表說話人的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=424">07:04.000</a></div>
+        <div class="t">接下來這句話是你老婆說的,不太確定在說什麼,就是日文啦,不太確定在說什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:13.000" id=07:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=433">07:13.000</a></div>
+        <div class="t">把這句話丟到encoder裡面,一樣,這個encoder的輸出前50維是日文,後50維代表你老婆說話的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:23.000" id=07:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=443">07:23.000</a></div>
+        <div class="t">接下來就把我的聲音的前50維代表內容的部分取出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:30.000" id=07:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=450">07:30.000</a></div>
+        <div class="t">把你老婆的聲音丟進encoder以後,後50維的部分抽出來,拼起來一樣是一個100維的相量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=458">07:38.000</a></div>
+        <div class="t">丟到decoder裡面,看看輸出來的聲音是不是你老婆叫你念博班的聲音,聽起來像是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.000" id=07:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=466">07:46.000</a></div>
+        <div class="t">你老婆叫你念博班啦,知道嗎?還不趕快乖乖簽下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:52.000" id=07:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=472">07:52.000</a></div>
+        <div class="t">其實反過來也可以啦,換成把日文的部分拿出來,把我的聲音的特徵拿出來,一樣串成一個100維的相量,丟到decoder裡面,聽起來就會變成這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:07.000" id=08:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=487">08:07.000</a></div>
+        <div class="t">我也不知道自己在說什麼就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:11.000" id=08:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=491">08:11.000</a></div>
+        <div class="t">所以確實用feature disentangle,你有機會做到voice conversion。其實在影像上,在NLP上,也都可以有類似的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.000" id=08:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=503">08:23.000</a></div>
+        <div class="t">所以可以想想看feature disentangle可以做什麼樣的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=507">08:27.000</a></div>
+        <div class="t">下一個要跟大家講的應用叫做discrete latent representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:33.000" id=08:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=513">08:33.000</a></div>
+        <div class="t">到目前為止,我們都假設這個embedding它就是一個相量,相量就是一串數字,它是real number。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:43.000" id=08:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=523">08:43.000</a></div>
+        <div class="t">那它可不可以是別的東西呢?舉例來說,它可不可以是binary?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=529">08:49.000</a></div>
+        <div class="t">那binary有什麼好處呢?binary的好處也許是說,每一個維度它就代表了某種特徵的有或者是沒有。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.000" id=09:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=540">09:00.000</a></div>
+        <div class="t">舉例來說,書的這張圖片,如果是女生,可能第一維就是1,男生第一維就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.000" id=09:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=546">09:06.000</a></div>
+        <div class="t">如果有戴眼鏡就是第三維是1,沒有戴眼鏡就是第三維是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=551">09:11.000</a></div>
+        <div class="t">也許我們把這個相量這個embedding變成binary的,變成只有0跟1的數字,可以讓我們在解釋encoder的輸出的時候更為容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:21.000" id=09:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=561">09:21.000</a></div>
+        <div class="t">甚至有沒有可能這個相量強迫它一定要是one heart呢?也就只有一維是1,其他就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=569">09:29.000</a></div>
+        <div class="t">如果我們強迫它是one heart,也就是每一個圖片丟進去,你的embedding裡面只可以有一維是1,其他都是0的話,那可以做到什麼樣的效果呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:40.000" id=09:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=580">09:40.000</a></div>
+        <div class="t">也許可以做到unsupervised的分類。舉例來說,假設你想要做手寫數字辨識,你有0到9的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.000" id=09:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=591">09:51.000</a></div>
+        <div class="t">你把0到9的圖片統統收集起來,train一個這樣子的autoencoder,然後強迫中間的latern representation,強迫中間的這個code一定要是one heart vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:03.000" id=10:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=603">10:03.000</a></div>
+        <div class="t">那你這個code正好設個十維,也許每一個one heart的code,就你設十維就有十種可能的one heart code,也許每一種one heart的code正好就對應到一個數字,也說不定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.000" id=10:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=617">10:17.000</a></div>
+        <div class="t">所以今天如果用one heart的vector來當作你的embedding的話,也許就可以做到完全沒有label data的情況下,讓機器自動學會分類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.000" id=10:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=629">10:29.000</a></div>
+        <div class="t">其實還有其他,在這種discrete representation的技術裡面,其中最知名的就是VQ-VAE,Vector Quantized Variable Autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.000" id=10:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=644">10:44.000</a></div>
+        <div class="t">那VQ-VAE是這樣子運作的,就是你輸入一張圖片,encoder輸出一個向量,這個向量它是一般的向量,它是continuous的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:56.000" id=10:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=656">10:56.000</a></div>
+        <div class="t">但接下來,你有一個codebook,所謂codebook的意思就是,你有一排向量,這排向量也是認出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:06.000" id=11:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=666">11:06.000</a></div>
+        <div class="t">你把encoder的輸出,去跟這排向量,都去算個相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.000" id=11:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=676">11:16.000</a></div>
+        <div class="t">你發現這件事情,其實跟self-attention有點像,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.000" id=11:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=681">11:21.000</a></div>
+        <div class="t">這個vector就是query,這些vector就是key,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.000" id=11:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=687">11:27.000</a></div>
+        <div class="t">就是跟attention是很像的,我們在講self-attention的時候,花了很多力氣講query,key跟value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:33.000" id=11:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=693">11:33.000</a></div>
+        <div class="t">所以這個東西就是query,這個東西就是key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.000" id=11:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=698">11:38.000</a></div>
+        <div class="t">接下來就看這些vector裡面,誰的相似度最大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.000" id=11:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=703">11:43.000</a></div>
+        <div class="t">你把相似度最大的vector拿出來,這邊就是key跟value等於是共用同一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:51.000" id=11:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=711">11:51.000</a></div>
+        <div class="t">如果你把這個process用self-attention來比喻的話,那就等於是key跟value是共用同一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.000" id=11:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=718">11:58.000</a></div>
+        <div class="t">把這個vector丟到decoder裡面,然後要它輸出一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.000" id=12:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=723">12:03.000</a></div>
+        <div class="t">接下來training的時候,就是要讓輸入跟輸出越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:07.000" id=12:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=727">12:07.000</a></div>
+        <div class="t">這個decoder、這個encoder、這一個codebook,都是一起從資料裡面被學出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:15.000" id=12:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=735">12:15.000</a></div>
+        <div class="t">這樣做的好處就是,你就有discrete的later representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.000" id=12:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=741">12:21.000</a></div>
+        <div class="t">也就是說,這邊decoder的輸入一定是這邊codebook裡面的像量的其中一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.000" id=12:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=748">12:28.000</a></div>
+        <div class="t">假設你codebook裡面有32個像量,那你decoder的輸入就只有32種可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:34.000" id=12:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=754">12:34.000</a></div>
+        <div class="t">你等於就是讓你的embedding是離散的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:38.000" id=12:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=758">12:38.000</a></div>
+        <div class="t">它沒有無窮無盡的可能,它只有32種可能而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.000" id=12:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=763">12:43.000</a></div>
+        <div class="t">其實像這樣子的技術,如果你把它用在語音上,你就是一段聲音訊號輸進來,通過encoder產生一個像量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.000" id=12:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=772">12:52.000</a></div>
+        <div class="t">接下來你去計算相似度,把最像的那個像量拿出來,丟給decoder再輸出一樣的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.000" id=12:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=779">12:59.000</a></div>
+        <div class="t">這個時候你會發現你的codebook可能可以學到最基本的發音單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:06.000" id=13:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=786">13:06.000</a></div>
+        <div class="t">舉例來說,最基本的發音單位又叫做phoneme,如果你不知道phoneme是什麼的話,你就把它想成是KK音標。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:15.000" id=13:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=795">13:15.000</a></div>
+        <div class="t">那你就會發現說,codebook裡面每一個vector,它就對應到某一個發音,就對應到KK音標裡面的某一個符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:25.000" id=13:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=805">13:25.000</a></div>
+        <div class="t">這個是VQVAE。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:28.000" id=13:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=808">13:28.000</a></div>
+        <div class="t">那其實還有更多瘋狂的想法,representation,一定要是像量嗎?能不能是別的東西?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.000" id=13:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=817">13:37.000</a></div>
+        <div class="t">舉例來說,它能不能是一段文字?是可以的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:42.000" id=13:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=822">13:42.000</a></div>
+        <div class="t">舉例來說,假設我們現在要做文字的autoencoder,文字的autoencoder概念跟語音的影像的沒有什麼不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.000" id=13:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=831">13:51.000</a></div>
+        <div class="t">就是你有一個encoder,一篇文章丟進去,也許產生一個什麼東西,一個像量,把這個像量丟到decoder,再讓它還原原來的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=840">14:00.000</a></div>
+        <div class="t">但我們現在可不可以不要用像量來當做embedding?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.000" id=14:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=845">14:05.000</a></div>
+        <div class="t">我們可不可以說我們的embedding就是一串文字呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:10.000" id=14:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=850">14:10.000</a></div>
+        <div class="t">如果把embedding變成一串文字,有什麼好處呢?也許這串文字就是文章的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=859">14:19.000</a></div>
+        <div class="t">因為你想想看,把一篇文章丟到encoder裡面,它輸出一串文字,而這串文字可以透過decoder還原回原來的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:27.000" id=14:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=867">14:27.000</a></div>
+        <div class="t">那代表說這段文字是這篇文章的精華,也就是這篇文章最關鍵的內容,也就是這篇文章的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.000" id=14:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=877">14:37.000</a></div>
+        <div class="t">不過啊,這邊的encoder顯然需要是一個sequence-to-sequence的model,比如說transformer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=883">14:43.000</a></div>
+        <div class="t">因為我們這邊輸入是文章嘛,這邊輸出是一串文字嘛,這個decoder輸入是一串文字,輸出是文章嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:50.000" id=14:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=890">14:50.000</a></div>
+        <div class="t">所以都是輸入一串東西,輸出一串東西,輸入一串文字,輸出一串文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:55.000" id=14:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=895">14:55.000</a></div>
+        <div class="t">所以encoder跟decoder顯然都必須要是一個sequence-to-sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:01.000" id=15:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=901">15:01.000</a></div>
+        <div class="t">所以你可以想像說,這邊是一個你作業舞在訓練的transformer,這個也是另外一個transformer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.000" id=15:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=908">15:08.000</a></div>
+        <div class="t">他們都是讀一段文字,輸出另外一段文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=912">15:12.000</a></div>
+        <div class="t">所以這整個autoencoder合起來啊,它不是一個普通的autoencoder,它是一個sequence-to-sequence-to-sequence的autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.000" id=15:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=921">15:21.000</a></div>
+        <div class="t">它把長的sequence轉成短的sequence,再把短的sequence還原回長的sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.000" id=15:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=927">15:27.000</a></div>
+        <div class="t">而這個autoencoder在訓練的時候,不需要標註的資料,因為訓練autoencoder只需要收集大量的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:34.000" id=15:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=934">15:34.000</a></div>
+        <div class="t">收集大量沒有標註的資料,在這邊就是大量的文章就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=938">15:38.000</a></div>
+        <div class="t">如果你真的可以訓練出這個模型,如果這串文字真的可以代表摘要的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:43.000" id=15:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=943">15:43.000</a></div>
+        <div class="t">你就是讓機器自動學會做摘要這件事,讓機器自動學會做unsupervised summarization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.000" id=15:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=951">15:51.000</a></div>
+        <div class="t">但是真的有這麼容易嗎?實際上這樣train起來以後發現,嗯,是行不通的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.000" id=15:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=957">15:57.000</a></div>
+        <div class="t">為什麼?因為這兩個encoder跟decoder之間會發明自己的暗號啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.000" id=16:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=963">16:03.000</a></div>
+        <div class="t">所以它會產生一段文字,但這段文字是你看不懂的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:10.000" id=16:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=970">16:10.000</a></div>
+        <div class="t">這decoder可以看得懂,它還原得了原來的文章,但是人看不懂,所以它根本就不是一段摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.000" id=16:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=977">16:17.000</a></div>
+        <div class="t">所以怎麼辦呢?再用game的概念加上一個discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:22.000" id=16:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=982">16:22.000</a></div>
+        <div class="t">discriminator看過人寫的句子,所以它知道人寫的句子長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.000" id=16:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=987">16:27.000</a></div>
+        <div class="t">但這些句子不需要是這些文章的摘要,就是另外一堆句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.000" id=16:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=993">16:33.000</a></div>
+        <div class="t">所以它知道人寫的句子長什麼樣子,然後這個encoder要想辦法去騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:39.000" id=16:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=999">16:39.000</a></div>
+        <div class="t">encoder要想辦法產生一段句子,這段句子不只可以透過decoder還原回原來的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:45.000" id=16:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1005">16:45.000</a></div>
+        <div class="t">還要是discriminator覺得像是人寫的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1010">16:50.000</a></div>
+        <div class="t">現在透過這個方法,就可以強迫encoder不只產生一段密碼可以給decoder去破解,而是產生一段人看得懂的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1019">16:59.000</a></div>
+        <div class="t">那你可能會問說,這個nerve要怎麼train啊?這個output是一串文字喔,那這個文字要怎麼接給discriminator跟decoder呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:08.000" id=17:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1028">17:08.000</a></div>
+        <div class="t">告訴你,看到你沒辦法train的問題,就用rl硬做,這邊就是用rl硬做就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.000" id=17:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1034">17:14.000</a></div>
+        <div class="t">所以這個nerve後來硬train起來以後呢,你可能會覺得這個概念有點像cycle gate,沒錯,你可以想,這根本就是cycle gate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.000" id=17:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1045">17:25.000</a></div>
+        <div class="t">這是一個generator,這是另外一個generator,這是discriminator,然後輸入跟輸出越接近越好,其實這根本就是cycle gate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1053">17:33.000</a></div>
+        <div class="t">我們只是從autoencoder的角度來看待cycle gate這個想法而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:40.000" id=17:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1060">17:40.000</a></div>
+        <div class="t">好,那實際上做的結果是怎麼樣呢?以下是真正nerve輸出的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.000" id=17:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1066">17:46.000</a></div>
+        <div class="t">你給他讀一篇文章,然後他就用autoencoder的方法拿三百萬篇文章做訓練以後,然後看看給他一篇新的文章,他可不可以是那個encoder輸出的句子,是不是就是人可以看得懂的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:00.000" id=18:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1080">18:00.000</a></div>
+        <div class="t">舉例來說,給encoder看這篇文章,他的輸出是澳大利亞加強體育競賽之外的藥品檢查,看起來還可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.000" id=18:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1090">18:10.000</a></div>
+        <div class="t">那這邊有一個特別強的啦,就是這篇文章是中華民國奧林匹克委員會今天接到1992年冬季奧運會邀請函。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.000" id=18:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1098">18:18.000</a></div>
+        <div class="t">丟給encoder之後,他的輸出是奧委會接獲冬季奧運會邀請函,他知道把奧林匹克委員會自己就縮寫成奧委會。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:29.000" id=18:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1109">18:29.000</a></div>
+        <div class="t">這個不知道怎麼回事,他自己就學到了這件事情。當然很多時候他也是會犯錯的,我特別喜歡舉這種極其犯錯的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.000" id=18:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1118">18:38.000</a></div>
+        <div class="t">舉例來說,你給他讀這篇文章,印度尼西亞蘇門達拉島近日來連降暴雨,機器產生的摘要是什麼呢?encoder的輸出是印尼門洪水氾濫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.000" id=18:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1129">18:49.000</a></div>
+        <div class="t">印尼門是什麼東西呢?大概就是印度尼西亞蘇門的縮寫。可能人類寫的句子裡面常常出現羅生門、通俄門等等什麼門,所以encoder覺得印度尼西亞蘇門應該可以縮寫成印尼門。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1144">19:04.000</a></div>
+        <div class="t">有時候他也會產生莫名其妙的句子,比如說把這篇文章給機器讀了以後,encoder的輸出是合肥領導幹部下基層坐稿銀來送往規定一律解釋,不知道在說些什麼,總之是個句子,不知道在說些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1157">19:17.000</a></div>
+        <div class="t">所以這個例子只是想要告訴你說,我們確實有可能拿一段文字來當作embedding。其實還有更狂的,我還看過有拿tree structure當作embedding,就一段文字把它變成tree structure,再用tree structure還原一段文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:36.000" id=19:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1176">19:36.000</a></div>
+        <div class="t">我把reference列在這邊給大家參考。接下來還有autoencoder更多的應用。autoencoder還可以拿來做些什麼事情呢?舉例來說,我們剛才用的都是encoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.000" id=19:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1190">19:50.000</a></div>
+        <div class="t">其實decoder也有作用,你把decoder拿出來,這不就是一個generator嗎?我們說generator不是就是要吃一個向量產生一個東西,比如說一張圖片嗎?而decoder不正好是吃一個向量產生一張圖片嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.000" id=20:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1206">20:06.000</a></div>
+        <div class="t">所以decoder你可以把它當作一個generator來使用。你可以從一個已知的distribution,比如說Gaussian distribution,sample一個向量,丟給decoder,看看它能不能夠輸出一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.000" id=20:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1220">20:20.000</a></div>
+        <div class="t">事實上,在我們之前在講這個generative model的時候,其實有提到說除了GAN以外,還有另外兩種generative model,其中一個就叫做VAE Variational Autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:34.000" id=20:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1234">20:34.000</a></div>
+        <div class="t">你看它名字裡面都有autoencoder,顯然是跟autoencoder非常有關係的。它其實就是把autoencoder的decoder拿出來當作generator來用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:46.000" id=20:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1246">20:46.000</a></div>
+        <div class="t">實際上它還有做一些其他的事情,至於它實際上做了什麼其他的事情,就留給大家自己研究。所以,autoencoder churn完以後,你也順便得到了一個decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:58.000" id=20:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1258">20:58.000</a></div>
+        <div class="t">autoencoder可以拿來做壓縮。我們今天知道說,你在做圖片,圖片如果太大的話,你會有一些壓縮的方法,比如說JPEG的壓縮。而autoencoder也可以拿來做壓縮。你完全可以把encoder的輸出當作是一個壓縮的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:17.000" id=21:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1277">21:17.000</a></div>
+        <div class="t">因為一張圖片是一個非常高維的向量,而一般我們encoder的輸出是一個非常低維的向量,你完全可以把那個向量看作是一個壓縮的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:28.000" id=21:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1288">21:28.000</a></div>
+        <div class="t">所以,你的encoder做的事情就是壓縮,而你的decoder做的事情就是解壓縮。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:35.000" id=21:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1295">21:35.000</a></div>
+        <div class="t">只是這個壓縮,它是那種loose的壓縮,所謂loose的壓縮就是它會失真。因為在churn autoencoder的時候,你沒有辦法churn到輸入的圖片跟輸出的圖片100%完全一模一樣,它還是會有一些差距的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:49.000" id=21:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1309">21:49.000</a></div>
+        <div class="t">所以,這樣子的autoencoder的壓縮技術,你拿這樣子的技術來做壓縮,那你的圖片是會失真的。就跟JPEG圖片會失真一樣,用autoencoder來做壓縮,你的圖片也是會失真的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:03.000" id=22:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1323">22:03.000</a></div>
+        <div class="t">接下來就是我們在作業裡面要使用的技術。在作業裡面,我們會拿autoencoder來做anomaly detection。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1334">22:14.000</a></div>
+        <div class="t">我在規劃作業的時候其實就是想要autoencoder出一個作業,那autoencoder的技術很多,那最後我決定做anomaly detection,因為這個是你在非常多的場合都有機會應用到的一個技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:30.000" id=22:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1350">22:30.000</a></div>
+        <div class="t">anomaly detection要做的是什麼呢?它要做的事情就是,假設你有一堆的訓練資料,這邊用x1到xn來表示我們的訓練資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:40.000" id=22:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1360">22:40.000</a></div>
+        <div class="t">而anomaly detection,它的中文通常翻譯成異常檢測。異常檢測要做的事情就是,來了一筆新的資料,它到底跟我們之前在訓練資料裡面看過的資料相不相似呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:56.000" id=22:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1376">22:56.000</a></div>
+        <div class="t">也就是說,你需要有一個異常檢測的系統,這個異常檢測的系統是透過大量你已經看過的資料訓練出來的,給它一筆新的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:06.000" id=23:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1386">23:06.000</a></div>
+        <div class="t">如果這筆新的資料看起來像是訓練資料裡面的data,就說它是正常的。如果看起來不像是訓練資料裡面的data,就說它是異常的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:19.000" id=23:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1399">23:19.000</a></div>
+        <div class="t">其實anomaly這個詞有很多不同的其他的稱呼,比如說有時候你會叫它outlier,有時候你會叫它novelty,有時候你會叫它exception。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1411">23:31.000</a></div>
+        <div class="t">但其實指的都是同樣的事情,你就是要看某一筆新的資料,它跟之前看過的資料到底相不相似。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.000" id=23:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1420">23:40.000</a></div>
+        <div class="t">但是所謂的相似這件事,其實並沒有非常明確的定義,它是見仁見智的,會根據你的應用情境而有所不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:52.000" id=23:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1432">23:52.000</a></div>
+        <div class="t">舉例來說,假設現在你的訓練資料這個都是雷丘,那這個皮卡丘就算是異常的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.000" id=24:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1441">24:01.000</a></div>
+        <div class="t">但是假設你的訓練資料裡面,你所有的動物都是皮卡丘,那雷丘就是異常的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:10.000" id=24:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1450">24:10.000</a></div>
+        <div class="t">所以我們並不會說某一個東西它一定就是normal,一定就是anomaly,我們不會說某個東西它一定是正常或異常,它是正常或異常,取決於你的訓練資料長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:23.000" id=24:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1463">24:23.000</a></div>
+        <div class="t">或者是說,假設你的訓練資料裡面通通都是寶可夢,那雷丘跟皮卡丘通通都算是正常的,而可能數碼寶貝、亞古獸算是異常的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:39.000" id=24:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1479">24:39.000</a></div>
+        <div class="t">那這個異常檢測有什麼樣的應用呢?舉例來說,它可以來做詐欺偵測。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:47.000" id=24:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1487">24:47.000</a></div>
+        <div class="t">假設你的訓練資料裡面有一大堆信用卡的交易紀錄,那我們可以想像說多數信用卡的交易都是正常的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:57.000" id=24:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1497">24:57.000</a></div>
+        <div class="t">那你拿這些正常的應用卡訓練的交易紀錄來訓練一個異常檢測的模型,那有一筆新的交易紀錄進來,你就可以讓機器幫你判斷說這筆紀錄算是正常的還是異常的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.000" id=25:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1512">25:12.000</a></div>
+        <div class="t">那你相信這種異常檢測的技術可以拿來做詐欺偵測,或者是它可以拿來做網路的侵入偵測。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.000" id=25:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1521">25:21.000</a></div>
+        <div class="t">舉例來說,你有很多連線的紀錄資料,那你相信多數人連到你的網站的時候,他的行為都是正常的,多數人都是好人,你收集到一大堆正常的連線紀錄。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:33.000" id=25:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1533">25:33.000</a></div>
+        <div class="t">那接下來有一筆新的連線進來,你可以根據過去正常的連線訓練出一個異常檢測的模型,看看新的連線它是正常的連線還是異常的連線,它是有攻擊性的還是正常的連線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:47.000" id=25:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1547">25:47.000</a></div>
+        <div class="t">或者是它在醫學上也可能有應用,你收集到一大堆正常細胞的資料,拿來訓練一個異常檢測的模型,也許看到一個新的細胞,它可以知道這個細胞有沒有突變,也許有突變,它就是一個癌細胞等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:03.000" id=26:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1563">26:03.000</a></div>
+        <div class="t">那講到這邊,有人可能會想說,anonymity detection異常檢測的問題,我們能不能把它當作一個二元分類的問題來看?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:12.000" id=26:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1572">26:12.000</a></div>
+        <div class="t">你說你要做詐欺偵測,你就收集一大堆正常的信用卡紀錄,一堆詐欺的信用卡紀錄,訓練一個binary classifier,就結束了,就這樣子,不是嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.000" id=26:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1585">26:25.000</a></div>
+        <div class="t">比較難點就是你要收資料。但是這種異常檢測的問題,它的難點就在於收資料上面。通常你比較有辦法收集到正常的資料,你比較不容易收集到異常的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:40.000" id=26:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1600">26:40.000</a></div>
+        <div class="t">你可能有一大堆信用卡交易的紀錄,但是多數信用卡交易的紀錄可能都是正常的、異常的資料,相較於正常的資料可能非常少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:50.000" id=26:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1610">26:50.000</a></div>
+        <div class="t">甚至有一些異常的資料混在正常的裡面,你可能也完全沒有辦法偵測出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:57.000" id=26:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1617">26:57.000</a></div>
+        <div class="t">所以在這種異常檢測的問題裡面,我們往往假設我們有一大堆正常的資料,但我們幾乎沒有異常的資料,所以它不是一個一般的分類的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.000" id=27:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1628">27:08.000</a></div>
+        <div class="t">這種分類的問題又叫做One Class的分類問題,就是我們只有一個類別的資料,那你怎麼訓練一個模型?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1638">27:18.000</a></div>
+        <div class="t">因為你想要訓練一個分類器,你得有兩個類別的資料才能訓練分類器。如果只有一個類別的資料,那我們可以訓練什麼東西?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:27.000" id=27:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1647">27:27.000</a></div>
+        <div class="t">這個時候就是Autoencoder可以派得上用場的時候了。舉例來說,假設我們現在想要做一個系統,這個系統是要偵測說一張圖片,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:40.000" id=27:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1660">27:40.000</a></div>
+        <div class="t">舉例來說它是不是真人的人臉,那你可以找到一大堆圖片它都是真人的人臉,那我們就拿這些真人的人臉來訓練一個Autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:53.000" id=27:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1673">27:53.000</a></div>
+        <div class="t">舉例來說,這個是你老婆的照片,你可以在聊天室推我老婆請測照,這是你老婆的照片,你可以拿它來訓練一個Autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:04.000" id=28:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1684">28:04.000</a></div>
+        <div class="t">那你訓練完這個Autoencoder以後,在測試的時候,如果進來的也是你老婆的照片,因為在訓練的時候有看過這樣的照片,所以它可以順利地被還原回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:17.000" id=28:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1697">28:17.000</a></div>
+        <div class="t">你可以計算這張照片在Autoencoder以後,它的變化有多大。你可以去計算這個輸入的照片跟這個輸出的照片,它們的差異有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:28.000" id=28:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1708">28:28.000</a></div>
+        <div class="t">如果差異很小,你的Autoencoder可以順利地還原原來的照片,代表這樣類型的照片是在訓練的時候有看過。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:37.000" id=28:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1717">28:37.000</a></div>
+        <div class="t">不過反過來說,假設有一張照片是訓練的時候沒有看過的,舉例來說,這根本不是人的照片。它是人嘛,它是團長,它是梁宮春日,但是它不是真人,它是一個動畫的人物,它是二次元的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:52.000" id=28:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1732">28:52.000</a></div>
+        <div class="t">一個二次元人物的照片輸入Autoencoder再輸出Autoencoder以後,因為這是沒有看過的東西,這是訓練的時候沒有看過的照片,那你的Autoencoder就很難把它還原回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:04.000" id=29:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1744">29:04.000</a></div>
+        <div class="t">如果你計算輸入跟輸出的差異發現差異非常的大,那就代表說現在輸入給Autoencoder的這張照片可能是一個異常的狀況,可能是訓練的時候沒有看過的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.000" id=29:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1757">29:17.000</a></div>
+        <div class="t">所以就可以看Reconstruction的好壞來決定說,你現在在測試的時候看到這張照片是不是訓練的時候有看過同類型的照片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:34.000" id=29:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1774">29:34.000</a></div>
+        <div class="t">這個就是我們在作業裡面要大家做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:45.000" id=29:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1785">29:45.000</a></div>
+        <div class="t">異常檢測其實也是另外一門學問,我們課堂上就沒有時間講了。異常檢測不是只能用Autoencoder這個技術,Autoencoder這個技術只是眾多可能方法裡面的其中一個我們拿它來當作Autoencoder的作業,因為我相信你未來有很多機會用得上異常檢測這個技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:06.000" id=30:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1806">30:06.000</a></div>
+        <div class="t">實際上有關異常檢測更完整的介紹,我們把過去上課的錄影放在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:14.000" id=30:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1814">30:14.000</a></div>
+        <div class="t">以上就是有關Autoencoder的部分。在我們請助教來講作業之前,我們看一下大家有沒有問題想要問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.000" id=30:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=JZvEzb5PV3U&t=1821">30:21.000</a></div>
+        <div class="t">如果暫時沒有問題的話,我們就請助教來講下一個作業。</div>
+    </div>
+    
+</body>
+</html>   

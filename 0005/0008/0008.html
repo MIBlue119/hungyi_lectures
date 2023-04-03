@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Voice Conversion (1/2) - Feature Disentangle</h2><a href=https://www.youtube.com/watch?v=Jj6blc8UijY><img src=https://i.ytimg.com/vi_webp/Jj6blc8UijY/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=0">00:00.000</a></div>
+        <div class="t">我們來講Voice Convergent,它的縮寫是VC,說到VC,大家比較常想到的是創投,我這邊是Voice Convergent,這隱藏起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:14.460" id=00:14.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=14">00:14.460</a></div>
+        <div class="t">Voice Convergent要做的事情是輸入一段聲音,輸出另外一段聲音。而這兩段聲音,有一些東西一樣,有一些東西不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.520" id=00:30.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=30">00:30.520</a></div>
+        <div class="t">什麼東西一樣呢?通常我們希望這兩段聲音的內容是一樣的,由這兩段聲音所對應的文字是一樣的。至於什麼東西不一樣呢?可以有很多不同的面向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.360" id=00:46.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=46">00:46.360</a></div>
+        <div class="t">最常見的、不一樣的面向是語者,你把其中的語者變換成另外一個語者,就像剛才助教講的領結變聲器就是一個最常見的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02.640" id=01:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=62">01:02.640</a></div>
+        <div class="t">為什麼我們會想把某一個人的聲音轉換成另外一個人的聲音呢?那是因為我們知道,同一句話,不同人說,它的效果就是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16.460" id=01:16.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=76">01:16.460</a></div>
+        <div class="t">舉例來說,如果今天你的同學跟你說,你可以畢業了,你沒有什麼好高興的。但是如果是你的老師跟你說,你可以畢業了,你的心情可能就會很高興。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31.660" id=01:31.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=91">01:31.660</a></div>
+        <div class="t">所以如果今天可以用你的老師的聲音告訴你說,你可以畢業了,你每天睡前都播放一遍,那也許你就會覺得心情比較好一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.620" id=01:42.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=102">01:42.620</a></div>
+        <div class="t">或者是說,因為我是一個死臭酸宅,所以我們上課,大家也許聽了並不是那麼的高興,但如果可以把我的聲音轉成像林志玲一樣的甜美女生,也許大家上課心情就會更好一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:55.880" id=01:55.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=115">01:55.880</a></div>
+        <div class="t">所以這個就是,同一件事情,不同人講,它的效果就是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:01.760" id=02:01.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=121">02:01.760</a></div>
+        <div class="t">那像Voice Conversion這樣的技術還有什麼用處呢?最常大家馬上可以想到的,就是拿來騙人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:10.980" id=02:10.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=130">02:10.980</a></div>
+        <div class="t">舉例來說,前幾個月才有一個例子,是有一個英國的公司接到了執行長打來的電話。執行長有德國口音,內部的人員一聽,這個真的是執行長的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:26.000" id=02:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=146">02:26.000</a></div>
+        <div class="t">執行長說,急需匯二十萬美金到某一個公司去,然後那個公司就被騙了二十萬美金。據說,那個執行長的聲音可能就是用AI產生出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:38.420" id=02:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=158">02:38.420</a></div>
+        <div class="t">實際上的細節我不知道,也許那個根本就不是AI產生出來的,只是有人模仿了執行長的聲音而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.880" id=02:44.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=164">02:44.880</a></div>
+        <div class="t">但是假設Voice Conversion的技術做得很成功,也許未來你真的可以用這樣的技術來進行詐騙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:51.800" id=02:51.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=171">02:51.800</a></div>
+        <div class="t">那要欺騙的對象不一定是人,也有可能是另外一個機器。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:57.320" id=02:57.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=177">02:57.320</a></div>
+        <div class="t">舉例來說,你今天打電話去銀行,銀行的職員現在不見得會問你問題,他可能直接用聲紋比對,就知道打電話進來的是不是客戶本人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:06.960" id=03:06.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=186">03:06.960</a></div>
+        <div class="t">但如果有Voice Conversion的技術,那任何人都可以把自己的聲音轉成另外一個語者,那可能就可以騙過銀行的語者驗證系統,你就可以做一些你不該做的壞事。這個是Deepfake的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:22.940" id=03:22.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=202">03:22.940</a></div>
+        <div class="t">還有一個轉換語者可能可以用上的地方是,你可以用這樣的方法來做個人化的語音合成系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.600" id=03:34.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=214">03:34.600</a></div>
+        <div class="t">當然,用Voice Conversion並不是製作個人化語音系統的唯一的方法,但是它是一個可行的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:43.320" id=03:43.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=223">03:43.320</a></div>
+        <div class="t">那什麽叫做個人化的語音合成系統呢?就是我們今天希望語音合成系統合出來的聲音,它可以是我們想要的語者的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:53.980" id=03:53.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=233">03:53.980</a></div>
+        <div class="t">我們希望我們的語音合成系統不是只是Google小姐的聲音,而是可以把Google小姐的聲音轉成我們想要它合出來的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.760" id=04:02.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=242">04:02.760</a></div>
+        <div class="t">那這樣的系統有什麽應用呢?那你其實可以有很多的想像。舉例來說,未來可能父母都在外面工作,照顧小孩的時候會請一個機器人管家來照顧小孩。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.380" id=04:14.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=254">04:14.380</a></div>
+        <div class="t">但如果機器人的聲音只是機器人的聲音,那小孩可能不太喜歡。但如果機器人可以模仿父母的聲音,也許小孩就會覺得比較親切,那你可以輕易地想到很多這種個人化的語音合成系統的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:29.960" id=04:29.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=269">04:29.960</a></div>
+        <div class="t">那還可以做什麽呢?我還看過有人做歌聲的轉換,就是你把某一個人唱歌的聲音轉成另外一個人唱歌的聲音,聲音裏面會透露很多的訊息。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.560" id=04:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=284">04:44.560</a></div>
+        <div class="t">這個在獵人裏面就有講過,《詳見獵人》第八卷,就是金流給小姐一個要找他的線索的錄音帶,然後那個錄音帶一播完以後,那個錄音帶就直接被銷毀了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:58.720" id=04:58.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=298">04:58.720</a></div>
+        <div class="t">爲什麽那個錄音帶播完以後就要被銷毀呢?因爲奇壓縮,只從聲音也可以得到很多訊息,像身高、體重、性別、年齡、臉型、健康狀況,還能推測對方的心理狀態。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:10.960" id=05:10.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=310">05:10.960</a></div>
+        <div class="t">所以,如果我們讓別人聽到我們真正的聲音,也許是會有隱私上的風險的。所以,如果我們把聲音都轉換成另外一個聲音,就可以避免留下線索,就可以保障隱私。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.220" id=05:25.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=325">05:25.220</a></div>
+        <div class="t">我可以想到一個比較實用的例子,也許是說,假設今天家裏只有小孩,然後有一個人按門鈴,小孩用對講機回覆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:37.360" id=05:37.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=337">05:37.360</a></div>
+        <div class="t">如果按門鈴的人聽到是小孩的聲音,他就知道家裏只有小孩。但如果那個對講機上面裝一個Voice Conversion的系統,然後把那小孩的聲音轉成父母的聲音,那按門鈴的人就會覺得是有大人在家的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:50.820" id=05:50.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=350">05:50.820</a></div>
+        <div class="t">我不知道這個實不實用,反正我就想到這樣的例子。那Speaker的轉換是最常見的,但除了Speaker的轉換以外,還有很多其他的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.020" id=06:02.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=362">06:02.020</a></div>
+        <div class="t">舉例來說,你可以做Speaking Style的轉換,你可以做語者風格的轉換,你可以做說話風格的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.720" id=06:14.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=374">06:14.720</a></div>
+        <div class="t">有什麼樣說話風格的轉換呢?比如說你可以改變一個人說話的情緒,某個人可能想要發出非常生氣的聲音,但是因為他講話太溫柔了,所以大家聽起來覺得他不夠生氣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.480" id=06:28.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=388">06:28.480</a></div>
+        <div class="t">也許他可以用Voice Conversion的技術,讓他講話聽起來非常生氣,所以我不知道這個應用是什麼就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:34.460" id=06:34.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=394">06:34.460</a></div>
+        <div class="t">我還聽過一個神奇的Speaking Style的轉換,是把正常的聲音轉成Lumba的聲音。什麼是Lumba的聲音呢?Lumba的意思是說,當我們人在講話的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.440" id=06:48.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=408">06:48.440</a></div>
+        <div class="t">如果你在酒吧說話,然後背景噪音很大,這個時候你就會不由自主地放大你說話的音量,這個就叫做Lumba。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.080" id=07:00.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=420">07:00.080</a></div>
+        <div class="t">其實Lumba是一個有點複雜的過程,它不是只是單純地把你的聲音放大一點而已,它聽起來就是不太一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.660" id=07:09.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=429">07:09.660</a></div>
+        <div class="t">這個我也說不太上來,所以我直接舉一個例子給大家聽聽看。以下是一句正常的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:16.400" id=07:16.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=436">07:16.400</a></div>
+        <div class="t">接下來,同樣的句子,同一個旅者,但是在Lumba的狀態下把它念出來,聽起來是這樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:33.240" id=07:33.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=453">07:33.240</a></div>
+        <div class="t">它不只是比較大聲一點,很多地方都有一些微妙的差異。所以有人就做了一個語音轉換的系統,Voice Conversion的系統,把正常的聲音轉成Lumba的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.160" id=07:45.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=465">07:45.160</a></div>
+        <div class="t">你可能問說,做這個系統到底要做什麼呢?我其實也有這個疑惑。其實這篇文章是ICAS19的文章,當時這篇文章在發表的時候,我也是在現場。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.200" id=07:56.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=476">07:56.200</a></div>
+        <div class="t">有人馬上就舉手問說,我們為什麼要把正常的聲音轉成Lumba的聲音呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.700" id=08:01.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=481">08:01.700</a></div>
+        <div class="t">這個作者的回答我覺得也還蠻合理的,他說,未來,語音合成的系統可能會在生活的方方面面出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.920" id=08:10.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=490">08:10.920</a></div>
+        <div class="t">有時候機器在說話的時候,可能是在酒吧裡,可能是在很吵雜的地方。人類之所以會從正常轉成Lumba的目的,也許是因為Lumba的聲音可以讓另外一個人聽得比較清楚。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.180" id=08:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=504">08:24.180</a></div>
+        <div class="t">所以未來,語音合成的系統如果要在吵雜的地方讓大家聽得清楚,它可能也需要有把正常的聲音轉成Lumba的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:33.400" id=08:33.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=513">08:33.400</a></div>
+        <div class="t">我覺得這個聽起來還蠻合理的。我看這群作者也不是突然一時興起才做這個任務,他們好幾年前,在大家還不知道要用Deep Learning做Voice Conversion的年代,他們就已經在想把Normal轉成Lumba這個問題了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:47.640" id=08:47.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=527">08:47.640</a></div>
+        <div class="t">你還可以把悄悄話轉成正常的聲音。什麼時候你會把悄悄話轉成正常的聲音呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:55.800" id=08:55.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=535">08:55.800</a></div>
+        <div class="t">也許你在圖書館講電話,你不能夠大聲講話,你只能講悄悄話,但是你希望另外一邊跟你講話的人聽起來是正常的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.660" id=09:06.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=546">09:06.660</a></div>
+        <div class="t">或者是你在電車上講電話,你不想講話太大聲被旁邊的人聽到,那你就講悄悄話。別人聽不到你在說什麼,你可以保護你的隱私,但是對方另外一個聽你講話的人、電話另外一頭聽你講話的人聽到的,會是正常的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.180" id=09:23.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=563">09:23.180</a></div>
+        <div class="t">還有可以轉換歌唱技巧的技術,舉例來說,可以讓你在唱歌的時候自動加上彈唇或自動加上顫音,這也是轉換speaking style的一個可能的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.860" id=09:38.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=578">09:38.860</a></div>
+        <div class="t">還有什麼呢?還有可能用voice conversion的技術來增進一段聲音的intelligibility,intelligibility的意思就是可理解性。我們有可能用voice conversion的技術來增進一段聲音的可理解性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:55.760" id=09:55.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=595">09:55.760</a></div>
+        <div class="t">舉例來說,有些人可能是因為先天或後天的因素,他的發音器官有一些損傷,所以他發出來的聲音也許一般人不是那麼容易理解。但如果你用voice conversion的技術,就有可能把這些一般人比較沒有那麼容易理解的聲音,轉成一般人比較容易理解的聲音。這就是一個語音可以用來助人的一個很好的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:20.240" id=10:20.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=620">10:20.240</a></div>
+        <div class="t">除了轉換因為發音器官的損傷所沒有辦法發清楚的聲音以外,還有可能做口音的轉換。你有可能把一個人的口音去掉,比如說我們講的英文也許沒有那麼標準,也許可以把不標準的英文轉成標準的英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.760" id=10:44.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=644">10:44.760</a></div>
+        <div class="t">像做這樣子的accent conversion的時候,你就只希望你轉的只有口音的部分,你希望語者的特徵仍然是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:54.740" id=10:54.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=654">10:54.740</a></div>
+        <div class="t">你不希望一個男生的聲音把從不標準的英文轉成標準的英文以後,就同時從男生的聲音變成女生的聲音。這不是你期待的。你希望語者的特性完全被保留下來,大家聽起來仍然是同一個人在講話,只是從不標準的英文轉成標準的英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:12.420" id=11:12.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=672">11:12.420</a></div>
+        <div class="t">這個是accent conversion。那accent conversion除了你可以直接使用它,也許未來大家在國際會議都會帶一個accent conversion的系統,然後就可以把每個人不標準的英文都轉成標準的英文,這樣大家溝通就會比較順暢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.240" id=11:28.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=688">11:28.240</a></div>
+        <div class="t">另外一個可能的應用是,它也許可以用在語言學習上。在語言學習上,有一個理論是說,你聽別人的聲音來學習,你比較不好學。舉例來說,你是一個男生,你的老師是一個女生,女生的聲音跟男生的聲音本來就有一定程度的差距,你可能會不知道怎麼模仿你的老師的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.580" id=11:48.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=708">11:48.580</a></div>
+        <div class="t">但假設你可以聽到自己的聲音,念出字正腔圓的英文的話,那你學英文可能會比較快,因為那是你自己的聲音,你知道怎麼發出一模一樣的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:01.760" id=12:01.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=721">12:01.760</a></div>
+        <div class="t">所以假設有這種accent conversion的技術,可以把某個人講出來不標準的英文轉成標準的英文,那你聽了這個標準的英文以後,可能可以加速你的語言的學習,讓你更知道怎麼把不標準的英文轉成標準的英文,讓你更知道怎麼發出標準的英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:19.840" id=12:19.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=739">12:19.840</a></div>
+        <div class="t">這是voice conversion的另外一個應用,可以增進聲音的可理解性。還有一個你也許比較想不到的應用,是用voice conversion來做data augmentation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:34.880" id=12:34.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=754">12:34.880</a></div>
+        <div class="t">舉例來說,你今天把你語音辨識訓練資料裡面所有男生的聲音都轉女生的聲音,女生的聲音都轉男生的聲音,你的訓練資料瞬間就被兩倍了。但這種技術有沒有用,你可以自己閱讀文獻,不是總是有用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.320" id=12:50.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=770">12:50.320</a></div>
+        <div class="t">或者是,還有人把乾淨的聲音轉成有雜訊的聲音。為什麼要把乾淨的聲音轉成有雜訊的聲音呢?因為一般在做語音辨識的時候,本來就會做data augmentation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:05.360" id=13:05.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=785">13:05.360</a></div>
+        <div class="t">語音辨識常用的data augmentation的方法是,直接把雜訊加到語音上面。有人可能會覺得說,直接把雜訊跟語音就把它們加起來,也許不是那麼的好,有沒有更靈活、更複雜的變化呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.480" id=13:22.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=802">13:22.480</a></div>
+        <div class="t">也許可以用voice conversion的技術,直接把乾淨的聲音轉成有雜訊的聲音,讓機器用這些有雜訊的聲音去訓練語音辨識系統。還有人直接把有雜訊的聲音透過voice conversion的技術轉成乾淨的聲音,那這個是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:39.680" id=13:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=819">13:39.680</a></div>
+        <div class="t">這就是去噪,有雜訊的聲音進來,在給語音辨識系統聽之前先把雜音去掉,希望用這樣的方法可以讓語音辨識做得更好。所以,voice conversion的技術也有機會用在data augmentation上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.880" id=13:54.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=834">13:54.880</a></div>
+        <div class="t">以上是voice conversion相關的應用。在進入技術之前,有兩件事情是要先跟大家說明一下。In general而言,voice conversion系統的輸入跟輸出的聲音長度可以是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.760" id=14:13.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=853">14:13.760</a></div>
+        <div class="t">甚至不一樣的話其實更好,因為假設你今天做口音的轉換,不同的口音間講同樣的句子,它的聲音的長度你不能夠期待,它的長度就是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.600" id=14:25.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=865">14:25.600</a></div>
+        <div class="t">Duration,像韻律這種東西,也是語者特徵的一部分。你在做speaker的voice conversion的時候,把一個人的聲音轉成另外一個人的聲音的時候,如果長度一樣,聽起來也許就不夠真實。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.380" id=14:39.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=879">14:39.380</a></div>
+        <div class="t">但是在很多時候,你在閱讀文獻的時候會發現說,我們會假設輸入跟輸出的聲音的長度就是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:48.960" id=14:48.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=888">14:48.960</a></div>
+        <div class="t">這可以讓我們的模型比較簡單一點,因為如果輸入跟輸出的長度不一樣,那你可能就需要用到sequence-to-sequence model來當作你的voice conversion的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.400" id=14:59.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=899">14:59.400</a></div>
+        <div class="t">我們直接假設輸入跟輸出的長度是一樣的,那你就可以不需要用sequence-to-sequence model,你可以用比較簡單的模型。舉例來說,你可以用一個類似encoder的架構,就把一個人的聲音轉成另外一個人的聲音,那這個可以讓你的訓練更容易一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.980" id=15:15.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=915">15:15.980</a></div>
+        <div class="t">當然,未來我們還是會往輸入跟輸出長度不一樣發展,只是今天你閱讀文獻的時候會發現說,多數時候都假設輸入跟輸出的長度都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:26.780" id=15:26.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=926">15:26.780</a></div>
+        <div class="t">另外一個實作上的issue是,今天voice conversion model的輸出也是acoustic feature sequence。我們說我們會把聲音訊號用acoustic feature sequence來表示,用一串向量來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.100" id=15:42.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=942">15:42.100</a></div>
+        <div class="t">所以輸入是一串向量,輸出是另外一串向量,但這一串向量往往不能夠直接轉成聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.480" id=15:52.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=952">15:52.480</a></div>
+        <div class="t">舉例來說,假設這一串向量是一個spectrogram,是你的頻譜,那頻譜轉成聲音訊號,中間還插了一個相位,還插了phase的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:04.380" id=16:04.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=964">16:04.380</a></div>
+        <div class="t">你需要自己把phase加到spectrogram裡面去,你才能夠產生出聲音訊號。假設你對訊號處理不熟悉,不知道什麼是spectrogram,不知道什麼是phase的話也沒有關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.500" id=16:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=975">16:15.500</a></div>
+        <div class="t">反正這個acoustic feature它不見得能夠直接對應回原來的聲音訊號。所以怎麼辦?我們需要另外一個module叫做vercoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:26.560" id=16:26.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=986">16:26.560</a></div>
+        <div class="t">vercoder吃acoustic feature sequence當作輸入,直接輸出聲音訊號。那vercoder怎麼做呢?你可以用比較傳統的方法,有一些rule-based的方法,有一些訊號處理的方法,會告訴你說怎麼把acoustic feature轉成waveform。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.240" id=16:44.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1004">16:44.240</a></div>
+        <div class="t">當然,這個vercoder其實也不是一個非常簡單的問題,人類的聲音訊號是非常非常複雜的。就算你的acoustic feature已經是spectrogram,你只是要把phase加進去,那都不是一個容易的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:00.220" id=17:00.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1020">17:00.220</a></div>
+        <div class="t">phase加得好、加得不好,會影響到你的語音合成的聲音聽起來是不是假假的。你常常會覺得說,語音合成合出來的聲音聽起來就是有一個假假的感覺,那也說不上來,它就是語音合成的感覺,那那個往往就是phase做得不夠好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.540" id=17:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1039">17:19.540</a></div>
+        <div class="t">所以vercoder並不是一個非常簡單的事情,但過去我們常常用一些訊號處理的方法,想辦法把這些acoustic feature轉成waveform,但不見得能夠得到完美的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.440" id=17:31.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1051">17:31.440</a></div>
+        <div class="t">而今天你不見得要用訊號處理的方法,你也有可能直接讓你的vercoder就是一個deep neural,這個deep neural直接是acoustic feature,突出直接就是聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:45.040" id=17:45.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1065">17:45.040</a></div>
+        <div class="t">那我們今天在講voice conversion的時候,我們就只討論到,我們就只假設voice conversion會輸出acoustic feature,我們不會講說acoustic feature怎麼轉回聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.920" id=17:57.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1077">17:57.920</a></div>
+        <div class="t">為什麼?因為vercoder其實是一個general的技術,它不是只會用在voice conversion裡面,它也會用在語音合成裡面,也會用在比如說speech separation裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.820" id=18:08.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1088">18:08.820</a></div>
+        <div class="t">簡單來說,如果你今天的模型突出來的是acoustic feature,最終你都會需要一個vercoder把acoustic feature轉回聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.960" id=18:18.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1098">18:18.960</a></div>
+        <div class="t">所以這個部分我們今天就先不細講,留待日後把它當作一個獨立的主題,來告訴大家說怎麼把acoustic feature直接轉成聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:29.920" id=18:29.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1109">18:29.920</a></div>
+        <div class="t">今天你就假設說反正我們有一個vercoder,不知道是哪來的,可以把acoustic feature轉成聲音訊號就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:39.080" id=18:39.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1119">18:39.080</a></div>
+        <div class="t">那這個voice conversion的部分,隨著我們有什麼樣的訓練資料,可以分成兩大類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.900" id=18:46.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1126">18:46.900</a></div>
+        <div class="t">一類是我們有成對的訓練資料,也就是做supervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.200" id=18:55.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1135">18:55.200</a></div>
+        <div class="t">如果我們有成對的訓練資料,也就是說假設我們要把某一個語者A的聲音轉成某一個語者B的聲音,那A跟B他們都念同樣的句子,那這個叫做成對的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:08.320" id=19:08.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1148">19:08.320</a></div>
+        <div class="t">如果成對的資料的話,voice conversion這個問題怎麼解,其實是頗為直覺的,你就直接訓練一個模型,這個模型也許是sequence to sequence的model,然後把左邊這句聲音訊號吃進去,然後吐出右邊這句聲音訊號,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:24.700" id=19:24.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1164">19:24.700</a></div>
+        <div class="t">所以如果你有成對的資料,voice conversion的解法其實是直覺的。但難的點在於說,你很難收集到非常大量的成對的聲音訊號,所以怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:37.640" id=19:37.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1177">19:37.640</a></div>
+        <div class="t">有一些可能的解決方案是說,也許你會需要一個比較好的pre-trained model,你今天說你要用一個sequence to sequence的模型,把一句聲音訊號轉成另一句聲音訊號,但是也許你成對的聲音訊號只有十句。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:51.460" id=19:51.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1191">19:51.460</a></div>
+        <div class="t">那你用十個example-trained sequence to sequence的模型顯然是會慘掉的,所以怎麼辦?也許你可以把那個sequence to sequence的模型先pre-trained好,再用少量的資料去fine tune,也許你也有機會得到不錯的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.820" id=20:06.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1206">20:06.820</a></div>
+        <div class="t">還有一個神奇的做法是用語音合成的技術,就是你收集到一大堆人講的句子,你也知道他們講的句子的內容是什麼,然後你就用Google小姐把這些句子統統都念一遍,然後你就可以訓練一個sequence to sequence的模型,把所有人的聲音都轉成Google小姐的聲音。Google確實有一篇paper做了類似的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:30.380" id=20:30.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1230">20:30.380</a></div>
+        <div class="t">也許在實際上更實用的是直接用unparalleled data來進行訓練。我們每一個語者都有一些聲音,但他們念的句子不見得是一樣的,甚至他們說的語言都不是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:48.940" id=20:48.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1248">20:48.940</a></div>
+        <div class="t">在這種狀況下,我們有沒有辦法讓機器學會把某個人的聲音轉成另外一個人的聲音呢?其實是有可能的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:58.020" id=20:58.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1258">20:58.020</a></div>
+        <div class="t">我們知道在影像上,今天有很多很多的研究是在做image style transfer,就是怎麼把一張圖片的風格轉成另外一張圖片的風格,而把一個人的聲音轉成另外一個人的聲音,或把一種emotion轉成另外一種emotion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.800" id=21:16.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1276">21:16.800</a></div>
+        <div class="t">這樣子的任務,像這樣voice conversion的任務,其實很像是一種audio style transfer。image style transfer已經研究得滿坑滿谷了,你可以從image style transfer那邊借一些技術來用在audio style transfer上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:33.540" id=21:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1293">21:33.540</a></div>
+        <div class="t">所以你會發現說,在unparalleled data的voice conversion裡面的這些技術,其實你都在image style transfer上面曾經看過,只是我們做語音的人從image style transfer那邊借一些來用在audio style transfer上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:47.380" id=21:47.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1307">21:47.380</a></div>
+        <div class="t">它有兩個可能的方向,一個是feature disentangle,另外一個是直接轉換。feature disentangle是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.860" id=21:56.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1316">21:56.860</a></div>
+        <div class="t">聲音訊號裡面包含了很多不同面向的資訊,一個聲音訊號裡面,它可能有包含了內容的資訊,也就是文字的資訊,它可能有包含了語者的資訊,它可能有包含了背景的雜訊等等,它包含了很多很多的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:17.440" id=22:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1337">22:17.440</a></div>
+        <div class="t">feature disentangle的想法是說,我們能不能夠把這些混在一起的資訊把它分離開來,舉例來說,我們有沒有可能把一段聲音訊號裡面的文字的資訊跟語者的資訊把它分離開來,接下來我們只要把語者的資訊替換掉,我們就可以做到voice conversion這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:38.060" id=22:38.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1358">22:38.060</a></div>
+        <div class="t">像這樣的技術,不是只能夠用在語者上,如果你有辦法把,比如說accent,把口音的資訊提取出來,把口音的feature替換掉,那你就可以做到accent的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.560" id=22:52.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1372">22:52.560</a></div>
+        <div class="t">如果你可以把情緒的部分提取出來,把情緒的部分替換掉,你就可以做到情緒的轉換。看你想轉什麼,你就要把什麼樣的資訊把它解離出來,把它disentangle出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.800" id=23:05.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1385">23:05.800</a></div>
+        <div class="t">以下在講這個技術的時候,我們都用語者來給大家當作例子,不過同樣的技術是可以用在其他種類的voice conversion上的,不見得只侷限於speaker的conversion,不見得只侷限於語者的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.380" id=23:23.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1403">23:23.380</a></div>
+        <div class="t">feature disentangle要怎麼使用它呢?我們這邊以語者的轉換為例,我們假設說我們可以訓練出一個content的encoder,給它一段聲音訊號,它會把這段聲音訊號裡面只跟文字內容有關的部分把它提取出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:44.120" id=23:44.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1424">23:44.120</a></div>
+        <div class="t">我們有一個speaker的encoder,給它一句話,它無視這個內容的資訊,它只把這句話跟語者特徵有關的部分把它提取出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:56.360" id=23:56.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1436">23:56.360</a></div>
+        <div class="t">接下來,我們會需要一個decoder,這個decoder做的事情是,你給它content encoder的輸出,給它內容的資訊,你給它speaker encoder的輸出,給它語者的資訊。根據這句話的內容,根據這個語者的資訊,它會用這個語者的聲音訊號,它會用這個語者的特徵念出這段話的內容,這個是decoder做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.460" id=24:21.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1461">24:21.460</a></div>
+        <div class="t">如果你可以訓練出這樣子的encoder,這樣子的encoder,跟這樣子的decoder,接下來你只要把這個speaker encoder的輸入換掉,換成別的句子,換成別的語者的句子,你就可以做到voice conversion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:36.940" id=24:36.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1476">24:36.940</a></div>
+        <div class="t">舉例來說,你給speaker encoder這邊聽星源結衣的聲音,它就提取出星源結衣這個語者的特徵,你把這個星源結衣的語者特徵丟給decoder,decoder就可以用星源結衣的聲音念出content encoder output的這句話的內容,這個是feature disentangle的基本概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:59.420" id=24:59.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1499">24:59.420</a></div>
+        <div class="t">可是我們要怎麼訓練出這樣子的encoder跟這樣子的decoder呢?這邊使用的方式、這邊使用的技術,它的本質上非常像是autoencoder,但是它必須要比autoencoder再多使用一些其他的方法,才能夠讓content encoder跟speaker encoder引口不一樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.440" id=25:21.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1521">25:21.440</a></div>
+        <div class="t">這樣feature disentangle的做法,它最基本的做法是說,我們收集了一大堆的聲音訊號,接下來我們認一個autoencoder,decoder的部分就跟autoencoder一樣,但是encoder的部分我們會有好幾個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.940" id=25:37.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1537">25:37.940</a></div>
+        <div class="t">那我們期待這些encoder可以引口到不同的資訊,content encoder就只抽content的資訊,speaker encoder就只抽speaker的資訊,把content encoder的資訊跟speaker encoder的資訊丟給decoder以後,decoder就合出聲音訊號,而我們希望輸入跟輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:54.140" id=25:54.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1554">25:54.140</a></div>
+        <div class="t">在訓練的時候,我們就希望輸入跟輸出的聲音越接近越好。訓練的時候,像是一個autoencoder,但不一樣的地方是,我們encoder有好幾個,而我們希望不同的encoder就去處理不同的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:10.020" id=26:10.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1570">26:10.020</a></div>
+        <div class="t">但是問題是,我們怎麽讓其中一個encoder只抽content的資訊,另外一個encoder只抽speaker的資訊呢?如果只是像一般的autoencoder一樣,end-to-end thread,輸入一段聲音訊號,中間輸出什麽也不管它,然後把中間輸出的latent representation轉回原來的聲音訊號,那沒有什麽理由content encoder跟speaker encoder要照你想象的一個引口content、一個引口speaker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:35.980" id=26:35.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1595">26:35.980</a></div>
+        <div class="t">所以怎麽辦呢?你需要加一些額外的東西。你需要加什麽樣額外的東西呢?那這邊就有一系列不同的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.160" id=26:49.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1609">26:49.160</a></div>
+        <div class="t">在這系列的做法裏面,最早開始做的,就我所知,應該是中研院的王興明老師跟他的學生黃信德做的成果。他們的做法是什麽樣呢?他們的做法是說,我們也不要認什麽speaker encoder了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:06.540" id=27:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1626">27:06.540</a></div>
+        <div class="t">我們假設我們今天在訓練的時候,我們訓練資料裏面每一句話是誰說的,這件事我們是知道的,我們知道說這句話是語者A說的,另外一句話是語者B說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:19.920" id=27:19.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1639">27:19.920</a></div>
+        <div class="t">那我們就不要認speaker encoder了,我們直接說,每一個speaker就是由一個one-half vector來表示。如果今天是speakerA,它對應的speaker的code就叫做E0,如果是speakerB就是0E。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:39.380" id=27:39.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1659">27:39.380</a></div>
+        <div class="t">所以對decoder來說,它就是把這個speaker encoder的資訊,但其實你也沒有speaker encoder,你也不用認speaker encoder,這個network完全不需要,它就把這個speaker的資訊,把這個one-half vector直接讀進去,然後再讀content encoder的output,然後就合成出聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:57.860" id=27:57.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1677">27:57.860</a></div>
+        <div class="t">在訓練的時候,就像是一個auto encoder一樣,輸入一段聲音訊號,然後要輸出一模一樣的聲音訊號。但是對decoder來說,因為它已經知道了語者的聲音訊號,它已經知道說這個語者是誰,也許對content encoder來說,它就不需要encode語者的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:19.000" id=28:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1699">28:19.000</a></div>
+        <div class="t">對decoder來說,它已經知道這個語者是誰,所以content encoder就不需要提供語者的聲音訊號,希望藉由這樣的方法,content encoder就會無視語者的資訊,它只把content相關的部分抽出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:32.180" id=28:32.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1712">28:32.180</a></div>
+        <div class="t">當然,你可能會去問說,直接使用這樣子的方法做訓練,也許也會有一些語者的資訊藏在content encoder的輸出裡面,也許沒有辦法保證content encoder可以完全把speaker的資訊濾掉,只保留content的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.180" id=28:49.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1729">28:49.180</a></div>
+        <div class="t">確實,在這樣子的整個模型架構裡面並沒有這樣的保證,但是如果你可以好好的調整你的模型,比如說feature的dimension的寬度的話,其實這樣一個跟後來的方法比較起來相對簡單的做法,其實也是會給你很不錯的結果的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:05.900" id=29:05.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1745">29:05.900</a></div>
+        <div class="t">但是像這樣子,不train speaker的encoder,每一個speaker就只用一個vector來表示它的方法,會有什麼樣的問題呢?它的一個侷限就是,你沒有辦法合出新的speaker的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:22.560" id=29:22.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1762">29:22.560</a></div>
+        <div class="t">假如今天你要合成出來的speaker,你要把A的聲音轉成比如說Z的聲音,而Z的聲音在你的訓練資料裡面一次都沒有出現過,你的訓練資料裡面根本就沒有Z的聲音,那你就不知道要給decoder什麼樣的code,你就沒有辦法合出Z的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.260" id=29:40.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1780">29:40.260</a></div>
+        <div class="t">所以用這種one-half-vector的方法的時候,你有幾個speaker,你這邊就要開一個幾維的向量。假設你的訓練資料裡面有十個speaker,那你就是開一個十維的向量,每一個speaker用一個one-half-vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:52.860" id=29:52.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1792">29:52.860</a></div>
+        <div class="t">如果有第十一個speaker進來,那你必須要重訓整個模型。如果第十一個speaker聲音需要在訓練的時候是從來沒有聽過的,那你就沒有辦法合第十一個speaker的聲音,這是這個方法的侷限。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:06.220" id=30:06.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1806">30:06.220</a></div>
+        <div class="t">那怎麼辦呢?還有一些其他的做法。舉例來說,你的speaker encoder可以事先pre-train好,就有一些其他的方法可以得到這個encoder,這個encoder是吃一段聲音訊號就輸出一個向量,而這個向量就代表了語者的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:26.220" id=30:26.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1826">30:26.220</a></div>
+        <div class="t">像這樣子代表語者特徵的向量,有一系列經典的做法,包括i-vector、d-vector、x-vector等等。我們今天先不細講這些vector是什麼,之後我們講到語者驗證的時候,還會再提到這些vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:40.780" id=30:40.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1840">30:40.780</a></div>
+        <div class="t">總之,你可以找到一些pre-trained的model,其實這些東西都是publicly available,網絡上download就有的。你可以在網絡上download到一些encoder,這些encoder就輸入一段聲音訊號,它輸出直接就是一個vector,這個vector就代表了這個語者說話的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:58.220" id=30:58.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1858">30:58.220</a></div>
+        <div class="t">而這個speaker encoder到時候在train的時候,也許你就不train它,也許你就只稍稍微調它就好了,這樣你就可以確保這個speaker encoder輸出的會是語者的特徵。因為這個speaker encoder它可能也是一個network,如果你今天用d-vector或x-vector的話,那你的speaker encoder也是一個network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:17.300" id=31:17.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1877">31:17.300</a></div>
+        <div class="t">就算是你給這個speaker encoder聽它從來沒有聽過的人的聲音,它也有機會抽出一個向量,這個向量正好就代表了這個新的語者的聲音的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.580" id=31:28.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1888">31:28.580</a></div>
+        <div class="t">這個是speaker encoder的部分,那content encoder的部分,我們有沒有辦法確保這個content encoder它抽出來的資訊就是只跟文字有關、只跟語音的內容有關呢?這個也是有可能的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:46.020" id=31:46.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1906">31:46.020</a></div>
+        <div class="t">一個常見的做法是直接把一個語音辨識系統塞在content encoder這個地方,你把一個語音辨識系統當作你的content encoder來用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:57.300" id=31:57.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1917">31:57.300</a></div>
+        <div class="t">如果你把你的一個一個語音辨識系統塞在這個地方,我們這個語音辨識系統做的事情就是給它一段聲音,把跟文字無關的地方就拿掉,只輸出文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:07.400" id=32:07.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1927">32:07.400</a></div>
+        <div class="t">所以如果你的content encoder就是一個語音辨識的系統,那你就可以確保這個content encoder它引扣的資訊只有文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:16.300" id=32:16.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1936">32:16.300</a></div>
+        <div class="t">不過如果你要讓這個content encoder跟這個decoder可以joint地一起訓練的話,那你的content encoder可能不能是一個一般的語音辨識系統,因為一般的語音辨識系統輸出是文字啊,那如果這邊輸出是文字,那你沒有辦法丟掉decoder,然後最後又做end-to-end的訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:35.100" id=32:35.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1955">32:35.100</a></div>
+        <div class="t">所以一個常見的做法是說,記不記得我們在講HMM的時候,我們說HMM也可以加deep learning,怎麼加deep learning,你train一個deep的network,這個network吃一個acoustic feature,接下來它就predict說這個acoustic feature屬於每一個state的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.260" id=32:54.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1974">32:54.260</a></div>
+        <div class="t">所以你其實可以把這個DNN直接就搬過來當作你的content encoder,這個content encoder輸出就是每一個state的機率,你把每一個state的機率就當作content encoder的輸出放在這個地方,那這個每一個state的機率會把語者的特性去掉,只保留文字相關的資訊,然後再丟給decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:17.620" id=33:17.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=1997">33:17.620</a></div>
+        <div class="t">所以如果你用這種pre-train的方法,你可以pre-traincontent encoder,你可以pre-trainspeaker encoder,最後可能再end-to-end的微調一下,那其實你就會得到非常不錯的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:28.820" id=33:28.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2008">33:28.820</a></div>
+        <div class="t">今天如果你想要做一個商用的系統的話,也許這一頁投影片用的技術,裡面的技術會是你比較想要優先嘗試的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:38.700" id=33:38.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2018">33:38.700</a></div>
+        <div class="t">那當然還有一些其他的想法,舉例來說,你可以加上end來讓你的content encoder不要encode speaker的資訊,你可以train一個discriminator,這個discriminator它的工作就是一個speaker的classifier,也就是給它一個content encoder輸出的向量,它去判斷說這個向量是來自於哪一個語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:05.340" id=34:05.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2045">34:05.340</a></div>
+        <div class="t">而你的content encoder要做的事情就是想辦法去騙過你的discriminator,也就是你的speaker classifier,而你的speaker classifier跟content encoder它們是交替訓練的,就跟一般的game的訓練是一樣的,你的speaker classifier跟content encoder是交替訓練的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:24.140" id=34:24.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2064">34:24.140</a></div>
+        <div class="t">然後希望說如果content encoder可以成功地騙過speaker classifier,代表說content encoder輸的這個向量裡面沒有任何語者的資訊,代表content encoder輸出沒有任何語者的資訊,所以它可以騙過你的discriminator,也就是speaker classifier,它可以把所有語者的資訊去掉,只保留文字的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:45.900" id=34:45.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2085">34:45.900</a></div>
+        <div class="t">這個是adversarial training的部分。接下來我們要講的方法是,你其實有可能透過設計network的架構,讓它做你想做的事,讓它encode你想encode的東西,你可以透過設計network的架構,讓content encoder去encodecontent的資訊,讓speaker encoder去encodespeaker的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:13.420" id=35:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2113">35:13.420</a></div>
+        <div class="t">透過給content encoder跟speaker encoder不同的network架構,讓其中一個會去encodecontent的資訊,讓另外一個學到encodespeaker的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.420" id=35:23.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2123">35:23.420</a></div>
+        <div class="t">這件事情要怎麼做到呢?這邊就舉一個例子,以下所講的技術,其實在image的style transfer上面已經有人用過了,我們這邊只是把image style transfer那邊有人驗證過的技術拿來用在語音上,看看是不是也可以讓machine在語音上學到featured disentangle。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:48.620" id=35:48.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2148">35:48.620</a></div>
+        <div class="t">那怎麼讓content encoder去encodecontent的資訊呢?這邊加了一個instant normalization,那在content encoder裡面加一個instant normalization的好處是什麼呢?這個instant normalization可以幫助我們去掉speaker的資訊,那instant normalization怎麼去掉speaker的資訊呢?我們先來看一下instant normalization做的事情是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:14.220" id=36:14.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2174">36:14.220</a></div>
+        <div class="t">那你這邊的encoder,它的架構就像是LAS裡面的encoder,就像是sequence-to-sequence model裡面的encoder,裡面可能就是很多層的CNN,那CNN加上instant normalization是怎麼運作的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:33.900" id=36:33.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2193">36:33.900</a></div>
+        <div class="t">首先input是聲音訊號,然後你會用1D的convolution去掃過這個聲音訊號得到一排數值,那這是第一個filter得到的一排數值,那你會有另外一個filter也得到一排數值,通過一組filter以後,每一小塊聲音訊號都會變成一個vector,所以聲音訊號通過一個1D convolutional的layer以後,你會得到一個vector sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:03.420" id=37:03.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2223">37:03.420</a></div>
+        <div class="t">那instant normalization就作用在這個vector sequence上面,instant normalization做的事情是什麼呢?它會對這些vector的同一個dimension做normalization,它會計算出這些vector同一個dimension的mean跟variance,然後把這個dimension的mean減掉,把variance除掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:25.820" id=37:25.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2245">37:25.820</a></div>
+        <div class="t">那所以通過instant normalization以後,這些vector的同一個dimension,它的mean都會是0,它的variance都會是1,那像這樣子的normalization的方式,我們以前也常常apply在你的model的input feature上,只是現在不是apply在input feature上,現在是apply在,現在是把這個normalization用在你的encoder的hidden layer上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:51.660" id=37:51.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2271">37:51.660</a></div>
+        <div class="t">那為什麼這樣子的normalization有機會把speaker的特性去掉呢?因為你可以想像說,我們在CNN裡面,在1D convolutional裡面,每一個filter其實就是抓聲音訊號的某一種pattern,所以這邊每一個row都代表說聲音訊號裡面某一種特徵有沒有出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:21.580" id=38:21.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2301">38:21.580</a></div>
+        <div class="t">那如果我們想得簡單一點,也許有一些filter它就是抓高頻的資訊,也許有一些filter它就是抓比較低頻的資訊。如果男生的聲音訊來,那低頻的filter它的輸出會比較大,高頻的filter輸出比較小。女生的聲音訊來,那高頻的filter輸出的值比較大,低頻的filter輸出的值比較少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:45.420" id=38:45.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2325">38:45.420</a></div>
+        <div class="t">但是我們透過這個normalization的方法,讓所有的filter它的mean都是0,variance是1,那就等於是把這個語者的特徵去掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:56.460" id=38:56.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2336">38:56.460</a></div>
+        <div class="t">假設我們知道說,每一個filter就是抓某一種聲音的特徵,那如果聲音訊號裡面有某一種特徵,那某一個filter輸出的值就會特別大。但透過這個normalization,讓所有的filter它們的輸出mean都是0,variance都是1,那就沒有filter的值是特別大,那你就把聲音裡面的特徵把它去掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:17.740" id=39:17.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2357">39:17.740</a></div>
+        <div class="t">所以,用這個incentivization可以去掉speaker的資訊。接下來,我們怎麼讓這個speaker encoder去encode speaker的資訊呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:31.500" id=39:31.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2371">39:31.500</a></div>
+        <div class="t">我們希望當我們把speaker encoder的輸出丟給decoder當作輸入的時候,這個speaker encoder對decoder的影響會影響在speaker的層面上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:47.940" id=39:47.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2387">39:47.940</a></div>
+        <div class="t">我們透過一個叫做adaptive incentivization的方法,把speaker encoder的輸出加到decoder裡面。我們期待這個adaptive incentivization會讓這個speaker encoder的輸出只會影響decoder輸出的時候跟語者有關的資訊,而不會影響content的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:10.500" id=40:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2410">40:10.500</a></div>
+        <div class="t">等一下會解釋這個adaptive incentivization是什麼。其實,把這些embedding加到decoder裡面的方式有百百種,每篇論文寫的都不太一樣,那我今天也還沒有辦法告訴你說,怎麼樣把這種encoder輸出的東西接到decoder裡面是最好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:30.700" id=40:30.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2430">40:30.700</a></div>
+        <div class="t">所以,我們在作業裡面會有一題問你說,你現在用的模型,它是用什麼方法把encoder的輸出加到decoder裡面去的?你可以自己多讀論文,看看有什麼樣的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:42.160" id=40:42.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2442">40:42.160</a></div>
+        <div class="t">我們來看一下adaptive incentivization是怎麼運作的。在decoder裡面,也有incentivization。在decoder裡面,我們也會對這個CNN輸出的每一個row做normalization去掉語者的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:59.620" id=40:59.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2459">40:59.620</a></div>
+        <div class="t">那去掉語者的資訊以後,decoder怎麼輸出有某一個語者的資訊呢?這要從encoder那邊過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:07.600" id=41:07.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2467">41:07.600</a></div>
+        <div class="t">Speaker encoder output一個vector,然後這個vector呢,通過兩個transform以後分別產生γ跟β這兩個vector,然後接下來呢,γ跟β會去影響這個做完instant normalization以後的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:23.220" id=41:23.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2483">41:23.220</a></div>
+        <div class="t">假設做完instant normalization以後的vector是z1到z4,那我們就把這邊每一個z乘上γ,element wise的乘上γ,再加上β,得到z'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:36.960" id=41:36.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2496">41:36.960</a></div>
+        <div class="t">所以你會發現,γ跟β,它們不是只會影響某幾個vector,它們的影響是global的,它們影響的是一整句話的層級。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:47.780" id=41:47.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2507">41:47.780</a></div>
+        <div class="t">所以這個γ跟β呢,它們會一次把所有的這邊z都做一個scaling跟做一個shift。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:58.180" id=41:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2518">41:58.180</a></div>
+        <div class="t">那我們期待說呢,透過γ跟β呢,會把global的資訊加到這個z裡面去,會把speaker的資訊,整個句子的資訊加到這個z裡面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:12.480" id=42:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2532">42:12.480</a></div>
+        <div class="t">我們期待γ跟β呢,會把speaker的資訊加到這個z裡面去,得到z'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:18.580" id=42:18.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2538">42:18.580</a></div>
+        <div class="t">然後這個instant normalization的部分,跟γ跟β影響mean跟variance的部分,這個整個合起來啊,叫做adaptive instant normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:29.780" id=42:29.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2549">42:29.780</a></div>
+        <div class="t">就沒有接下來的,你就直接像一個一般的autoencoder一樣,end to end的train下去,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:37.280" id=42:37.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2557">42:37.280</a></div>
+        <div class="t">那像這樣子design neural架構的方法有沒有效呢?它看起來是有一些作用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:44.860" id=42:44.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2564">42:44.860</a></div>
+        <div class="t">以下是一些我們論文裡面的實驗結果了,你可以另外train一個speaker classifier,然後這個speaker classifier去對這個content encoder輸出去分類,看看說這個speaker classifier能不能看出這個向量是屬於哪一個speaker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:59.680" id=42:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2579">42:59.680</a></div>
+        <div class="t">如果你沒有用instant normalization,那這個speaker classifier的正確率有66%,那這個speaker classifier的正確率越低越好,因為我們希望這個vector裡面的speaker資訊越少越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:11.680" id=43:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2591">43:11.680</a></div>
+        <div class="t">如果你加入一個instant normalization,就可以從66%降到37.5%,代表說這個instant normalization確實有濾掉speaker資訊的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:22.400" id=43:22.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2602">43:22.400</a></div>
+        <div class="t">那speaker encoder這邊的輸出如何呢?這個結果其實看起來是非常明顯的,這邊每一個不同的顏色都代表一個不同的speaker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:34.840" id=43:34.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2614">43:34.840</a></div>
+        <div class="t">而且這邊要強調一下,這些聲音訊號是在訓練的時候從來都沒有聽過的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:42.360" id=43:42.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2622">43:42.360</a></div>
+        <div class="t">我們給這個speaker encoder一些它從來都沒有聽過的聲音訊號,它居然知道這些聲音訊號哪些句子就是哪些人講的,而且它分得是非常好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:52.680" id=43:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2632">43:52.680</a></div>
+        <div class="t">我們還發現說,這邊有一個處和和解,從這邊往右下通通都是女生的聲音,往左上通通都是男生的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:03.800" id=44:03.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2643">44:03.800</a></div>
+        <div class="t">如果你把這個speaker encoder的output做貼聲音降維,你可以很明顯地看到這樣的結果,代表說speaker encoder確實有incode speaker的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:13.800" id=44:13.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2653">44:13.800</a></div>
+        <div class="t">這個技術就是我們開學第一次上課的時候demo的那個我的聲音轉心圓結液的聲音的技術,這個技術裡面還有很多細節,你可以參看這一篇文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:24.560" id=44:24.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Jj6blc8UijY&t=2664">44:24.560</a></div>
+        <div class="t">那現在也超過12點10分了,所以我們就講到這邊,大家有問題還可以提問,那如果沒有問題的話,那就下課啦。</div>
+    </div>
+    
+</body>
+</html>   

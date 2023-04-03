@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 10: Convolutional Neural Network</h2><a href=https://www.youtube.com/watch?v=FrKWiRv254g><img src=https://i.ytimg.com/vi_webp/FrKWiRv254g/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=0">00:00.000</a></div>
+        <div class="t">所以就算我們上課還沒有講到也沒有關係,我相信對大家來說應該不是一個問題,我們今天唯一需要做的就是講完CNN的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:13.000" id=00:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=13">00:13.000</a></div>
+        <div class="t">我們都知道說CNN常常被用在影像處理上,如果你今天用CNN來做影像處理,我們當然可以用一般的Neural Network來做影像處理,不一定要用CNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:33.000" id=00:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=33">00:33.000</a></div>
+        <div class="t">比如說你想要做影像的分類,那你就是train一個Neural Network,input是一張圖片,那這張圖片你就把它表示成它裡面的pixel,也就是一個很長很長的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.000" id=00:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=46">00:46.000</a></div>
+        <div class="t">那output就是看你假設你有一千個類別,output就是一千個dimension,那我相信根據剛才那堂課的內容,大家應該都可以給你training data,你大概就可以秒做出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:57.000" id=00:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=57">00:57.000</a></div>
+        <div class="t">那但是呢,我們現在會遇到的問題是這樣子,實際上呢,如果我們train Neural Network的時候,我們會期待說在這一個Network的structure裡面,每一個Neural其實就代表了一個最基本的classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18.000" id=01:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=78">01:18.000</a></div>
+        <div class="t">事實上在文件上呢,根據訓練的結果,也有很多人得到這樣的結論,舉例來說,第一層的classifier,第一層的Neural,它是最簡單的classifier,它做的事情就是depend,有沒有綠色出現,有沒有黃色出現,有沒有斜的條紋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.000" id=01:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=94">01:34.000</a></div>
+        <div class="t">那第二個layer呢,它做的事情是你在更複雜的東西,根據第一個layer的output,它如果看到直線橫線,就是窗框的一部分,如果看到棕色直條紋就是木紋,看到斜條紋加灰色的,這個很有可能是很多東西,比如說輪胎的一部分等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:53.000" id=01:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=113">01:53.000</a></div>
+        <div class="t">那再根據第二個layer的output,第三個layer會做更複雜的事情,比如說它可以知道說某一個Neural看到蜂巢它就被activate,某一個Neural看到車子就被activate,某一個Neural看到人的上半身就被activate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.000" id=02:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=129">02:09.000</a></div>
+        <div class="t">但現在的問題是這樣子的,當我們直接用一般的fully connected feed-forward network來做影像處理的時候,往往我們會需要太多的參數,舉例來說,假設這是一張100x100的彩色圖片,它解析度才100x100,那其實這已經是很小張的image,那你把它拉成一個vector,它有多少個pixel,它有100x100x3,對不對,每個pixel其實需要三個value來描述它,如果是彩色圖的話,所以是三萬位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:38.000" id=02:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=158">02:38.000</a></div>
+        <div class="t">那input的vector如果是三萬位,那這個hidden layer假設就一千個Neural就好了,你的這個第一個hidden layer的參數就已經有三萬x一千了,這樣太多了,這樣太多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.000" id=02:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=174">02:54.000</a></div>
+        <div class="t">所以CNN它做的事情其實是,我們來簡化這個Neural network的架構,我們根據人的知識,我們根據我們對影像處理的理解就知道說,某些weight其實是用不上的,我們一開始就把它濾掉,我們一開始就想一些辦法,不要用fully connected network,而是用比較少的參數來做影像處理這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.000" id=03:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=200">03:20.000</a></div>
+        <div class="t">所以CNN其實是比一般的DNN還要更簡單的,等一下我們講完以後你就會發現說,你可能覺得CNN看起來它的運作很複雜,它應該是個比較複雜的東西,但事實上它的模型是比DNN還要更簡單的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:38.000" id=03:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=218">03:38.000</a></div>
+        <div class="t">我們就是用prior knowledge去把原來fully connected layer裡面的一些參數拿掉,就變成CNN。我們先講一下為什麼我們有可能把一些參數拿掉,為什麼我們有可能只用比較少的參數就來做影像處理這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:56.000" id=03:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=236">03:56.000</a></div>
+        <div class="t">這邊有幾個觀察,第一個是,在影像處理裡面,如果我們說第一層的hidden layer,那些neuron做的事情就是偵測某一種pattern,有沒有某一種東西,有沒有某一種pattern出現,那大部分的pattern其實是比整張image還要小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.000" id=04:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=254">04:14.000</a></div>
+        <div class="t">所以對一個neuron來說,假設它要知道說一張image裡面有沒有某一個pattern出現,它其實不需要看整張image,它只要看image的一小部分,它就可以決定這件事情了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.000" id=04:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=267">04:27.000</a></div>
+        <div class="t">舉例來說,假設我們現在有一張圖片,第一個hidden layer的某一個neuron,它的工作是要偵測有沒有鳥嘴的存在,那你可能有一些neuron偵測有沒有鳥嘴的存在,有一些neuron偵測有沒有爪子的存在,有一些neuron偵測有沒有翅膀的存在,有沒有尾巴的存在,合起來就可以偵測出現某一隻鳥。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:50.000" id=04:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=290">04:50.000</a></div>
+        <div class="t">假設有某一個neuron,它的工作是要偵測有沒有鳥嘴的存在,那它其實並不需要看整張圖,因為其實我們只要給neuron看這樣一個小的部分,這個小的紅色框框裡面的區域,它其實就可以知道說它是不是一個鳥嘴。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:08.000" id=05:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=308">05:08.000</a></div>
+        <div class="t">對人來說也是一樣,只要看這個小的區域就知道說這是鳥嘴,你不需要看整張圖才知道這件事情。所以,每一個neuron其實只要連接到一個小塊的區域就好,它不需要連接到整張完整的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:23.000" id=05:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=323">05:23.000</a></div>
+        <div class="t">第二個觀察是這樣子,同樣的pattern在image裡面,它可能會出現在image的不同的部分,但是它們代表的是同樣的含義,它們也有同樣的形狀,它們可以用同樣的neuron,同樣的參數,同樣的偵測就可以偵測出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:47.000" id=05:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=347">05:47.000</a></div>
+        <div class="t">比如說這張圖裡面有一個在左上角的鳥嘴,這張圖裡面有一個在中央的鳥嘴,但是你並不需要說我去訓練兩個不同的detector,一個是專門偵測左上角有沒有鳥嘴,一個是專偵測中央有沒有鳥嘴。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:04.000" id=06:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=364">06:04.000</a></div>
+        <div class="t">如果這樣做的話,它就太冗了,所以它要把不需要太多的冗員,因為偵測左上角鳥嘴的neuron跟偵測中央有沒有鳥嘴的neuron,它們做的事情其實可能都是一樣的,所以我們並不需要有兩個neuron來做兩組參數來做duplicate的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.000" id=06:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=387">06:27.000</a></div>
+        <div class="t">所以我們可以要求這兩個neuron,它們就用同一組參數,它們就share它們的參數,它們就共用同一組參數,這樣就可以減少你需要用的參數的量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.000" id=06:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=401">06:41.000</a></div>
+        <div class="t">第三個,我們知道一個image你可以對它做sub-sampling,你把一張image的奇數行偶數列的pixel拿掉,變成原來的十分之一的大小,它其實不會影響人對這張image的理解,對你來說這張image跟這張image看起來可能沒有太大的差別,你都可以辨識裡面有什麼物件。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=424">07:04.000</a></div>
+        <div class="t">所以做sub-sampling這件事情對影像辨識來說可能是沒有太大的影響的,所以我們可以用這個概念把image變小,這樣你就可以減少你需要用的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.000" id=07:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=439">07:19.000</a></div>
+        <div class="t">所以整個CNN的架構是這樣,等一下我們會一個一個解釋在CNN的整個架構裡面每一個block它做的事情是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=454">07:34.000</a></div>
+        <div class="t">以後首先這個image會通過convolution的layer,然後接下來做max pooling這件事,這個我們每件事等一下都會解釋,然後再做convolution這件事,然後再做max pooling這件事,這個process可以反覆數次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.000" id=07:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=471">07:51.000</a></div>
+        <div class="t">反覆的次數你覺得夠多以後,但反覆幾次這個你要事先決定,它就是network的架構,就好像你network有幾層一樣,你要做幾次convolution做幾次max pooling,你在定你network架構的時候你就要事先決定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:05.000" id=08:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=485">08:05.000</a></div>
+        <div class="t">你做完你決定要做的convolution和max pooling的次數以後,你會做另外一件事情,這個事情叫flatten,做完flatten以後你把flatten的output丟到一般的fully connected的network裡面去,然後得到最後影像辨識的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:22.000" id=08:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=502">08:22.000</a></div>
+        <div class="t">我們剛才講說我們基於三個對影像處理的觀察,所以設計了CNN這樣的架構,第一個觀察是同樣的pattern,要偵測一個pattern你不需要看整張image,你只要看image的一個小部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.000" id=08:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=518">08:38.000</a></div>
+        <div class="t">第二個是同樣的pattern它會出現在一張圖片的不同的區域,第三個是我們可以做sub sampling,前面這兩個property它就是用convolution的layer來處理掉,最後這個property是用max pooling這件事情來處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.000" id=08:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=536">08:56.000</a></div>
+        <div class="t">等一下我們就要介紹一下每一個layer在做的事情,我們就先從convolution開始看起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:08.000" id=09:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=548">09:08.000</a></div>
+        <div class="t">假設現在我們的network的input是一張6x6的image,假設就是黑白的,如果是黑白的話每一個pixel就只需要用一個value來描述它,比如說1就代表有塗墨水,0就代表沒有塗到墨水。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.000" id=09:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=567">09:27.000</a></div>
+        <div class="t">那在convolution layer裡面它有一堆filter,那這邊的每一個filter我等一下會講說它其實就等同於是fully connected layer裡面的一個neural,我們等一下會講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.000" id=09:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=584">09:44.000</a></div>
+        <div class="t">那現在就先講說我們有一組filter,那每一個filter其實就是一個matrix,比如說這邊的每一個filter都是3x3的matrix,那這邊的每一個filter裡面的參數,這個matrix裡面的每一個element的值就是network的parameter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:03.000" id=10:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=603">10:03.000</a></div>
+        <div class="t">它就跟那些neural的weight和bias一樣,它們是network的parameter,它們是必須學出來的,根據training量學出來的,並不是人去設計的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.000" id=10:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=614">10:14.000</a></div>
+        <div class="t">所以每一個filter它裡面的值是做什麼,它裡面的值是什麼,它做什麼事情是自動被學出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:20.000" id=10:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=620">10:20.000</a></div>
+        <div class="t">那這邊我們每一個filter如果你是3x3的size的話,意味著它就是在偵測一個3x3的pattern,它在偵測一個pattern的時候它不看整張image,它只看一個3x3的範圍內就可以決定有沒有某一個pattern的出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:40.000" id=10:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=640">10:40.000</a></div>
+        <div class="t">這個就是我們考慮的第一個problem,整個pattern其實是比整張image還要小。那這個filter怎麼跟image做operation呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.000" id=10:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=652">10:52.000</a></div>
+        <div class="t">它這個operation的process是這樣子的,首先你有第一個filter,它是一個3x3的matrix,那你把這個filter放在image的左上角,那我猜你可能會很困惑說,哇,突然出現什麼filter放在左上角,跟我們之前講的neural network都不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.000" id=11:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=673">11:13.000</a></div>
+        <div class="t">那我等一下會告訴你說,這個其實就是一個neural network,training就跟之前的backpropagation是一模一樣的,那我們現在只是從convolution的角度來看它是怎麼運作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.000" id=11:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=684">11:24.000</a></div>
+        <div class="t">它運作的方式是這樣,我們把一個filter放在image的左上角,然後你把這九個值跟這九個值做內積,所以內積的結果這邊是111,這邊是111,內積的結果你就得到3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.000" id=11:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=703">11:43.000</a></div>
+        <div class="t">你挪動一下你的filter的位置,至於要挪多少,這個你要事先決定,這個挪動的距離,大家有問題嗎?講到這邊,如果大家沒有問題的話,你就繼續。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.000" id=11:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=717">11:57.000</a></div>
+        <div class="t">這個挪動的距離叫做stripe,這個stripe等於多少你要自己設,比如說你設stripe等於1,filter就放在這邊,所以111乘上-1-1-1,先算一下得到是-1,你可以設stripe等於2,stripe等於2的話你就得到-3,你把filter移到這邊,111-1-1-1得到-3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.000" id=12:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=740">12:20.000</a></div>
+        <div class="t">那我們等一下就設stripe等於1,所以設stripe等於1,你把filter往左移一格得到-1,往右移一格得到-1,再往右移一格得到-3,再往右移一格得到這邊是111,這邊是-1,然後你接下來往下移一格得到-3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=762">12:42.000</a></div>
+        <div class="t">就這樣以此類推,把這件事情,每次都stripe等於1,每次都移動一格,最後你就會得到一個,之後直到你把filter移到右下角的時候,這邊是111,這邊是-1-1-1-1,你就得到-1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.000" id=12:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=779">12:59.000</a></div>
+        <div class="t">所以做這件事情以後,本來是一個6x6的matrix,那經過這個convolution process就得到一個4x4的matrix,那如果你看這個filter的值,它的斜對角的地方是111,所以它的工作就是detect有沒有111,有沒有這個連續的左上到右下的111出現在這個image裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.000" id=13:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=802">13:22.000</a></div>
+        <div class="t">比如說它出現在這個地方,比如說它出現在這個地方,所以跟這個filter就會告訴你說,你看現在左上跟左下出現最大的值,就代表說這個filter要偵測的pattern,它出現在這個image的左上角。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.000" id=13:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=820">13:40.000</a></div>
+        <div class="t">所以左上角最大的值跟左下角,所以左下角有最大的值,這件事情就考慮了property2,因為同一個pattern它出現在左上角的位置跟出現在左下角的位置,我們都用filter1就可以偵測出來,我們並不需要用不同的filter來做這件事情,我們用同一個filter就可以把它偵測出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:01.000" id=14:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=841">14:01.000</a></div>
+        <div class="t">那在一個convolution layer裡面,它會有一大堆的filter,剛才只是一個filter的結果,那會有另外一個filter,它裡面會有不一樣的參數,比如說這個有一個filter2,它有不一樣的參數,那它也做跟filter1一模一樣的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=859">14:19.000</a></div>
+        <div class="t">你就先把filter2放在左上角,再做inner product得到-1,再挪動一格得到-1,就像以此類推,以此類推,以此類推,以此類推。所以你把filter2跟input的image做完convolution以後,你就得到了另外一個4乘以4的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.000" id=14:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=881">14:41.000</a></div>
+        <div class="t">那這個紅色的4乘以4的matrix跟藍色的4乘以4的matrix合起來,它們叫做feature map,這個東西叫做feature map。那看你有幾個filter,你就會得到多少的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:56.000" id=14:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=896">14:56.000</a></div>
+        <div class="t">如果你有比如說100個filter,那你這邊你就會得到100個image。好,講到這邊,大家有沒有問題想要問的,一起說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=912">15:12.000</a></div>
+        <div class="t">【觀眾】這個matrix size就進了後面,忘記了多大小,跟我的pattern大小。 沒錯,沒錯,因為現在每一個filter的size都是一樣,意味著說如果你今天有同一個pattern,它有不同的size,有大的鳥嘴,有小的鳥嘴,它必須要用normalize,如果你事先知道的話,你當然可以normalize。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:32.000" id=15:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=932">15:32.000</a></div>
+        <div class="t">可是一部一張image,你沒有辦法事先知道它大的鳥嘴還是小的鳥嘴,所以你也沒辦法normalize,所以你其實CNN並不能夠自動處理這個問題,對它來說這種不同scale的東西,它其實是不見得能夠處理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:45.000" id=15:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=945">15:45.000</a></div>
+        <div class="t">那你其實可以看看這個DeepMind最近有寫一篇paper,是當你input一張image的時候,它在CNN前面再接另外一個network,這個network做的事情是什麼呢?這個network做的事情是它output一些scale,告訴你說它要把這個image裡面的哪些位置做旋轉縮放,然後再丟到CNN裡面,這樣你其實會得到比較好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:13.000" id=16:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=973">16:13.000</a></div>
+        <div class="t">大家還有什麼問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:16.000" id=16:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=976">16:16.000</a></div>
+        <div class="t">剛才舉的例子是黑白的image,所以你input是一個matrix,如果今天是彩色的image怎麼樣呢?我們知道彩色的image就是RGB組成的,所以一個彩色的image就是好幾個matrix疊在一起,就是一個立方體。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.000" id=16:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1001">16:41.000</a></div>
+        <div class="t">如果我今天要處理彩色的image,我們要怎麼做呢?這個時候你的filter就不是一個matrix,你的filter也是一個立方體。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:51.000" id=16:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1011">16:51.000</a></div>
+        <div class="t">如果你今天是這個RGB三個顏色來表示一個pixel的話,那你的input就是3x6x6,那你的filter就是3x3x3,你的filter的高就是3,你的filter的高就是3。你在做convolution的時候,你就是把這個filter的九個值跟這個image裡面的九個值做內積,了解嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.000" id=17:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1039">17:19.000</a></div>
+        <div class="t">我們並不是把每一個RGB的顏色分開算,其實這個在影像上我們叫做channel,我們並不是把每一個channel分開來算,而是合在一起算,你一個filter同時就考慮了不同顏色所代表的channel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.000" id=17:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1058">17:38.000</a></div>
+        <div class="t">講到這邊,大家聽得懂嗎?好,那我們現在要講的東西就是,這個convolution跟fully connected有什麼關係?你可能覺得說這個很特別的一個operation,感覺跟neural network沒半毛錢的關係,其實它就是一個neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.000" id=17:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1077">17:57.000</a></div>
+        <div class="t">怎麼說呢?我現在要講的就是,這個convolution這件事情,其實它就是一個fully connected的layer把一些weight拿掉而已,怎麼說呢?我們假設這邊這個output,這個feature map的output,其實就是一個hidden layer的neural的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.000" id=18:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1098">18:18.000</a></div>
+        <div class="t">如果你把這兩個東西link在一起的話,這個convolution其實就是一個fully connected的layer拿掉一些weight的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.000" id=18:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1108">18:28.000</a></div>
+        <div class="t">怎麼說呢?你看我們在做convolution的時候,假設我們先考慮filter1,我們把filter1放在左上角,然後你就inner product得到一個值3,這件事情等同於我們現在把這個6乘以6的image拉直,拉直變成這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.000" id=18:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1128">18:48.000</a></div>
+        <div class="t">然後你有一個neural的output是3,這個neural的output怎麼來的呢?這個neural的output它是考慮了,你看這個filter,它把它放在左上角。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1144">19:04.000</a></div>
+        <div class="t">所以這個filter它考慮的pixel是1,2,3,1,2,3,這邊是4,5,6,不是4,5,6,這邊是1,2,3,4,5,6,所以這邊是7,8,9,這邊是13,14,15。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.000" id=19:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1160">19:20.000</a></div>
+        <div class="t">假設你把這個6乘以6的image的36個pixel拉成直的,那這9個pixel分別就是編號1,2,3的pixel,7,8,9的pixel,跟13,14,15的pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:34.000" id=19:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1174">19:34.000</a></div>
+        <div class="t">那如果我們說這個filter做inner product以後的output3,就是某一個neural的output3的話,就代表說有一個neural,這個neural的weight只連接到1,2,3,7,8,9,跟13,14,15,這3個pixel而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.000" id=19:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1190">19:50.000</a></div>
+        <div class="t">這個neural它的這9個weight就是filter的這個matrix裡面的這9個weight,花很多時間故意把它用同樣的顏色,你看得出來嗎?這個1是框棕色的,所以這邊是棕色的,這是框紅色的,這真的要搞很久,這是紅色的,這個是橙色的,這是橙色的,可是這邊有9個不同的顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:11.000" id=20:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1211">20:11.000</a></div>
+        <div class="t">所以這9個不同顏色框起來裡面的weight分別就是這9個不同的weight,大家看得懂嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.000" id=20:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1221">20:21.000</a></div>
+        <div class="t">所以現在是這樣子,我們原來在fully connected layer裡面,一個neural照理說是連接到所有的input,也有36個pixel當作input,那這個neural本來應該連接到36個input,但是我們現在只連接9個input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:41.000" id=20:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1241">20:41.000</a></div>
+        <div class="t">因為我們知道說要detect一個pattern,我們不需要看整張image,我就看9個input就好,所以當我們這麼做的時候,你就用了比較少的參數了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:53.000" id=20:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1253">20:53.000</a></div>
+        <div class="t">當我們移動一格,把filter做stripe等於1的移動的時候,發生什麼事呢?我們得到另外一個值-1,我們假設這個-1是另外一個neural的output,那這個neural連接到哪些input的weight呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.000" id=21:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1271">21:11.000</a></div>
+        <div class="t">這個框起來的地方,它正好就對應到pixel編號234、234、890、14、15、16、14、15、16,同樣的weight代表同一個顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.000" id=21:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1291">21:31.000</a></div>
+        <div class="t">所以這9個matrix,這9個在filter所對應的matrix裡面的weight,就是這個圖上的9個不同的顏色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:41.000" id=21:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1301">21:41.000</a></div>
+        <div class="t">所以當我們做這件事情的時候,意味著說這兩個neural本來在fully connected layer裡面,每一個neural都有獨立自己的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:50.000" id=21:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1310">21:50.000</a></div>
+        <div class="t">當我們做convolution的時候,首先我們把每一個neural它前面連接的weight減少,再來我們強迫說某些neural,這兩個neural,他們一定要共用同一組weight,他們的weight永遠都必須是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:07.000" id=22:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1327">22:07.000</a></div>
+        <div class="t">它連接到pixel1的weight,要等於它連接到pixel2的weight,它連接到pixel2的weight,要等於它連接到pixel3的weight,它連接到pixel3的weight,要等於它連接到pixel4的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:20.000" id=22:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1340">22:20.000</a></div>
+        <div class="t">我故意用同樣的顏色來表示,希望你可以看得出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:24.000" id=22:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1344">22:24.000</a></div>
+        <div class="t">這件事情叫做weight的sharing,當我們做這件事情的時候,我們用的這個參數又比原來更少,等於我們強迫一些weight一定要share在一起,我們用的weight就更少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:40.000" id=22:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1360">22:40.000</a></div>
+        <div class="t">這邊有一件事情是統件上沒有講,你可能會問說,這怎麼train?其實首先第一件事情就是這都是用torque做的,所以你大概不會自己寫。如果你要自己寫的話,它的做法就是,你就跟原來的backpropagation用一模一樣的做法,只是有一些weight永遠是零,你就不train它,它永遠是零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:00.000" id=23:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1380">23:00.000</a></div>
+        <div class="t">然後再來呢,你說怎麼讓這個weight的值永遠都是一樣呢?你就用一般的backpropagation的方法,然後這個weight你算出一個歸點,這個weight你算出一個歸點,再把本來要tie在一起要share的weight的那些weight的歸點平均,然後他們update它的值,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:19.000" id=23:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1399">23:19.000</a></div>
+        <div class="t">你聽不懂沒有關係,因為你大概沒有機會自己實做這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1411">23:31.000</a></div>
+        <div class="t">那這件事情呢,就可以再來接下來要做這個max pooling。max pooling是什麼呢?相較compolution,max pooling是比較簡單的,它就是做subassembly。根據filter1,我們得到一個4乘以4的matrix,根據filter2,你得到另外一個4乘以4的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:49.000" id=23:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1429">23:49.000</a></div>
+        <div class="t">接下來我們做什麼事呢?我們說把這個output呢,四個一組,四個一組,四個一組,四個一組。每一組裡面呢,你可以選他們的平均,或者是你可以選最大,其實都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:04.000" id=24:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1444">24:04.000</a></div>
+        <div class="t">你就是把原來四個value合成一個value,那你可以用自己想要的方法來做這件事情,這件事情就可以讓你的image縮小。比如說,假設我們現在就是選四個裡面最大的那個保留下來,所以3-1-3-1,我就選3,就選最大的保留下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:22.000" id=24:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1462">24:22.000</a></div>
+        <div class="t">那你這邊可能會有一個問題就是,把這個東西放到network裡面,你不就不能夠微分了嗎?max這個東西感覺不能微分啊,它其實可以的,我們之後講max out network的時候再來跟大家講,這個其實是有辦法微分的方式來處理它的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:38.000" id=24:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1478">24:38.000</a></div>
+        <div class="t">好,那所以結論是這樣,結論是這樣,我們現在這邊有四個值,這邊有四個值,所以做完一次convolution,加一次max boolean,我們就把原來6x6的image變成一個2x2的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:57.000" id=24:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1497">24:57.000</a></div>
+        <div class="t">那至於這個2x2的image,它每一個pixel的深度,它的這個深度,每一個pixel用幾個value來表示,depending你有幾個filter,如果你50個filter,這邊就是50維,那兩個filter這邊就有2維。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.000" id=25:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1512">25:12.000</a></div>
+        <div class="t">所以這個就是一個新的,但是比較小的image,每一個filter就代表了一個channel,這件事可以repeat很多次,你得到一個,你通過一個convolution,再加一個max boolean,你就得到一個新的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:32.000" id=25:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1532">25:32.000</a></div>
+        <div class="t">那它是一個比較小的image,所以你可以把這個比較小的image,再做一樣的事情,再通過convolution,再通過max boolean,再得到一個更小的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.000" id=25:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1546">25:46.000</a></div>
+        <div class="t">那我這邊舉個例子,input image已經夠小了,所以再做一次就不見了,所以我就沒有再做一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.000" id=25:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1552">25:52.000</a></div>
+        <div class="t">那講到這邊,大家可以了解我意思嗎?有什麼問題要問的嗎?其實我講到這邊的時候,我常常會被遇到一個問題,但是我講deep learning的talk已經太多了,所以我都可以predict聽眾的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:08.000" id=26:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1568">26:08.000</a></div>
+        <div class="t">這邊每次都會有人問我一個問題,如果我這邊有25個filter,我得到25個feature map,我假設我第一個convolution有25個filter,我得到25個feature map,第二個convolution也有25個filter,那這樣做完我是不是得到25個平方的feature map?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:30.000" id=26:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1590">26:30.000</a></div>
+        <div class="t">是這樣嗎?其實不是這樣,就是說你這邊做完一次convolution,你得到25個feature map,你這邊做完還是得到25個feature map,這樣大家了解我的意思嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:44.000" id=26:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1604">26:44.000</a></div>
+        <div class="t">因為在這邊,假設你這邊有第一層filter有兩個好了,那第二層的filter,它在考慮這個input的時候,它是會考慮深度的,它並不是每一個channel分開考慮,它是一次考慮所有的channel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.000" id=27:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1622">27:02.000</a></div>
+        <div class="t">所以你convolution這邊有多少個filter,你output就有多少個filter,這邊有25個filter,output就有25個filter,這邊有25個filter,output還是25個filter,只是這邊的每一個25個filter,它都是一個qubit,它都是一個立方體,它高有25個value那麼高,這樣大家有問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:24.000" id=27:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1644">27:24.000</a></div>
+        <div class="t">好,如果大家沒有問題的話,我們就繼續,再來就是最後這個flatten跟fully connected的部分,這個就很簡單,這個怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:37.000" id=27:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1657">27:37.000</a></div>
+        <div class="t">flatten的意思就是,我把這個feature map拉直,這邊完全沒有學問在,就把它拉直,然後拉直以後,你就可以把它丟到一個fully connected的c forward network,然後就沒有然後了,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.000" id=27:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1672">27:52.000</a></div>
+        <div class="t">接下來剩下一點時間,我就要瞄講一下怎麼用keras來implement CNN,在compile跟fitting的部分其實一模一樣,你唯一需要改的只有說你要改一下你的network structure,還有input的format,本來在原來DNN裡面input是一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:16.000" id=28:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1696">28:16.000</a></div>
+        <div class="t">現在如果是CNN的話,它是會考慮這個input的image的幾何空間的,所以不能input給它一個vector,你要input給它一個tensor,tensor就是高維的vector,你要給它一個三維的vector,為什麼三維的vector呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:33.000" id=28:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1713">28:33.000</a></div>
+        <div class="t">因為一個image的長寬各是一維,如果它彩色的話,RGB就是第三維,所以你要給它三維的vector,三維的metric,這高維的metric就叫做tensor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:46.000" id=28:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1726">28:46.000</a></div>
+        <div class="t">那怎麼implement一個convolution的layer呢?你就這麼做,有model,add,剛才是dense,現在把它改成convolution,2D,它其實也有1D的,這邊就是2D的,然後這邊25,33是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:03.000" id=29:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1743">29:03.000</a></div>
+        <div class="t">這邊25,33的意思就是說,你有25個,第一個25代表25個filter,後面的33就代表你的filter是一個3x3的metric,你的filter都是3x3的size。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:16.000" id=29:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1756">29:16.000</a></div>
+        <div class="t">那input呢?你要告訴它input shape是什麼樣子,假設我現在是要做手寫數字辨識,input是28x28的image,它的每個pixel都是只有單一顏色,所以你input的shape就是1x28x28。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.000" id=29:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1773">29:33.000</a></div>
+        <div class="t">這個1啊,如果你是黑白的話它就是1,如果你是彩色的圖,每個pixel用三個詞來表示,它就是這邊你要放3,代表RGB三個顏色,那28x28就是說這個image總共28x28的pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:48.000" id=29:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1788">29:48.000</a></div>
+        <div class="t">那max pooling也很簡單,就add一個max pooling的layer,那這邊22的意思是說,我們把2x2的feature map裡面的pixel拿出來,然後每次就選最大的那一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:05.000" id=30:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1805">30:05.000</a></div>
+        <div class="t">好,那所以呢,假設我們input是一個1x28x28的image,那就這樣寫,add convolution2D2533,input shape12828。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:18.000" id=30:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1818">30:18.000</a></div>
+        <div class="t">那通過convolution以後,你得到的東西是什麼呢?你得到的output是什麼呢?你得到的output,首先你這個channel的數目會是25,你有25個filter,你得到channel的數目就是25。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:34.000" id=30:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1834">30:34.000</a></div>
+        <div class="t">然後因為你現在的filter size是3,所以本來28x28的image,通過33的filter,就假設你那個邊邊的地方沒有考慮的話,就會變成26x26,這樣大家了解我的意思嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:48.000" id=30:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1848">30:48.000</a></div>
+        <div class="t">但你也可以考慮邊邊啦,如果你想要考慮邊邊的話,你就在原來的image旁邊boolean,把它變成比較大的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:55.000" id=30:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1855">30:55.000</a></div>
+        <div class="t">好,然後接下來你做max boolean,你做max boolean,把2x2的這個pixel一組,然後裡面選一個最大的,那做完以後,你就變成25x13x13。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.000" id=31:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1870">31:10.000</a></div>
+        <div class="t">好,然後接下來你再做一次convolution,假設我這次選50個filter,然後每個filter size是3x3的話,那現在變成output的channel就有50個,那13x13的image,通過3x3的filter就變成11x11。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:32.000" id=31:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1892">31:32.000</a></div>
+        <div class="t">我們剛才舉的例子裡面是6x6的image,通過filter,3x3的filter變成4x4,所以你通過3x3的filter都會,就是長跟寬都會減2,ok?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:44.000" id=31:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1904">31:44.000</a></div>
+        <div class="t">所以本來是13x13的image,通過3x3的filter就變成11x11,然後你接下來呢,再做這個max boolean,2x2的max boolean變成50x5x5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:57.000" id=31:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1917">31:57.000</a></div>
+        <div class="t">好,那這邊呢,就問一下大家,在第一個convolution的layer裡面,每一個filter他有多少個參數呢?他有多少個參數?是不是9個參數?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:15.000" id=32:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1935">32:15.000</a></div>
+        <div class="t">因為他就是一個3x3的matrix嘛,是9個參數。但是在第二個convolution layer裡面,雖然你每一個neural,每一個filter都是3x3,但他其實不是3x3的參數,因為他的input的channel有25個,所以他的參數是3x3x25,那他高是25的,所以這邊呢,就是2x2x5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:38.000" id=32:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1958">32:38.000</a></div>
+        <div class="t">這樣大家有問題嗎?好,如果大家沒有問題的話呢,我們就繼續看下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:47.000" id=32:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1967">32:47.000</a></div>
+        <div class="t">所以通過兩次convolution,兩次max boolean,原來input是1x28x28,做完這些事以後變成50x5x5,那做flatten就是把這個東西拉直,那你只要call一個add flatten就好,把它拉直,拉直以後就變成一個1250維的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:08.000" id=33:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=1988">33:08.000</a></div>
+        <div class="t">再把1250維的vector丟到一個fully connected的network裡面,那fully connected的network我想大家都應該很熟悉,就跟我們剛才demo的是一樣的,然後就得到offer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:21.000" id=33:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2001">33:21.000</a></div>
+        <div class="t">那現場秒做一下CNN這樣,那這個code也胡亂改一下,大家就可以交作業了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:39.000" id=33:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2019">33:39.000</a></div>
+        <div class="t">假設要做手寫的數字辨識,input是一張28x28的影像,然後呢,通過convolution layer以後呢,假設我們現在有25個filter,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:06.000" id=34:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2046">34:06.000</a></div>
+        <div class="t">然後呢,每個filter的size是3x3,那input28x28的image,它的output呢,通過3x3的filter以後,你得到image size就是26x26,那這個26x26的image呢,它的每一個pixel都是有一個25維的vector來表示,如果你有25個filter的話呢,就是25維的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:30.000" id=34:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2070">34:30.000</a></div>
+        <div class="t">哦,是不是?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:36.000" id=34:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2076">34:36.000</a></div>
+        <div class="t">哦,可是已經共享螢幕了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:40.000" id=34:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2080">34:40.000</a></div>
+        <div class="t">哦!</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:44.000" id=34:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2084">34:44.000</a></div>
+        <div class="t">哦,我知道!</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:57.000" id=34:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2097">34:57.000</a></div>
+        <div class="t">哦,如果這邊切換顯示設定的話,錄音就會跳出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:07.000" id=35:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2107">35:07.000</a></div>
+        <div class="t">然後做mix pooling,就把原來26x26的image變成13x13,然後你可以再加另外一層convolution,另外一層convolution,假設它是3x3的話,做完convolution就是11x11,因為有50個filter,所以你的每一個pixel現在是用50個value來描述,然後你可以再做pooling等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:35.000" id=35:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2135">35:35.000</a></div>
+        <div class="t">然後最後呢,把這個結果接進一個fully connected的layer,得到最後的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:41.000" id=35:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2141">35:41.000</a></div>
+        <div class="t">那上次也示範說,如果你要用keras來實做一個CNN的話,你要怎麼秒做?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:47.000" id=35:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2147">35:47.000</a></div>
+        <div class="t">好,那接下來我想要講的是,很多人常會說deep learning就是一個黑盒子,然後你認完以後,你不知道它得到了什麼,所以有很多人不喜歡這種方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:02.000" id=36:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2162">36:02.000</a></div>
+        <div class="t">那其實我是覺得是這樣,如果今天有一個方法,它可以讓你輕易地理解它為什麼會下這樣的判斷,為什麼這個方法會下這樣的決策的話,那其實這個方法你就會覺得它不夠intelligent,因為你可以輕易地理解它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:17.000" id=36:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2177">36:17.000</a></div>
+        <div class="t">所以一個system如果它非常intelligent的話,它必須是一個你無法理解的東西,這樣它才夠intelligent,至少你會感覺它很intelligent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:29.000" id=36:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2189">36:29.000</a></div>
+        <div class="t">所以大家常說deep learning就是一個黑盒子,你認出來以後,你根本不知道為什麼是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:36.000" id=36:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2196">36:36.000</a></div>
+        <div class="t">但是其實還是有很多方法可以分析的,比如說我們今天這邊來示範一下,怎麼分析這個CNN它到底學到了什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.000" id=36:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2207">36:47.000</a></div>
+        <div class="t">那我今天的例子一樣就是做在那個at least上面,你其實可以在你的作業3在Cypher 10上面複製看看,你能不能看到類似的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:59.000" id=36:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2219">36:59.000</a></div>
+        <div class="t">那要分析這個input第一個layer的filter是比較容易的,因為第一個layer裡面每一個filter,它就是一個三乘以三的metric,它對應到三乘以三的範圍內的九個pixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:11.000" id=37:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2231">37:11.000</a></div>
+        <div class="t">所以你只要看這個filter的值就可以知道說它在detect什麼東西,所以第一層的filter是很容易理解的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:19.000" id=37:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2239">37:19.000</a></div>
+        <div class="t">但是你比較沒有辦法想像它在做什麼事情的是第二層的filter,在第二層我們也是三乘以三的filter有五十個,但是這些filter的input並不是pixel,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:31.000" id=37:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2251">37:31.000</a></div>
+        <div class="t">這些filter的九個input,它的三乘以三的input並不是pixel,而是做完convolution再做max pooling的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.000" id=37:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2261">37:41.000</a></div>
+        <div class="t">所以這個三乘以三的filter你就算把它的weight拿出來,你也不知道它在做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:48.000" id=37:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2268">37:48.000</a></div>
+        <div class="t">另外這個三乘以三的filter,它考慮的範圍並不是三乘以三的pixel,並不是九個pixel,而是比九個pixel更大的範圍。不要忘了它的input,這三乘以三的element的input是做完convolution再加max pooling的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:04.000" id=38:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2284">38:04.000</a></div>
+        <div class="t">所以它實際上在image上面看到的範圍是比三乘以三還要更大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:10.000" id=38:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2290">38:10.000</a></div>
+        <div class="t">好,那我們怎麼來分析一個filter它做的事情是什麼呢?以下是一個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:18.000" id=38:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2298">38:18.000</a></div>
+        <div class="t">那你可以這樣做,我們知道說現在在這第二個convolution layer裡面的那五十個filter,每一個filter的output就是一個matrix,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:33.000" id=38:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2313">38:33.000</a></div>
+        <div class="t">每一個filter的output就是一個十一乘以十一的matrix。那假設我們現在把第k個filter拿出來,我們把input一張image,第k個filter的output拿出來,它可能長得是這個樣子,是一個十一乘以十一的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:52.000" id=38:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2332">38:52.000</a></div>
+        <div class="t">那裡面每一個element,我們就叫它A上標K下標IJ,上標K的意思是說這是第k個filter,IJ代表說它在這個matrix裡面的第這個color。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:07.000" id=39:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2347">39:07.000</a></div>
+        <div class="t">接下來我們定一個東西叫做degree的activation of the kfilter,我們定一個值代表說現在這個第k個filter它有多被activate,它有多被啟動,就第k個activate現在input的東西跟第k個activate有多相近,有多match。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:31.000" id=39:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2371">39:31.000</a></div>
+        <div class="t">那這個第k個filter它被啟動的degree,我們這邊就定義成它的這十一乘十一的matrix裡面的這些全部element的summation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:48.000" id=39:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2388">39:48.000</a></div>
+        <div class="t">這個filter就我們input一張image,然後看這個filter它output的這個十一乘十一個值,把它全部加起來,當作說現在這個filter被activate的程度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:01.000" id=40:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2401">40:01.000</a></div>
+        <div class="t">接下來我們要做的事情是這樣子,我們想要知道這個第k個filter它的作用是什麼,所以我們想要找一張image,這一張image它可以讓第k個filter被activate的這個程度最大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:18.000" id=40:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2418">40:18.000</a></div>
+        <div class="t">怎麼做到這件事情呢?假設input的image我們稱之為x,那我們現在要解的問題就是找一個x,它可以讓現在我們定義的這個activation的degree,a上標k,它可以讓我們定義的這個activation的degree最大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:39.000" id=40:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2439">40:39.000</a></div>
+        <div class="t">那這件事情要怎麼做到呢?你其實就是用gradient descent,因為現在我們要maximize,如果是minimize你用gradient descent,那maximize你用gradient ascent,你就可以做到這件事了,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:52.000" id=40:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2452">40:52.000</a></div>
+        <div class="t">當大家聽得懂了嗎?這個方法我覺得還頗神妙,因為我們現在是把x當作我們要找的參數,對它去用gradient descent或gradient ascent做update。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:09.000" id=41:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2469">41:09.000</a></div>
+        <div class="t">就像CNN在train neural network的時候,input是固定的,那你的model的參數是要用gradient descent去找出來的,用gradient descent找一組參數可以讓你的loss被minimize。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:23.000" id=41:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2483">41:23.000</a></div>
+        <div class="t">但是現在這個立場是反過來的,現在在這個task裡面,model的參數是固定的,那我們要用gradient descent去update這個x,或是我們要用gradient ascent去update這個x,我們要update這個x,讓它可以讓這個activation function的degree of activation是最大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:44.000" id=41:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2504">41:44.000</a></div>
+        <div class="t">這個大家有問題嗎?沒有,這個還蠻神妙的。這個是得到的結果,如果我們隨便取12個filter出來的話,我們說我們對每一個filter都去找一張image,這個image可以讓那個filter的activation最大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:06.000" id=42:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2526">42:06.000</a></div>
+        <div class="t">那現在有50個filter,所以理論上你就可以找50張image,它可以讓這些filter的activation最大。那我們就隨便取了前12個filter,可以讓它最activate的image出來,那你看它結果長這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:23.000" id=42:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2543">42:23.000</a></div>
+        <div class="t">這些image它有一個共同的特徵就是,它是某種texture,它是某種紋路在圖上不斷的反覆。為什麼呢?為什麼會這樣呢?比如說,我們看看這一張image好了,這張image上面,第三張圖上面,它都是小小的斜條紋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:47.000" id=42:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2567">42:47.000</a></div>
+        <div class="t">這意味著什麼事?這意味著第三個filter它的工作就是在圖上有沒有斜的條紋。那不要忘了說,現在每一個filter,它其實它考慮的範圍都只是一個圖上的小小的範圍而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:03.000" id=43:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2583">43:03.000</a></div>
+        <div class="t">所以今天一個圖上如果出現一個小小的斜的條紋的話,這個filter就會被activate,這個filter的output值就會比較大,就會很大。那如果今天讓圖上所有的範圍通通出現這種小小的斜條紋的話,那這個時候它的activation,它的degree of activation會是最大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:28.000" id=43:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2608">43:28.000</a></div>
+        <div class="t">因為它的工作就是偵測有沒有一個斜的條紋,所以你給它一個完整的數字的時候,它不會最興奮。你給它通通都是斜的條紋的時候,這個時候它最興奮,雖然它完全不是一個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:40.000" id=43:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2620">43:40.000</a></div>
+        <div class="t">所以你就會發現說,每一個filter它的工作就是偵測某一種pattern,偵測某一種線條,比如說第三個圖,它偵測斜的線條,第四個圖偵測短的直的線條,這個偵測這個方向斜的線條,這個偵測這個方向斜的線條,這個也是偵測這個方向斜的線條,不過跟這個degree可能有點不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:03.000" id=44:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2643">44:03.000</a></div>
+        <div class="t">這個也是偵測斜的線條,但它比較平,這個偵測是直的線條等等。你會發現,每一個filter它做的事情就是偵測不同角度的線條。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:15.000" id=44:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2655">44:15.000</a></div>
+        <div class="t">如果今天input有不同角度的線條的話,你就會讓某一個activation function,某一個filter,它的output值最大。我們接下來可以分析fully connected layer。我們做完convolution和mixed pooling以後,接下來我們會做一件事情叫做flatten。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:38.000" id=44:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2678">44:38.000</a></div>
+        <div class="t">然後把flatten以後的結果丟到neural network裡面去。我們也會想要知道說,在這個neural network裡面,每一個neural它的工作是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:48.000" id=44:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2688">44:48.000</a></div>
+        <div class="t">所以我們就如法炮製剛才的做法。我們要做的事情是這樣子,我們定義這一個neural,它的output叫做aj。接下來我們要做的事情就是找一張image x,用gradient descent的方法去找一張image x。這個image x,你把它丟到這個neural network裡面去,它可以讓aj的值被maximize。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:12.000" id=45:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2712">45:12.000</a></div>
+        <div class="t">那找到什麼樣的結果呢?我們找到的結果就是這樣。我就隨便取前九個neural出來,隨便取九個neural出來。那什麼樣的圖丟到這個CNN裡面可以讓這九個neural最被activate,output值最大呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:29.000" id=45:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2729">45:29.000</a></div>
+        <div class="t">就是這九張圖。你會發現說,跟剛才的filter所觀察到的情形是很不一樣的。在剛才filter裡面我們觀察到的是類似紋路的東西,在整張圖上反覆同樣的紋路。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:45.000" id=45:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2745">45:45.000</a></div>
+        <div class="t">那是因為每一個filter它考慮的只是一個小小的region,圖上的一部分的region,所以它detect的是某一種texture。但是現在每一個neural,在你做flatten以後,每一個neural它的工作就是去看整張圖,它不是在只看這個圖的一小部分,它現在的工作是看整張圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:05.000" id=46:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2765">46:05.000</a></div>
+        <div class="t">所以每一個neural你可以讓它最activate的圖,並不再是texture那個樣子,而是一個完整的圖形,雖然它看起來完全不像數字,比如說這個看起來像是千年眼這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:21.000" id=46:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2781">46:21.000</a></div>
+        <div class="t">雖然沒有人知道我在說什麼。這個neural,這個會偵測千年眼的neural,它的工作其實就是看到這樣子的線條,或者看到這樣子的線條,或者看到小小的圓圈,就可以讓它被activate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:41.000" id=46:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2801">46:41.000</a></div>
+        <div class="t">它偵測的不是一個完整的數字,是一個比較大的pattern。接下來我就想要知道說,如果我們今天考慮的是output呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:57.000" id=46:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2817">46:57.000</a></div>
+        <div class="t">如果我們今天把output就是十維嘛,每一維就對應到一個digit,那我們把某一維拿出來,然後我們說找一張image讓那一個維度的output最大,那我們會得到什麼樣的image呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:13.000" id=47:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2833">47:13.000</a></div>
+        <div class="t">那你可以想像說,現在既然每一個output每一個dimension就對應到某一個數字,那我們現在如果把對應到數字1的那一張圖,我們如果先找一張image,它可以讓對應到數字1的那一個output layer的neural,它的output最大,那那張image顯然看起來像個數字1,讓大家了解我的意思嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:37.000" id=47:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2857">47:37.000</a></div>
+        <div class="t">你可以期待說,搞不好我們用這個方法就可以自動畫出數字。但是實際上呢,我們得到的結果是這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:49.000" id=47:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2869">47:49.000</a></div>
+        <div class="t">這邊呢,每一張圖分別代表數字0、1、2到8,就只畫8個,實際上output有10個。也就是說,我們找出來可以讓對應到0的那一個output layer裡面對應到0的那一個neural,它的output最大的image其實是長這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:15.000" id=48:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2895">48:15.000</a></div>
+        <div class="t">就像1的neural,output最大的image其實長這樣,2的其實長這樣,以此類推,每張看起來都差不多,都像是那個電視壞掉的樣子。那你可能就會有疑惑,為什麼會這樣?是不是程式有bug?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:30.000" id=48:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2910">48:30.000</a></div>
+        <div class="t">我為了確定程式沒有bug,所以我就再做了一個實驗,我把這每一張image都真的丟到CNN裡面,然後看說它classify的結果是什麼。那CNN確實就說,它classify說這個是0,這個是1,這個是2,一直到這個是8。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:47.000" id=48:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2927">48:47.000</a></div>
+        <div class="t">CNN就覺得說,你如果拿這張image勸出來,正確率有98點多的CNN看,它卻說這個東西就叫做8。所以很神奇吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:00.000" id=49:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2940">49:00.000</a></div>
+        <div class="t">所以這個結果其實在很多地方都已經被觀察到了,就是今天這個neural network所學到的東西跟我們人類是不太一樣的,它所學到的東西跟我們人類一般的想像認知是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:20.000" id=49:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2960">49:20.000</a></div>
+        <div class="t">你可以看一下這段video,它也有對應的paper,裡面這個machine會把各種,比如說你看起來不像企鵝的東西也是企鵝,看起來不像公車的東西也是公車,或者像我這邊看起來這個完全不是一個數字,但對machine來說它就是這個數字8。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:38.000" id=49:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2978">49:38.000</a></div>
+        <div class="t">所以這個machine它學到的東西和我們人類是非常不一樣的。那我就在想說,我們沒有辦法畫一個數字,我們有沒有辦法讓這個圖看起來更像數字呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:58.000" id=49:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=2998">49:58.000</a></div>
+        <div class="t">所以這邊的想法是這個樣子。因為我們知道說,一張圖是不是一個數字,它有一些基本的假設,比如說這些東西就算是你不知道它是什麼數字,你也會知道說它顯然就不是一個digit,人類手寫出來的東西就不是長這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:20.000" id=50:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3020">50:20.000</a></div>
+        <div class="t">所以我們應該對這個y做一些regularization,做一些constraint,我們應該告訴machine說,我們應該對找出來的x做一些constraint,我們應該告訴machine說,有一些x它雖然可以讓你的y很大,但是它不是數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:46.000" id=50:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3046">50:46.000</a></div>
+        <div class="t">根據我們人的primary knowledge就知道說,這些x它不可能是一個數字。那我們可以加上什麼樣的constraint呢?比如說最簡單的想法是說,今天這個圖上白色的亮點,這邊畫這個圖的時候白色代表是有墨水的,有ink有筆畫的地方是白色的,希望大家可以想像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:12.000" id=51:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3072">51:12.000</a></div>
+        <div class="t">對一個digit來說,這個圖白的部分其實是有限的,圖白的部分不會太多,你整張圖都是白白的,它一定不是一個數字。對數字來說,只有一整張圖的某一個小部分會有筆畫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:30.000" id=51:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3090">51:30.000</a></div>
+        <div class="t">所以,我們應該要對這個x做一些限制。比如說,這邊的限制是,我發現我寫錯了,因為這邊是max,所以這邊的加號應該是減號,這邊加號應該是一個減號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:52.000" id=51:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3112">51:52.000</a></div>
+        <div class="t">因為我們這邊要做的事情是這樣子,假設這個image裡面的每一個pixel,我們用xij來表示,所以每一個image有28x28個pixel,這個i就是1到28,j就是1到28。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:06.000" id=52:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3126">52:06.000</a></div>
+        <div class="t">我們把所有pixel的值,我們把所有今天image上面的xij的值取絕對值後加起來,如果你熟悉machine learning的話,這一項就是L1的regularization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:24.000" id=52:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3144">52:24.000</a></div>
+        <div class="t">那我們把這個pixel的值全部加起來,然後我們希望說,我們再找一個x,它可以讓yi最大的同時,這邊其實應該要是減號,它同時應該要讓這個xij的summation越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:45.000" id=52:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3165">52:45.000</a></div>
+        <div class="t">也就是說,我們希望找出來的image,大部分的地方是沒有塗顏色的,沒有塗白色的,沒有筆畫的,只有非常少的地方是有塗筆畫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:55.000" id=52:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3175">52:55.000</a></div>
+        <div class="t">如果我們加上這個constraint以後,我們得到的結果看起來就像是這樣。其實跟左邊的圖比起來,你已經有些隱約可以看出來它是一個數字。比如說,這個看起來就有一點點像6,雖然說它這邊還多了一條,但它有一點點像6。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:17.000" id=53:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3197">53:17.000</a></div>
+        <div class="t">這個有一點點像8,這個它好像找到了5的第一個筆畫,這個好像找到了7的第一個筆畫,等等。如果你加上這個constraint以後,你看起來得到的結果就比較像數字了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:36.000" id=53:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3216">53:36.000</a></div>
+        <div class="t">講到這邊,你可能會有一個問題。首先,我們還沒有講過L1的regularization,這個我們其實等一下會講。再來就是,你可能會有另外一個問題,就是這個有絕對值啊,這個怎麼微分?其實這個是可以微分的啦,這個我們下一堂課會講到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:52.000" id=53:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3232">53:52.000</a></div>
+        <div class="t">講到這邊,大家有沒有什麼問題呢?其實我覺得說,如果你再加上一些額外的constraint,比如說,你希望相鄰的pixel是同樣的顏色等等,你應該可以得到更好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:09.000" id=54:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3249">54:09.000</a></div>
+        <div class="t">不過其實有更多很好的方法可以讓machine自動generate數字或generate它看到的東西,所以這邊我就沒有興致把它再做得更好了。其實這個想法就是deep dream的精神。不知道大家知不知道deep dream是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:28.000" id=54:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3268">54:28.000</a></div>
+        <div class="t">deep dream是說,如果你給machine一張image,它會在這個image裡面加上它看到的東西。怎麼做這件事情呢?你就找一張image,這個是我,後面這個不是photoshop上去的,這邊我擺了一個很做作的姿勢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:48.000" id=54:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3288">54:48.000</a></div>
+        <div class="t">然後你把這張相片丟到CNN裡面去,然後你把它的某一個hidden layer,你把某一個layer裡面的filter或者是fully connected layer裡面的某一個hidden layer拿出來,那它其實是一個vector嘛,你把某一個hidden layer的output拿出來,它其實是一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:10.000" id=55:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3310">55:10.000</a></div>
+        <div class="t">假設它這邊是比如說3.9-1.5-2.3,接下來你把這個filter的值調大,你把本來是positive的dimension值調大,把positive的dimension值調大,negative的dimension的值調小,然後你把正的讓它變得更正,負的讓它變得更負。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:34.000" id=55:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3334">55:34.000</a></div>
+        <div class="t">然後你把這個東西當作是新的image的目標,了解我的意思嗎?就是你把這個3.9的值變大,你把-1.5的值變得更負,你把2.3的值變得更大,然後你找一張image,用歸根descent的方法,讓它在這個hidden layer的output是你現在設下的target。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:00.000" id=56:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3360">56:00.000</a></div>
+        <div class="t">這樣大家可以聽得懂嗎?你如果這麼做的話,你的意思就是說,讓CNN誇大化它看到的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:12.000" id=56:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3372">56:12.000</a></div>
+        <div class="t">它本來已經有看到某一個東西了,你讓它看起來更像它原來看到的東西。它本來看起來只是有一點像某一個東西,它讓某一個filter有被activate,但是你讓它activate得更劇烈,也就是你讓CNN誇大化它現在看到的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:33.000" id=56:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3393">56:33.000</a></div>
+        <div class="t">那如果你把這一張image拿去做deep dream的話,那你看到的結果就會是這樣子,就背後出現很多念獸,要明才看得到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:43.000" id=56:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3403">56:43.000</a></div>
+        <div class="t">比如說像這邊有一隻熊,你看這個熊原來是一個石頭,那你不覺得這個石頭看起來其實也是有點像熊的嗎?這個是耳朵,這個是眼睛,這個是鼻子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:04.000" id=57:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3424">57:04.000</a></div>
+        <div class="t">那對機器來說,它在看這張圖的時候,它本來就覺得這個有點像熊,那你就更強化這一件事,所以它看起來就真的變成了一隻熊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:15.500" id=57:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3435">57:15.500</a></div>
+        <div class="t">這個是deep dream。那deep dream還有一個進階的版本,這個叫做deep style。deep style是讓今天你input一張image,你input一張相片,然後讓機器去修改這一張圖,讓它有另外一張圖的風格,比如說讓這個相片看起來像是吶喊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:38.500" id=57:38.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3458">57:38.500</a></div>
+        <div class="t">得到的結果就是這樣子,這個畫還蠻好的,驚人的好。那這個東西是怎麼做的呢?這邊就不細講,我就列一個reference給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:51.500" id=57:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3471">57:51.500</a></div>
+        <div class="t">那它的這個做法的精神是這樣子,你把原來的image丟給CNN,然後得到CNN的filter的output,CNN的filter的output代表這一張image裡面有什麼樣的content。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:09.500" id=58:09.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3489">58:09.500</a></div>
+        <div class="t">然後接下來你把吶喊這張圖也丟到CNN裡面,也得到filter的output,但是這個時候我們考慮的不是filter output的absolute value,我們並不在意filter output的value是什麼,而是在意filter和filter間output的correlation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:30.500" id=58:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3510">58:30.500</a></div>
+        <div class="t">那這個correlation代表了一張image的style。那接下來你就用同一個CNN找一張image,這張image它的content向左邊這張相片,也就是這張image它的filter output的value向左邊這張相片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:49.500" id=58:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3529">58:49.500</a></div>
+        <div class="t">但同時呢,這張image的style向右邊這張相片,所謂的style向右邊這張相片是,你的這個image output的filter間的correlation向右邊這張相片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:02.500" id=59:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3542">59:02.500</a></div>
+        <div class="t">那你找一張image同時可以maximize左邊這個東西,maximize右邊這個東西,那你得到的結果就是像這樣的一個圖了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:11.500" id=59:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3551">59:11.500</a></div>
+        <div class="t">那你用的其實就是我們剛才講的用這個gradient descent的方法,找一張image,maximize這兩個criteria,你得到的結果就是左邊這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:21.500" id=59:21.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3561">59:21.500</a></div>
+        <div class="t">好,那我們現在都知道說呢,CNN可以被應用在很多不同的應用上,而不是只有影像處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:29.500" id=59:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3569">59:29.500</a></div>
+        <div class="t">比如說現在CNN有一個非常知名的應用,就是用在下圍棋上面。那為什麼CNN可以用在下圍棋上面呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:41.500" id=59:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3581">59:41.500</a></div>
+        <div class="t">我們知道說呢,你要讓machine來下圍棋,你不見得需要用CNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:48.500" id=59:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3588">59:48.500</a></div>
+        <div class="t">其實一般typical的neural network也可以幫我們做到這件事情,你只要任意一個network,也就是找一個function,它的input是棋盤,output呢是棋盤上的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:01.500" id=01:00:01.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3601">01:00:01.500</a></div>
+        <div class="t">也就是說你下一步,根據這個棋盤的盤勢,如果你下一步要落子的話,你應該落子的位置,你其實就可以讓machine學會下圍棋了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:12.500" id=01:00:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3612">01:00:12.500</a></div>
+        <div class="t">所以,你其實用fully connected feedforward network,也可以幫我們做到讓machine下圍棋這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:20.500" id=01:00:20.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3620">01:00:20.500</a></div>
+        <div class="t">也就是說你只要告訴它說input是一個19x19的vector,每一個vector的每一個dimension,對應到這個棋盤上的某一個位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:30.500" id=01:00:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3630">01:00:30.500</a></div>
+        <div class="t">如果那個位置有一個黑子的話,就是1,如果有一個白子的話,就是-1,反之呢,就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:37.500" id=01:00:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3637">01:00:37.500</a></div>
+        <div class="t">如果你把一個棋盤描述成一個vector,一個19x19的vector,丟到一個fully connected feedforward network,output也是19x19的dimension,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:46.500" id=01:00:46.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3646">01:00:46.500</a></div>
+        <div class="t">那每一個dimension對應到一個棋盤上的位置,那machine就可以學會下圍棋了,結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:55.500" id=01:00:55.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3655">01:00:55.500</a></div>
+        <div class="t">那但是,實際上如果我們今天在這邊採用CNN的話,我們會得到更好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:02.500" id=01:01:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3662">01:01:02.500</a></div>
+        <div class="t">那採用CNN是什麼意思呢?我們之前舉的例子都是把CNN用在影像上面,也就是input是一個metric。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:12.500" id=01:01:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3672">01:01:12.500</a></div>
+        <div class="t">所以現在你其實只要把19x19的vector表示成一個19x19的metric,而一個棋盤可以很自然地表示成一個19x19的metric,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:22.500" id=01:01:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3682">01:01:22.500</a></div>
+        <div class="t">然後對CNN來說,就是把它當作一個image來看,然後再讓它output下一步要下落子的位置,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:33.500" id=01:01:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3693">01:01:33.500</a></div>
+        <div class="t">那它training的process呢,是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:37.500" id=01:01:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3697">01:01:37.500</a></div>
+        <div class="t">就是,你先收集,這個我們講過了,你就收集很多棋譜,比如說這個是鏡騰光跟射青春的棋譜,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:44.500" id=01:01:44.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3704">01:01:44.500</a></div>
+        <div class="t">出手下在5-5,然後次手下在天元,然後再下在5-5。接下來你就告訴machine說,看到落子在5-5,CNN的output就是天元的地方是1,其他地方是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:55.500" id=01:01:55.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3715">01:01:55.500</a></div>
+        <div class="t">看到這個5-5和天元都有子,那你output呢,就是這個5-5的地方是1,其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:02.500" id=01:02:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3722">01:02:02.500</a></div>
+        <div class="t">這個是supervised的部分,那其實呢,alpha go還有這個reimposement learning的部分,那這個呢,我們就之後再講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:12.500" id=01:02:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3732">01:02:12.500</a></div>
+        <div class="t">那我知道說呢,其實大家都是,現在大家都說的一口好alpha go啦,大家都是咚咚咚這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:19.500" id=01:02:19.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3739">01:02:19.500</a></div>
+        <div class="t">自從alpha go用了CNN以後,大家就覺得說,好像CNN應該很厲害。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:27.500" id=01:02:27.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3747">01:02:27.500</a></div>
+        <div class="t">所以有時候如果你沒有用CNN來處理你的問題,人家就會問你說,比如說你去面試的時候,你的碩士論員沒有用CNN來處理問題,口試的人可能也不知道CNN是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:36.500" id=01:02:36.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3756">01:02:36.500</a></div>
+        <div class="t">大家就會問說,為什麼不用CNN呢?CNN不是比較強嗎?這個時候你就可以強暴他這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:42.500" id=01:02:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3762">01:02:42.500</a></div>
+        <div class="t">什麼時候我們可以用CNN呢?你要有那個image該有的那些特性,我們之前在講CNN開頭的時候,我們有說根據三個觀察,所以我們設計出了CNN這樣的network架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:56.500" id=01:02:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3776">01:02:56.500</a></div>
+        <div class="t">它在處理image的時候呢,是特別有效。那為什麼這樣的架構也同時可以用在圍棋上面呢?那是因為圍棋有一些特性和影像處理是很相似的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:10.500" id=01:03:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3790">01:03:10.500</a></div>
+        <div class="t">第一個是,我們說在image上面,有一些pattern是比整張image還要小得多的,比如說鳥的繪是比整張image還要小得多。但是你只要看那一小的部分,你就會知道說它是不是鳥的繪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:29.500" id=01:03:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3809">01:03:29.500</a></div>
+        <div class="t">在圍棋上可能也有同樣的現象,雖然我對圍棋知道得很少,我知道的知識都沒有超過這個麒麟王所教我的範圍。但是我也知道說,比如說這個東西,一個白紙被三個黑紙圍住,這個叫做轎池。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:45.500" id=01:03:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3825">01:03:45.500</a></div>
+        <div class="t">如果黑紙現在落在這邊,就可以把白紙踢走。那白紙要接在這邊才不會被踢走。總之,這個是一個pattern。你看到這個pattern,你應該會做一些應手,你會做一些相應的事情,比如說你會落紙在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:00.500" id=01:04:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3840">01:04:00.500</a></div>
+        <div class="t">那現在你只需要看這一個小小的範圍,你就可以偵測說這個白紙是不是處於被轎池的狀態。你不需要看整個棋盤才能夠知道這件事情。所以這件事情跟image是有同樣的性質的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:17.500" id=01:04:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3857">01:04:17.500</a></div>
+        <div class="t">那在AlphaGo裡面,它的第一個layer的filter其實就是用5x5的filter。顯然做這個設計的人覺得說,圍棋上最基本的pattern可能都是在5x5的範圍內就可以被偵測出來,並不需要看整個棋盤才能夠知道這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:37.500" id=01:04:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3877">01:04:37.500</a></div>
+        <div class="t">那接下來呢,我們說image它有一個特性是同樣的pattern會出現在不同的region,而它們代表的是同樣的意義。在圍棋上呢,也可能有同樣的現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:51.500" id=01:04:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3891">01:04:51.500</a></div>
+        <div class="t">像這個轎池的pattern,它可能可以出現在一個棋盤的左上角,也可以出現在右下角。它們都是轎池,它們都代表了同樣的意義。這些同樣的pattern出現在不同的位置,它們也都代表同樣的意義。所以你可以用同一個detector來處理這些在不同位置的同樣的pattern。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:11.500" id=01:05:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3911">01:05:11.500</a></div>
+        <div class="t">所以對圍棋來說呢,它在第一個observation和第二個observation是有image的特性的。但是讓我沒有辦法想通的地方,就是第三點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:21.500" id=01:05:21.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3921">01:05:21.500</a></div>
+        <div class="t">我們說我們可以對一個image做sub-sampling,你拿掉奇數行偶數列的pixel,把image變成原來的四分之一的大小,但是呢,也不會影響你看這張圖的樣子。但是因為基於這個觀察,所以有max pooling這個layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:41.500" id=01:05:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3941">01:05:41.500</a></div>
+        <div class="t">但是對圍棋來說,你可以做這件事情嗎?比如說你可以對一個棋盤丟掉奇數列和偶數列,它還是同一個盤式嗎?顯然是不是的。就算我對圍棋什麼都不懂,圍棋覺得說這顯然不work,這件事就讓我相當的困擾。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:01.500" id=01:06:01.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3961">01:06:01.500</a></div>
+        <div class="t">我看網路上有一些文章有人覺得說,因為可能AlphaGo裡面有用了max pooling這樣的架構,所以或許這是一個它的弱點,你要針對這個弱點去攻擊它就可以擊敗它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:17.500" id=01:06:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3977">01:06:17.500</a></div>
+        <div class="t">但是AlphaGo很強,它可能比李四十還強,它比高永夏還強,所以它顯然沒有這個顯而易見的弱點。所以到底是怎麼回事呢?我就一直覺得相當的困惑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:33.500" id=01:06:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=3993">01:06:33.500</a></div>
+        <div class="t">有一天我突然領悟到,會不會在這個AlphaGo的CNN架構裡面有什麼特別的地方呢?我相信說其實大家都讀過AlphaGo的paper,那個paper也沒幾頁,好像就六頁吧,應該就是一下子就看完了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:49.500" id=01:06:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4009">01:06:49.500</a></div>
+        <div class="t">但是它後面有一個很長的附錄,我們一般都是不看附錄的。本來就是不看附錄的。我在想說,它在paper裡面,它只說了一句說它用CNN,但它沒有在正文裡面仔細描述過它的CNN架構,會不會實際上它的CNN架構裡面有什麼特別的玄機呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:11.500" id=01:07:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4031">01:07:11.500</a></div>
+        <div class="t">所以我就讀了一下它的附錄,在附錄裡面它描述了它的CNN架構,它是這樣說的,它的input是一個19x19x48的input,19x19我們可以理解,因為一個棋盤就是19x19。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:27.500" id=01:07:27.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4047">01:07:27.500</a></div>
+        <div class="t">18是怎麼來的呢?對AlphaGo來說,它把每一個位置都用48個value來描述它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:46.500" id=01:07:46.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4066">01:07:46.500</a></div>
+        <div class="t">它裡面的value包括了,我們本來說只要在一個位置描述說它是不是白紙,有沒有黑紙就可以了,但其實AlphaGo它有加上了domain knowledge,它不只是說有一個位置有沒有白紙或黑紙,而是看說這個位置是不是處於叫吃的狀態等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:08.500" id=01:08:08.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4088">01:08:08.500</a></div>
+        <div class="t">所以我們如果讀完這一段的話,你會發現說,第一個layer它有做zero padding,也就是說它把原來19x19的image外圍補上更多的,讓它變成一張23x23的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:30.500" id=01:08:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4110">01:08:30.500</a></div>
+        <div class="t">它的第一個layer用的是5x5的filter,總共有K個filter,K的值它在paper裡面用的是192,另外它有4128跟256。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:45.500" id=01:08:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4125">01:08:45.500</a></div>
+        <div class="t">接下來它的stride是設1,然後它有用IOU的activation function,接下來它有2到12層,然後它有21x21,apply這個5x5的filter以後,它變成21x21的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:05.500" id=01:09:05.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4145">01:09:05.500</a></div>
+        <div class="t">接下來的filter都是3x3的filter,它的stride都是1。然後你就會發現說,其實AlphaGo是沒有用max pooling的,有沒有很神奇呢?它是沒有用max pooling的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:18.500" id=01:09:18.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4158">01:09:18.500</a></div>
+        <div class="t">所以這個neural network架構的設計是應用之道,純乎一心。雖然說在image裡面我們都會用max pooling這個架構,但是針對圍棋的特性來設計neural network的時候,我們是不需要max pooling這個架構的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:35.500" id=01:09:35.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4175">01:09:35.500</a></div>
+        <div class="t">所以在AlphaGo裡面,max pooling這個架構並不是疏失了什麼之類的,而是根據圍棋的特性,我們本來就不需要在圍棋的CNN裡面用max pooling這樣的架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:49.500" id=01:09:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4189">01:09:49.500</a></div>
+        <div class="t">那其實CNN也可以被用在很多的其他的task裡面,比如說CNN也被用在影像處理上。舉例來說,這個是一段聲音,你可以把一段聲音表示成所謂的spectrogram。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:09.500" id=01:10:09.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4209">01:10:09.500</a></div>
+        <div class="t">所謂的spectrogram的意思是說,這個橫軸是時間,這個縱軸是那段時間裡面聲音的頻率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:21.500" id=01:10:21.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4221">01:10:21.500</a></div>
+        <div class="t">比如說,假設我們看這一段時間,這個偏紅色就代表說,在那一段時間裡面,那一個頻率的energy是比較大。而在這一段時間裡面,這一個頻率跟這個頻率跟這個頻率的能量是比較高的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:43.500" id=01:10:43.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4243">01:10:43.500</a></div>
+        <div class="t">那這一張image其實是我說你好,然後看到的spectrogram,所以這個東西是你,這個東西是好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:53.500" id=01:10:53.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4253">01:10:53.500</a></div>
+        <div class="t">那如果有透過訓練的人,他其實可以看這一張image,就知道說這一句話的內容是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:00.500" id=01:11:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4260">01:11:00.500</a></div>
+        <div class="t">我之前在MIT做PostDoc的時候,MIT的語音處理實驗室據說是最早發明spectrogram reading的團隊,所謂的spectrogram reading的意思就是練習看這個頻譜,就知道說它裡面的內容是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:16.500" id=01:11:16.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4276">01:11:16.500</a></div>
+        <div class="t">他們經年累月地在練習這一件事情,就練習得很強。他們每週的group meeting都要練習做spectrogram,就是老師會拿出一張spectrogram,然後大家就要判讀這一張spectrogram的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:36.500" id=01:11:36.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4296">01:11:36.500</a></div>
+        <div class="t">老師就會指著一段說,這個spectrogram,這一段聲音,你覺得它是哪一個縫呢?縫就是類似音標的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:48.500" id=01:11:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4308">01:11:48.500</a></div>
+        <div class="t">大家把一段聲音的音標解譯出來以後,你再靠language model上去把它decode成文字,然後通常都會答對。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:56.500" id=01:11:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4316">01:11:56.500</a></div>
+        <div class="t">你可能會覺得說,他們練到最後可能可以看一張image,就瞄反應說它的結果是什麼,但其實沒有辦法,通常這個解譯的過程大概要花一個小時。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:10.500" id=01:12:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4330">01:12:10.500</a></div>
+        <div class="t">這個東西就像念求遊戲之類的,是一個很厲害的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:14.500" id=01:12:14.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4334">01:12:14.500</a></div>
+        <div class="t">既然人可以看這個image就知道說,它是什麼樣的聲音訊號,什麼樣的phoning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:24.500" id=01:12:24.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4344">01:12:24.500</a></div>
+        <div class="t">我們也可以讓機器把這個spectrogram當作一張image,然後用CEO來判斷說,input這一張image,它是對應什麼樣的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:37.500" id=01:12:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4357">01:12:37.500</a></div>
+        <div class="t">這邊通常判斷的單位比如說是phoning,也就是類似音標這樣子的單位,也有可能是syllable之類的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:45.500" id=01:12:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4365">01:12:45.500</a></div>
+        <div class="t">但是這邊神奇的地方就是,當我們把一段spectrogram當作image丟到CNN裡面的時候,在語音上我們通常只考慮在frequency方向移動的filter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:00.500" id=01:13:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4380">01:13:00.500</a></div>
+        <div class="t">也就是說我們的filter是這樣,是長方形的,它的寬就跟我們image的寬是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:08.500" id=01:13:08.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4388">01:13:08.500</a></div>
+        <div class="t">那我們在移動filter的時候,我們只移這個方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:16.500" id=01:13:16.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4396">01:13:16.500</a></div>
+        <div class="t">為什麼是這樣子呢?當然也有人試過說,如果把filter移時間的方向上會怎麼樣呢?結果是沒有太大的幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:25.500" id=01:13:25.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4405">01:13:25.500</a></div>
+        <div class="t">會這樣的原因,我認為是因為在語音裡面,這個CNN的output後面都還會再接別的東西,比如說再接LSTM或HLM等等,他們都已經有考慮temporal的information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:37.500" id=01:13:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4417">01:13:37.500</a></div>
+        <div class="t">所以你在CNN裡面再考慮一次時間的information,其實沒有什麼特別的幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:42.500" id=01:13:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4422">01:13:42.500</a></div>
+        <div class="t">但是為什麼在頻率上的filter有幫助呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:46.500" id=01:13:46.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4426">01:13:46.500</a></div>
+        <div class="t">你想想看,我們說我們用filter的目的,是為了要dictate說同樣的pattern出現在不同的region,我們都可以用同一個filter把它dictate出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:56.500" id=01:13:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4436">01:13:56.500</a></div>
+        <div class="t">那在聲音訊號上面,雖然比如說男生跟女生發同樣的聲音,男生女生發同樣說的你好,看起來這個spectrogram是非常不一樣的,但實際上他們的不同可能只是一個頻率的shift而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:12.500" id=01:14:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4452">01:14:12.500</a></div>
+        <div class="t">男生說的你好跟女生說的你好,他們的pattern其實是一樣的,比如說你看這個spectrogram的變化的情形,其實可能是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:22.500" id=01:14:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4462">01:14:22.500</a></div>
+        <div class="t">那男生跟女生的差別可能只是一個頻率上的shift而已,就只是把這個pattern放在image上的不同的位置而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:31.500" id=01:14:31.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4471">01:14:31.500</a></div>
+        <div class="t">所以今天我們把filter在frequency的direction上移動是有效的,但是在time domain上的移動是沒有必要,是沒有帶來幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:42.500" id=01:14:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4482">01:14:42.500</a></div>
+        <div class="t">所以這又是另外一個例子,就是當你把CNN用在另外一個application上面的時候,你永遠要想一想說這個application的特性是什麼,而根據那個application的特性來design你的network的structure。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:57.500" id=01:14:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4497">01:14:57.500</a></div>
+        <div class="t">那我們也知道說CNN會被用在文字處理上面,這個是從paper上面截下來的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:05.500" id=01:15:05.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4505">01:15:05.500</a></div>
+        <div class="t">在文字處理上面,假設你input一張word sequence,假設你現在要做的事情是讓machine偵測說這個word sequence代表的是positive的意思還是negative的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:20.500" id=01:15:20.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4520">01:15:20.500</a></div>
+        <div class="t">首先input一個word sequence,你把這個word sequence裡面的每一個word都用一個vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:29.500" id=01:15:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4529">01:15:29.500</a></div>
+        <div class="t">這邊的每一個vector代表了這個word本身的semantic,如果兩個word的含義越接近的話,它們的vector在高維的空間上就越接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:43.500" id=01:15:43.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4543">01:15:43.500</a></div>
+        <div class="t">這個東西叫做word embedding,如果你不知道word embedding是什麼的話,也沒有關係,你就記得說現在每一個word都被用一個vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:57.500" id=01:15:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4557">01:15:57.500</a></div>
+        <div class="t">當你把每一個word都用一個vector來表示的時候,你把所有的word排在一起,它就變成一個image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:10.500" id=01:16:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4570">01:16:10.500</a></div>
+        <div class="t">你可以把CNN套用在這個image上面,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:18.500" id=01:16:18.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4578">01:16:18.500</a></div>
+        <div class="t">當我們要把CNN用在文字處理上的時候,你的filter其實是長這個樣子,它的高跟image的高是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:33.500" id=01:16:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4593">01:16:33.500</a></div>
+        <div class="t">然後你把你的filter沿著word的順序,沿著句子裡面詞彙的順序來移動,然後你就會得到一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:44.500" id=01:16:44.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4604">01:16:44.500</a></div>
+        <div class="t">不同的filter就給你不同的vector,然後接下來做max pooling,把max pooling的結果丟到fully connected layer裡面,你就會得到最後的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:54.500" id=01:16:54.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4614">01:16:54.500</a></div>
+        <div class="t">那在文字處理上,這個filter只在時間的序列上移動,而不在這個embedding的dimension上面移動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:06.500" id=01:17:06.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4626">01:17:06.500</a></div>
+        <div class="t">就是你不會設計filter,它的移動的方向是這個方向的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:13.500" id=01:17:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4633">01:17:13.500</a></div>
+        <div class="t">為什麼呢?如果你有做過類似的test,如果你有做過文字處理的test,知道這個embedding的dimension指的是什麼的話,知道word vector指的是什麼的話,你就會知道說,移動在這個方向上移動是不make sense的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:30.500" id=01:17:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4650">01:17:30.500</a></div>
+        <div class="t">因為在這個word embedding裡面,每一個dimension的含義其實是獨立的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:38.500" id=01:17:38.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4658">01:17:38.500</a></div>
+        <div class="t">當我們今天使用CNN的時候,你會假設說,第二個dimension跟第一個dimension有某種特別的關係,第四個dimension跟第五個dimension有某種特別的關係,而這個關係是重複的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:59.500" id=01:17:59.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4679">01:17:59.500</a></div>
+        <div class="t">這個同樣的pattern出現在不同的位置,它們代表的是同樣的意思。但是在word embedding裡面,不同dimension是獨立的,所以在這個方向上移動filter是沒有意義的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:14.500" id=01:18:14.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4694">01:18:14.500</a></div>
+        <div class="t">所以如果你在做文字處理的時候,你只會在sentence的順序上移動filter,而不會在word embedding的dimension上移動filter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:24.500" id=01:18:24.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4704">01:18:24.500</a></div>
+        <div class="t">所以這個又是另外一個例子。雖然說大家覺得說CNN很powerful,你可以用在各個不同的地方,但是你在用在一個新的task的時候,你要想想你的新的task在設計這個CNN架構的時候,你要怎麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:42.500" id=01:18:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4722">01:18:42.500</a></div>
+        <div class="t">如果你想要知道更多有關visualization的事情的話,以下是一些reference。我們剛才看到說,如果你想要用deep print的方法來讓machine自動產生一個digit,這件事情是不太成功的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:02.500" id=01:19:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4742">01:19:02.500</a></div>
+        <div class="t">但是有很多其他的方法可以讓machine畫出非常清晰的圖,有很多其他的方法可以讓machine看過mnist裡面的那些數字以後,就學會畫出以假亂真的數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:16.500" id=01:19:16.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=FrKWiRv254g&t=4756">01:19:16.500</a></div>
+        <div class="t">我這邊列了幾個方法,比如說有Pixel RNN、VAE、或者是GAN,給大家參考。講到這邊,大家有沒有什麼問題呢?</div>
+    </div>
+    
+</body>
+</html>   

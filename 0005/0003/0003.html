@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Speech Recognition (3/7) - CTC, RNN-T and more</h2><a href=https://www.youtube.com/watch?v=CGuLuBaLIeI><img src=https://i.ytimg.com/vi_webp/CGuLuBaLIeI/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=0">00:00.000</a></div>
+        <div class="t">我們來上課了,接下來要講這個CTC這個模型。其實CTC這個模型它起源的很早,它是Alex Kraff在2006年的ICML就proposed。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.780" id=00:16.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=16">00:16.780</a></div>
+        <div class="t">其實在ICML那篇paper,它就已經有把CTC用在Kimi這個比較小的語音辨識上面,但是很長一段時間,大家並沒有真的常常把CTC拿出來用。那CTC其實有一些比較大的問題,等一下我們會看到說CTC的問題在哪裏。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:37.520" id=00:37.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=37">00:37.520</a></div>
+        <div class="t">那CTC確實就可以做到online的regulation。首先你在用CTC的時候,CTC可以說是只有encoder,然後你在選這個encoder的時候,你要選一些可以讓你做online語音辨識的encoder,比如說unidirection的RNN,只有單方向的RNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03.380" id=01:03.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=63">01:03.380</a></div>
+        <div class="t">如果你今天選雙方向的RNN作為你的encoder裏面的neural架構的話,那你就必須要把整個句子都看完,才能夠計算出這邊的H1到H4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.380" id=01:15.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=75">01:15.380</a></div>
+        <div class="t">那這邊不是,我們只選擇,如果你只選擇單方向的encoder的話,單方向的RNN的話,那你就可以看到X1產生H1,看到X2產生H2,看到X3產生H3,以此類推,你就有機會做online的語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32.000" id=01:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=92">01:32.000</a></div>
+        <div class="t">那CTC它只需要encoder,它只需要encoder把這些H跑出來。把這些H跑出來以後,接下來它就把這些H丟到一個linear的classifier裏面去,然後去決定說現在這個H屬於哪一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:53.280" id=01:53.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=113">01:53.280</a></div>
+        <div class="t">這個linear classifier就是你知道的linear classifier,你把這邊的H拿去乘上一個transform,再做softmax,得到每一個over所有token的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.280" id=02:11.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=131">02:11.280</a></div>
+        <div class="t">那CTC它可以做online的,你輸入X1產生H1,就可以通過這個classifier產生第一個輸出的結果,然後接下來X2再進來再產生H2,你就可以產生第二個輸出的結果,然後H3再進來再產生H3,你就產生第三個輸出的結果,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.720" id=02:32.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=152">02:32.720</a></div>
+        <div class="t">聽到這邊,你可能會覺得有點怪怪的。我們之前有講過,input,這個X1到X4,每一個X其實都是一個acoustic的feature,acoustic的feature它所代表的聲音訊號其實非常非常小,它只代表了10ms那麽短的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.800" id=02:56.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=176">02:56.800</a></div>
+        <div class="t">所以這一小個acoustic feature裏面通常都沒什麽資訊。給你一個acoustic feature,你大概很難判斷說它是哪一個token。所以怎麽辦呢?在CTC的設計上,它加入了一個特別的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.380" id=03:13.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=193">03:13.380</a></div>
+        <div class="t">這個特別的token,我們這邊用空集合的符號來表示它,我們叫它NO,就代表沒有東西。所以我們現在的token size不再是V,而是V加1,就你原來的token是什麽,我們都得再多加一個NO當作額外的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:33.340" id=03:33.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=213">03:33.340</a></div>
+        <div class="t">這個NO在這邊是什麽意思呢?在這邊也可以想成,我不知道該輸出什麽。NO就是,我看到一個feature,但是我一下子沒辦法決定它是什麽,那沒關係,你就先輸出我不知道它是什麽。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.620" id=03:47.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=227">03:47.620</a></div>
+        <div class="t">接下來,也許在看到下一個acoustic feature的時候能夠決定了,再把token輸出出來。所以你在做CTC的時候,你inputT一個acoustic feature,你會outputT一個token,那裏面有包含NO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.900" id=04:04.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=244">04:04.900</a></div>
+        <div class="t">那我們這邊ignoredownsampling這件事,有時候你會做downsampling,所以input你有X1到X4,output可能只有H1、H2。你input有1000個acoustic feature,那可能output是1000除以,看你downsampling要多少,你downsampling八倍就是1000除以八。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.120" id=04:23.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=263">04:23.120</a></div>
+        <div class="t">所以我們先無視這個問題,我們假設沒有做downsampling,那你就輸入T一個acoustic feature,那你就要outputT一個token,那這些token裏面有一些是NO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:34.600" id=04:34.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=274">04:34.600</a></div>
+        <div class="t">那當然語音辨識最終的結果裏面不應該有NO這個東西,所以怎麽辦呢?CTC會把它輸出的這T一個token做一下process,做一下後處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:46.720" id=04:46.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=286">04:46.720</a></div>
+        <div class="t">怎麽處理呢?它說,我們把有duplicate重複的token就把它merge起來,然後看到NO就把它丟掉。什麽意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:58.860" id=04:58.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=298">04:58.860</a></div>
+        <div class="t">就假設今天CTC的output是這樣,CTC是每一個acoustic feature就要硬是output一個token,不管機器覺得那個acoustic feature聽得到東西,反正都給我輸出一個東西就對了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.620" id=05:11.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=311">05:11.620</a></div>
+        <div class="t">所以你有可能輸出來的結果是這個樣子,有一大堆NO、有一大堆重複的字母,然後接下來你把重複的字母併起來,所以D跟D合起來當作一個D,P跟P合起來當作一個P,然後NO統統拿掉,那得到的結果就是D。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:32.260" id=05:32.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=332">05:32.260</a></div>
+        <div class="t">如果今天產生另外一個輸出,那你把重複的字母統統併起來,D跟D就合起來是一個D,三個E合起來就是一個E,三個E合起來不是兩個E,只有重複的到合起來,一一一合起來就是一個E。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:47.100" id=05:47.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=347">05:47.100</a></div>
+        <div class="t">它按照這個CTC process的規則就會變成DEP而不是DEEP。或者是,你今天如果是做中文的語音辨識,用CTC的話,你的output的token可能就是所有中文的方塊字再加NO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:04.960" id=06:04.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=364">06:04.960</a></div>
+        <div class="t">如果你的輸出是好好棒棒棒棒棒,那你把重複的東西拿掉就是好棒。如果你的輸出是好、NO、棒、NO、棒、NO、NO、棒、NO拿掉就是好棒棒棒棒,這就是CTC處理的規則。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.560" id=06:22.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=382">06:22.560</a></div>
+        <div class="t">接下來,我們知道CTC輸出東西以後怎麼把它變成人可以讀懂的文字,但是訓練的時候要怎麼訓練呢?你想想看,這邊每一個CTC的output都等於是一個classification的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.420" id=06:40.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=400">06:40.420</a></div>
+        <div class="t">我們在做classifier的時候,每一個輸入你都要給它一個正確的輸出,你都要給它一個ground truth,然後你會去minimize cost entropy。CTC也需要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:52.420" id=06:52.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=412">06:52.420</a></div>
+        <div class="t">今天輸入四個東西,要吐出這四個東西,吐出來的這四個東西分別應該是多少?你必須要告訴你的model,你必須要給每一個time state正確的輸出一個ground truth。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:06.820" id=07:06.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=426">07:06.820</a></div>
+        <div class="t">你必須要告訴機器說,每一個time state正確的輸出應該是什麼,那你才能像一般的classifier一樣,去minimize它的cost entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:16.360" id=07:16.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=436">07:16.360</a></div>
+        <div class="t">但是訓練的時候你就會遇到問題,為什麼?因為訓練的時候,我們並不知道每一個time state、每一個輸入的acoustic feature對應的輸出是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.860" id=07:27.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=447">07:27.860</a></div>
+        <div class="t">假設我們知道這句聲音訊號,有人幫你label,工讀生幫你label,說這句聲音訊號叫做好棒,但是你還是不知道,在這四個linear classifier,它們的輸出分別正確的答案應該是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:40.540" id=07:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=460">07:40.540</a></div>
+        <div class="t">你說,為什麼我會不知道正確的答案是什麼?你想想看,你現在的標注只有好跟棒。你不知道說,它應該是要把好放在第一個位置,棒放在第二個位置,還是棒應該放在第三個位置,還是棒應該放在第四個位置?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:53.940" id=07:53.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=473">07:53.940</a></div>
+        <div class="t">你不知道,你沒有這個資訊。而且,這邊輸出有時候會是弱,有時候會是空,弱要放在哪裡呢?第二個是弱,還是第四個是弱呢?你不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:07.540" id=08:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=487">08:07.540</a></div>
+        <div class="t">所以你會發現說,今天工讀生給你的標注是不夠的,因為我們會需要每一個input的acoustic feature都有一個對應的function,都有一個正確的輸出,都要告訴它正確的輸出是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.160" id=08:23.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=503">08:23.160</a></div>
+        <div class="t">但是,工讀生給你的標注就是看有幾個token,這邊就有幾個單位,但是它的數目是遠小於輸入的acoustic feature的數目的,所以怎麼辦呢?自己製造合適的標注。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.540" id=08:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=518">08:38.540</a></div>
+        <div class="t">怎麼自己製造合適的標注呢?你就想看看,我們現在這邊要有四個光注,我這邊只有兩個token,那你就自己想看看說,你要把弱插在什麼樣的地方,你要怎麼製造出合適、可以拿來train你的標注。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:55.520" id=08:55.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=535">08:55.520</a></div>
+        <div class="t">所以,我們現在需要有四個標注,那怎麼辦呢?現在本來只有兩個token,也許我們就在好跟棒中間插兩個弱,這樣就有四個token了,四個光注了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:08.400" id=09:08.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=548">09:08.400</a></div>
+        <div class="t">然後機器學到說,看到這段聲音訊號輸出,好、弱、弱、棒,按照CPC處理的規則,把弱拿掉,就變成好、棒,這樣聽起來沒有什麼問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.160" id=09:18.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=558">09:18.160</a></div>
+        <div class="t">這種自己製造標注這件事,本來我的輸出的token、正確的標注比較短,輸入的時間比較長,把輸入的比較長的訊號跟比較短的token硬是對在一起這種事情,叫做alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.060" id=09:35.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=575">09:35.060</a></div>
+        <div class="t">那你會問說,為什麼要這樣子做alignment呢?為什麼是好、弱、棒呢?因為如果我換另外一個例子,你也會問同樣的問題,所以其實有很多種不同的alignment的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.900" id=09:46.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=586">09:46.900</a></div>
+        <div class="t">你可以說是弱、好、棒、弱。弱、好、棒、弱,按照CPC的規則,把弱去掉,也是好、棒。它也可以是弱、好、弱、棒,按照CPC的規則,把弱去掉,它還是好、棒。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.880" id=09:59.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=599">09:59.880</a></div>
+        <div class="t">然後你會發現說,它有好多好多可以做alignment的方式,有各式各樣可以做alignment的方式。這邊每一個做alignment的方式,通過CPC的規則以後都是好、棒,它們都是有可能的alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.880" id=10:14.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=614">10:14.880</a></div>
+        <div class="t">那我們到底要選哪一個來當做training呢?CPC的想法就是,全部都拿來當做training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:23.580" id=10:23.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=623">10:23.580</a></div>
+        <div class="t">看到這邊你就會覺得有點困惑,要怎麼窮取所有的alignment當做training呢?這個是我們下一份投影片會跟大家講的內容。今天大概講到那邊了,今天希望能夠把這份投影片講完就不錯了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:36.840" id=10:36.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=636">10:36.840</a></div>
+        <div class="t">所以我們之後會講,你可能聽到這裡,你覺得匪夷所思,窮取所有的alignment、窮取所有duplicate和xnor的方式,每一個alignment都當做正確的IgTrain,這件事實際上到底是怎麼辦到的?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.400" id=10:53.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=653">10:53.400</a></div>
+        <div class="t">我們下一次會講,你今天就先接受說實際上可以做這件事,反正在作業裡面助教已經幫你把程式都寫好了,所以你也可以自己train一個CPC。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:02.840" id=11:02.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=662">11:02.840</a></div>
+        <div class="t">那CPCwork不work呢?看起來還可以,在LSgraph、ICML的paper裡面就show一下說,CPC的output大概長什麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.060" id=11:16.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=676">11:16.060</a></div>
+        <div class="t">在這個圖片上,有一個淺灰色的虛線,希望大家可以看得到。這個淺灰色的虛線代表的是nor的機率,有顏色的代表的是字母的機率,還有包括空白的機率。而且它還會output那個標點符號,這個是一撇的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.640" id=11:35.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=695">11:35.640</a></div>
+        <div class="t">所以,今天這一段聲音訊號輸入以後,因為每一個acoustic feature都要產生一個東西,所以它會產生一大排東西,但是多數都是nor。所以,今天語音辨識的結果是h,然後有一堆nor,然後產生i,然後其實這邊中間還插了一個nor,然後產生s,然後產生底線,這個底線代表空白,代表新的詞彙要出現了,這是一個空白,然後產生一堆nor,再產生f,再產生nor,再產生r,再產生i,一直下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.600" id=12:03.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=723">12:03.600</a></div>
+        <div class="t">這句話,你把nor都拿掉,你就知道它是his,ren。所以,還真的可以拿CTC用這個方法來做語音辨識。甚至,在這個2015年的InterSpeech這篇paper裡面,有人嘗試了用word當作單位,讓CTC直接產生word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:26.040" id=12:26.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=746">12:26.040</a></div>
+        <div class="t">可不可以呢?看起來也可以。CTC可以選擇的word,這邊沒有用很多,這邊的vocabulary的詞彙有點小,所以它只用了七千個word。這句話,CTC辨識出來是如何呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.140" id=12:41.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=761">12:41.140</a></div>
+        <div class="t">這邊每一個peak就代表某一個word的機率,然後灰色的這個曲線就代表nor的機率。這個圖上是用b來代表那個nor,這邊這個b跟我剛才講的那個nor的意思是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.640" id=12:56.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=776">12:56.640</a></div>
+        <div class="t">這句話是什麼呢?你就可以看得出來它這句話是什麼。第一個peak是to,然後這邊有一個小小的藍色代表是do,因為to跟do的機率聲音有點像,所以機器有點沒辦法分別,不過to的機率還是比較高的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.080" id=13:12.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=792">13:12.080</a></div>
+        <div class="t">第二個字是become,然後再來是er,to become er,然後黃色是diet。然後這個灰色是什麼呢?灰色可能是dietary,dietary到底是什麼呢?dietary是毛之物、毛巾的意思,diet是飲食,飲食毛巾不知道是說什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.340" id=13:30.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=810">13:30.340</a></div>
+        <div class="t">其實這句話是dietary,就是飲食的。但是因為詞典裡沒這個詞彙,所以這個就是你直接拿word當作語音辨識的單位、當作token的時候的問題。沒有dietary這個詞彙,所以你也不用指望它辨識出正確的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:46.020" id=13:46.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=826">13:46.020</a></div>
+        <div class="t">但是它音是正確的,這個還蠻厲害的,它用diet跟dairy湊出dietary。這句話接下來還辨識出什麼呢?它辨識出一個nutritional。但其實它想要輸出的是nutritionist,但是因為詞典裡面沒有nutritionist,所以它就隨便output一個nutritional。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:04.280" id=14:04.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=844">14:04.280</a></div>
+        <div class="t">再來居然是完全讀得懂的,"What classes should I take for two-year program in community college?" 它辨識出一個你完全讀得懂的句子,這還挺厲害的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:20.760" id=14:20.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=860">14:20.760</a></div>
+        <div class="t">但是有趣的地方是,"community",這個淺藍色的pick居然出現了兩次,它等於是有點結巴,就community,community,college。等一下我們會講說,為什麼ctc會發生這種現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.260" id=14:34.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=874">14:34.260</a></div>
+        <div class="t">其實在同一篇paper裡面有試vocabulary更大的case,vocabulary更大你就不會有這種錯誤了。那ctc到底work不work呢?結果是這樣子的,如果你單用剛才講的LAS,你可以得到這個是在八十個小時的Wall Street Journal的copy上做出來的結果,encoder decoder,也就是LAS,它有十幾percent的錯誤率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.640" id=14:59.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=899">14:59.640</a></div>
+        <div class="t">後面這個加language model,如果你不知道是什麼,你就想成是有做一個像是post-processing的步驟,就是已經辨識出第一次的結果,覺得有點差,然後想辦法再把它修一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.940" id=15:13.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=913">15:13.940</a></div>
+        <div class="t">encoder decoder在沒有修的時候就只有十八percent的錯誤率,這其實也還好。那ctc,你會發現說,沒有修就會慘,這邊有三十percent的錯誤率,這邊有三十五percent的錯誤率。它要得到不錯的結果,必須要有post-processing再修一下,它的結果才會好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.860" id=15:35.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=935">15:35.860</a></div>
+        <div class="t">所以,你在座位裡面其實也可以體驗這件事,你會發現說你ctc的output有一點容易結巴,所以你要用一個post-processing,你要自己再想個辦法把它輸出的結果再修一下,結果才會好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.220" id=15:48.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=948">15:48.220</a></div>
+        <div class="t">所以有些人甚至覺得ctc不該被歸類為end-to-end的model,因為往往要加post-processing,要再處理一下它的輸出,結果才會好,所以有的人甚至不把它當作end-to-end的其中一員。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.500" id=16:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=960">16:00.500</a></div>
+        <div class="t">不過反正這個就是看你怎麼想了,反正ctc的結果就是這樣了,它有點不夠強,但是也不是完全不行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:09.040" id=16:09.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=969">16:09.040</a></div>
+        <div class="t">那ctc會有什麼樣的問題呢?你看,這個ctc的linear classifier,我們可以把它想成就是decoder。這些decoder每次只吃一個vector,然後就要決定輸出是什麼,而且每一次輸出決定是independent的,是獨立各自決定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.080" id=16:34.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=994">16:34.080</a></div>
+        <div class="t">所以我覺得ctc可能會遇到一個這樣子的狀況,假設我們前三個acoustic feature都對應到客號,人該output一個c,第一個acoustic feature讀進來,linear classifier覺得說這個是c,第二個H2進來,linear classifier有點聽不懂,所以它說我覺得是no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.260" id=16:56.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1016">16:56.260</a></div>
+        <div class="t">那其實後面就不可以再輸出c了,因為後面如果再輸出c會怎樣?你就會變成有兩個c了,你就結巴了。因為按照ctc的規則,看到no要去掉,看到一樣duplicate的要merge起來,然後再把看到no的東西去掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:17.940" id=17:17.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1037">17:17.940</a></div>
+        <div class="t">所以如果兩個字母中間隔了no,那就是要產生兩個字母。所以接下來如果再產生c,那就結巴了,那就產生兩個c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.120" id=17:30.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1050">17:30.120</a></div>
+        <div class="t">但是對於第三個timestamp的classifier來說,它根本不知道前面的人到底做了什麼事,它聽起來input的聲音就蠻像c的,所以它也覺得它應該產生c,但它不知道說這樣子產生出來的結果可能就會是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:45.000" id=17:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1065">17:45.000</a></div>
+        <div class="t">我最近發現說,ctc辨識的結果沒有那麼好,你可以在作業裡面自己體會一下。當然我覺得ctc也沒有我這邊講得這麼差,因為我這邊說每一個classifier都是完全independent,各自獨立決定的,所以感覺好像說應該非常弱。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.180" id=18:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1081">18:01.180</a></div>
+        <div class="t">但是其實下面還有encoder,encoder可能是一個很深的LSTM,所以encoder可能會知道說,在第二個timestamp已經出現no了,它會壓制下一個timestamp產生c的機率。不過我們就要看encoder能不能夠學到這件事就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.820" id=18:19.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1099">18:19.820</a></div>
+        <div class="t">這個是ctc,其實在助教程式裡面還有幫你implement同時做ctc跟sequence-to-sequence,這個我投影片上沒有解釋,它概念很簡單,就是說我們train一個LAS,然後encoder的部分同時接出來做ctc,有兩個loads,這兩個loads一起train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.180" id=18:43.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1123">18:43.180</a></div>
+        <div class="t">你說這樣會比較好嗎?你可以自己在作業試試看,看看這樣子會給你帶來什麼樣的幫助。所以我們有LAS,有ctc,LAS跟ctc其實可以放在同一個model裡面一起train,你可以說LAS的encoder就是ctc。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.340" id=19:01.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1141">19:01.340</a></div>
+        <div class="t">接下來我們就要介紹下一個模型,這下一個模型叫做RNNT,叫RNN Transducer。在講RNN Transducer之前,我想要跟大家介紹一個叫做RNA的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.540" id=19:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1160">19:20.540</a></div>
+        <div class="t">RNA就是核糖核酸,DNA就是去氧核糖核酸。我覺得Google的人都是模型命名大師,每個模型都一定要湊個梗才行。RNA是recurrent neural aligner,它其實是在我等一下要講的RNNT之後才被proposed出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:41.260" id=19:41.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1181">19:41.260</a></div>
+        <div class="t">但是我覺得,就整個演化的歷程而言,先講RNA是比較順的。我覺得RNA像是一個介於RNNT跟ctc之間的過渡,它比較像是這兩個之間的一個過渡的生物,所以我想要先講一下RNA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:57.480" id=19:57.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1197">19:57.480</a></div>
+        <div class="t">我們剛才說ctc的decoder有什麼問題?ctc的decoder,它是linear classifier,每次從encoder那邊拿一個h進來,然後通過一個classifier,你就要output結果。每一次classifier決定要output什麼東西的時候是各自獨立的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.520" id=20:12.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1212">20:12.520</a></div>
+        <div class="t">我們能不能不要讓它獨立決定東西呢?我們能不能夠讓classifier每次output東西的時候看一下前面已經輸出什麼呢?可以,你就把這邊的linear classifier換成RNN,換成LSTM,就結束了,這就是RNA做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:33.560" id=20:33.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1233">20:33.560</a></div>
+        <div class="t">把原來的ctc linear classifier改成LSTM,每一次都會看前一個time state輸出的東西,而且有hidden state來傳遞前一個time state所輸出的資訊,這樣就是RNA了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:48.380" id=20:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1248">20:48.380</a></div>
+        <div class="t">RNA再做一些改變,就變成剛才講的RNNT,RNN的transducer。RNA還可以做什麼樣的改變呢?我們到目前為止,看ctc或RNA,它們都是吃一個輸入就輸出一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:05.020" id=21:05.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1265">21:05.020</a></div>
+        <div class="t">但是有沒有可能有時候我們會需要吃一個輸入輸出多個token呢?舉例來說,TH它只有一個音而已,TH只有一個音而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.900" id=21:19.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1279">21:19.900</a></div>
+        <div class="t">你希望機器聽到TH,然後對ctc來說聽到TH,它只能先輸出T,然後再記得說,我這個輸出T還沒有輸出完,等一下我要記得輸出H。那這樣子好像有點麻煩,能不能夠做得更好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:38.380" id=21:38.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1298">21:38.380</a></div>
+        <div class="t">當然在實作上有一個比較簡易的方法可以解決我剛才講的那個問題,就是你就直接把TH當作一個單位就好了。因為token是你自己訂的,你不一定要拿所有的字母出來當作token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:53.160" id=21:53.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1313">21:53.160</a></div>
+        <div class="t">除了所有的字母以外,你可以自己加新的token。如果你覺得TH是一個發音的單位的話,你就把TH當作token加進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:00.440" id=22:00.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1320">22:00.440</a></div>
+        <div class="t">如果你覺得EE重複兩次,比如說NPUEE常常出現,EE重複兩次,應該是一個單位,你把EE就加進去。所以,token要加什麽是你自己決定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.100" id=22:12.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1332">22:12.100</a></div>
+        <div class="t">但是從機器能力的觀點來考量,我們當然希望說現在的模型越flexible越好,給它什麽樣的data都可以train下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:19.000" id=22:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1339">22:19.000</a></div>
+        <div class="t">所以,如果我們今天會遇到的狀況是,有時候同一個發音其實要對應到一串token而不是一個token,我們有沒有辦法解呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:27.380" id=22:27.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1347">22:27.380</a></div>
+        <div class="t">RNT可以解這個問題,RNT的做法是這個樣子的。剛才我們都是看到一個輸入就看到一個輸出,RNT是看到一個輸入以後就一直輸出,輸出到model覺得滿意為止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:43.860" id=22:43.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1363">22:43.860</a></div>
+        <div class="t">所以,看到一個HT進來,RNT可以先輸出個T,然後再輸出個H,然後如果它覺得它滿意了,它看到這個H,它沒有更多東西可以輸出了,那怎麽辦呢?它就輸出NULL。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:57.960" id=22:57.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1377">22:57.960</a></div>
+        <div class="t">NULL在這邊你可以解釋成,我看完了,給我看下一個東西,給我看下一個input,這個就是RNT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:06.200" id=23:06.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1386">23:06.200</a></div>
+        <div class="t">所以RNT整個運作是怎麽樣的呢?它的運作是這樣,我們先有HT進來,這個來自於encoder,RNT可以做online的recognition,HT先進來,然後丟給decoder,decoder先output個T,然後再output一個H,然後再說,夠了,給我下一個input吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:27.160" id=23:27.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1407">23:27.160</a></div>
+        <div class="t">然後encoder就再把HT加1拿進來,丟給decoder,decoder說,那我輸出個1,輸出1以後覺得夠了,再給我下一個input吧,然後就把HT加2丟進來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.900" id=23:40.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1420">23:40.900</a></div>
+        <div class="t">很多時候,因為輸入的一個acoustic feature其實資訊量很少,所以很多時候一個H一丟進來,然後你的decoder就覺得這個沒什麽好輸出的,它就馬上說,再給我下一個看看,再給它HT加3,然後它就輸出一個底線,輸出一個空白,代表我要產生新的詞彙了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.100" id=24:01.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1441">24:01.100</a></div>
+        <div class="t">然後可能再輸出一個no,代表說,再給我下一個friend,然後再給我下一個acoustic feature,然後再繼續升級。這個就是RNNT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:13.080" id=24:13.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1453">24:13.080</a></div>
+        <div class="t">所以這個產生的結果是TH-no,1-no-no,底線-no,no就代表給我下一個acoustic feature,給我下一個acoustic feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:25.520" id=24:25.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1465">24:25.520</a></div>
+        <div class="t">所以真正辨識的結果,你會把所有的no拿掉,你把這邊所有的no拿掉,就知道說這邊output是TH-1,然後空白。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.780" id=24:33.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1473">24:33.780</a></div>
+        <div class="t">所以今天給這個RNNT一個句子,會輸出幾個no呢?它會輸出大T一個no,它會在原來的句子裡面插入大T一個no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.460" id=24:45.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1485">24:45.460</a></div>
+        <div class="t">為什麼大T一個no呢?你的輸入有大T一個acoustic feature,如果你輸入有大T一個acoustic feature,它就會輸出大T一個no,因為每次要讀下一個acoustic feature的時候,你都需要輸出一個no才能夠讀下一個acoustic feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:04.300" id=25:04.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1504">25:04.300</a></div>
+        <div class="t">所以如果你今天進來的這個sequence語音的長度有大T一個acoustic feature,那你就需要輸出大T一個no,才有辦法把這個有大T一個acoustic feature的聲音訊號把它讀完。這個就是RNNT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:20.440" id=25:20.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1520">25:20.440</a></div>
+        <div class="t">RNNT有跟CTC一樣的問題。什麼樣的問題呢?就是剛才講的alignment的問題,因為RNNT它在輸出的時候需要輸出no,它需要知道在什麼時候應該要輸出一個no,告訴encoder說我要讀下一個friend,把下一個friend送給我,把下一個acoustic feature送給我。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:43.000" id=25:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1543">25:43.000</a></div>
+        <div class="t">但是在training的時候,這種資訊是不存在的,在training的時候沒有這樣子的label。這種label你也要自己產生。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.380" id=25:52.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1552">25:52.380</a></div>
+        <div class="t">所以RNNT跟剛才CTC一樣,有一個alignment的問題。舉例來說,工讀生給你的label是四個acoustic feature,然後它的中文是好棒,那你必須要在這個好棒裡面自己找位置插四個no進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:07.800" id=26:07.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1567">26:07.800</a></div>
+        <div class="t">這邊我們必須要把好棒插入四個no,才能夠把輸入的這四個acoustic feature把它讀完。可是這四個no應該要被插在哪裡呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:21.900" id=26:21.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1581">26:21.900</a></div>
+        <div class="t">你可以說先放第一個no,再放好,然後接著再放兩個no,再放棒,再放最後一個no。這樣可以把四個feature讀完,然後輸出好棒。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:34.900" id=26:34.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1594">26:34.900</a></div>
+        <div class="t">你也可以說,一開始就先輸出三個no,就讀第一個feature,覺得沒什麼好輸出的,就輸出個no,讀第二個feature,然後再輸出no,讀第三個feature,再輸出no,讀第四個feature進來,一次輸出好棒,再輸出no,代表全部都讀完了。這樣也可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:57.600" id=26:57.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1617">26:57.600</a></div>
+        <div class="t">我們不知道哪一種放no的方法才是正確的。那RNNT跟CTC一樣,怎麼辦呢?它會窮取所有可能的alignment,把所有可能的alignment都在training的時候進行考慮。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:14.020" id=27:14.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1634">27:14.020</a></div>
+        <div class="t">實際上,RNNT會另外訓練一個recurrent neural network。這個recurrent neural network的作用有點像是一個language model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:27.200" id=27:27.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1647">27:27.200</a></div>
+        <div class="t">你不知道它是什麼language model,沒有關係。實際上,我們在考慮每一個linear classifier的dependency的時候,我們在RNNT裡面並不是直接把這些linear classifier改成一個RNN,它是另外用一個RNN來考慮每一個timestamp決定要output哪一個token的dependency。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:54.080" id=27:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1674">27:54.080</a></div>
+        <div class="t">它要怎麼做的呢?我們另外訓練了一個RNN,另外訓練了一個recurrent neural network。這個recurrent neural network會看說,如果前面已經有輸出token,就把那些token丟到recurrent neural network裡面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:09.520" id=28:09.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1689">28:09.520</a></div>
+        <div class="t">這邊這樣講有點抽象,我們舉具體的例子。現在丟入一個HT,RNNT決定要產生一個T,這個T就會被放到那個recurrent neural network裡面去,然後那個recurrent neural network會有一個輸出,這個輸出會變成RNNT決定下一個token的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:30.900" id=28:30.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1710">28:30.900</a></div>
+        <div class="t">本來看到HT,輸出T,然後會影響這個recurrent neural network得到新的輸出。雖然這邊輸入還是HT,但是因為這邊這個recurrent neural network已經插一腳進來了,它已經插一個不同的東西進來了,所以這邊不會再輸出T,這邊會輸出H。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.660" id=28:48.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1728">28:48.660</a></div>
+        <div class="t">這個H會再丟到recurrent neural network裡面去,然後recurrent neural network會產生新的輸出進來。雖然同樣是HT,但這邊的輸入,這邊這個recurrent neural network輸出來的這條紅色的線跟這邊輸出來的這條紅色的線,它們不是同樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:05.360" id=29:05.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1745">29:05.360</a></div>
+        <div class="t">所以本來這邊會產生H,但是這個recurrent neural network它已經看過這個H,所以又受到影響了,所以這邊會產生新的東西,比如說產生NO,代表說要看下一個occlusive feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:18.700" id=29:18.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1758">29:18.700</a></div>
+        <div class="t">這邊一個有趣的設計是,你的另外的、額外的這個RNN,它會無視這個NO,等一下會告訴大家說為什麼要無視這個NO。無視這個NO,當作沒這件事,當作沒看到產生這個NO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.920" id=29:35.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1775">29:35.920</a></div>
+        <div class="t">這邊產生NO以後,代表我要再看下一個occlusive feature,所以下一個occlusive feature,HT加1就被拿進來了,然後產生1,一樣會受到recurrent neural network的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:49.180" id=29:49.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1789">29:49.180</a></div>
+        <div class="t">在前一個time step,我們是看到HT跟紅色這條線產生NO,那在下一個time step,雖然一樣是紅色這條線,就這邊的東西跟這邊的東西是一模一樣的,但是輸入變了,從原來的HT變成了HT加1,所以輸出可能就從NO變成1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.640" id=30:08.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1808">30:08.640</a></div>
+        <div class="t">這個process就繼續下去,那1會再丟進這個recurrent neural network裡面,然後產生新的東西出來,然後影響下一個time step的輸出,產生NO,然後NO就ignore,這個RNN不看它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.180" id=30:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1824">30:24.180</a></div>
+        <div class="t">然後這個RNN會再影響下一個time step的輸出,還是NO,不看它,然後再有新的occlusive feature進來,RNN會再影響它的輸出,產生底線,這是一個token,這個token會影響RNN產生新的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:42.060" id=30:42.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1842">30:42.060</a></div>
+        <div class="t">講到這邊,你可能會覺得有點一頭霧水,就覺得說原來那個recurrent neural network感覺挺好的,前一頁那個recurrent neural network感覺很容易了解,為什麼這邊要用一個額外的RNN,為什麼要把這邊原來存在的recurrent拔掉,用一個額外的RNN,這個額外的RNN還要特別把NO過濾掉,還特別要忽視NO呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.780" id=31:09.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1869">31:09.780</a></div>
+        <div class="t">這邊可以試著解釋一下,第一個在現階段你覺得最直覺、你最容易聽得懂的理由是,這個東西的角色是一個language model,它只看token當作輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.420" id=31:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1888">31:28.420</a></div>
+        <div class="t">它只看token當作輸入有什麼好處呢?你可以直接先用大量的文字去訓練這個RNN,你可以直接先爬大量的文字,把這些文字都轉成token,然後訓練RNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:43.000" id=31:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1903">31:43.000</a></div>
+        <div class="t">因為那些文字裡面沒有NO這種東西,你一般的文字裡面哪有NO這種東西?沒有NO這種東西,所以你不要給它看那些NO,它在一般的文字裡面沒有看過,這樣子它會壞掉。你拿大量的文字先去train這個RNN,先把它train好,接下來再跟encoder一起去做訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.780" id=32:01.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1921">32:01.780</a></div>
+        <div class="t">但不要給它看NO,因為它在pre-train的時候沒有看過NO,這是一個理由,這也是一個不錯的理由。但是還有一個我覺得更本質的理由就是,這一步是必要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.320" id=32:17.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1937">32:17.320</a></div>
+        <div class="t">我們剛才講說,RNN-T在訓練的時候,它要窮取所有的alignment,所有alignment都是對的,拿去做訓練。這件事,你當然需要一個好的演算法才能做到這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:30.520" id=32:30.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1950">32:30.520</a></div>
+        <div class="t">而那個演算法能夠work的前提是,你必須要有一個internal language model,它是無視NO的。如果這個RNN把NO當作input的話,你就沒有辦法用我們在下一個投影片要講的那個演算法去窮取所有可能的alignment,去把所有alignment的分數加起來,然後拿去做訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.680" id=32:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1974">32:54.680</a></div>
+        <div class="t">所以,這一個特別的設計,我認為更本質的理由是,為了訓練而設計的。到時候你看了後面訓練的algorithm,你就會發現,嗯,這真是一個八旗等級的設計。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:08.800" id=33:08.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=1988">33:08.800</a></div>
+        <div class="t">在這邊乍看之下,你會覺得說,怎麼這麼奇怪?用原來的,把這邊當作RNN不是感覺更好嗎?感覺更直覺嗎?為什麼要把時間和時間之間的dependence的關係另外拉出來,用另外一個network來control呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:24.800" id=33:24.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2004">33:24.800</a></div>
+        <div class="t">要這麼做,你之後在做alignment的時候才有辦法窮取所有的alignment。我們還有十分鐘,不過沒有關係,應該可以把後面兩個模型講完。接下來,我們要講兩個比較新的模型,一個叫做neural transducer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:40.420" id=33:40.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2020">33:40.420</a></div>
+        <div class="t">Neural transducer是什麼呢?剛才講的RNA或者是CTC,每次只讀一個acoustic feature進來,這樣感覺沒有特別有效率。Neural transducer它做了一個改變,它說,能不能不要一次只讀一個acoustic feature進來,一次讀一把acoustic feature進來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:03.440" id=34:03.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2043">34:03.440</a></div>
+        <div class="t">但是讀一把acoustic feature進來,我們要看哪些acoustic feature呢?我們就做attention。我們在這一個小小的範圍內,在這個chunk,這一塊區域內,在這個window內做attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:18.460" id=34:18.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2058">34:18.460</a></div>
+        <div class="t">原來CTC、RNA、RNT每次只讀一個acoustic feature進來,所以沒什麼好做attention的,你就把那acoustic featurecopy進來當作RNA的輸入就好。但現在一次讀N個acoustic feature,我這邊寫大W,一次讀大W的acoustic feature,那到底要看哪些acoustic feature呢?由attention來決定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:37.680" id=34:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2077">34:37.680</a></div>
+        <div class="t">所以neural transducer它的運作方式是這個樣子。它運作的方式是說,我們先讀一些acoustic feature進來,累積夠多的acoustic feature了,它可以放到一個window裡面了,接下來我們就開始做decode,開始產生輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:55.540" id=34:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2095">34:55.540</a></div>
+        <div class="t">輸出的時候,我們只在這個小範圍之內做attention,做一下attention,產生個C,再做一下attention,產生個A,然後跟RNT一樣,如果這個window裡面的東西覺得讀得差不多了,沒什麼好再輸出的,就輸出個Nor,然後代表我想看下一個window。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:15.220" id=35:15.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2115">35:15.220</a></div>
+        <div class="t">接下來,我們就再等encoder再輸出一些東西給你。等encoder輸出的東西足夠一個window了,再丟給decoder,這邊要做attention,決定說要看window裡面的哪些feature,做一下attention,然後再產生T,就產生cat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:35.000" id=35:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2135">35:35.000</a></div>
+        <div class="t">接下來,如果覺得這個window裡面讀的東西差不多了,就產生Nor,再讀下一個window的資料,這個就是neural transducer。那這個window應該開多大呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:46.860" id=35:46.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2146">35:46.860</a></div>
+        <div class="t">在neural transducer原始文獻裡面有試了一下,window從5開到30,他發現說如果沒有attention,沒有attention就是你就只吃那個window裡面的最後一個acoustic feature,那沒有attention,你window一長,結果就爛掉,不過這個也是可以預期的,因為你就是拿最後一個acoustic feature來代表整個window嘛,那如果window太長,結果爛掉也是可以預期的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:13.800" id=36:13.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2173">36:13.800</a></div>
+        <div class="t">有attention就不錯了,有attention的話window的size的大小沒那麼重要,反正有attention都做得好。他試了三種attention,performance都差不多了,一個是data product的attention,一個是MLP的attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:26.860" id=36:26.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2186">36:26.860</a></div>
+        <div class="t">最後一個,這個LSTM的attention,它也是一種local aware的attention,我們剛才講attention的時候講過local aware的attention,講說我們要把前一個test set的attention的分數,attention的weight,那些alpha,在下一個test set還要再做考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:45.040" id=36:45.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2205">36:45.040</a></div>
+        <div class="t">其實你看那個local aware的attention原始的paper,有點不知所云,看不太懂,他要講一些什麼CNN之類的,也看不太懂,反正他的意思就是我剛才說的那個樣子就對了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:57.000" id=36:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2217">36:57.000</a></div>
+        <div class="t">這邊他也做一個LSTM的attention,很神奇,他把attention的weight讀進LSTM裡面去,然後透過LSTM來考慮前一個test set的attention的weight,這個叫做LSTM的attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:14.000" id=37:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2234">37:14.000</a></div>
+        <div class="t">下一個東西叫做monotonic chunkwise的attention,它的縮寫叫做mocha,就是一種咖啡。Google的模型命名大師,他們都很會給模型取名字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:29.000" id=37:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2249">37:29.000</a></div>
+        <div class="t">這個monotonic chunkwise的attention,它是想要在attention上面做一些改變,不過這邊為了要跟其他的模型做比較好的連結,我用我自己的講法來說它做的是什麼事情。如果你有興趣的話,可以看一下原始的paper,原始的paper還有很多東西,非常非常多東西,是我今天沒有講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:48.820" id=37:48.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2268">37:48.820</a></div>
+        <div class="t">這個mocha是怎麼做的呢?mocha我們可以把它想成是dynamic的移動我們的window。剛才在neural transducer裡面,你每次window移動的距離都是固定的。舉例來說,在剛才的例子裡面,先看前四個frame,然後再來就移動四步,再看接下來四個frame。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:10.760" id=38:10.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2290">38:10.760</a></div>
+        <div class="t">那mocha的想法是,我們能不能夠自由地決定我們要把window移動多少呢?所以在mocha裡面,它有一個operation,這個operation其實它的運作的原理跟我們看到的attention是有點像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:28.780" id=38:28.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2308">38:28.780</a></div>
+        <div class="t">它一樣是吃兩個vector,然後輸出yes或no,attention就是給它兩個vector輸出一個數值嘛。那這邊有一個新的module,這個module叫做要不要把window放在這裡,它吃一個frame跟一個z,然後產生yes或no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:51.800" id=38:51.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2331">38:51.800</a></div>
+        <div class="t">如果yes就是把window放在這裡,如果no就是我們應該要把window享用。所以它運作的過程就是這樣,一開始先h1進來,跟z去看說要不要放在這裡,它決定不要,再把h2讀進來,看說要不要放在這裡,不要,h3讀進來,不要放在這裡,h4讀進來,說好,要放在這裡,那就把window放在這邊,然後就開始用attention decode。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:21.780" id=39:21.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2361">39:21.780</a></div>
+        <div class="t">不過在mocha裡面,它是設定說每次只decode一個token,所以它就不需要再輸出那個no,我現在輸出完了,給我下一個window。它沒有這個設計,可能是因為它覺得說這個window移動的operation已經夠好了,它會移動到一個合適的位置,在那個合適的位置你只需要output一個token就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:45.780" id=39:45.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2385">39:45.780</a></div>
+        <div class="t">那你可以說你把mocha在加前面的rmnt的概念,看一個window,然後decode很多東西,decode到no這樣子,然後再看下一個window,可不可以呢?我覺得應該也可以啦,我沒有看過有人做過這件事情就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:01.780" id=40:01.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2401">40:01.780</a></div>
+        <div class="t">那mocha這邊它只會decode一個token,它不需要decodeno,decode一個token就結束,window就往右移,接下來再看說window放在這裡好不好,好不好,然後h6再進來,window放在這邊好不好,好,然後就再做一次attention,然後產生下一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:20.780" id=40:20.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2420">40:20.780</a></div>
+        <div class="t">那你很會問說,剛才有一個要不要放在這裡的operator,它會輸出yes或no,這是binary的啊,這個不能為分啊,到底實際上怎麼train呢?這個詳盡論文,其實是頗有學問在這裡面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:36.780" id=40:36.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2436">40:36.780</a></div>
+        <div class="t">好,那這個就是我們今天要跟大家講的東西,那就是摘要一下我們講的模型有什麼。我們講了LAS,它就是你知道的sequence-to-sequence model,我們講了CTC,CTC就是decode是一個linear classifier的sequence-to-sequence model,我們講了RNA,RNA就是輸出一個東西就要輸出一個東西的sequence-to-sequence model,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:01.780" id=41:01.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=CGuLuBaLIeI&t=2461">41:01.780</a></div>
+        <div class="t">RMNT就是輸入一個東西可以輸出多個東西的sequence-to-sequence model,neural transducer就是一次輸入一個window的RMNT,然後mocha就是window可以自由移動的neural transducer,就是跟大家介紹了這些模型。後面就是一大堆的reference啊。</div>
+    </div>
+    
+</body>
+</html>   

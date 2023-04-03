@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ML Lecture 19: Transfer Learning</h2><a href=https://www.youtube.com/watch?v=qD6iD4TFsdQ><img src=https://i.ytimg.com/vi_webp/qD6iD4TFsdQ/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1">00:01.000</a></div>
+        <div class="t">Transfer Learning指的意思是什麼呢?Transfer Learning指的意思是說,假設你現在手上有一些跟你現在要進行的task沒有直接相關的data,那你能不能用這些沒有直接相關的data來幫助我們做一些什麼事情?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:21.000" id=00:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=21">00:21.000</a></div>
+        <div class="t">比如說你現在要做的是貓跟狗的classify,那所謂的沒有直接相關的data是什麼意思呢?所謂的沒有直接相關其實有很多不同的可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:33.000" id=00:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=33">00:33.000</a></div>
+        <div class="t">一個可能是比如說input的distribution是類似的,比如說input的distribution一樣是動物的圖片,但是task你的label是無關的,比如說現在你的另外一些data其實是要分這個大象跟老虎。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.000" id=00:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=52">00:52.000</a></div>
+        <div class="t">你的這個input的domain是像的,但是你的task是不一樣的。還有另外一個可能是你是input的domain是不一樣,但是你的task是一樣的,比如說一樣是要做貓狗的分類,但是你現在的圖片是一些招財貓的圖片跟高飛狗的圖片,跟原來的圖片的distribution是非常不像,但你要做的task是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14.000" id=01:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=74">01:14.000</a></div>
+        <div class="t">那transfer learning要問的問題就是,我們能不能夠在有一些不相關的data的情況下,然後來幫助我們現在要做的task。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26.000" id=01:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=86">01:26.000</a></div>
+        <div class="t">那為什麼我們要考慮transfer learning這樣的task呢?舉例來說,在speech recognition裡面,可能你現在要做的事情是台語的語音辨識,但是台語的data是很少的。那你就會想說,我們今天能不能夠,但是其實語音的data是很容易收集的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:44.000" id=01:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=104">01:44.000</a></div>
+        <div class="t">你隨便去YouTube上爬一下,就可以爬到一大堆英文、中文、其他語言的data。那我們能不能夠用其他語言的data來improve台語的語音辨識這件事情。或者是,如果在image recognition裡面,或許你現在有興趣的task是做medical的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:03.000" id=02:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=123">02:03.000</a></div>
+        <div class="t">你想要讓機器自動診斷說有沒有tumor之類的,現在很流行做這些事情。可是這種medical的image其實是很少的,你不可能手上有太多這種image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:16.000" id=02:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=136">02:16.000</a></div>
+        <div class="t">但是實際上image的data我們永遠都不缺,你胡亂網絡上爬就有一大堆image,或你download一下endless裡面有超過一百萬張image,有這麼多image,只是不是medical的image。那這些其他的image,對你現在要考慮的task有沒有什麼可能是有幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:35.000" id=02:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=155">02:35.000</a></div>
+        <div class="t">或者是在文件的分析上面,你現在要分析的文件是某個很specific的domain,比如說你想要分析的是某種特別的法律的文件,那這種法律的文件或許你的data很少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.000" id=02:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=167">02:47.000</a></div>
+        <div class="t">但是假設你可以從網絡上collect到一大堆的data,那這些data有沒有可能是有幫助的。那其實transfer learning這件事情是有可能的嗎?用不相干的data,用來自其他domain的data來幫助我們現在的task是有可能的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:02.000" id=03:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=182">03:02.000</a></div>
+        <div class="t">是有可能的,因為我們在現實生活中,我們都是不斷地在做transfer learning。比如說,你可能是一個研究生,你可能想要知道研究生應該怎麼樣過日子,那怎麼辦呢?你就可以參考報案網。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:17.000" id=03:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=197">03:17.000</a></div>
+        <div class="t">那在報案網裡面,其實漫畫家就是研究生,折邊就等同於指導教授。漫畫家每週都要畫一個分鏡,然後去給折邊看,然後就跟折邊討論,就像你每週要跟指導教授進度報告一樣,畫分鏡就是好實驗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:37.000" id=03:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=217">03:37.000</a></div>
+        <div class="t">最後目標就是要在jump上面連載,在jump上面連載就是投稿期刊,連world embedding都知道這件事情。雖然我們沒有一個研究生的守則,但是從報案網裡面,我們可以知道說,身為一個研究生,應該要做什麼樣的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:57.000" id=03:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=237">03:57.000</a></div>
+        <div class="t">那你可能會覺得說,拿漫畫來跟神聖的研究作類比,有點不倫不類。我跟你講,漫畫家都是用生命來畫漫畫的,其實這比我們做研究認真多。我不知道大家有沒有看過報案網,我簡介一下報案網的劇情,好像三十個字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:15.000" id=04:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=255">04:15.000</a></div>
+        <div class="t">報案網就是說,有兩個高中生,一個叫曾晨,一個叫高某,然後他們不知道什麼回事,就很想當漫畫家,後來就當了漫畫家,故事就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.000" id=04:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=267">04:27.000</a></div>
+        <div class="t">曾晨畫,因為每週都有連載,實在太累了,曾晨就累到住院要開刀。住院的時候,他手還是握著畫筆不斷畫,然後大家都阻止他。他女朋友就來看他,他女朋友決定要支持他,他女朋友就握著他的手續續畫下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.000" id=04:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=285">04:45.000</a></div>
+        <div class="t">所以這個就好像說,你今天在做研究的時候,你就每週記錄報告都太累了,累到生病住院了,然後其他人都叫你不要再做研究了,你女朋友來看,你把你的手壓在鍵盤上面,叫你繼續寫功課。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:02.000" id=05:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=302">05:02.000</a></div>
+        <div class="t">比如說,裡面有一個天才漫畫家叫辛七惠優,他應該在影射韋田榮一郎,辛七惠優他想要結束他現在的連載,他就跟總編說他要結束現在的連載,然後就跟總編談一個條件,我從現在開始,接下來的十週,我要是降回人氣第一名,如果我可以做到的話,你就要讓我結束連載,如果我做不到,我就繼續畫到死為止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.000" id=05:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=324">05:24.000</a></div>
+        <div class="t">就像你跟指導教授說,我做這個題目很膩,我想要畢業,指導教授說,你接下來連發十篇給我,東南北斜賀,我就讓你畢業,如果做不到的話,你就繼續做到死為止,就是這個概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:36.000" id=05:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=336">05:36.000</a></div>
+        <div class="t">所以他們是比我們還要認真很多的,所以我覺得每個人都應該看一下,研究生都應該看一下爆漫王。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:42.000" id=05:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=342">05:42.000</a></div>
+        <div class="t">Transfer learning我們要怎麼講呢?Transfer learning是這樣子的,Transfer learning有很多很多的方法,它是很多方法的集合。在你以下聽到的我用的這個terminology裡面,這個地方的這個terminology有點混亂,所以不同的文獻用的詞彙其實不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.000" id=06:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=367">06:07.000</a></div>
+        <div class="t">有些方法有人說算是transfer learning,有些方法有人又說不算是transfer learning,這邊是很混亂的。所以如果你看到我說的跟別人不一樣,也有可能並不是我錯或者是別人錯,這個地方就是很混亂,你只要知道那個方法是什麼就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.000" id=06:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=381">06:21.000</a></div>
+        <div class="t">那我們會怎麼講呢?我們講法是這樣,我們現在有一個我們想要做的task,然後有一些跟這個task有關的data,這個叫做target data,我們有一些data是跟這個task無關的data,這個data叫做source data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.000" id=06:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=399">06:39.000</a></div>
+        <div class="t">接下來我們的講法會是,這個target data它有可能是有label的,也可能是沒有label的,那個source data它也有可能是有label的,也有可能是沒有label的,所以現在我們就會有四種可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:55.000" id=06:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=415">06:55.000</a></div>
+        <div class="t">所以之後我們就會分這四種可能來討論。那我們在這邊,我想我們休息五分鐘就好,然後我們就請做得特別好的同學來講一下他是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=429">07:09.000</a></div>
+        <div class="t">好,謝謝,那我們就在這邊休息一下。好,各位同學大家好,那我們來講一下,繼續講transfer learning。那上次我們講到說,這個transfer learning我們可以分成四個不同的,四個不同的象限來討論它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:33.000" id=07:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=453">07:33.000</a></div>
+        <div class="t">我把滑鼠叫出來一下,分成四個不同的,我們可以分成四個不同的象限來討論它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.000" id=07:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=465">07:45.000</a></div>
+        <div class="t">OK,我看得到,我看得到滑鼠。我們可以分成四個不同的象限來討論它。那我們的data分成,在螢幕上看不到滑鼠,但是在我的電腦上面卻看得到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.000" id=08:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=483">08:03.000</a></div>
+        <div class="t">我也是覺得非常的困惑。這樣就有了。好,那data分成兩種,一種是target data,一種是source data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=495">08:15.000</a></div>
+        <div class="t">所謂的target data是說,這個target data跟我們現在要考慮的這個task是直接相關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.000" id=08:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=503">08:23.000</a></div>
+        <div class="t">那source data呢,它是跟我們現在要考慮的task沒有直接的關係。那當然什麼叫做沒有直接的關係,這個定義是比較模糊的,可以用很多種不同的定義方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.000" id=08:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=519">08:39.000</a></div>
+        <div class="t">有人說,比如說,如果,雖然說input都是image,但是如果這個image是,它們的distribution是很不一樣的,這些image,比如說一個是食物的image,一個是真正的東西的image,一個是動畫的image,那它們就差很多,那就可以算是跟這個task沒有直接相關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:59.000" id=08:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=539">08:59.000</a></div>
+        <div class="t">好,等一下我們討論的方式就是,我們可以分成說我們的target data有可能是有label的,有可能是沒有label的,那我們的source data也可能同時是有label的,也沒有label的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=551">09:11.000</a></div>
+        <div class="t">所以總共有四種可能,那分別在這四種可能的情況下呢,介紹一些方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.000" id=09:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=558">09:18.000</a></div>
+        <div class="t">好,那我們就先來講,假設我們現在我們的target data跟source data同時都有label的情況下,那我們可以做什麼事情?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:30.000" id=09:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=570">09:30.000</a></div>
+        <div class="t">那最常見的,也最簡單的做法呢,就是finetune你的model,什麼意思呢?我們現在看一下我們現在的task,在我們現在的task裡面,我們的target和source data通通都是有label,那target data呢,我們就用上標t來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:50.000" id=09:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=590">09:50.000</a></div>
+        <div class="t">在target data裡面,我們有我們要找的function的input x上標t跟它的output y上標t。在source data裡面,我們有這個function的input x上標s跟y上標s。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:05.000" id=10:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=605">10:05.000</a></div>
+        <div class="t">但是通常我們會假設說,現在我們的target data它的量是非常少,如果target data的量其實很多的話,你就直接當作一個一般的machine learning的problem,直接拿target data來train你的model就好了,你也不需要做什麼transfer learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:22.000" id=10:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=622">10:22.000</a></div>
+        <div class="t">這邊是假設說,在做transfer learning的時候,是假設說這個target data的量是非常少,而這個source data是很多的。雖然這個source data跟我們現在考慮的task沒有關係,但我們想知道說,在target data很少的情況下,如果有一大堆不相干的source data,到底有沒有可能會有幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.000" id=10:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=644">10:44.000</a></div>
+        <div class="t">如果你今天的target data量非常少,少到只有幾個example而已,這個叫做one-shot learning。從它的名字來看,好像應該只有一個example,所以叫one-shot,但有時候也不見得只有一個example才能稱之為one-shot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=660">11:00.000</a></div>
+        <div class="t">意思就是,如果你今天target data量真的非常非常少,你可以說你在做one-shot learning。這樣子的task有什麼樣的例子呢?我覺得語音上最典型的例子就是speaker的adaptation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.000" id=11:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=679">11:19.000</a></div>
+        <div class="t">什麼意思呢?我現在的target data是某一個人的聲音,我們要辨識某一個人的聲音,但是這個人的聲音你不可能有太多的label data,你不可能對這個人的audio去做太多的transcription,你可能只有他的非常少量的transcription。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.000" id=11:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=699">11:39.000</a></div>
+        <div class="t">比如說他可能只有對你的machine說三句話,你就只有這三句話的label而已。但是source data,你有一大堆的audio data是來自於不同人的,這些audio data都是transcription,通常這種data可能上萬小時都是有可能的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.000" id=11:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=718">11:58.000</a></div>
+        <div class="t">那你當然不可能直接就用target data,某一個speaker他的data去train一個語音辨識系統,這樣一定會壞掉,所以你會希望說這個有好幾萬個小時的source data在這個task裡面可以有什麼幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=736">12:16.000</a></div>
+        <div class="t">那這邊的處理方式其實可以非常直覺,怎麼做呢?你就拿你的source data直接去train一個model,然後接下來你去finetune你的model用這個target data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:35.000" id=12:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=755">12:35.000</a></div>
+        <div class="t">什麼叫做用target data來finetune你的model呢?其實這個想法是非常直覺的,你就把你在source data上train出來的model當作是training的initial value,當作是那個初始的值,然後再用target data去train下去,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.000" id=12:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=773">12:53.000</a></div>
+        <div class="t">但是這邊可能會遇到的這個challenge是說,可能會遇到的這個問題是說,source data它真的非常非常的少,所以你今天就算是在target data上面train出一個好的model,當你把它當作model的initialization,在source data上再去做training的時候,可能你train下去整個就壞掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.000" id=13:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=793">13:13.000</a></div>
+        <div class="t">所以在train的時候要很小心,因為有很多可能的不同的技巧,比如說一個技巧叫做conservative training,conservative training是說現在有大量的source data,比如說如果在語音辨識裡面,它就是很多不同speaker的聲音,然後都有transcription,那你可以去train一個拿來做語音辨識的neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.000" id=13:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=817">13:37.000</a></div>
+        <div class="t">接下來呢,你有target data,target data是某個speaker的聲音跟transcription,你可能只有5句10句那麼多而已,那怎麼辦呢?如果你直接拿這些target data去train這個model,train下去就壞掉了,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.000" id=13:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=834">13:54.000</a></div>
+        <div class="t">你可以說我在training的時候下一些constraint,讓training的時候train完的新的model跟舊的model不要差太多,比如說你可以說我下一個constraint,下這個constraint其實就是加一個regulation,那我們之前在training的時候你會加比如說L1 L2的regulation,那在conservative training裡面你會加另外一種不同的regulation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:17.000" id=14:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=857">14:17.000</a></div>
+        <div class="t">你會說我們希望說現在新的model的output跟舊的model的output在看到同一筆data的時候,它們的output越接近越好,或者是你可以下constraint說新的model跟舊的model它們的L2 node差距越小越好,總之你就是做一些事情讓你的新的model跟舊的model它們的差距不要太大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=883">14:43.000</a></div>
+        <div class="t">這樣你就可以防止overfitting的情形,就可以防止說你的training data只有一點點train下去以後整個結果就壞掉的情形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:51.000" id=14:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=891">14:51.000</a></div>
+        <div class="t">那另外一個方法是layer transfer,現在有用source data train好的一個model,那你把這個model裡面的某幾個layer拿出來,直接copy到新的model裡面去,你把某幾個layer直接copy到新的model裡面去,接下來你用你的source data只去train沒有copy的layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:17.000" id=15:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=917">15:17.000</a></div>
+        <div class="t">可能你只保留一個layer是沒有copy的source data,就只train那個layer就好了。這樣的好處就是你的source data只需要考慮非常少的參數,它只需要考慮非常少的參數,所以就可以避免overfitting的情形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.000" id=15:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=931">15:31.000</a></div>
+        <div class="t">當然如果你後來source data夠多了,你也可以說我最後還是要finetune整個model,這樣也是可以的。那layer transfer其實是一個非常非常常見的小小的技巧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:49.000" id=15:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=949">15:49.000</a></div>
+        <div class="t">那現在有可能的問題就是,你可能會問的問題就是,哪些layer應該被transfer,哪些layer不應該被transfer呢?有趣的是在不同的task上面,需要被transfer的layer往往反而是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.000" id=16:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=966">16:06.000</a></div>
+        <div class="t">比如說在語音辨識上面,我們通常是copy最後幾層,然後train,重新traininput的那一層。為什麼呢?在語音上你可以想成說,每一個人他用同樣的發音方式,但是因為口腔結構略有差異,所以同樣的發音方式得到的聲音是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:35.000" id=16:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=995">16:35.000</a></div>
+        <div class="t">那我們說這個neural network的前幾層他做的事情,是從這個聲音訊號裡面得知現在這個語者說話的人的發音方式。那根據發音方式,他就可以得到說現在說的是哪一個詞彙,他就可以得到辨識的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.000" id=16:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1012">16:52.000</a></div>
+        <div class="t">所以從這個角度來看,從發音方式到辨識結果,也就是neural network的後面幾層,是跟語者說話的人是沒有關係的,而是跟語者沒有關係的,所以他是可以被copy的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:07.000" id=17:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1027">17:07.000</a></div>
+        <div class="t">而不一樣的地方是,從聲音訊號到發音方式這一段,可能是每個人都不一樣。所以在做語音辨識的時候,以常見的做法是,把一個neural network的後幾層是copy的,只保留後幾層是copy的,只有前面可能第一層是用speak,用target data,用某一個speaker的data train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1053">17:33.000</a></div>
+        <div class="t">但是在image的時候,我發現是不一樣的。因為在image的時候,通常是copy前面幾層,只train最後幾層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:43.000" id=17:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1063">17:43.000</a></div>
+        <div class="t">為什麼呢?因為在image的時候,你會發現說,當你在source domain上認了一個network,那你今天認到的network,你認到的CNN,通常前幾層他做的就是detect,最簡單的pattern。比如說,前幾層做的事情就是detect,有沒有直線、橫線,或者是有沒有簡單的幾何圖形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.000" id=18:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1090">18:10.000</a></div>
+        <div class="t">所以在image上面,一個neural network前幾層認的東西,他是可以被transfer到其他的task上面,而最後幾層認的東西往往是比較abstract,而這個比較abstract的東西,他就沒有辦法transfer到其他的task上面去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.000" id=18:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1110">18:30.000</a></div>
+        <div class="t">所以在做影像處理的時候,在做影像的辨識的時候,反而是會copy前面幾層,然後後面幾層重train。所以到底哪些layer要被transfer,其實是case by case,這邊也是應用之道,純故意性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.000" id=18:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1126">18:46.000</a></div>
+        <div class="t">好,那這邊是一個image在layer transfer上面的實驗,這個是出自Benjo在NIPS2014的paper。這個實驗是做在imagenet上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.000" id=19:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1143">19:03.000</a></div>
+        <div class="t">這個實驗是說,現在他把imagenet的corpus,應該是120萬張image分成source跟target,這個分法是按照它的class來分的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.000" id=19:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1161">19:21.000</a></div>
+        <div class="t">我們知道imagenet的image,一個typical setup是有1000個class,那把其中500個class歸為source data,把另外500個class歸為target data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:33.000" id=19:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1173">19:33.000</a></div>
+        <div class="t">橫軸是什麼呢?橫軸的意思是說,我們在做transfer learning的時候,copy了幾個layer,那這個就是橫軸。所以copy0個layer,就代表說完全沒有做transfer learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:51.000" id=19:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1191">19:51.000</a></div>
+        <div class="t">所以這是一個baseline,你就直接在target data上面秤下去,縱軸是top1的accuracy,所以是越高越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:03.000" id=20:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1203">20:03.000</a></div>
+        <div class="t">所以直接秤下去的結果是白色這個點,沒有做transfer learning是白色這個點。那如果今天是copy前面幾個layer,只有秤最後幾個layer的時候呢?如果今天是只有copy第一個layer秤剩下的layer,copy前面兩個layer,copy第三個layer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:22.000" id=20:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1222">20:22.000</a></div>
+        <div class="t">就是在source data上面秤一個model,然後copy第一個layer,或copy第二個,copy第三個,一直到copy前面7個layer,然後剩下的layer再用target data去秤,會得到什麼樣的結果呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:37.000" id=20:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1237">20:37.000</a></div>
+        <div class="t">你會發現說呢,其實如果今天它的結果是會變差的,但是如果在前面只有copy幾個layer的時候呢,只有copy第一個layer的時候呢,performance是稍微有點進步的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:52.000" id=20:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1252">20:52.000</a></div>
+        <div class="t">如果copy前面兩個layer,performance幾乎是持平的,但是如果copy的layer太多,結果是會壞掉的。但是這個實驗室想要顯示說呢,在不同的data上面秤出來的neural network,前面幾個layer是可以共用的,後面幾個layer可能是沒有辦法共用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:14.000" id=21:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1274">21:14.000</a></div>
+        <div class="t">上面這一條橙色的線呢,是說如果我們今天copy完以後,還有fine tune整個model的話,就是把第一個layer在source domain上秤一個model,然後把第一個layercopy過去以後,再用target domainfine tune整個model,包括前面copy過的layer的話,那你得到performance是橙色這一條線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:38.000" id=21:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1298">21:38.000</a></div>
+        <div class="t">那在所有的case上面呢,都是有進步的。那其實這個結果呢,是蠻surprise的,因為你不要忘了,這可是image net的corpus。就一般我們在做transfer learning的時候,我們都是假設你target domain的data非常少,這邊target domain可是有60萬張的,你可能都沒有處理過這麼多的image,所以這個target domain的data它是非常非常多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:02.000" id=22:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1322">22:02.000</a></div>
+        <div class="t">但是就算是在這個情況下,再多加了另外60張image做transfer learning,其實還是有幫助的,從結果看來還是有幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1334">22:14.000</a></div>
+        <div class="t">中間這兩條藍色的線是什麼?這兩條藍色的線跟transfer learning比較沒有關係,不過是這篇paper裡面發現了一個有趣的現象,它是想要做一個對照組,它說我們今天在target domain上面呢,秤一個model,這邊你聽不懂就算了,我就很快的講過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:36.000" id=22:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1356">22:36.000</a></div>
+        <div class="t">我秤target domain上的一個model,然後把前幾個layercopy起來,然後接下來我再用一次target domain的data,秤剩下幾個layer,那你可能前面幾個layer就fix住了,只秤後面幾個layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:54.000" id=22:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1374">22:54.000</a></div>
+        <div class="t">你可能會覺得說,直覺上這樣做應該跟直接秤整個model可能沒有太大的差別,但是最後發現是說,假設你fix前面幾個layer,就你先秤好一個model,fix前面幾個layer,接下來只秤後面幾個layer,接下來再重新秤後面幾個layer,結果有些時候是會壞掉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:20.000" id=23:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1400">23:20.000</a></div>
+        <div class="t">那它的理由是說,今天在training的時候,前面的layer跟後面的layer,它們其實是要互相搭配的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:28.000" id=23:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1408">23:28.000</a></div>
+        <div class="t">所以如果你今天只copy了前面的layer,然後秤後面,只秤後面的layer,你其實performance會是比較差的,後面的layer就沒有辦法跟前面的layer互相搭配,所以結果有點差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:42.000" id=23:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1422">23:42.000</a></div>
+        <div class="t">但是如果你可以fine-tune整個model的話,performance就跟有沒有transfer learning是一樣的。這是另外一個有趣的發現,作者自己對這件事情是蠻surprised的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:54.000" id=23:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1434">23:54.000</a></div>
+        <div class="t">這是另外一個實驗結果,這個實驗結果是要說,紅色的這條線是我們剛才在前面那一頁看到的紅色的這條線。那這邊是說,假設我們的source跟target是比較沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:12.000" id=24:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1452">24:12.000</a></div>
+        <div class="t">假設我們把image net的corpus分成source data跟target data的時候,比如說自然的東西,自然風景,自然界的東西,通通當作source。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.000" id=24:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1466">24:26.000</a></div>
+        <div class="t">那你target通通是人造的東西,桌子椅子等等。這樣子transfer learning會有什麼樣的影響?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.000" id=24:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1473">24:33.000</a></div>
+        <div class="t">就是說,如果你今天source跟target的data是不太一樣的,是差很多的,那在做transfer learning的時候,你的performance會掉得比較多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.000" id=24:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1485">24:45.000</a></div>
+        <div class="t">不過前面幾個layer還是影響是比較小的。如果你只copy前面幾個layer的話,performance仍然跟沒有copy是持平的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:59.000" id=24:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1499">24:59.000</a></div>
+        <div class="t">這意味著說,就算是你現在的source統類跟target統類是非常不一樣的,一邊是自然的東西,一邊是人造的東西,在neural network的第一個layer,他們仍然做的事情很有可能是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.000" id=25:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1512">25:12.000</a></div>
+        <div class="t">綠色的這一條線,這個爛掉的這條線是說,假設我前面幾個layer的參數是random的,那會發生什麼事情呢?得到的結果其實就是爛掉,這是一個baseline。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:26.000" id=25:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1526">25:26.000</a></div>
+        <div class="t">另外一個我們要講的是multitask的learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:30.000" id=25:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1530">25:30.000</a></div>
+        <div class="t">那在multitask的learning裡面呢,multitask的learning跟fine-tune略有不同的地方就是,在fine-tune裡面呢,我們care的是target domain做的好不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.000" id=25:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1545">25:45.000</a></div>
+        <div class="t">在source domain上learn一個model,然後接下來target domain上fine-tune,那你現在care的是target domain上做的好不好,fine-tune以後source domain壞掉了就算了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:53.000" id=25:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1553">25:53.000</a></div>
+        <div class="t">那在multitask的learning裡面,我們其實同時caretarget domain跟source domain做的好不好,同時care在這兩個domain上能不能夠同時把它做好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:05.000" id=26:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1565">26:05.000</a></div>
+        <div class="t">那怎麼做呢?其實如果我們今天用的是deep learning phase的方法的話,它特別適合拿來做這種multitask的learning,因為你可以說我丟一個neural network,假設你現在兩個不同的task,他們用的是同樣的feature的話,比如說你都做影像辨識,只是現在影像辨識的class不一樣的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:30.000" id=26:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1590">26:30.000</a></div>
+        <div class="t">那你可以說我就learn一個neural network,那input就是兩個不同task同樣的feature,但是中間會分岔出來一部分的network去處理task,一部分的network它的output是task A的答案,一部分的network的output是task B的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.000" id=26:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1608">26:48.000</a></div>
+        <div class="t">這麼做的好處是你的task A跟task B,它們在前面幾個layer就會是共用的,在前面幾個layer會同時使用task A跟task B的data去同時train前面幾個layer,所以前面幾個layer是用比較多datatrain的,所以它可能有比較好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:06.000" id=27:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1626">27:06.000</a></div>
+        <div class="t">那你要做這件事的前提就是你要確定說這兩個task它們有沒有共通性,是不是可以共用前面幾個layer。那今天有時候有一些更crazy的task是你現在連input都是沒有辦法share的,這有可能你input都是沒有辦法share的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:24.000" id=27:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1644">27:24.000</a></div>
+        <div class="t">但是你可以說我今天先兩種不同task的不同input,我們都用不同的neural network把它transform到同一個domain上面去,然後在同一個domain上你再apply不同的neural network,一條路去做task A,一條路去做task B,然後中間可能有某幾個layer是share的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:47.000" id=27:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1667">27:47.000</a></div>
+        <div class="t">如果在這樣的task下你也可以做transfer learning,就算是task A跟task B的input output完全不一樣,如果你覺得在中間幾個layer它們有共同的地方,你還是可以用這樣的model架構來處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:03.000" id=28:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1683">28:03.000</a></div>
+        <div class="t">Multi-task learning,一個很成功的例子就是多語言的語音辨識。假設你現在手上有一大堆的不同語言的data,比如說你有法文、德文、西班牙文、意大利文還有中文,你在train你的model的時候,你在train你的拿來做語音辨識的neural network的時候,你可以train一個model它同時可以辨識這五種不同的語言。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:31.000" id=28:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1711">28:31.000</a></div>
+        <div class="t">這個model的前面幾個layer它們會共用參數,後面幾個layer每一個語言可能有自己的參數。這麼做是合理的,雖然說是不同的語言,但是都是人類說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.000" id=28:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1729">28:49.000</a></div>
+        <div class="t">所以前面幾個layer它們可能是可以share同樣的資訊,可以共用同樣的參數。其實在translation你也可以用同樣的事情,假設你今天既要做中翻英,也要做中文翻日文,你可以把這兩個model一起train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.000" id=29:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1749">29:09.000</a></div>
+        <div class="t">在一起train的時候,反正在中翻英還是中文翻日文,你都要把中文的data先做process,把中文的data先做process,那一部分的neural network就可以是兩種不同語言的data共同使用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:24.000" id=29:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1764">29:24.000</a></div>
+        <div class="t">那有人就會問說,這個transfer它到底可以transfer得多廣?會不會說比如說德文、法文都是同樣語系的語言,所以它們是可以transfer的,但是這些歐洲的語言跟中文或許是不能transfer的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:48.000" id=29:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1788">29:48.000</a></div>
+        <div class="t">目前在語音這邊發現是幾乎所有的語言都可以transfer。過去還有人說收集了十幾種語言,然後把它們互相之間兩兩都transfer,做了一個很大的n乘以n的table,每一個case都有進步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:07.000" id=30:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1807">30:07.000</a></div>
+        <div class="t">所以目前發現大部分的case,不同人類的語言就算你覺得它們不是非常像,它們也都可以互相transfer。這邊舉的這個例子是從歐洲的語言去transfer到中文上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.000" id=30:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1823">30:23.000</a></div>
+        <div class="t">橫軸是中文的data,縱軸是辨識的character的error rate。你會發現說你一開始data很少,假設你現在只有用中文直接train一個model,你現在data很少,那error rate當然就很大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:49.000" id=30:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1849">30:49.000</a></div>
+        <div class="t">你data越來越多,到一百多小時的時候,你error rate就可以壓到三十幾下。但是如果你今天有一大堆的歐洲語言,你是把這些歐洲語言跟中文一起去做multitask的training,用這些歐洲語言的data來幫助中文的model的前面幾層,讓它train得更好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.000" id=31:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1869">31:09.000</a></div>
+        <div class="t">你會發現說就算是在中文data很少的情況下,你有做transfer learning,你就可以得到比較好的performance。當然data越多,中文data越多的時候,中文本身的performance是越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:21.000" id=31:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1881">31:21.000</a></div>
+        <div class="t">但是就算是你中文一百小時的data,借用一些從歐洲語言來的knowledge,對這個辨識還是有微幅的幫助的。所以這邊的好處是說,假設你做multitask learning的時候,你會發現你有一百多個小時,跟你只有這邊大概是五十個小時以內。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:43.000" id=31:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1903">31:43.000</a></div>
+        <div class="t">如果你有做transfer learning的話,你只需要二分之一以下的data,就可以跟原來有兩倍的data做得一樣好。常常有人會擔心說,transfer learning會不會有負面的效應,會不會有negative transfer的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:03.000" id=32:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1923">32:03.000</a></div>
+        <div class="t">這是有可能的。如果兩個test不像的話,你的transfer就是negative的。今天兩個test不像,你要讓你的neural network同時做兩個test,反而把結果弄糟了。但是有人會覺得說,總是在思考說兩個test到底之間能不能夠transfer,然後trial and error,這樣很浪費時間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:23.000" id=32:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1943">32:23.000</a></div>
+        <div class="t">所以有人propose了progressive neural network。這個progressive neural network其實是很新的做法,這個是2016年的放在archive上面的配率。你會發現說它還是有很多問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:39.000" id=32:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1959">32:39.000</a></div>
+        <div class="t">這個方法是這樣子,它說我現在有一個test1,我就先train一個test1的neural network,藍色這個neural network,train好以後,它的參數就fixed住了。現在我們要做test2,做test2的時候怎麼樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.000" id=32:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=1977">32:57.000</a></div>
+        <div class="t">一樣有一個neural network,但是test2它的每一個hidden layer都會去接前面test1的某一個hidden layer的open。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:21.000" id=33:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2001">33:21.000</a></div>
+        <div class="t">所以在training的時候它的好處就是,你就算是test1跟test2非常的不像,首先test2的data不會去動到test1的model,所以test1一定不會比原來更差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:46.000" id=33:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2026">33:46.000</a></div>
+        <div class="t">再來就是test2它去借用test1的參數,但是它可以把這些參數就直接設成0,這樣子也不會影響test2的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:13.000" id=34:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2053">34:13.000</a></div>
+        <div class="t">所以在最大的情況下,就跟自己train的performance是差不多的。如果有test3,你也就做一樣的事情,test3會同時從test1和test2的hidden layer得到information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:37.000" id=34:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2077">34:37.000</a></div>
+        <div class="t">那你可能會覺得說這個model感覺有點怪怪的,如果我今天有五個test,那第五個test不就是要同時接前面四個test嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:46.000" id=34:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2086">34:46.000</a></div>
+        <div class="t">對啊,它是怪怪的,作者也有說這個怪怪的,等待大家提出更好的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:53.000" id=34:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2093">34:53.000</a></div>
+        <div class="t">好,接下來我們要講的是,假設我們的target data是unlabeled,而我們source data是label的時候,我們可以做什麼樣的事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:08.000" id=35:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2108">35:08.000</a></div>
+        <div class="t">在source data,我們有function的input,也有function的output,但在target data,我們只有function的input,沒有function的output。舉例來說,我們可以說我們的source data是unlisted的image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:25.000" id=35:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2125">35:25.000</a></div>
+        <div class="t">那我們的target data是另外一個corpus,unlisted end image,它就把這個unlisted image加上一些奇怪的背景,加上一些奇怪的顏色跟背景。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:38.000" id=35:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2138">35:38.000</a></div>
+        <div class="t">然後unlisted是有label的,我們知道每張image對應到哪個digit,但是unlisted end,它是沒有label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:47.000" id=35:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2147">35:47.000</a></div>
+        <div class="t">在這種情況下,我們通常是把source data就是做training data,把target data就是做testing data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:58.000" id=35:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2158">35:58.000</a></div>
+        <div class="t">那這邊的問題就是,你的training data跟你的testing data是非常的mismatch的。你怎麼在這種source data,unlisted上傳出來的model,直接apply到另外一個corpus上面,它也work呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:21.000" id=36:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2181">36:21.000</a></div>
+        <div class="t">另外一個corpus,它要做的事情也是辨識數字,0到9,但是他們input的image是非常不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:29.000" id=36:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2189">36:29.000</a></div>
+        <div class="t">你要怎麼把在source data上認出來的model也可以apply到target data上面呢?如果你今天直接認一個model,它的input就是一張image,你就不管,你就直接說,就算mismatch的training跟testing也沒有關係,就直接認一個model,直接認下去看看會怎樣的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.000" id=36:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2207">36:47.000</a></div>
+        <div class="t">你會發現你的結果可能是會爛掉的。如果我們把一個neural network當作是一個feature的attractor,我們知道neural network的前面幾層我們可以看作是在抽feature,後面幾層可以看作是在做classification。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:01.000" id=37:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2221">37:01.000</a></div>
+        <div class="t">如果我們把neural network的前面幾層看作是在抽feature的話,我們把這個feature拿來看會發現什麼事呢?我們會發現說不同domain的data,它的feature根本就完全不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:17.000" id=37:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2237">37:17.000</a></div>
+        <div class="t">比如說,如果把emnist的feature丟進去的話,它是藍色的這些點,藍色的這些點其實它很明顯的就是分成9群,1、2、3、4、5、6、7、8分成10群,就是0到9總共10個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:32.000" id=37:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2252">37:32.000</a></div>
+        <div class="t">但是如果你今天是把另外一群image,把另外一個copus的image丟進去的話,你會發現說它抽出來的feature就是紅色這一群。這邊是有把做TSNE降為以後的結果,反正它做出來的就是紅色這一群。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:47.000" id=37:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2267">37:47.000</a></div>
+        <div class="t">所以你會發現說,今天做feature extraction的時候,藍色的原來source domain的image跟honey domain的image,它們根本就不在同一個位置裡面,它抽出來的feature根本完全不一樣。所以後面的classify,它雖然可以把藍色的這部分做好,但紅色這部分它就整個無能為力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:06.000" id=38:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2286">38:06.000</a></div>
+        <div class="t">所以怎麼辦呢?所以這邊希望做到的事情是,前面的feature extraction,它可以把domain的特性去除掉。這一招叫做domain adversarial training。等一下會講說為什麼這邊出現adversarial這個字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:23.000" id=38:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2303">38:23.000</a></div>
+        <div class="t">我們之前已經看過adversarial這個字,在前面講gain的時候,gain就是generative adversarial的model,這邊又出現adversarial。這邊adversarial跟gain的原理是非常像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:36.000" id=38:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2316">38:36.000</a></div>
+        <div class="t">這邊我們希望feature extraction做到的事情是,它可以把domain的特性消掉。也就是feature extraction的output不應該是紅色跟藍色的點分成兩群,不同的domain不應該是分成兩群,而是不同的domain應該都被混在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:56.000" id=38:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2336">38:56.000</a></div>
+        <div class="t">我們希望feature extraction的output是可以把不同domain的image混在一起,也就是把不同domain的特性取消掉。那怎麼認這樣的feature extraction呢?這邊的做法就是在後面接一個domain的classify,把feature extraction的output丟給domain的classify。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:15.000" id=39:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2355">39:15.000</a></div>
+        <div class="t">那domain的classify它也是一個classification的test,它要做的事情就是說,根據現在feature extraction給它的feature,判斷說這個feature來自於哪一個domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:27.000" id=39:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2367">39:27.000</a></div>
+        <div class="t">而在這個test裡面,就是要分辨這些feature是來自於at least的那個corpus,還是來自於另外一個at least的n的corpus。這件事情就是有一個generator的output,然後有一個discriminator這件事情,讓它的架構非常像是gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:47.000" id=39:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2387">39:47.000</a></div>
+        <div class="t">但是跟gain不一樣的地方是,之前在gain那個test裡面,你的generator要做的事情是產生一個image,然後騙過discriminator,這件事很難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:57.000" id=39:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2397">39:57.000</a></div>
+        <div class="t">但是在這個domain adversary的training裡面,要騙過domain classifier太簡單了,怎麼做呢?有一個solution就是,不管看到什麼東西,output都零,就騙過classifier了,結束。所以如果光只是train這個domain classifier是不夠的,因為feature extraction可以輕易的騙過domain classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:19.000" id=40:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2419">40:19.000</a></div>
+        <div class="t">所以你要給feature extractor增加它任務的難度。所以這個feature extractor,它output的feature不只要同時騙過domain classifier,它還要同時讓label的predictor做得好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.000" id=40:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2433">40:33.000</a></div>
+        <div class="t">這個label predictor它就吃feature extractor的output,然後它的output就是10個class,它的output就是10個class。所以今天你的feature extractor它不只要騙過domain classifier,它同時還要滿足label predictor的需求。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:52.000" id=40:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2452">40:52.000</a></div>
+        <div class="t">它抽出來的feature不只是要把domain的特性消掉,它同時還要保留原來的feature的特性。好,那如果我們把這三個network放在一起的話,實際上它就只是一個大型的neural network而已,對吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:10.000" id=41:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2470">41:10.000</a></div>
+        <div class="t">它就只是一個大型的neural network,它有很多層,就像一個在multitask learning會用到的neural network一樣。但是這個neural network它是一個各懷鬼胎的neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:22.000" id=41:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2482">41:22.000</a></div>
+        <div class="t">一般的neural network就是整個neural network裡面每一個參數它想要做的事情都是一樣的,它們有共同的目標,它們要minimize loss,它們要optimize accuracy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:34.000" id=41:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2494">41:34.000</a></div>
+        <div class="t">但是在這個neural network裡面,它的參數是各懷鬼胎的。這邊藍色這部分,label predictor它想要做的事情是把class的分類做得越高越好,正確率越高越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:51.000" id=41:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2511">41:51.000</a></div>
+        <div class="t">Domain classifier要做的事情是它想要正確的predict一個image屬於哪個domain。但feature extractor它想要做的事情是它同時要improve label predictor的accuracy,但它同時想要minimize domain classifier的accuracy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:12.000" id=42:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2532">42:12.000</a></div>
+        <div class="t">所以這個feature extractor它是一個不好的隊友。Domain classifier它想要做domain classification這件事情,但是feature extractor它想要做的事情是捅它隊友一刀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:26.000" id=42:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2546">42:26.000</a></div>
+        <div class="t">隊友想要選總統,它想要背後捅他一刀,它不想讓他選總統。所以它想要做的事情跟它隊友要做的事情是相反的,所以它是一個會陷害它的隊友的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:39.000" id=42:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2559">42:39.000</a></div>
+        <div class="t">那這個feature extractor怎麼陷害它的隊友呢?這件事情其實是很容易的,你只要加一個gradient reversal的layer就行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:49.000" id=42:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2569">42:49.000</a></div>
+        <div class="t">也就是說今天你在做backpropagation的時候,你的domain classifier計算backpropagation的時候不是有forward跟backward兩個pass嗎?那在做backward pass的時候,你的domain classifier傳給feature extractor什麼樣的value,feature extractor就把它存上一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:11.000" id=43:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2591">43:11.000</a></div>
+        <div class="t">也就是domain classifier告訴你說你某一個value應該要上升,它就會故意下降。所以它就做一個跟domain classifier的要求相反的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:23.000" id=43:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2603">43:23.000</a></div>
+        <div class="t">那domain classifier因為它看不到真正的image,所以它最後一定會fail掉,因為它所能夠看到的東西都是feature extractor告訴它的,所以它最後一定會無法分辨feature extractor所抽出來的feature是來自於哪一個domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:42.000" id=43:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2622">43:42.000</a></div>
+        <div class="t">但是今天的問題就是domain classifier一定要奮力地掙扎。這個model其實雖然講起來原理很簡單,但我相信實際上的training可能跟game一樣是沒有那麼好train的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:55.000" id=43:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2635">43:55.000</a></div>
+        <div class="t">今天這個domain classifier它一定要奮力掙扎,因為它一定要努力去判斷說現在的feature是來自於哪一個domain。如果你的domain classifier是比較弱,它比較懶惰,它一下子就放棄,不想做了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:14.000" id=44:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2654">44:14.000</a></div>
+        <div class="t">那你就沒有辦法把前面的feature extractor逼到極限,你就沒有辦法讓前面的feature extractor真的把domain的information remove掉。如果domain classifier它根本很weak,比如說它的output一開始就不想做,它的output永遠都是0的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:30.000" id=44:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2670">44:30.000</a></div>
+        <div class="t">那你的feature extractor胡亂弄什麼feature都可以騙過domain classifier的話,那你就達不到你把domain的特性remove掉的效果。所以今天這個task裡面,你一定要讓domain classifier奮力掙扎,然後最後才死掉,這樣你才能把feature extractor的潛能逼到極限。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:46.000" id=44:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2686">44:46.000</a></div>
+        <div class="t">好,那這個其實你看這是很新的方法,我這邊引用的是ICML15的paper跟JML16的paper。這是paper中的一些實驗結果,做了不同的domain的transfer,包括從at least上transfer到at least end上,從這個數字的corpustransfer到另外一個數字的corpus,從這個數字的corpustransfer到at least上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:14.000" id=45:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2714">45:14.000</a></div>
+        <div class="t">然後兩種不同的道路號誌的data互相transfer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:44.000" id=45:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2744">45:44.000</a></div>
+        <div class="t">好,那如果我們看一下現在的實驗結果的話,這個縱軸代表用不同的方法。這邊有一個用source only的方法,就是說我們直接在source domain上trade一個model,然後test在testing的domain上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:06.000" id=46:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2766">46:06.000</a></div>
+        <div class="t">所以在這四個結果裡面,你會發現說如果只用source only的話,performance是比較差的。那這邊它有比較另外一個transfer learning的方法,這個留給大家自己去參考文獻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:20.000" id=46:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2780">46:20.000</a></div>
+        <div class="t">那這個propose的方法呢,是我們剛剛講的domain adversarial的training,如果你用domain adversarial的training的話,你得到的結果是這個,我們現在最下面這一行。最下面這一行是說,你直接拿target domain的data去做training,那你會得到performance是最下面這個row。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:39.000" id=46:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2799">46:39.000</a></div>
+        <div class="t">那這個其實是你的performance的upper bound,所以你會發現說呢,如果你用source的data跟target的data傳出來的結果是有天差地遠的,這中間有一個很大的gap。如果你今天用domain adversarial的training的話呢,你會發現說它其實可以有很好的improvement,在不同的case上面都有很好的improvement。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:01.000" id=47:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2821">47:01.000</a></div>
+        <div class="t">那接下來呢,我要講的是這個zero-shot的learning。在zero-shot的learning裡面呢,跟剛才講的task是一樣的,我們只有source data有label,target data沒有label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:18.000" id=47:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2838">47:18.000</a></div>
+        <div class="t">那你可以說,我們在剛才的task裡面,我們可以把source data當作training data,target data當作testing data,但是實際上在zero-shot的learning裡面,它的task呢,它的define又更加嚴苛一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:33.000" id=47:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2853">47:33.000</a></div>
+        <div class="t">它的define是,今天在source data跟target data,它的task是不一樣的。什麼意思呢?比如說,如果在影像上面,你的source data它裡面的,你可能是要分辨貓跟狗,但是你的source data裡面可能有貓的task,有狗的task。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:54.000" id=47:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2874">47:54.000</a></div>
+        <div class="t">但是你的target data裡面,你的image是草泥馬,然後在你的source data裡面呢,是從來都沒有出現過草泥馬的。如果在source data裡面從來都沒有出現過草泥馬的話,那machine有辦法看到它就說是草泥馬嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:13.000" id=48:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2893">48:13.000</a></div>
+        <div class="t">你不覺得這個實在是太強人所難了?但是這個task啊,其實在語音上很早就有solution了。其實語音本來就常常會遇到zero-shot的問題,假如我們把不同的word都當作一個class的話,那本來在training的時候跟testing的時候,你就有可能看到不同的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:40.000" id=48:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2920">48:40.000</a></div>
+        <div class="t">你的testing data裡面本來就有一些詞彙,因為英文的詞彙這麼多,至少十萬個不同的詞彙。你testing data本來就有一些詞彙,是在training的時候從來沒有看過的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:50.000" id=48:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2930">48:50.000</a></div>
+        <div class="t">那在語音上我們怎麼解決這個問題呢?在語音上我們的做法就是,不要直接去辨識一段聲音屬於哪一個word,我們辨識的是一段聲音屬於哪一個phony,如果不知道phony是什麼的話就講成音標就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:05.000" id=49:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2945">49:05.000</a></div>
+        <div class="t">所以我們辨識的單位,不要定成word,而定成phony。然後我們再做一個phony跟table之間的對應關係的表,這個東西我們叫做lesson,也就是辭典。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:16.000" id=49:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2956">49:16.000</a></div>
+        <div class="t">我們建一個文字跟phony之間對應關係的表根據人的knowledge,在辨識的時候只要辨識出phony就好,然後你再去查表說這一段phony對應到哪一個word。這樣就算是有一些word是沒有出現在training data裡面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:36.000" id=49:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2976">49:36.000</a></div>
+        <div class="t">只要它在你的lexicon,在你建好這個lexicon裡面是有出現過,你的model可以正確辨識出現在聲音屬於哪一個phony的話,你就可以處理這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:48.000" id=49:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=2988">49:48.000</a></div>
+        <div class="t">那在這個影像上是怎麼做的呢?在影像上我們可以把每一個class用它的attribute來表示,也就是說你有一個database,這個database裡面你會有所有不同可能的object跟它的特性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:12.000" id=50:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3012">50:12.000</a></div>
+        <div class="t">假設你現在要做的事情就是辨識動物,但是你的training的data跟test的data,它們的動物是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:20.000" id=50:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3020">50:20.000</a></div>
+        <div class="t">但是你有一個database,這個database裡面告訴你說每一種動物它們有什麼樣的特性,比如說狗它就是毛茸茸四隻腳加有尾巴,魚是有尾巴但沒有四隻腳,沒有毛茸茸。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:35.000" id=50:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3035">50:35.000</a></div>
+        <div class="t">Chimp這個黑猩猩有毛茸茸,沒有四隻腳,然後沒有尾巴,黑猩猩是沒有尾巴的,猴子才有尾巴這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:43.000" id=50:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3043">50:43.000</a></div>
+        <div class="t">然後你今天這個attribute你要訂得夠豐富,每一個class都要有它的獨一無二的attribute,如果兩個class它的attribute一模一樣的話,等一下那個方法會fill掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:59.000" id=50:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3059">50:59.000</a></div>
+        <div class="t">那在training的時候呢,我們不直接辨識說每一張image屬於哪一個class,而是去辨識說每一張image裡面它具備什麼樣的attribute。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:12.000" id=51:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3072">51:12.000</a></div>
+        <div class="t">所以你的neural network learning target就是說,看到猩猩的圖就要說這是一個毛茸茸的動物,它是沒有四隻腳的動物,是沒有尾巴的動物,看到一個狗的圖就要說這是毛茸茸的動物,有四隻腳的動物,有尾巴的動物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:27.000" id=51:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3087">51:27.000</a></div>
+        <div class="t">那在testing的時候,就算今天來了一張你從來沒有見過的image,那沒有關係,你今天neural network它的任務也不是要detect說input這張image它是屬於哪一種動物,它只要detect說input這張image它有什麼樣的attribute。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:44.000" id=51:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3104">51:44.000</a></div>
+        <div class="t">所以input一張你沒有見過的動物,但是你只要能夠把它attribute找出來,然後你就查表看說,在你的database裡面,哪一種動物它的attribute跟你現在model的off最接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:59.000" id=51:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3119">51:59.000</a></div>
+        <div class="t">有時候可能沒有一個正好一模一樣,那也沒有關係,你就看說誰最接近,哪一個動物它的attribute跟neural network現在的off最接近,那一個動物就是你要找。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:10.000" id=52:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3130">52:10.000</a></div>
+        <div class="t">那有時候你的attribute可能非常的複雜,你的attribute dimension可能很大,你甚至可以做attribute的embedding,也就是說現在有一個embedding的space。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:27.000" id=52:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3147">52:27.000</a></div>
+        <div class="t">那把每一張image,把trainedata裡面每一張image都透過一個transform把它變成embedding space上面的一個點,然後把所有的attribute也都變成embedding space上面的一個點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:54.000" id=52:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3174">52:54.000</a></div>
+        <div class="t">那這個G跟F它們都可以是neural network,那training的時候就希望F跟G越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:04.000" id=53:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3184">53:04.000</a></div>
+        <div class="t">那在testing的時候,如果有一張沒有看過的image,你就看說這個image的attributeembedding以後,跟哪一個attribute最像,那你就知道說它是什麼樣的image。草泥馬翻譯就是grass mud horse。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:24.000" id=53:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3204">53:24.000</a></div>
+        <div class="t">我們休息一下,我們十分鐘後再回來,謝謝。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:54.000" id=53:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3234">53:54.000</a></div>
+        <div class="t">其實就是把attribute是一個vector,然後把那個vector乘上一個transform,或者把它丟到一個neural network裡面去,那neural network會output一個vector,那就是把它從一個vector變到另外一個low dimension的vector,你可以想像是做降維的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:16.000" id=54:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3256">54:16.000</a></div>
+        <div class="t">所以這個embedding的過程要同時可以,它的input可以是一個image,也可以是一個attributeembedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:26.000" id=54:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3266">54:26.000</a></div>
+        <div class="t">對,就是這樣子,但是它是要用不同的transformation,因為image跟attribute是差很多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:34.000" id=54:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3274">54:34.000</a></div>
+        <div class="t">所以它就會變成說這個embedding過程它是有兩個neural network,但是它會想辦法讓這兩個neural network的結果,就是使得例如說x1跟y1出來,然後不能接起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:52.000" id=54:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3292">54:52.000</a></div>
+        <div class="t">沒錯,就是這樣子,謝謝。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:09.000" id=55:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3309">55:09.000</a></div>
+        <div class="t">各位同學大家好,我們來上課吧。剛才講到attributeembedding,這邊意思是說,我們要把image跟attribute,它們其實都可以描述成vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:24.000" id=55:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3324">55:24.000</a></div>
+        <div class="t">這邊想要做的事情是把image跟attribute投影到同一個空間裡面,也就是說,你可以想像成是對image的vector,也就是這邊的x,跟attribute的vector,也就是這邊的y,都做降維,然後降到同樣的dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:43.000" id=55:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3343">55:43.000</a></div>
+        <div class="t">所以你把x通過一個function f,都變成這個embedding space上面的vector,把y通過另外一個function g,也都變成embedding space上的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:56.000" id=55:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3356">55:56.000</a></div>
+        <div class="t">但是要怎麼找這個f跟g呢?這邊的f跟g你可以說,就是neural network,input一張image,它變成一個vector,或input一個attribute的vector,它變成一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:07.000" id=56:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3367">56:07.000</a></div>
+        <div class="t">這個f跟g怎麼找呢?你的training target就是,假設我們已經知道說,這個y1是x1的attribute,y2是x2的attribute,那你就希望說找到一個f跟g,它可以讓x1跟y1投影到embedding space以後越接近越好,x2跟y2投影到embedding space以後越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:32.000" id=56:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3392">56:32.000</a></div>
+        <div class="t">那如果你現在已經把這個f跟g找出來了,現在假如有一張你從來沒有見過的image叫做x3在你的testing data裡面,它也可以透過這個f變成embedding space上面的一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:46.000" id=56:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3406">56:46.000</a></div>
+        <div class="t">接下來你就看說,這一個embedding的vector,它跟,這邊有個錯,這邊應該是x3,我先發現,這應該是x3,這個x3它應該跟y3的embedding最接近,那y3就是它的attribute。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:03.000" id=57:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3423">57:03.000</a></div>
+        <div class="t">那你再看說它對應到哪一個動物,比如說它是grass horse,它是草泥馬這樣子。然後,有時候你會遇到一個問題就是,如果我根本沒有database,我根本不知道每一個動物它的attribute是什麼,怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:23.000" id=57:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3443">57:23.000</a></div>
+        <div class="t">那你可以借用word vector,我們知道說word vector的每一個dimension就代表了現在的這個word它的某種attribute,所以你不一定需要一個database去告訴你說每一個動物它的attribute是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:40.000" id=57:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3460">57:40.000</a></div>
+        <div class="t">假設你有一組word vector,這一組word vector裡面,你知道每一個動物它對應的那個word的word vector,這個word vector你就拿一個很大的commas,比如說wikipedia串出來,那你就可以把你的attribute直接換成word vector,所以你就把attribute通通換成那個word的word vector,再做跟剛才一樣的embedding,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:03.000" id=58:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3483">58:03.000</a></div>
+        <div class="t">那其實呢,剛才的training這邊是可以稍微講一下,假設我們的training的criterion只是說,我們要讓xn通過f of x,跟yn通過g of y,它的距離越接近越好,你就是找一個f跟g,minimize f of xn跟g of yn的距離,這樣子你覺得ok嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:28.000" id=58:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3508">58:28.000</a></div>
+        <div class="t">其實這樣子是會有問題的,對不對?因為這樣你的model就只會認到說,它把所有不同的x跟所有不同的y都tone到同一點,這樣子距離最少就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:42.000" id=58:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3522">58:42.000</a></div>
+        <div class="t">所以如果你的training的loss function這樣定,其實是不行的,所以你需要稍微重新設計一下你的loss function,前面這個loss function只有考慮到說,如果我們知道xn跟yn是一個pair,要讓它越接近越好,但沒有考慮到的是,我們如果知道xn跟另外一個y,它不是同一個pair,那它們的距離應該要被拉大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:09.000" id=59:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3549">59:09.000</a></div>
+        <div class="t">前面這個loss function沒有考慮到這件事,所以應該要改一下這個loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:19.000" id=59:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3559">59:19.000</a></div>
+        <div class="t">怎麼改這個loss function呢?一個可能是你把它改成,這邊這是一個max,max裡面的兩個element分別是0跟k減f of xn跟g of yn的inner product,加上max找一個n不等於n,然後f of xn跟g of yn的inner product。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:43.000" id=59:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3583">59:43.000</a></div>
+        <div class="t">這個k是你自己define的margin,這個k是一個constant,你需要training的時候自己define。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:54.000" id=59:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3594">59:54.000</a></div>
+        <div class="t">今天這邊有一個max,它的其中一個element是0,另外一個element是一個看起來很長的式子,這個是什麼意思呢?它會從0跟這個式子裡面選一個最大,所以今天這一項它的最小值就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:16.000" id=01:00:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3616">01:00:16.000</a></div>
+        <div class="t">那什麼時候它會等於0呢?當你另外一項不是0的這一項,它的值小於0的時候,這個loss它就會是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:26.000" id=01:00:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3626">01:00:26.000</a></div>
+        <div class="t">所以你今天如果k減掉f of xn跟g of yn的inner product,再加上後面這一項max,n不等於n,f of xn跟g of yn的inner product小於0的時候,這一項會是zero loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:43.000" id=01:00:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3643">01:00:43.000</a></div>
+        <div class="t">然後我們再整理一下,把這兩項移到右邊,然後把左右對調完就得到下面這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:55.000" id=01:00:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3655">01:00:55.000</a></div>
+        <div class="t">所以如果看下面這個式子的話,你就比較清楚這一項的含義是什麼。下面這個式子的意思是說什麼時候我們會有zero loss呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:03.000" id=01:01:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3663">01:01:03.000</a></div>
+        <div class="t">當我們的這個f of xn跟g of yn它的inner product的值大於什麼東西?大於另外一個,假設我在所有不是yn的y裡面找一個n出來,這個n它是跟f of xn最接近的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:28.000" id=01:01:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3688">01:01:28.000</a></div>
+        <div class="t">但就算它們的inner product最大,它還是要比正確的這個答案小一個k。如果今天xn跟yn它們之間的inner product值要很大,要有多大呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:42.000" id=01:01:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3702">01:01:42.000</a></div>
+        <div class="t">它要大過所有其他的yn跟xn的inner product,而且要大過一個margin k。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:50.000" id=01:01:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3710">01:01:50.000</a></div>
+        <div class="t">所以如果你定這個式子的話,你不只是把pair起來的attribute跟image拉近,你同時也要把那些不成pair的東西,不成對的東西,把它拆散。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:04.000" id=01:02:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3724">01:02:04.000</a></div>
+        <div class="t">其實還有一個更簡單的zero-shot learning的方法叫做convex combination of semantic embedding。這個方法是說,我們也不要做什麼learning,假設我們現在有一個off-the-shelf的語音辨識系統跟一個off-the-shelf的word vector,這兩個可能不是你自己可以從網路上載下來的,你就可以做這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:27.000" id=01:02:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3747">01:02:27.000</a></div>
+        <div class="t">怎麼做呢?我把一張圖丟到neural network裡面去,然後它的output說,它沒有辦法決定它是哪一個class,但它覺得它有0.5的機率是lion,而0.5的機率是tiger。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:43.000" id=01:02:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3763">01:02:43.000</a></div>
+        <div class="t">接下來你再去找lion跟tiger的word vector,然後把lion跟tiger的word vector用1比1的比例混合,0.5的tiger的vector加0.5的lion的vector得到另外一個新的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:00.000" id=01:03:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3780">01:03:00.000</a></div>
+        <div class="t">那你再看說哪一個word的word vector跟混合以後的結果最接近。假設是liger這個字最接近的話,那這個東西就是liger。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:15.000" id=01:03:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3795">01:03:15.000</a></div>
+        <div class="t">那liger是什麼呢?liger就是獅虎,老虎跟獅子生下來後代叫liger,這個是paper裡面舉的例子。你在這邊也不需要做任何training,你只要有一組word vector,一個語音辨識系統,就可以做這樣的transfer learning了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:31.000" id=01:03:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3811">01:03:31.000</a></div>
+        <div class="t">那以下是這個方法的實驗結果,我覺得其實還頗驚人的。我們來比一下人類跟機器的差別。我們來問一下大家的意見吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:45.000" id=01:03:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3825">01:03:45.000</a></div>
+        <div class="t">你覺得他是海豹的同學舉手,手放下。你覺得他是海象的同學舉手,手放下。你覺得他是海獅的同學舉手,手放下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:02.000" id=01:04:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3842">01:04:02.000</a></div>
+        <div class="t">我們看機器覺得怎麼樣呢?假設你沒有做transfer learning,就直接拿一個CNN來,他說他覺得最有可能的是sea lion是海獅,其他也是習慣的,比如說cowboy boot,也蠻像cowboy boot的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:17.000" id=01:04:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3857">01:04:17.000</a></div>
+        <div class="t">那像是他說是海獅,所以如果你打海獅的話,你跟machine同一個等級。那正確的答案是什麼呢?正確的答案是Stellar sea lion,北海獅。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:32.000" id=01:04:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3872">01:04:32.000</a></div>
+        <div class="t">所以ImageNet其實是一個很崩潰的test,在這種test上面,你就覺得說機器真的是有可能贏過人的,因為我覺得應該不可能有人可以答對這個正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:47.000" id=01:04:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3887">01:04:47.000</a></div>
+        <div class="t">這個device是另外一個方法,它是我們剛才講的,把world vector跟image都project到同一個inventory space上面的結果。在這邊它的結果並沒有很好,而且比較荒謬的答案比如說free farm之類的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:02.000" id=01:05:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3902">01:05:02.000</a></div>
+        <div class="t">這個是剛才講的,完全不用training的方法,結果很驚人,它的前五名裡面是有北海獅的,而且它其他答案都是海獅,什麼California sea lion,Australia sea lion,South America sea lion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:19.000" id=01:05:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3919">01:05:19.000</a></div>
+        <div class="t">這邊有舉另外一個例子,我們剛才都用草泥馬當作例子,但是那個例子並不是亂舉的,因為ImageNet裡面是真的有草泥馬的,這個大家都知道是草泥馬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:34.000" id=01:05:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3934">01:05:34.000</a></div>
+        <div class="t">Machine的答案是這樣子,第一名是Tibetan Mastiff,這個是螯犬,拿鐵手套跟它打的那一種,然後有一個TT monkey,我也不知道是什麼,koala,這個choo choo好像是一種鬆弛狗之類的,所以它其實滿像螯犬的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:59.000" id=01:05:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3959">01:05:59.000</a></div>
+        <div class="t">拉馬是什麼?拉馬其實就是草泥馬,所以它表面上看起來有答對,但其實沒有答對,因為答案是另外一種拉馬。如果你有看過草泥馬傳奇的話,它其實是部落裡面最強的騎手還是其他的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:16.000" id=01:06:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3976">01:06:16.000</a></div>
+        <div class="t">草泥馬其實有很多種,至少有三種,這一種是最強的,反正它不是拉馬,拉馬的臉是尖的,這種的臉是圓的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:32.000" id=01:06:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=3992">01:06:32.000</a></div>
+        <div class="t">這個方法是得到比較怪的結果,其實這個題材有點難,所以這可能是一個比較失敗的例子,這個level其實也沒有得到正確的結果,它得到最接近的時候,donestic 拉馬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:03.000" id=01:07:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4023">01:07:03.000</a></div>
+        <div class="t">好,那這個zero-shot learning剛才舉的例子都是影像的例子,最後我舉一個文字的例子,那這個結果其實是滿新的,這個結果是最近才被放到archive上面,是google的paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:22.000" id=01:07:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4042">01:07:22.000</a></div>
+        <div class="t">現在不只要放archive,還要做漂亮的動畫在部落格上面,這個漂亮的動畫是這樣子的,這個動畫裡面是說,這個是做machine translation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:38.000" id=01:07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4058">01:07:38.000</a></div>
+        <div class="t">好,那現在在training的時候,我們去看過說,如何把英文翻成韓文有這種data,他知道怎麼把韓文翻成英文有這種data,他知道怎麼把英文翻成日文有這種data,他知道怎麼把日文翻成英文有這種data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:57.000" id=01:07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4077">01:07:57.000</a></div>
+        <div class="t">好,接下來呢,他從來沒有看過日文翻韓文的data,但是他可以翻,他從來沒有看過韓文翻日文的data,所以他也可以翻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:08.000" id=01:08:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4088">01:08:08.000</a></div>
+        <div class="t">好,這件事情是怎麼做到的?如果你看那個部落格的文章的話,他好像有第一個版本的開頭是很聳動的,就是說google的machine發明了自己的secret language這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:18.000" id=01:08:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4098">01:08:18.000</a></div>
+        <div class="t">那後來好像標題就被偷偷改了,因為後來看到有另外一個版本的標題。他實際上做的事情是這樣子的,那篇部落格可能也不是google寫的,不知道是誰寫的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:32.000" id=01:08:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4112">01:08:32.000</a></div>
+        <div class="t">好,那這個要做的事情是這樣,為什麼zeoshare learning在這個task是可行的呢?因為如果你今天用同一個model做了不同語言之間的translation以後,machine可以學到的事情是怎樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:50.000" id=01:08:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4130">01:08:50.000</a></div>
+        <div class="t">他可以學到的事情是,對不同語言的input,都把他不同語言的不同的句子,他可以project到同一個space上面。而在這個space上面,他是language independent的,這個space上面的位置只跟這個句子的semantic有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:13.000" id=01:09:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4153">01:09:13.000</a></div>
+        <div class="t">舉例來說,這個是paper裡面的例子,這個paper裡面的例子說,我們現在根據我們認好的translator,那個translator有一個encoder,他會把你input的句子變成vector,那個decoder根據這個vector解回,他是屬於他的,解成一個句子,就是翻譯的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:32.000" id=01:09:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4172">01:09:32.000</a></div>
+        <div class="t">那如果我們今天把不同的語言都丟到這個encoder裡面,讓他變成vector的話,那這些不同語言的不同句子,在這個space上面分布有什麼樣的關係呢?他發現說呢,如果今天有,比如說這三個,這邊可能大家看起來字很小,看不清楚,有英文、韓文和日文的三個句子,這三個句子講的是同一件事情,是一樣的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:58.000" id=01:09:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4198">01:09:58.000</a></div>
+        <div class="t">但是通過這個encoder的embedding以後,他們在這個space上面其實是差不多的位置,其實就是在這個位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:08.000" id=01:10:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4208">01:10:08.000</a></div>
+        <div class="t">所以在這個圖上面,不同的顏色代表說同樣的意思,但是他們這些句子雖然是同樣的意思,但可能來自於不同語言。比如說這邊含紅色的這三條線,他們在這個space上面是在一起的,代表同樣的意思,但他們其實是來自於不同的語言。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:33.000" id=01:10:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4233">01:10:33.000</a></div>
+        <div class="t">所以你說這樣子算是machine發明的一種新語言,其實也算是還可以,還蠻有意思的。如果你把這個embedding space當作一種新的語言的話,machine它做到的事情就是它發現了一種secret language,對,每一種不同的語言它都先轉成這種,它只有它自己知道的secret language,再從這種secret language轉成另外一種語言。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:53.000" id=01:10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4253">01:10:53.000</a></div>
+        <div class="t">所以今天就算是有某個翻譯的test,你的input語言和output語言是machine沒有看過的,它也可以透過這種它自己學出來的secret language來做translation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:04.000" id=01:11:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4264">01:11:04.000</a></div>
+        <div class="t">這邊是更多ZeroShot Learning的paper給大家參考,其實ZeroShot Learning像剛才看到用在image的分類上面,其實現在也被用在question generation上面,就希望machine如果看到一個它從來沒有看到的東西,它也可以用自然語言來描述說它現在到底看到什麼,或看到什麼動作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:24.000" id=01:11:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4284">01:11:24.000</a></div>
+        <div class="t">剩下一點點部分,我想要講的是,有時候你遇到的狀況是target data有label,source data是沒有label,我們剛才講的狀況都是source data有label的狀況,有時候你會遇到source data沒有label的狀況,但是target data可能有label,可能沒有label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:47.000" id=01:11:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4307">01:11:47.000</a></div>
+        <div class="t">這種target data有label,source data沒有label的狀況叫做self-toe learning。這種target data沒有label,source data也沒有label,這種狀況像self-toe的clustering就算是一種這種狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:12.000" id=01:12:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4332">01:12:12.000</a></div>
+        <div class="t">在self-toe learning裡面,作者有強調說,它這個跟一般的transfer learning是不一樣的,你知道這個名詞都是大家自己定的,在self-toe learning的作者裡面,他的想法是transfer learning是有data的,在source裡面有label data才叫transfer learning, self-toe learning不算是一種transfer learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:36.000" id=01:12:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4356">01:12:36.000</a></div>
+        <div class="t">不過後人其實都把self-toe learning當作一種transfer learning,不過這個只是文字上的知識解決小問題而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:46.000" id=01:12:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4366">01:12:46.000</a></div>
+        <div class="t">那這個self-toe learning是怎麼做的呢?另外有一個地方要強調,就是self-toe learning跟semi-supervised learning有一些不一樣的地方,我們講說semi-supervised learning在learning的時候,你也是有一些label的data,有一些unlabel的data,所以你可以說這個source data它是unlabel的data,target data是label的data,所以這也是一種semi-supervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:07.000" id=01:13:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4387">01:13:07.000</a></div>
+        <div class="t">但是這種semi-supervised learning跟一般的semi-supervised learning有些不一樣,因為一般的semi-supervised learning,你會假設你那些unlabel data至少還是跟你的label data是比較有關係的,但是在這個task裡面,在self-toe learning裡面,你那些unlabel data,那些source data跟target data它的關係是比較遠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:30.000" id=01:13:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4410">01:13:30.000</a></div>
+        <div class="t">那其實self-toe learning它的概念很簡單,它說假設我們現在的source data夠多,雖然它是unlabel的,我可以去認一個feature extractor,那在原始的self-toe learning的paper裡面,它的feature extractor是sparse coding,那但是現在,因為這個paper比較舊了,大概十年前的paper,現在你不見得要用sparse coding,你可以認比如說autoencoder,用autoencoder來做feature extractor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:58.000" id=01:13:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4438">01:13:58.000</a></div>
+        <div class="t">總之,你有大量的data,它們沒有label,你可以做的事情是用這些data去認一個好的feature extractor,用這些data去認一個好的representation,然後用這個feature extractor在你的target data上面去抽feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:15.000" id=01:14:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=qD6iD4TFsdQ&t=4455">01:14:15.000</a></div>
+        <div class="t">那在self-toe learning那篇原始的paper裡面,它其實做了很多的task,我們這邊不要一一細講好了,這些task都顯示self-toe learning是有可能可以得到蠻顯著的improvement。</div>
+    </div>
+    
+</body>
+</html>   

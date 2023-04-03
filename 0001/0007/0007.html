@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【生成式AI】Finetuning vs. Prompting：對於大型語言模型的不同期待所衍生的兩類使用方式 (1/3)</h2><a href=https://www.youtube.com/watch?v=F58vJcGgjt0><img src=https://i.ytimg.com/vi_webp/F58vJcGgjt0/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1">00:01.000</a></div>
+        <div class="t">在座的同學、線上的同學大家好,我們今天就是繼續來講大型語言模型的故事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:10.800" id=00:10.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=10">00:10.800</a></div>
+        <div class="t">今天要講的是人類對大型語言模型在歷史上有兩種不同的期待,這兩種不同的期待其實導致了非常不一樣的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:22.200" id=00:22.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=22">00:22.200</a></div>
+        <div class="t">這兩種不同的期待對應到兩種不同的技術,一個叫Fighting,一個叫Copying。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.200" id=00:30.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=30">00:30.200</a></div>
+        <div class="t">語言模型是我們已經介紹過的東西,我們已經跟大家講過說GPT就是一個語言模型,GPT在做的事情就是文字接龍,這是大家都已經很熟悉的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:44.200" id=00:44.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=44">00:44.200</a></div>
+        <div class="t">語言模型除了GPT以外,另外一個特別知名的叫做BERT,BERT是2018年年底的時候Google所釋出的一個大型的語言模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:58.200" id=00:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=58">00:58.200</a></div>
+        <div class="t">BERT做的事情跟GPT其實略有不同,BERT做的事情是文字填空。文字填空跟文字接龍有點像,又有微妙的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09.200" id=01:09.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=69">01:09.200</a></div>
+        <div class="t">文字填空做的事情是給機器一個句子,它要做的事情是句子裡面有一些部分是鏤空的,它要把鏤空的部分填回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21.200" id=01:21.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=81">01:21.200</a></div>
+        <div class="t">所以GPT是做文字接龍,把不完整的句子補完,BERT是做文字填空,把一個句子裡面挖空的地方把它補齊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31.200" id=01:31.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=91">01:31.200</a></div>
+        <div class="t">為了講解使用大型語言模型的意象,這邊特別用MeJourney生了一個圖。這個圖的創痕就是有一隻老鼠騎在大象的頭上,還用韁繩來操控大象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:44.200" id=01:44.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=104">01:44.200</a></div>
+        <div class="t">這個是MeJourney畫的圖,這個大象就是大型的語言模型。大型的語言模型在網路上讀過很多資料,它知道很多事情,但是它不知道自己要做什麼。它空有一身力量,但是站在那裡不知道要做什麼,它需要有人來指引它的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:05.200" id=02:05.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=125">02:05.200</a></div>
+        <div class="t">指引它方向的人也許不用花很大的力量,只需要用一點點的力量就可以引導大象走向我們要它走的方向。所以大象指的是大型語言模型,而大象頭上的老鼠指的是使用語言模型的人類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:22.200" id=02:22.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=142">02:22.200</a></div>
+        <div class="t">這邊我是要叫MeJourney畫一個老鼠,但不知道它怎麼畫都畫不出一隻老鼠,它畫出來的老鼠都是像是米老鼠這個感覺,有一點人的樣子。這個大象也有點失敗,不知道為什麼它有兩個鼻子就失了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:37.200" id=02:37.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=157">02:37.200</a></div>
+        <div class="t">它有兩個鼻子看起來很正常,乍看之下你還沒發現有什麼問題,但它其實是鼻子跟腳融合在一起的大象。人們對大型語言模型有兩種不同的期待。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:53.200" id=02:53.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=173">02:53.200</a></div>
+        <div class="t">第一個期待是我們期待大型語言模型成為解決某一種問題的專才,它可以解決某一種自然語言處理的特定任務。舉例來說,我們把大型語言模型做一些調整以後,叫它專門做翻譯,你給它什麼句子,它都把中文翻成英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.200" id=03:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=193">03:13.200</a></div>
+        <div class="t">或給它一個句子,給它一段文章,它專門做摘要,看到一段文章作為輸入,它就是會把文章變短。這個是讓大型語言模型變成專才。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:25.200" id=03:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=205">03:25.200</a></div>
+        <div class="t">第二個期待是期待大型語言模型變成一個通才,變得無所不能,什麼都會。舉例來說,你給它一個句子以後,它因為什麼都會,所以如果你只給它一個句子,它不知道它要得到什麼樣的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.200" id=03:42.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=222">03:42.200</a></div>
+        <div class="t">所以你需要對它用人類可以看得懂的語言直接下指令,告訴大型語言模型說,現在把這句話做翻譯,期待它就產生英文的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:54.200" id=03:54.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=234">03:54.200</a></div>
+        <div class="t">同樣的句子,如果你下不同的指令,說要做摘要,它就把你輸入的文字進行摘要。而這個額外所下的,用人類語言來描述的指令,期待今天機器可以看得懂人下的指令,這個人下的指令叫做曠。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:12.200" id=04:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=252">04:12.200</a></div>
+        <div class="t">那大家都知道說,今天雀GBP走的就是這個期待二的路線,希望我們的大型語言模型變成一個通才,你今天要叫它做什麼事情,直接用人類的語言去操控它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.200" id=04:28.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=268">04:28.200</a></div>
+        <div class="t">其實讓語言模型成為一個通才這件事,並不是一件非常新鮮的點子,很早以前就已經有人提出過類似的想法。一個例子是有一篇2018年的文章,大概五年前的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.200" id=04:45.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=285">04:45.200</a></div>
+        <div class="t">它論文的標題叫做Natural Language Decisive,自然語言處理的十項全能競賽。它要做的事情是什麼呢?在這篇文章裡面講說,所有自然語言處理的問題都是問答的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:01.200" id=05:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=301">05:01.200</a></div>
+        <div class="t">什麼叫問答的問題?問答的問題就是給機器一篇文章,然後問它一個問題,叫它根據你給的文章產出答案。所有自然語言處理的問題都可以把它看作是問答的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.200" id=05:17.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=317">05:17.200</a></div>
+        <div class="t">怎麼說呢?假設你今天要做翻譯,就是給機器一段文字,然後你問它說,要怎麼把這句話從英文翻成德文,期待它輸出一個德文給你。或者是你給機器一篇文章,你現在的問題是這篇文章的摘要是什麼,期待機器輸出一個摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:35.200" id=05:35.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=335">05:35.200</a></div>
+        <div class="t">或者是你想做情緒辨識,做sentimental analysis,給機器一篇文章,你問它說,這篇文章的內容是正面還是負面的,希望機器可以得出正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:47.200" id=05:47.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=347">05:47.200</a></div>
+        <div class="t">所以在《Natural Language Dictionary》這篇文章裡面就已經有說過,所有的問題都是問答的問題。其實這篇文章裡面所謂的question,所謂的問題,在今天看起來就是prompt。只是在2018年的時候,prompt這個詞彙還不流行,所以在《Natural Language Dictionary》裡面說,操控自然語言處理模型做各種不同事情的指令叫做question。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:15.200" id=06:15.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=375">06:15.200</a></div>
+        <div class="t">其實這篇文章也不是最早提出這樣概念的文章。我在更早2015年,那時候deep learning剛開始紅起來的時候,就有人提過這樣的概念了,這篇文章叫做Ask Me Anything。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.200" id=06:28.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=388">06:28.200</a></div>
+        <div class="t">從文章的標題就可以知道說,作者有一個很大的野心,他相信所有自然語言處理的問題通通是問答的問題,他期待有一個模型,問他什麼問題都可以回答。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.200" id=06:40.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=400">06:40.200</a></div>
+        <div class="t">當然在2015年的時候,看起來這個就是天方夜譚,大家會覺得說,嗯,這個有趣的點子應該一百年內都不太可能實踐吧,但今天回頭看起來不就是check GPT嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:53.200" id=06:53.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=413">06:53.200</a></div>
+        <div class="t">所以我想要講的就是,讓機器變成通財這件事情也不是最近才有的點子,而是人類一直以來的夢想。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:03.200" id=07:03.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=423">07:03.200</a></div>
+        <div class="t">成為通財跟專財其實各自有利有弊,成為通財的好處比較容易想像。我們先來講講成為專財的好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:13.200" id=07:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=433">07:13.200</a></div>
+        <div class="t">成為專財的好處就是,這個模型專注在一個任務上面,其他什麼事都不想,所以它比較有機會在單一任務上面擊敗通財。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.200" id=07:24.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=444">07:24.200</a></div>
+        <div class="t">這邊舉一個例子,有一個今年一月的文章叫做《Is Check GPT a Good Translator?》,這個是騰訊的文章。它想知道說,Check GPT可以做翻譯,但是跟現在的商用翻譯軟體,比如說Google Translator比起來,結果怎麼樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.200" id=07:42.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=462">07:42.200</a></div>
+        <div class="t">但是Check GPT,你要對它做翻譯之前,你要先對它下指令,要先對它做prompt。所以這篇文章的起手式是,因為我們並不知道要下什麼樣的prompt才是最適合把Check GPT變成翻譯軟體的prompt。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.200" id=07:57.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=477">07:57.200</a></div>
+        <div class="t">所以它先問Check GPT問題,我應該要下什麼樣的prompt才能夠讓你做翻譯呢?Check GPT給了十個建議,這群作者再根據這十個建議做一些修改,得到一個他們覺得最適合把Check GPT當作翻譯軟體的prompt。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.200" id=08:15.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=495">08:15.200</a></div>
+        <div class="t">結果怎麼樣呢?這是文章中的結果。它們試了好幾種不同的語言。像這邊ZHEN的意思就是,左到右就是把ZH轉成EN,就是把中文翻成英文,右到左就是把英文翻成中文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.200" id=08:32.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=512">08:32.200</a></div>
+        <div class="t">這邊就做十二個不同的翻譯的任務。這邊試了Google、DeepL、騰訊的翻譯系統,就是有三種不同的商用翻譯軟體,跟Check GPT來做PK。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:45.200" id=08:45.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=525">08:45.200</a></div>
+        <div class="t">這邊的數值是一個叫做Blue Score的數值。Blue Score這個數值在作業5我們還會再看到,它是通常拿來評量翻譯系統的一種指標。總之數值越大,代表翻譯的品質越好。細節我們就不再講,其實在作業5我們會用到Blue Score這個評比的標準。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:08.200" id=09:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=548">09:08.200</a></div>
+        <div class="t">你可以很明顯地看到說,在多數的情況下,其實Check GPT都是輸給商用系統的。商用系統只單一做一件事情,當然可以比Check GPT做得好。Check GPT還要另外做一萬件事情呢,所以翻譯並不是它特別專長的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.200" id=09:29.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=569">09:29.200</a></div>
+        <div class="t">剛才那是騰訊的文章,騰訊的文章是比較早開始做的,它用的是12月版本的Check GPT,而且他們只試了50個句子,這是有點被人詬病的,因為那時候Check GPT還沒有API,所以他們應該是人手輸進去的,有點麻煩,所以只試了50個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.200" id=09:46.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=586">09:46.200</a></div>
+        <div class="t">在幾週之前,Microsoft本身出了另外一篇文章,就是How Good Are GPT Models as Machine Translations,想要知道GPT系列當作一個翻譯軟體的時候,跟現有最強的翻譯系統、翻譯模型比起來怎麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.200" id=10:04.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=604">10:04.200</a></div>
+        <div class="t">這邊一樣試了各種不同語言間的翻譯,總共試了八個不同的狀況。那這邊比較的基準是WNT Best,你可以想像就是在某一個比賽裡面,WNT其實是一個翻譯的比賽,WNT Best就是在某一個翻譯比賽裡面最強的那一個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.200" id=10:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=625">10:25.200</a></div>
+        <div class="t">那這邊比了Check GPT,還有DaVinci 002、DaVinci 003,就是之前的GPT。你會發現說這個Check GPT如果跟WNT Best,跟最好的翻譯模型比起來,還是沒有辦法贏的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:40.200" id=10:40.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=640">10:40.200</a></div>
+        <div class="t">在多數的狀況下,在這個WNT比賽裡面最好的模型,還是贏過Check GPT的。所以這是專才的好處,假設你只在意一個任務,那你其實應該專門為這個任務打造一個系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:54.200" id=10:54.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=654">10:54.200</a></div>
+        <div class="t">那成為通才的好處是什麼呢?其實我覺得成為通才最大的好處就是,這個才符合人類對人工智慧的想像。這樣才潮,才上得了新聞,才會被討論。你只專做一個任務,現在沒有什麼特別厲害的地方,沒有人會討論這個軟體。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.200" id=11:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=673">11:13.200</a></div>
+        <div class="t">那成為通才的好處除了潮以外,另外一個好處就是,未來要開發新的功能就很快了。從現在開始,你要開發自然語言處理的任務,過去開發新的自然語言處理的任務是要寫程式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.200" id=11:28.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=688">11:28.200</a></div>
+        <div class="t">從今天開始,使用Check GPT,你要開發任務,你不再是寫程式了,你是用人類的語言,直接來操控一個現有的通才的模型,讓它做你想做的事。操控機器不再是用程式語言,而是用人類的語言。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.200" id=11:48.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=708">11:48.200</a></div>
+        <div class="t">舉例來說,假設如果你對模型下的指令是請幫我做摘要,但是模型輸出的摘要還是太長了,怎麼辦?以前你要改程式很麻煩,現在直接改指令說我要100字以內的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.200" id=12:03.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=723">12:03.200</a></div>
+        <div class="t">順便一提,八成看得懂,八成可以符合你的要求,按照你的要求輸出你指定長的摘要。所以我們就講了兩種對於語言模型不同的期待,一個是希望它只做一件事情,一個是希望它成為通才。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.200" id=12:21.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=741">12:21.200</a></div>
+        <div class="t">而這兩種期待導致兩種不同類型的使用與大型語言模型的方式。我們先來看期待1有什麼樣的大型語言模型的使用方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:35.200" id=12:35.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=755">12:35.200</a></div>
+        <div class="t">BERT這個模型就是一個做文字填空的模型,這個做文字填空的模型通常我們在使用它的時候都是在期待1的情境下來使用它。我們有一個語言模型,我們要這個語言模型成為各種不同任務的專才之前,我們需要先對它做一些改造。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:58.200" id=12:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=778">12:58.200</a></div>
+        <div class="t">什麼樣的改造呢?這個改造分成兩個面向,一個面向是你需要加一些外掛,第二個面向是你需要對它的參數做一些微調,它才能夠變成專精於某一個任務的專才。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.200" id=13:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=793">13:13.200</a></div>
+        <div class="t">為什麼需要加一個外掛呢?你想想看,BERT相較於GPT系列有一個先天的劣勢,什麼樣的劣勢?它不會講話。當初學習叫它做的事情就是文字填空。你給它一個句子,中間有一些鏤空,它把蓋起來的地方,把鏤空的地方把它補上去。這是它會做的事情,但它不會生出一個完整的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.200" id=13:40.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=820">13:40.200</a></div>
+        <div class="t">如果你今天的任務是要BERT去產生某種樣子的答案,或是要它做翻譯生成一個完整的句子,你是沒辦法直接使用BERT這種模型的,你需要加上外掛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:55.200" id=13:55.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=835">13:55.200</a></div>
+        <div class="t">那怎麼幫BERT加上外掛呢?在過去的上課錄影裡面我們是有講的,所以我們今天就不細講。基本上有幾個固定的套路,本身在原始的BERT文章裡面就已經告訴你說有幾個固定的套路,你可以根據你的需求來改裝BERT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.200" id=14:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=853">14:13.200</a></div>
+        <div class="t">BERT不是一出廠就可以使用的,它要做一些改裝,加上一些額外的模組,才能夠做你想做的任務。如果你不喜歡看影片的話,那這邊有一個寫得很清楚的Blog文章,我把連結也放在頭幾天上面給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.200" id=14:30.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=870">14:30.200</a></div>
+        <div class="t">這邊講的是加外掛。另外一個要做的事情就是,你需要去微調語言模型內部的參數。微調這件事情的英文叫做Finetune。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:45.200" id=14:45.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=885">14:45.200</a></div>
+        <div class="t">微調的概念是什麼呢?一個語言模型拿來,你要叫它做翻譯,它是不會做翻譯的。所以怎麼辦?你要先準備一些成對的資料,告訴它說如果有人跟你輸入good morning,你就要輸出早安。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.200" id=15:00.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=900">15:00.200</a></div>
+        <div class="t">然後你就去微調語言模型內部的參數,讓它變成一個翻譯的專才,有人跟它說good morning的時候,它可以輸出早安。我剛才有講過說,如果今天你用的語言模型是一個BERT,它沒事是講不了一句話的,所以你一定要加額外的外掛,它才講得了一句完整的話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.200" id=15:20.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=920">15:20.200</a></div>
+        <div class="t">外掛是要另外訓練出來的,你還是需要一些標註的資料才能夠把外掛訓練出來。這邊所謂Finetune的意思講得更具體一點,就是大家都已經知道的,如果你要調整一個類神經網路的參數,你要怎麼做呢?你要跑Gradient Descent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.200" id=15:38.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=938">15:38.200</a></div>
+        <div class="t">這邊所謂的Finetune其實就是跑Gradient Descent的意思,就是你把語言模型原來的參數當作訓練的初始化參數,當作訓練的initialization。之前在作業裡面train模型的時候,你的deep learning的network、你的類神經網路的參數都是隨機初始化的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:56.700" id=15:56.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=956">15:56.700</a></div>
+        <div class="t">但是今天你有一個語言模型了,你要做翻譯,那你不需要隨機初始化你的參數,不要從頭訓練起,把語言模型當作初始化的參數,然後用翻譯的資料去做一點微調,你去做幾步的Gradient Descent,那這個模型可能就有很好的翻譯的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:16.700" id=16:16.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=976">16:16.700</a></div>
+        <div class="t">這個就是微調的概念,你把原來語言模型裡面的參數當作初始化的參數,用Gradient Descent去微調模型裡面的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.200" id=16:27.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=987">16:27.200</a></div>
+        <div class="t">還有另外一個技術叫做adapter,adapter的意思是說,這個語言模型的參數我們都不去動它,我們在語言模型裡面再插入額外的模組。講插入額外的模組這件事聽起來有點抽象,下一頁的投影片會讓你更清楚所謂的插入額外的模組是什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.200" id=16:49.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1009">16:49.200</a></div>
+        <div class="t">我們就在大型語言模型裡面插入額外的插件,這個插件可能就是新增加的一個layer等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:58.200" id=16:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1018">16:58.200</a></div>
+        <div class="t">有了這個額外的插件以後,假設我們要讓這個語言模型可以做翻譯,我們有一些翻譯的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:07.200" id=17:07.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1027">17:07.200</a></div>
+        <div class="t">在FindU的時候,語言模型本身是不動的,你只去微調adapter裡面的參數。所以語言模型本身不動,但語言模型加上adapter,加上這個額外的插件合起來,它們可以做翻譯,合起來變成一個有翻譯專長的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:26.200" id=17:26.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1046">17:26.200</a></div>
+        <div class="t">那adapter這個插件實際上長什麼樣子呢?有千千百百種各式各樣不同的變形。你可以在網路上找到一個東西叫adapter hub,一個adapter的倉庫裡面有各式各樣的adapter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.200" id=17:42.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1062">17:42.200</a></div>
+        <div class="t">這個adapter hub的logo長得像是這個樣子,就是把bird加上外掛讓它變成一個機械bird。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.200" id=17:51.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1071">17:51.200</a></div>
+        <div class="t">那adapter有各式各樣不同的插法,那這邊就是列了幾種常見的插法。一種是bifid,那這邊就很快地帶過去啦,你有興趣再自己去研究文獻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.200" id=18:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1082">18:02.200</a></div>
+        <div class="t">bifid就是把所有的bias當作額外的插件。今天在FindU的時候,只FindU那些neuron的bias,weight都不去動它,這是一種做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.200" id=18:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1093">18:13.200</a></div>
+        <div class="t">一種叫haspi,haspi就是這是一個transformer encoder的layer,中間包括了attention,包括了v-forward network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:25.200" id=18:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1105">18:25.200</a></div>
+        <div class="t">haspi就在v-forward network後面再接一層v-forward network,到時候做FindU的時候只FindU這個額外插入的額外的這一層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:35.200" id=18:35.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1115">18:35.200</a></div>
+        <div class="t">那有adapter bias,adapter bias是跟v-forward的模組是平行的,它會對這個v-forward的output做一些修改,把v-forward的output做一下平移。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.200" id=18:49.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1129">18:49.200</a></div>
+        <div class="t">然後還有prefix,這個prefix tuning是去改attention,還有另外一個最近因為跟diffusion model結合突然變得很熱門的方法叫做laura,那laura也是去改attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:02.200" id=19:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1142">19:02.200</a></div>
+        <div class="t">總之這個插件可以插在各式各樣的地方,那至於插在哪裡好,你得自己試啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:08.200" id=19:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1148">19:08.200</a></div>
+        <div class="t">比如說laura在NLP上表現得很好,但是我們實驗室有一篇文章是把laura試在語音上,表現就特別差,這樣子是全部adapter裡面最差的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:18.200" id=19:18.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1158">19:18.200</a></div>
+        <div class="t">所以一個adapter要插在哪裡才會好,我覺得其實取決於你的應用,這個是你要自己去嘗試的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.200" id=19:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1165">19:25.200</a></div>
+        <div class="t">我只想告訴你說,世界上有各式各樣的adapter,這個插件可以插在各式各樣的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:32.200" id=19:32.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1172">19:32.200</a></div>
+        <div class="t">而那變成adapter有什麼樣的好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:38.200" id=19:38.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1178">19:38.200</a></div>
+        <div class="t">我們剛才講說,如果沒有用adapter的話,我們就要微調整個模型做的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.200" id=19:44.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1184">19:44.200</a></div>
+        <div class="t">那這邊在投影片上是列舉了三個專長,但是我們期待一個機器可以做的事情不只三個任務,比如說有100個任務,有1000個任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.200" id=19:53.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1193">19:53.200</a></div>
+        <div class="t">如果今天要微調整個模型,意味著每一個任務你都有一個全新的模型,你都有一組全新的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.200" id=20:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1202">20:02.200</a></div>
+        <div class="t">而今天的語言模型都很大,什麼GPT-3,175、176個這個billion的參數,那參數量太多了,這些模型實在是太巨大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:13.200" id=20:13.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1213">20:13.200</a></div>
+        <div class="t">100個任務交存100個模型,1000個任務交存1000個模型,這個可能在實作上是難以承受的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.200" id=20:20.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1220">20:20.200</a></div>
+        <div class="t">所以怎麼辦?adapter的方法是語言模型本身就不懂,我們只插入額外的插件。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.200" id=20:27.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1227">20:27.200</a></div>
+        <div class="t">到時候你真正實際需要存的模型參數,其實只有大型語言模型本身,GPT-3只需要存一個,它有176個billion的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.200" id=20:38.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1238">20:38.200</a></div>
+        <div class="t">但是每一個任務其實你只存了adapter,100個任務你就只存100個adapter就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.200" id=20:45.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1245">20:45.200</a></div>
+        <div class="t">adapter通常都很小,它們可能只是一個layer的參數而已,它們是很少的參數,所以存100個也許你還是可以接受的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:54.200" id=20:54.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1254">20:54.200</a></div>
+        <div class="t">這個是adapter的優勢,就為什麼大家會想要使用adapter這樣的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:01.200" id=21:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1261">21:01.200</a></div>
+        <div class="t">接下來,我們剛才講的是臍帶1,就是大家通常使用BERT這個模型的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.200" id=21:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1268">21:08.200</a></div>
+        <div class="t">接下來我們就要進入臍帶2,怎麼把模型變成一個通材。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:14.200" id=21:14.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1274">21:14.200</a></div>
+        <div class="t">也許在講這邊之前,我們也可以看看大家有沒有什麼問題要問的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.200" id=21:19.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1279">21:19.200</a></div>
+        <div class="t">以後應該要講到一個段落就停下來,看看大家有沒有問題想要問的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:24.200" id=21:24.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1284">21:24.200</a></div>
+        <div class="t">我們可以看看線上有沒有同學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:34.200" id=21:34.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1294">21:34.200</a></div>
+        <div class="t">我以後都複述一下同學的問題,同學的問題是說,有了adapter是不是就不用FileTune了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:40.200" id=21:40.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1300">21:40.200</a></div>
+        <div class="t">是,就是你不去FileTune那個大的language model,你只去FileTune那個adapter裡面的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:48.200" id=21:48.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1308">21:48.200</a></div>
+        <div class="t">所以應該說你還是有FileTune,但是只FileTuneadapter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:51.200" id=21:51.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1311">21:51.200</a></div>
+        <div class="t">其實像adapter這種技術,現在又有一個新的名詞叫做Efficient FileTuning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:57.200" id=21:57.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1317">21:57.200</a></div>
+        <div class="t">FileTune整個model是一般的FileTune,adapter也有FileTune,但它不是FileTune整個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:02.200" id=22:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1322">22:02.200</a></div>
+        <div class="t">所以它有另外一個名詞叫Efficient FileTuning,就是更有效率的FileTuning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.200" id=22:06.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=F58vJcGgjt0&t=1326">22:06.200</a></div>
+        <div class="t">接下來要講的就是,怎麼讓機器進一步成為一個通財呢?</div>
+    </div>
+    
+</body>
+</html>   

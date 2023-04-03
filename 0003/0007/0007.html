@@ -1,0 +1,3226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】類神經網路訓練不起來怎麼辦 (五)： 批次標準化 (Batch Normalization) 簡介</h2><a href=https://www.youtube.com/watch?v=BABPWOkSbLE><img src=https://i.ytimg.com/vi/BABPWOkSbLE/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGDogTihyMA8=&rs=AOn4CLDiRTPKDZECkSEsO7WtOuiNmaK8CA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=0">00:00.000</a></div>
+        <div class="t">這段是想跟大家簡短的介紹一下Batch Normalization的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.000" id=00:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=15">00:15.000</a></div>
+        <div class="t">因為上課的內容想要配合作業的關係,所以我們會先把作業需要的,比如說Self-Tension就先講一講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.000" id=00:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=24">00:24.000</a></div>
+        <div class="t">我們在比較覺得進度有跟得上的時候,就講一些Training的Tips。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=30">00:30.000</a></div>
+        <div class="t">所以這樣可能有點散亂了,就Training的Tips散佈在課程的各個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.000" id=00:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=35">00:35.000</a></div>
+        <div class="t">但Training的Tips這種東西,如果真的想講的話是永遠都講不完的,這個Tips實在是太多了,所以我們有空的時候就講一些Tips。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:44.000" id=00:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=44">00:44.000</a></div>
+        <div class="t">我們這邊要講的是Batch Normalization。這個時候講Batch Normalization是最合適的,因為Batch Normalization在作業三是用得上的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:53.000" id=00:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=53">00:53.000</a></div>
+        <div class="t">而且作業三助教的程式裡面其實就有Batch Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:58.000" id=00:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=58">00:58.000</a></div>
+        <div class="t">在做CNN的時候,今天做影像處理的時候,Batch Normalization往往可以帶來蠻大的幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05.000" id=01:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=65">01:05.000</a></div>
+        <div class="t">所以我們正好準備要來做作業三了,所以我們來講一下Batch Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10.000" id=01:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=70">01:10.000</a></div>
+        <div class="t">這邊是一個很快的介紹Batch Normalization這個技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.000" id=01:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=75">01:15.000</a></div>
+        <div class="t">那你記得我們之前才講過說,我們能不能夠直接改Aero Surface的Landscape。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=85">01:25.000</a></div>
+        <div class="t">我們覺得Aero Surface如果很崎嶇的時候,它比較難Train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.000" id=01:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=90">01:30.000</a></div>
+        <div class="t">那我們能不能夠直接把三產品讓它變得比較好Train呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:36.000" id=01:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=96">01:36.000</a></div>
+        <div class="t">Batch Normalization就是其中一個把三產品的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.000" id=01:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=102">01:42.000</a></div>
+        <div class="t">那我記得我們在講Optimization的時候,我們一開始就跟大家講說,不要小看Optimization這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:51.000" id=01:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=111">01:51.000</a></div>
+        <div class="t">有時候就算你的Aero Surface是Convex的,也就是它就是一個腕的形狀,都不見得很好Train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:58.000" id=01:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=118">01:58.000</a></div>
+        <div class="t">那我們舉的例子就是,假設你的兩個參數,它們對Loss的斜率差別非常大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.000" id=02:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=126">02:06.000</a></div>
+        <div class="t">在W1這個方向上面,你的斜率變化很小,在W2這個方向上面,斜率變化很大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:12.000" id=02:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=132">02:12.000</a></div>
+        <div class="t">你今天如果是固定的Learning Rate,你可能很難得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:18.000" id=02:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=138">02:18.000</a></div>
+        <div class="t">所以我們才說,你需要Adaptive的Learning Rate,你需要用Add-On等等比較進階的Optimization的方法,才能夠得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:30.000" id=02:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=150">02:30.000</a></div>
+        <div class="t">那現在我們要從另外一個方向想,直接把難做的Aero Surface把它改掉,看能不能夠改得好做一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:40.000" id=02:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=160">02:40.000</a></div>
+        <div class="t">那在做這件事之前,也許我們第一個要問的問題就是,有這種狀況,W1跟W2它們的斜率差很多的這種狀況,到底是從什麼地方來的?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.000" id=02:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=174">02:54.000</a></div>
+        <div class="t">那我們這邊就是舉一個例子,假設我現在有一個非常簡單的Model,它的輸入是X1跟X2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:04.000" id=03:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=184">03:04.000</a></div>
+        <div class="t">X1跟X2它對應的參數就是W1跟W2,它是一個Linear的Model,沒有Activation Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.000" id=03:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=191">03:11.000</a></div>
+        <div class="t">W1乘X1,W2乘X2,加上B以後就得到Y,會計算Y跟Y hat之間的差距,當作1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.000" id=03:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=200">03:20.000</a></div>
+        <div class="t">把所有Trending Data一加起來就是你的Loss,那你希望去Minimize你的Loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:27.000" id=03:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=207">03:27.000</a></div>
+        <div class="t">那什麼樣的狀況,我們會產生像上面這樣子比較不好Trend的Aero Surface呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:33.000" id=03:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=213">03:33.000</a></div>
+        <div class="t">我們來看一下這個W1,如果今天W1有改變的時候,它對Loss的變化,我們要怎麼看呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:44.000" id=03:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=224">03:44.000</a></div>
+        <div class="t">當我們對W1有一個小小的改變,比如說加上Delta W1的時候,那這個L也會有一個改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:52.000" id=03:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=232">03:52.000</a></div>
+        <div class="t">那這個W1是透過W1改變的時候,你就改變了Y,Y改變的時候你就改變了E,然後接下來就改變了L。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.000" id=04:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=242">04:02.000</a></div>
+        <div class="t">所以當W1改變的時候,L就跟著改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:05.000" id=04:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=245">04:05.000</a></div>
+        <div class="t">那什麼時候W1的改變會對L的影響很小呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:11.000" id=04:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=251">04:11.000</a></div>
+        <div class="t">那什麼時候W1這邊的變化,它在Aero Surface上的斜率會很小呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:17.000" id=04:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=257">04:17.000</a></div>
+        <div class="t">一個可能性是當你的Input很小的時候,假設X1的值都很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=264">04:24.000</a></div>
+        <div class="t">假設X1的值在不同的Trending Example裡面,它的值都很小,那因為X1是直接乘上W1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:32.000" id=04:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=272">04:32.000</a></div>
+        <div class="t">如果X1的值都很小,W1有一個變化的時候,它對Y的影響也是小的,對E的影響也是小的,它對L的影響就會是小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:42.000" id=04:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=282">04:42.000</a></div>
+        <div class="t">所以如果W1接的Input它的值都很小,那就會產生這邊的這樣的case,你在W1上面的變化對大L的影響是小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:52.000" id=04:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=292">04:52.000</a></div>
+        <div class="t">反之呢,如果今天是X2的話,假設X2它的值都很大,當你的W2有一個小小的變化的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.000" id=05:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=305">05:05.000</a></div>
+        <div class="t">雖然W2這個變化可能很小,但是因為它乘上了X2,X2的值很大,那Y的變化就會很大,那E的變化就會很大,那L的變化就會很大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:15.000" id=05:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=315">05:15.000</a></div>
+        <div class="t">那就會導致我們在W這個方向上做變化的時候,我們把W改變一點點,那我們的Error Surface就會有很大的變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.000" id=05:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=324">05:24.000</a></div>
+        <div class="t">所以你發現說,今天在這個Linear的Model裡面,當我們Input的Feature每一個Dimension的值,它的Scale差距很大的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:34.000" id=05:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=334">05:34.000</a></div>
+        <div class="t">我們就可能產生像這樣子的Error Surface,就可能產生不同方向,它的斜率非常不同的、它的坡度非常不同的Error Surface。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.000" id=05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=344">05:44.000</a></div>
+        <div class="t">所以怎麼辦呢?我們有沒有可能給不同的Dimension,Feature裡面不同的Dimension,讓它有同樣的數值的範圍?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=356">05:56.000</a></div>
+        <div class="t">如果我們可以給不同的Dimension同樣的數值範圍的話,那我們可能就可以製造比較好的Error Surface,讓Training變得比較容易一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.000" id=06:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=367">06:07.000</a></div>
+        <div class="t">那怎麼讓不同的Dimension有類似的、有接近的數值的範圍呢?其實有很多不同的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:16.000" id=06:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=376">06:16.000</a></div>
+        <div class="t">那這些不同的方法往往就合起來統稱為Feature Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.000" id=06:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=381">06:21.000</a></div>
+        <div class="t">那我以下所講的方法只是Feature Normalization的一種可能性,它並不是Feature Normalization的全部。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=390">06:30.000</a></div>
+        <div class="t">你可以怎麼做呢?你可以說,假設X1到XR是我們所有的訓練資料的Feature Vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.000" id=06:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=399">06:39.000</a></div>
+        <div class="t">我們把所有訓練資料的Feature Vector通通都集合起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=404">06:44.000</a></div>
+        <div class="t">那每一個Vector,X1裡面就有X上標1下標1,代表X1的第一個Element。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.000" id=06:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=410">06:50.000</a></div>
+        <div class="t">X上標2下標1就代表X2的第一個Element,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:55.000" id=06:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=415">06:55.000</a></div>
+        <div class="t">那我們把同一個Dimension,不同筆資料,不同Feature Vector,同一個Dimension裡面的數值,把它取出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:06.000" id=07:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=426">07:06.000</a></div>
+        <div class="t">然後去計算某一個Dimension的Mean。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=429">07:09.000</a></div>
+        <div class="t">那我們現在計算的是第i一個Dimension,它的Mean就是ni。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:14.000" id=07:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=434">07:14.000</a></div>
+        <div class="t">那我們計算第i一個Dimension的Standard Deviation,我們用σi來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.000" id=07:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=441">07:21.000</a></div>
+        <div class="t">那接下來,我們就可以做一種Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:25.000" id=07:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=445">07:25.000</a></div>
+        <div class="t">那這種Normalization其實叫做標準化,其實叫Standardization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:29.000" id=07:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=449">07:29.000</a></div>
+        <div class="t">不過我們這邊等一下就統稱Normalization就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:32.000" id=07:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=452">07:32.000</a></div>
+        <div class="t">那我們怎麼做Normalization呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=454">07:34.000</a></div>
+        <div class="t">我們就是把這個X,把這邊的某一個數值,減掉這個Dimension算出來的Mean。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.000" id=07:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=462">07:42.000</a></div>
+        <div class="t">再除掉這個Dimension算出來的Standard Deviation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.000" id=07:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=466">07:46.000</a></div>
+        <div class="t">減掉Mean,除掉Standard Deviation,得到新的數值,叫做XΔ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:53.000" id=07:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=473">07:53.000</a></div>
+        <div class="t">那得到新的數值以後,再把新的數值把它塞回去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.000" id=07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=477">07:57.000</a></div>
+        <div class="t">我們等一下都用這個Δ來代表有被Normalize以後的數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.000" id=08:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=483">08:03.000</a></div>
+        <div class="t">那做完Normalize以後有什麼好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:06.000" id=08:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=486">08:06.000</a></div>
+        <div class="t">做完Normalize以後,這個Dimension上面的數值就會平均是0,然後它的Variance就會是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=495">08:15.000</a></div>
+        <div class="t">所以這一排數值,它的分布網就都會在0上下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:20.000" id=08:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=500">08:20.000</a></div>
+        <div class="t">那你對每一個Dimension,每一個Dimension,每一個Dimension都做一樣的事情,都做一樣的Normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=507">08:27.000</a></div>
+        <div class="t">把它們變成Mean接近0,Variance是1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.000" id=08:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=512">08:32.000</a></div>
+        <div class="t">那你就會發現說所有的數值,所有feature不同Dimension的數值都在0上下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.000" id=08:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=518">08:38.000</a></div>
+        <div class="t">那你可能就可以製造一個比較好的Aerial Surface。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.000" id=08:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=522">08:42.000</a></div>
+        <div class="t">所以像這樣子的Feature Normalization的方式,往往對你的Training有幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:47.000" id=08:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=527">08:47.000</a></div>
+        <div class="t">它可以讓你在做Gradient Descent的時候,你的Gradient Descent它的Loss收斂更快一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:53.000" id=08:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=533">08:53.000</a></div>
+        <div class="t">可以讓你的Gradient Descent它的訓練更順利一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:57.000" id=08:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=537">08:57.000</a></div>
+        <div class="t">這個是Feature Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.000" id=09:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=540">09:00.000</a></div>
+        <div class="t">所以當然Deep Learning可以做Feature Normalization,你可能會把Feature做Normalize以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.000" id=09:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=544">09:04.000</a></div>
+        <div class="t">其實在助教的Code裡面,我們都有對Feature做Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:09.000" id=09:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=549">09:09.000</a></div>
+        <div class="t">那當你得到X tilde以後呢,這個是X tilde代表Normalize的Feature以後呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:14.000" id=09:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=554">09:14.000</a></div>
+        <div class="t">把它丟到Deep Neural裡面去做接下來的計算,去做接下來的訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:20.000" id=09:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=560">09:20.000</a></div>
+        <div class="t">所以你把X1 tilde通過第一個Layer得到Z1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.000" id=09:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=565">09:25.000</a></div>
+        <div class="t">那你有可能通過Activation Function,不管是選Signal或Relu都可以,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:30.000" id=09:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=570">09:30.000</a></div>
+        <div class="t">然後再得到A1,然後再通過下一層等等,那就看你有幾層Neural就做多少的運算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:36.000" id=09:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=576">09:36.000</a></div>
+        <div class="t">每一個X都做類似的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.000" id=09:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=579">09:39.000</a></div>
+        <div class="t">但是如果我們進一步來想的話,對W2來說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.000" id=09:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=584">09:44.000</a></div>
+        <div class="t">這邊的A1 A3,這邊的Z1 Z3,其實也是另外一種Input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.000" id=09:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=591">09:51.000</a></div>
+        <div class="t">如果這邊X tilde,雖然它已經做Normalize,但是通過W1以後它就沒有做Normalize啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=599">09:59.000</a></div>
+        <div class="t">如果X tilde通過W1得到Z1,而Z1的不同的Dimension間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.000" id=10:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=604">10:04.000</a></div>
+        <div class="t">它的數值的分布仍然有很大的差異的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:07.000" id=10:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=607">10:07.000</a></div>
+        <div class="t">那我們要Tread W2第二層的參數會不會也有困難呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=613">10:13.000</a></div>
+        <div class="t">所以這樣想起來,我們也應該要對這邊的A或對這邊的Z做Feature Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:22.000" id=10:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=622">10:22.000</a></div>
+        <div class="t">對W2來說,這邊的A或這邊的Z其實也是一種Feature,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:26.000" id=10:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=626">10:26.000</a></div>
+        <div class="t">我們應該要對這些Feature也做Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:30.000" id=10:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=630">10:30.000</a></div>
+        <div class="t">但這邊有人就會問一個問題,應該要在Activation Function之前做Normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.000" id=10:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=637">10:37.000</a></div>
+        <div class="t">還是要在Activation Function之後做Normalization呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:42.000" id=10:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=642">10:42.000</a></div>
+        <div class="t">在實作上這兩件事情其實差異不大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.000" id=10:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=645">10:45.000</a></div>
+        <div class="t">你可以自己在座位裡面試試看這兩件事情有沒有差異,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:48.000" id=10:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=648">10:48.000</a></div>
+        <div class="t">它們的差異是不大的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:50.000" id=10:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=650">10:50.000</a></div>
+        <div class="t">所以你對Z做Feature Normalization或對A做Feature Normalization其實都可以啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.000" id=10:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=655">10:55.000</a></div>
+        <div class="t">那如果你選擇的是Sigmoid,那可能比較推薦對Z做Feature Normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=660">11:00.000</a></div>
+        <div class="t">因為你知道Sigmoid是一個S的形狀嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:04.000" id=11:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=664">11:04.000</a></div>
+        <div class="t">那它在0附近斜率比較大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=667">11:07.000</a></div>
+        <div class="t">所以如果你對Z做Feature Normalization把所有的值都挪到0附近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:11.000" id=11:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=671">11:11.000</a></div>
+        <div class="t">那你到時候算Gradient的時候算出來的值會比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:14.000" id=11:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=674">11:14.000</a></div>
+        <div class="t">那不過因為你不見得是選Sigmoid嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.000" id=11:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=676">11:16.000</a></div>
+        <div class="t">所以你也不一定要把Feature Normalization放在Z這個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:20.000" id=11:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=680">11:20.000</a></div>
+        <div class="t">若是選別的,也許你選A也會有好的結果,也說不定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:25.000" id=11:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=685">11:25.000</a></div>
+        <div class="t">總之,in general而言,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.000" id=11:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=688">11:28.000</a></div>
+        <div class="t">這個Normalization要放在Activation Function之前或之後都是可以的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:32.000" id=11:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=692">11:32.000</a></div>
+        <div class="t">在實作上可能沒有太大的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=696">11:36.000</a></div>
+        <div class="t">好,那我們這邊就是對Z做一下Feature Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:42.000" id=11:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=702">11:42.000</a></div>
+        <div class="t">那怎麼對Z做Feature Normalization呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:46.000" id=11:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=706">11:46.000</a></div>
+        <div class="t">那你就把Z想成是另外一種Feature嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.000" id=11:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=709">11:49.000</a></div>
+        <div class="t">我們這邊有Z1、Z2、Z3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:52.000" id=11:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=712">11:52.000</a></div>
+        <div class="t">我們就把Z1、Z2、Z3拿出來算一下它的mean。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:56.000" id=11:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=716">11:56.000</a></div>
+        <div class="t">怎麼算mean呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.000" id=11:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=717">11:57.000</a></div>
+        <div class="t">這邊的μ它是一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:59.000" id=11:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=719">11:59.000</a></div>
+        <div class="t">我們就把Z1、Z2、Z3這三個vector呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:02.000" id=12:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=722">12:02.000</a></div>
+        <div class="t">把它平均起來得到μ這個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:05.000" id=12:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=725">12:05.000</a></div>
+        <div class="t">那我們也算一個Standard Deviation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:07.000" id=12:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=727">12:07.000</a></div>
+        <div class="t">這個Standard Deviation這邊這個σ代表了一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.000" id=12:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=731">12:11.000</a></div>
+        <div class="t">那這個vector怎麼算出來呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.000" id=12:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=733">12:13.000</a></div>
+        <div class="t">你就把Zi減掉μ,然後取平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=736">12:16.000</a></div>
+        <div class="t">這邊的平方這個notation有點abuse,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:19.000" id=12:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=739">12:19.000</a></div>
+        <div class="t">這邊的平方就是指對每一個element都去做平方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=743">12:23.000</a></div>
+        <div class="t">然後再開根號,這邊開根號指的是對每一個element,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.000" id=12:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=747">12:27.000</a></div>
+        <div class="t">向量裡面的每一個element都去做開根號,得到σ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=751">12:31.000</a></div>
+        <div class="t">反正你知道我的意思就好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:32.000" id=12:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=752">12:32.000</a></div>
+        <div class="t">就把這三個vector裡面的每一個dimension,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:35.000" id=12:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=755">12:35.000</a></div>
+        <div class="t">都去把它的μ算出來,把它的σ算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:40.000" id=12:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=760">12:40.000</a></div>
+        <div class="t">好,我這邊就不把那些箭頭畫出來了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.000" id=12:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=763">12:43.000</a></div>
+        <div class="t">從Z1、Z2、Z3,算出μ、算出σ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:47.000" id=12:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=767">12:47.000</a></div>
+        <div class="t">好,接下來呢,你就把這邊的每一個Z啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=770">12:50.000</a></div>
+        <div class="t">都去減掉μ除以σ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.000" id=12:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=772">12:52.000</a></div>
+        <div class="t">你把Zi減掉μ除以σ,就得到Zi的θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:57.000" id=12:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=777">12:57.000</a></div>
+        <div class="t">那這邊的μ跟σ它都是向量啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:00.000" id=13:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=780">13:00.000</a></div>
+        <div class="t">所以這邊這個除呢,它的notation有點abuse,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.000" id=13:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=783">13:03.000</a></div>
+        <div class="t">我這邊的除的這個意思是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:06.000" id=13:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=786">13:06.000</a></div>
+        <div class="t">Element wise的相除,就是Zi減μ,它是一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:10.000" id=13:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=790">13:10.000</a></div>
+        <div class="t">所以分子的地方是一個向量,分母的地方也是一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.000" id=13:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=793">13:13.000</a></div>
+        <div class="t">把這個兩個向量,它們對應的element的值相除,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.000" id=13:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=797">13:17.000</a></div>
+        <div class="t">是我這邊這個除號的意思,這邊得到Z的θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.000" id=13:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=802">13:22.000</a></div>
+        <div class="t">好,所以我們就是把Z1減μ除以σ,得到Z1θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.000" id=13:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=807">13:27.000</a></div>
+        <div class="t">同理,Z2減μ除以σ,得到Z2θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.000" id=13:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=811">13:31.000</a></div>
+        <div class="t">Z3減μ除以σ,得到Z3θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:34.000" id=13:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=814">13:34.000</a></div>
+        <div class="t">那就把這個Z1、Z2、Z3做feature normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:38.000" id=13:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=818">13:38.000</a></div>
+        <div class="t">變成Z1θ、Z2θ跟Z3θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.000" id=13:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=823">13:43.000</a></div>
+        <div class="t">好,那接下來呢,要做什麼,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:46.000" id=13:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=826">13:46.000</a></div>
+        <div class="t">接下來就看你愛做什麼就做什麼啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.000" id=13:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=828">13:48.000</a></div>
+        <div class="t">通過activation function得到其他vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.000" id=13:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=831">13:51.000</a></div>
+        <div class="t">然後再去通過其他layer等等,這樣就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:55.000" id=13:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=835">13:55.000</a></div>
+        <div class="t">這樣你就等於對Z1、Z2、Z3做了feature normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:59.000" id=13:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=839">13:59.000</a></div>
+        <div class="t">變成Z1θ、Z2θ、Z3θ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.000" id=14:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=843">14:03.000</a></div>
+        <div class="t">但這邊有一件有趣的事情,這件事情是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.000" id=14:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=847">14:07.000</a></div>
+        <div class="t">這邊的μ跟σ,他們其實都是根據Z1、Z2、Z3算出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:14.000" id=14:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=854">14:14.000</a></div>
+        <div class="t">所以這邊Z1啊,它本來如果我們沒有做feature normalization的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.000" id=14:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=861">14:21.000</a></div>
+        <div class="t">你改變了Z1的值,你會改變這邊A的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:27.000" id=14:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=867">14:27.000</a></div>
+        <div class="t">但是現在啊,當你改變Z1的值的時候,μ跟σ也會跟著改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:35.000" id=14:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=875">14:35.000</a></div>
+        <div class="t">μ跟σ改變以後,Z2的值、A2的值、Z3的值、A3的值也會跟著改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.000" id=14:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=884">14:44.000</a></div>
+        <div class="t">所以之前啊,我們每一個X1θ、X2θ、X3θ,它是獨立分開處理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:50.000" id=14:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=890">14:50.000</a></div>
+        <div class="t">但是我們在做feature normalization以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:54.000" id=14:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=894">14:54.000</a></div>
+        <div class="t">這三個example,他們變得彼此關聯了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:58.000" id=14:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=898">14:58.000</a></div>
+        <div class="t">我們這邊Z1只要有改變,接下來Z2、A2、Z3、A3也都會跟著改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:07.000" id=15:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=907">15:07.000</a></div>
+        <div class="t">所以這邊啊,其實你要把當你有做feature normalization的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=912">15:12.000</a></div>
+        <div class="t">你要把這一整個process,就是有收集一堆feature,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.000" id=15:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=918">15:18.000</a></div>
+        <div class="t">把這堆feature算出μ跟σ這件事情,當作是network的一部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=925">15:25.000</a></div>
+        <div class="t">也就是說你現在有一個比較大的network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:28.000" id=15:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=928">15:28.000</a></div>
+        <div class="t">你之前的network都只吃一個input得到一個output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:32.000" id=15:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=932">15:32.000</a></div>
+        <div class="t">現在呢,你有一個比較大的network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.000" id=15:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=935">15:35.000</a></div>
+        <div class="t">這個大的network它是吃一堆input,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=938">15:38.000</a></div>
+        <div class="t">用這堆input在這個network裡面要算出μ跟σ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=942">15:42.000</a></div>
+        <div class="t">然後接下來產生一堆output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:45.000" id=15:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=945">15:45.000</a></div>
+        <div class="t">那這個地方比較抽象,不知道大家有沒有,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.000" id=15:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=948">15:48.000</a></div>
+        <div class="t">希望希望你聽得懂,如果你覺得有困惑的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.000" id=15:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=951">15:51.000</a></div>
+        <div class="t">你可以等一下詢問或者是在討論板上發問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:54.000" id=15:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=954">15:54.000</a></div>
+        <div class="t">那這一段呢,我覺得只可繪衣不可言傳這樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:58.000" id=15:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=958">15:58.000</a></div>
+        <div class="t">不知道你聽不聽得懂這一段的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:01.000" id=16:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=961">16:01.000</a></div>
+        <div class="t">現在不是一個network處理一個example,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:04.000" id=16:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=964">16:04.000</a></div>
+        <div class="t">而是有一個巨大的network它處理一把example,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.000" id=16:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=967">16:07.000</a></div>
+        <div class="t">用這把example還要算個μ跟σ得到一把output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.000" id=16:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=971">16:11.000</a></div>
+        <div class="t">那這邊就會有一個問題了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:13.000" id=16:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=973">16:13.000</a></div>
+        <div class="t">因為你的訓練資料裡面你的data非常多啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.000" id=16:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=977">16:17.000</a></div>
+        <div class="t">現在一個data set的benchmark topper都上百萬筆資料啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:21.000" id=16:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=981">16:21.000</a></div>
+        <div class="t">你哪有辦法一次把上百萬筆資料丟到一個network裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:25.000" id=16:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=985">16:25.000</a></div>
+        <div class="t">你這個GPU的memory根本無法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:28.000" id=16:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=988">16:28.000</a></div>
+        <div class="t">這個沒電了,換一個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.000" id=16:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=993">16:33.000</a></div>
+        <div class="t">好,麥克風沒電了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:37.000" id=16:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=997">16:37.000</a></div>
+        <div class="t">好,那你那個GPU的memory根本沒有辦法把整個data set的data都漏進去啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.000" id=16:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1004">16:44.000</a></div>
+        <div class="t">所以怎麼辦?在實作的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:47.000" id=16:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1007">16:47.000</a></div>
+        <div class="t">你不會讓這個network考慮整個training data裡面的所有example,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.000" id=16:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1013">16:53.000</a></div>
+        <div class="t">你只會考慮一個batch裡面的example,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.000" id=16:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1016">16:56.000</a></div>
+        <div class="t">舉例來說你batch設64,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:58.000" id=16:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1018">16:58.000</a></div>
+        <div class="t">那你這個巨大的network就是把64筆data讀進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.000" id=17:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1022">17:02.000</a></div>
+        <div class="t">算這64筆data的μ,算這64筆data的σ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:06.000" id=17:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1026">17:06.000</a></div>
+        <div class="t">對這64筆data都去做normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.000" id=17:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1031">17:11.000</a></div>
+        <div class="t">因為我們在實作的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:12.000" id=17:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1032">17:12.000</a></div>
+        <div class="t">我們只對一個batch裡面的data做normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1036">17:16.000</a></div>
+        <div class="t">所以這招叫做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:20.000" id=17:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1040">17:20.000</a></div>
+        <div class="t">這個就是你常常聽到的batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:24.000" id=17:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1044">17:24.000</a></div>
+        <div class="t">那這個batch normalization顯然有一個問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:26.000" id=17:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1046">17:26.000</a></div>
+        <div class="t">就是你一定要有一個夠大的batch,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:29.000" id=17:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1049">17:29.000</a></div>
+        <div class="t">你才算得出μ跟σ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.000" id=17:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1051">17:31.000</a></div>
+        <div class="t">假設你今天你batch設1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1053">17:33.000</a></div>
+        <div class="t">那你就沒有什麼μ或σ可以算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:35.000" id=17:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1055">17:35.000</a></div>
+        <div class="t">你就會有問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:36.000" id=17:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1056">17:36.000</a></div>
+        <div class="t">所以這個batch normalization是適用於batch size比較大的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:41.000" id=17:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1061">17:41.000</a></div>
+        <div class="t">那我們因為batch size如果比較大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:43.000" id=17:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1063">17:43.000</a></div>
+        <div class="t">也許這個batch size裡面的data就足以表示</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.000" id=17:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1066">17:46.000</a></div>
+        <div class="t">整個Corpus的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.000" id=17:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1068">17:48.000</a></div>
+        <div class="t">那這個時候你就可以把這個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.000" id=17:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1071">17:51.000</a></div>
+        <div class="t">本來要對整個Corpus做feature normalization這件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:54.000" id=17:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1074">17:54.000</a></div>
+        <div class="t">改成只在一個batch做feature normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.000" id=17:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1078">17:58.000</a></div>
+        <div class="t">作為approximation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.000" id=18:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1082">18:02.000</a></div>
+        <div class="t">好,那在做batch normalization的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:04.000" id=18:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1084">18:04.000</a></div>
+        <div class="t">往往還會有這樣的設計,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:06.000" id=18:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1086">18:06.000</a></div>
+        <div class="t">你算出這個θ以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:09.000" id=18:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1089">18:09.000</a></div>
+        <div class="t">接下來你會把這個θ再乘上另外一個向量叫做γ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:15.000" id=18:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1095">18:15.000</a></div>
+        <div class="t">這個γ也是一個向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.000" id=18:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1097">18:17.000</a></div>
+        <div class="t">所以你是把θ跟γ做element wise的相乘,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:21.000" id=18:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1101">18:21.000</a></div>
+        <div class="t">把θ這個向量裡面的element,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.000" id=18:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1103">18:23.000</a></div>
+        <div class="t">跟γ這個向量裡面的element,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:25.000" id=18:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1105">18:25.000</a></div>
+        <div class="t">兩兩做相乘,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1106">18:26.000</a></div>
+        <div class="t">再加上β這個向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.000" id=18:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1108">18:28.000</a></div>
+        <div class="t">得到Z hat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.000" id=18:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1110">18:30.000</a></div>
+        <div class="t">而β跟γ你要把它想成是network的參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.000" id=18:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1114">18:34.000</a></div>
+        <div class="t">它是另外再被認出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:37.000" id=18:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1117">18:37.000</a></div>
+        <div class="t">那為什麼要加上β跟γ呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:40.000" id=18:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1120">18:40.000</a></div>
+        <div class="t">那是因為有人可能會覺得說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:42.000" id=18:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1122">18:42.000</a></div>
+        <div class="t">如果我們做normalization以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:44.000" id=18:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1124">18:44.000</a></div>
+        <div class="t">那這邊的Zθ它的平均就一定是0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.000" id=18:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1128">18:48.000</a></div>
+        <div class="t">那也許今天如果平均是0的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:51.000" id=18:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1131">18:51.000</a></div>
+        <div class="t">就是給network一些限制嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1133">18:53.000</a></div>
+        <div class="t">那也許這個限制會帶來什麼負面的影響,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:56.000" id=18:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1136">18:56.000</a></div>
+        <div class="t">所以我們把β跟γ加回去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:58.000" id=18:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1138">18:58.000</a></div>
+        <div class="t">然後讓network現在它的hidden layer的output不需要平均是0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1144">19:04.000</a></div>
+        <div class="t">如果它想要不平均不是0的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.000" id=19:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1147">19:07.000</a></div>
+        <div class="t">它就自己去認β跟γ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.000" id=19:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1149">19:09.000</a></div>
+        <div class="t">來調整一下輸出的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.000" id=19:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1151">19:11.000</a></div>
+        <div class="t">來調整Z hat的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:13.000" id=19:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1153">19:13.000</a></div>
+        <div class="t">但講到這邊又會有人問說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.000" id=19:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1155">19:15.000</a></div>
+        <div class="t">剛才不是說做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1157">19:17.000</a></div>
+        <div class="t">就是為了要讓每一個不同的dimension,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.000" id=19:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1160">19:20.000</a></div>
+        <div class="t">它的range都是一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.000" id=19:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1162">19:22.000</a></div>
+        <div class="t">我們才做這個normalization嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:24.000" id=19:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1164">19:24.000</a></div>
+        <div class="t">現在如果加去乘上γ再加上β,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.000" id=19:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1167">19:27.000</a></div>
+        <div class="t">把γ跟β加進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:29.000" id=19:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1169">19:29.000</a></div>
+        <div class="t">這樣不會不同dimension的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.000" id=19:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1171">19:31.000</a></div>
+        <div class="t">它的range又都不一樣了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:33.000" id=19:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1173">19:33.000</a></div>
+        <div class="t">有可能,但是實際上你在做的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:36.000" id=19:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1176">19:36.000</a></div>
+        <div class="t">實際上在訓練的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:38.000" id=19:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1178">19:38.000</a></div>
+        <div class="t">γ跟β的初始值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:40.000" id=19:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1180">19:40.000</a></div>
+        <div class="t">你會把γ的初始值都設為1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:43.000" id=19:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1183">19:43.000</a></div>
+        <div class="t">所以γ是一個裡面的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:45.000" id=19:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1185">19:45.000</a></div>
+        <div class="t">一開始是一個裡面的值全部都是1的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:47.000" id=19:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1187">19:47.000</a></div>
+        <div class="t">那β是一個裡面的值全部都是0的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.000" id=19:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1190">19:50.000</a></div>
+        <div class="t">所以γ是一個1 vector都是1的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.000" id=19:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1193">19:53.000</a></div>
+        <div class="t">β是一個0 vector裡面的值都是0的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.000" id=19:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1196">19:56.000</a></div>
+        <div class="t">所以讓你的network在一開始訓練的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:58.000" id=19:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1198">19:58.000</a></div>
+        <div class="t">每一個dimension的分布是比較接近的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:01.000" id=20:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1201">20:01.000</a></div>
+        <div class="t">也許訓練到後來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:03.000" id=20:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1203">20:03.000</a></div>
+        <div class="t">你已經訓練夠長的一段時間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:05.000" id=20:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1205">20:05.000</a></div>
+        <div class="t">已經找到一個比較好的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:07.000" id=20:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1207">20:07.000</a></div>
+        <div class="t">Aerosurface走到一個比較好的地方以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:09.000" id=20:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1209">20:09.000</a></div>
+        <div class="t">那再把γ跟β慢慢地加進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.000" id=20:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1212">20:12.000</a></div>
+        <div class="t">所以加Batch Normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:14.000" id=20:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1214">20:14.000</a></div>
+        <div class="t">往往對你的訓練是有幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:17.000" id=20:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1217">20:17.000</a></div>
+        <div class="t">接下來就要講testing的部分了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.000" id=20:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1221">20:21.000</a></div>
+        <div class="t">剛才講的都是training的部分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:23.000" id=20:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1223">20:23.000</a></div>
+        <div class="t">還沒有講到testing的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:25.000" id=20:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1225">20:25.000</a></div>
+        <div class="t">Testing有時候又叫inference,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.000" id=20:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1227">20:27.000</a></div>
+        <div class="t">所以有時候在文件上看到有人說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:29.000" id=20:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1229">20:29.000</a></div>
+        <div class="t">做個inference,inference指的就是testing。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:33.000" id=20:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1233">20:33.000</a></div>
+        <div class="t">這個Batch Normalization在inference或是testing的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:36.000" id=20:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1236">20:36.000</a></div>
+        <div class="t">會有問題啊,會有什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:39.000" id=20:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1239">20:39.000</a></div>
+        <div class="t">在testing的時候,當然如果今天你是在做作業,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:44.000" id=20:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1244">20:44.000</a></div>
+        <div class="t">我們一次會把所有的testing的資料給你,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:46.000" id=20:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1246">20:46.000</a></div>
+        <div class="t">所以你確實也可以在testing的資料上面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.000" id=20:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1249">20:49.000</a></div>
+        <div class="t">製造一個一個Batch。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:51.000" id=20:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1251">20:51.000</a></div>
+        <div class="t">但是假設你真的有系統上線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:53.000" id=20:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1253">20:53.000</a></div>
+        <div class="t">你是一個真正的線上的application,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:56.000" id=20:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1256">20:56.000</a></div>
+        <div class="t">你可以說我今天一定要等30,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.000" id=20:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1259">20:59.000</a></div>
+        <div class="t">比如說你的batch size是64,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:00.000" id=21:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1260">21:00.000</a></div>
+        <div class="t">我一定要等64筆資料都進來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:02.000" id=21:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1262">21:02.000</a></div>
+        <div class="t">我才一次做運算嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:04.000" id=21:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1264">21:04.000</a></div>
+        <div class="t">這顯然是不行的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:05.000" id=21:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1265">21:05.000</a></div>
+        <div class="t">如果你是一個線上的服務,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:07.000" id=21:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1267">21:07.000</a></div>
+        <div class="t">一筆資料進來,你就要每次都做運算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:10.000" id=21:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1270">21:10.000</a></div>
+        <div class="t">你不能等說我累積了一個batch的資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:13.000" id=21:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1273">21:13.000</a></div>
+        <div class="t">才開始做運算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:15.000" id=21:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1275">21:15.000</a></div>
+        <div class="t">但是在做Batch Normalization的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:17.000" id=21:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1277">21:17.000</a></div>
+        <div class="t">我們今天一個x tilde,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:20.000" id=21:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1280">21:20.000</a></div>
+        <div class="t">一個normalize過的feature進來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:22.000" id=21:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1282">21:22.000</a></div>
+        <div class="t">然後你有一個z,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:23.000" id=21:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1283">21:23.000</a></div>
+        <div class="t">你的z要減掉μ跟除σ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.000" id=21:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1286">21:26.000</a></div>
+        <div class="t">那這個μ跟σ是用一個batch的資料算出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:29.000" id=21:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1289">21:29.000</a></div>
+        <div class="t">但如果今天在testing的時候根本就沒有batch,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:32.000" id=21:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1292">21:32.000</a></div>
+        <div class="t">那我們要怎麼算這個μ跟怎麼算這個σ呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:38.000" id=21:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1298">21:38.000</a></div>
+        <div class="t">所以實作上的解法是這個樣子的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.000" id=21:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1302">21:42.000</a></div>
+        <div class="t">如果你看那個PyTorch的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.000" id=21:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1304">21:44.000</a></div>
+        <div class="t">Batch Normalization在testing的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:46.000" id=21:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1306">21:46.000</a></div>
+        <div class="t">你並不需要做什麼特別的處理,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:48.000" id=21:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1308">21:48.000</a></div>
+        <div class="t">PyTorch幫你處理好了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:49.000" id=21:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1309">21:49.000</a></div>
+        <div class="t">PyTorch是怎麼處理這件事的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:51.000" id=21:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1311">21:51.000</a></div>
+        <div class="t">他說在training的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:53.000" id=21:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1313">21:53.000</a></div>
+        <div class="t">如果你有在做Batch Normalization的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:55.000" id=21:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1315">21:55.000</a></div>
+        <div class="t">在training的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:57.000" id=21:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1317">21:57.000</a></div>
+        <div class="t">你每一個batch計算出來的μ跟σ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:00.000" id=22:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1320">22:00.000</a></div>
+        <div class="t">他都會拿出來算moving average,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:04.000" id=22:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1324">22:04.000</a></div>
+        <div class="t">什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.000" id=22:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1325">22:05.000</a></div>
+        <div class="t">你每一次取一個batch出來的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:07.000" id=22:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1327">22:07.000</a></div>
+        <div class="t">你就會算一個μ1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:08.000" id=22:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1328">22:08.000</a></div>
+        <div class="t">取第二個batch出來的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:09.000" id=22:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1329">22:09.000</a></div>
+        <div class="t">你就算一個μ2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:10.000" id=22:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1330">22:10.000</a></div>
+        <div class="t">一直到取第一個batch出來的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.000" id=22:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1332">22:12.000</a></div>
+        <div class="t">你就算一個μt,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:13.000" id=22:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1333">22:13.000</a></div>
+        <div class="t">接下來你會算一個moving average,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:15.000" id=22:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1335">22:15.000</a></div>
+        <div class="t">也就是你會把你現在算出來的μ的一個平均值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:20.000" id=22:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1340">22:20.000</a></div>
+        <div class="t">叫做μbar乘上某一個factor,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:22.000" id=22:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1342">22:22.000</a></div>
+        <div class="t">那這個也是一個constant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:24.000" id=22:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1344">22:24.000</a></div>
+        <div class="t">這也是一個hyperparameter,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:26.000" id=22:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1346">22:26.000</a></div>
+        <div class="t">也是需要調的那一種啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.000" id=22:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1348">22:28.000</a></div>
+        <div class="t">那在PyTorch裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:29.000" id=22:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1349">22:29.000</a></div>
+        <div class="t">我沒記錯他就是0.1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:31.000" id=22:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1351">22:31.000</a></div>
+        <div class="t">我加b就是0.1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.000" id=22:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1353">22:33.000</a></div>
+        <div class="t">然後加上1-p乘上μt,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:36.000" id=22:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1356">22:36.000</a></div>
+        <div class="t">然後來更新你的μ的平均值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:38.000" id=22:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1358">22:38.000</a></div>
+        <div class="t">然後最後在testing的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:40.000" id=22:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1360">22:40.000</a></div>
+        <div class="t">你就不用算batch裡面的μ跟σ了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:43.000" id=22:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1363">22:43.000</a></div>
+        <div class="t">因為testing的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:44.000" id=22:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1364">22:44.000</a></div>
+        <div class="t">在真正的application上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.000" id=22:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1366">22:46.000</a></div>
+        <div class="t">也沒有batch這個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:47.000" id=22:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1367">22:47.000</a></div>
+        <div class="t">你就直接拿μbar跟σbar,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.000" id=22:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1370">22:50.000</a></div>
+        <div class="t">也就是μ跟σbar在訓練的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.000" id=22:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1372">22:52.000</a></div>
+        <div class="t">得到的moving average,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:53.000" id=22:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1373">22:53.000</a></div>
+        <div class="t">μbar跟σbar,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:55.000" id=22:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1375">22:55.000</a></div>
+        <div class="t">來取代這邊的μ跟σbar,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:57.000" id=22:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1377">22:57.000</a></div>
+        <div class="t">這個就是batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:59.000" id=22:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1379">22:59.000</a></div>
+        <div class="t">在testing的時候的運作方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:02.000" id=23:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1382">23:02.000</a></div>
+        <div class="t">好,那這個是從batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:04.000" id=23:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1384">23:04.000</a></div>
+        <div class="t">原始的文獻上面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.000" id=23:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1385">23:05.000</a></div>
+        <div class="t">截出來的一個實驗結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:08.000" id=23:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1388">23:08.000</a></div>
+        <div class="t">那在原始的文獻上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:09.000" id=23:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1389">23:09.000</a></div>
+        <div class="t">還講了很多其他的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:10.000" id=23:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1390">23:10.000</a></div>
+        <div class="t">舉例來說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.000" id=23:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1391">23:11.000</a></div>
+        <div class="t">我們今天還沒有講的是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:13.000" id=23:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1393">23:13.000</a></div>
+        <div class="t">batch normalization用在CNN上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:16.000" id=23:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1396">23:16.000</a></div>
+        <div class="t">要怎麼用呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.000" id=23:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1397">23:17.000</a></div>
+        <div class="t">那你自己去讀一下原始的文獻,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:19.000" id=23:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1399">23:19.000</a></div>
+        <div class="t">你會告訴你說batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:21.000" id=23:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1401">23:21.000</a></div>
+        <div class="t">如果用在CNN上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.000" id=23:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1403">23:23.000</a></div>
+        <div class="t">應該要長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:25.000" id=23:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1405">23:25.000</a></div>
+        <div class="t">好,那這個是原始文獻上面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:26.000" id=23:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1406">23:26.000</a></div>
+        <div class="t">截出來的一個數據,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:28.000" id=23:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1408">23:28.000</a></div>
+        <div class="t">那這個橫軸呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:29.000" id=23:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1409">23:29.000</a></div>
+        <div class="t">代表的是訓練的過程,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1411">23:31.000</a></div>
+        <div class="t">縱軸呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:32.000" id=23:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1412">23:32.000</a></div>
+        <div class="t">代表的是validation state上面的accuracy,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:37.000" id=23:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1417">23:37.000</a></div>
+        <div class="t">那這個黑色的虛線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:39.000" id=23:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1419">23:39.000</a></div>
+        <div class="t">是沒有做batch normalization的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:43.000" id=23:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1423">23:43.000</a></div>
+        <div class="t">他用的是inception的network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:45.000" id=23:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1425">23:45.000</a></div>
+        <div class="t">就是某一種network架構,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:47.000" id=23:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1427">23:47.000</a></div>
+        <div class="t">也是以CNN為基礎的network架構,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:49.000" id=23:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1429">23:49.000</a></div>
+        <div class="t">總之黑色的這個虛線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:51.000" id=23:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1431">23:51.000</a></div>
+        <div class="t">代表沒有做batch normalization的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:54.000" id=23:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1434">23:54.000</a></div>
+        <div class="t">然後如果有做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:56.000" id=23:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1436">23:56.000</a></div>
+        <div class="t">你會得到紅色的這一條虛線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:00.000" id=24:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1440">24:00.000</a></div>
+        <div class="t">那你會發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.000" id=24:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1441">24:01.000</a></div>
+        <div class="t">紅色這一條虛線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:03.000" id=24:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1443">24:03.000</a></div>
+        <div class="t">他訓練的速度,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:04.000" id=24:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1444">24:04.000</a></div>
+        <div class="t">顯然比黑色的虛線還要快很多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:07.000" id=24:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1447">24:07.000</a></div>
+        <div class="t">雖然最後收斂的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.000" id=24:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1448">24:08.000</a></div>
+        <div class="t">就是你只要給他足夠的訓練的時間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:11.000" id=24:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1451">24:11.000</a></div>
+        <div class="t">可能都跑到差不多的accuracy,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:14.000" id=24:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1454">24:14.000</a></div>
+        <div class="t">但是紅色這一條虛線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.000" id=24:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1456">24:16.000</a></div>
+        <div class="t">可以在比較短的時間內,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:19.000" id=24:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1459">24:19.000</a></div>
+        <div class="t">就跑到一樣的accuracy,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.000" id=24:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1461">24:21.000</a></div>
+        <div class="t">那這邊這個藍色的菱形,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:23.000" id=24:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1463">24:23.000</a></div>
+        <div class="t">代表說這幾個點的accuracy是一樣的啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.000" id=24:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1466">24:26.000</a></div>
+        <div class="t">那紅色的大概在一半以內的時間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:29.000" id=24:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1469">24:29.000</a></div>
+        <div class="t">相較於沒有做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:31.000" id=24:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1471">24:31.000</a></div>
+        <div class="t">只需要一半或甚至更少的時間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.000" id=24:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1473">24:33.000</a></div>
+        <div class="t">就跑到同樣的正確率了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:35.000" id=24:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1475">24:35.000</a></div>
+        <div class="t">那這邊還有別的線啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:37.000" id=24:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1477">24:37.000</a></div>
+        <div class="t">這邊有一個粉紅色的線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:39.000" id=24:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1479">24:39.000</a></div>
+        <div class="t">粉紅色的線是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:41.000" id=24:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1481">24:41.000</a></div>
+        <div class="t">粉紅色的線是sigmoid function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:43.000" id=24:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1483">24:43.000</a></div>
+        <div class="t">就是sigmoid function一般的認知,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.000" id=24:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1485">24:45.000</a></div>
+        <div class="t">我們雖然還沒有討論這件事啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:47.000" id=24:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1487">24:47.000</a></div>
+        <div class="t">但一般都會選擇relook,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:49.000" id=24:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1489">24:49.000</a></div>
+        <div class="t">我們是用sigmoid function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:50.000" id=24:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1490">24:50.000</a></div>
+        <div class="t">因為sigmoid function他的training是比較困難的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:52.000" id=24:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1492">24:52.000</a></div>
+        <div class="t">但是這邊想要強調的點是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.000" id=24:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1494">24:54.000</a></div>
+        <div class="t">就算是sigmoid比較難搞的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:57.000" id=24:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1497">24:57.000</a></div>
+        <div class="t">加batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:59.000" id=24:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1499">24:59.000</a></div>
+        <div class="t">還是train得起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:00.000" id=25:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1500">25:00.000</a></div>
+        <div class="t">那這邊沒有,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.000" id=25:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1501">25:01.000</a></div>
+        <div class="t">sigmoid沒有做batch normalization的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:03.000" id=25:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1503">25:03.000</a></div>
+        <div class="t">因為在這個實驗上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.000" id=25:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1505">25:05.000</a></div>
+        <div class="t">作者有說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:06.000" id=25:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1506">25:06.000</a></div>
+        <div class="t">sigmoid不加batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:07.000" id=25:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1507">25:07.000</a></div>
+        <div class="t">根本連train都train不起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:09.000" id=25:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1509">25:09.000</a></div>
+        <div class="t">那這邊還有這個藍色的實線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:11.000" id=25:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1511">25:11.000</a></div>
+        <div class="t">藍色的實線跟這個藍色的虛線呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:14.000" id=25:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1514">25:14.000</a></div>
+        <div class="t">是把learning rate設比較大一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:16.000" id=25:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1516">25:16.000</a></div>
+        <div class="t">乘5就是learning rate變原來的5倍,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:18.000" id=25:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1518">25:18.000</a></div>
+        <div class="t">然後乘30就是learning rate變原來的30倍,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:22.000" id=25:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1522">25:22.000</a></div>
+        <div class="t">那因為如果你做batch normalization的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.000" id=25:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1525">25:25.000</a></div>
+        <div class="t">那你的error surface會比較平滑,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:28.000" id=25:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1528">25:28.000</a></div>
+        <div class="t">比較容易訓練,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:29.000" id=25:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1529">25:29.000</a></div>
+        <div class="t">所以你可以把你的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:30.000" id=25:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1530">25:30.000</a></div>
+        <div class="t">比較不崎嶇,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:31.000" id=25:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1531">25:31.000</a></div>
+        <div class="t">所以你就可以把你的learning rate設大一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:34.000" id=25:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1534">25:34.000</a></div>
+        <div class="t">那這邊有個不好解釋的奇怪的地方就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.000" id=25:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1537">25:37.000</a></div>
+        <div class="t">不知道為什麼learning rate設30倍的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:39.000" id=25:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1539">25:39.000</a></div>
+        <div class="t">是比5倍差啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:40.000" id=25:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1540">25:40.000</a></div>
+        <div class="t">那作者也沒有解釋啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:41.000" id=25:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1541">25:41.000</a></div>
+        <div class="t">你只要做deep learning就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:43.000" id=25:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1543">25:43.000</a></div>
+        <div class="t">有時候會產生這種怪怪的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:44.000" id=25:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1544">25:44.000</a></div>
+        <div class="t">不知道怎麼解釋的現象就是了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.000" id=25:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1546">25:46.000</a></div>
+        <div class="t">不過作者就是照實,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:47.000" id=25:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1547">25:47.000</a></div>
+        <div class="t">把它做出來的實驗結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.000" id=25:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1549">25:49.000</a></div>
+        <div class="t">呈現在這個圖上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.000" id=25:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1552">25:52.000</a></div>
+        <div class="t">好,接下來的問題就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:54.000" id=25:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1554">25:54.000</a></div>
+        <div class="t">batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:55.000" id=25:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1555">25:55.000</a></div>
+        <div class="t">它為什麼會有幫助呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:57.000" id=25:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1557">25:57.000</a></div>
+        <div class="t">在原始的batch normalization那篇paper裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:01.000" id=26:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1561">26:01.000</a></div>
+        <div class="t">它提出來一個概念叫做,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:03.000" id=26:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1563">26:03.000</a></div>
+        <div class="t">internal covariate shift,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.000" id=26:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1566">26:06.000</a></div>
+        <div class="t">covariate shift這個詞彙是原來就有的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:09.000" id=26:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1569">26:09.000</a></div>
+        <div class="t">internal covariate shift我認為是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:12.000" id=26:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1572">26:12.000</a></div>
+        <div class="t">batch normalization的作者自己發明的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:15.000" id=26:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1575">26:15.000</a></div>
+        <div class="t">他認為說今天在train network的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:18.000" id=26:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1578">26:18.000</a></div>
+        <div class="t">會有以下這個問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:19.000" id=26:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1579">26:19.000</a></div>
+        <div class="t">這個問題是這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:21.000" id=26:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1581">26:21.000</a></div>
+        <div class="t">network有很多層,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:22.000" id=26:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1582">26:22.000</a></div>
+        <div class="t">x通過第一層以後得到a,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:24.000" id=26:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1584">26:24.000</a></div>
+        <div class="t">a通過第二層以後得到b,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:27.000" id=26:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1587">26:27.000</a></div>
+        <div class="t">那我們今天計算出gradient以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:29.000" id=26:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1589">26:29.000</a></div>
+        <div class="t">把aupdate成a',</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:31.000" id=26:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1591">26:31.000</a></div>
+        <div class="t">把b這一層的參數update成b',</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:34.000" id=26:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1594">26:34.000</a></div>
+        <div class="t">但是作者認為說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:36.000" id=26:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1596">26:36.000</a></div>
+        <div class="t">現在我們在把bupdate到b'的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:40.000" id=26:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1600">26:40.000</a></div>
+        <div class="t">那我們在計算bupdate到b'的gradient的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:44.000" id=26:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1604">26:44.000</a></div>
+        <div class="t">這個時候前一層的參數是a,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:46.000" id=26:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1606">26:46.000</a></div>
+        <div class="t">或者是前一層的output是a,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.000" id=26:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1609">26:49.000</a></div>
+        <div class="t">那當前一層從a變成a'的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.000" id=26:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1612">26:52.000</a></div>
+        <div class="t">它的output就從a變成a',</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:54.000" id=26:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1614">26:54.000</a></div>
+        <div class="t">但是我們計算這個gradient的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:56.000" id=26:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1616">26:56.000</a></div>
+        <div class="t">我們是根據這個a算出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:58.000" id=26:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1618">26:58.000</a></div>
+        <div class="t">所以這個update的方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:00.000" id=27:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1620">27:00.000</a></div>
+        <div class="t">也許它適合用在a上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.000" id=27:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1622">27:02.000</a></div>
+        <div class="t">但不適合用在a'上面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:05.000" id=27:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1625">27:05.000</a></div>
+        <div class="t">那如果做batch normalization的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:07.000" id=27:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1627">27:07.000</a></div>
+        <div class="t">因為我們每次都有做normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:09.000" id=27:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1629">27:09.000</a></div>
+        <div class="t">我們就會讓a跟a'的分佈比較接近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:13.000" id=27:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1633">27:13.000</a></div>
+        <div class="t">也許這樣就會對訓練有幫助,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:16.000" id=27:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1636">27:16.000</a></div>
+        <div class="t">但是有一篇paper叫做</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1638">27:18.000</a></div>
+        <div class="t">How does batch normalization help optimization?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.000" id=27:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1640">27:20.000</a></div>
+        <div class="t">它就打臉了internal covariance shift的觀點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:24.000" id=27:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1644">27:24.000</a></div>
+        <div class="t">在這篇paper裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:25.000" id=27:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1645">27:25.000</a></div>
+        <div class="t">它從各式各樣的面向來告訴你說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:28.000" id=27:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1648">27:28.000</a></div>
+        <div class="t">internal covariance shift,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:31.000" id=27:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1651">27:31.000</a></div>
+        <div class="t">首先它不一定是training network時候的一個問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.000" id=27:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1655">27:35.000</a></div>
+        <div class="t">然後batch normalization它會比較好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:37.000" id=27:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1657">27:37.000</a></div>
+        <div class="t">可能不見得是因為它解決了internal covariance shift,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.000" id=27:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1662">27:42.000</a></div>
+        <div class="t">那在這篇paper裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:43.000" id=27:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1663">27:43.000</a></div>
+        <div class="t">它做了很多很多的實驗,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:45.000" id=27:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1665">27:45.000</a></div>
+        <div class="t">比如說它比較了訓練的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.000" id=27:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1668">27:48.000</a></div>
+        <div class="t">這個a的分佈的變化發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:51.000" id=27:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1671">27:51.000</a></div>
+        <div class="t">不管有沒有做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:53.000" id=27:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1673">27:53.000</a></div>
+        <div class="t">它的變化都不大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:55.000" id=27:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1675">27:55.000</a></div>
+        <div class="t">然後它又說就算是變化很大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:58.000" id=27:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1678">27:58.000</a></div>
+        <div class="t">對training也沒有太大的傷害,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:01.000" id=28:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1681">28:01.000</a></div>
+        <div class="t">然後它又說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:03.000" id=28:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1683">28:03.000</a></div>
+        <div class="t">不管你是根據a算出來的規定,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:05.000" id=28:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1685">28:05.000</a></div>
+        <div class="t">還是根據a'算出來的規定,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:07.000" id=28:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1687">28:07.000</a></div>
+        <div class="t">方向居然都差不多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:08.000" id=28:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1688">28:08.000</a></div>
+        <div class="t">所以它告訴你說internal covariance shift,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:11.000" id=28:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1691">28:11.000</a></div>
+        <div class="t">可能不是training network的時候最主要的問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:13.000" id=28:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1693">28:13.000</a></div>
+        <div class="t">它可能也不是batch normalization會好的一個關鍵,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:17.000" id=28:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1697">28:17.000</a></div>
+        <div class="t">那有關更多的實驗,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:19.000" id=28:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1699">28:19.000</a></div>
+        <div class="t">你就自己參見這篇文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:22.000" id=28:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1702">28:22.000</a></div>
+        <div class="t">好,那為什麼batch normalization會比較好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:27.000" id=28:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1707">28:27.000</a></div>
+        <div class="t">在這篇How does batch normalization help optimization這篇論文裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:30.000" id=28:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1710">28:30.000</a></div>
+        <div class="t">它從實驗上,也從理論上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:33.000" id=28:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1713">28:33.000</a></div>
+        <div class="t">至少支持了batch normalization可以改變error surface,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:38.000" id=28:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1718">28:38.000</a></div>
+        <div class="t">讓error surface比較不崎嶇這個觀點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:41.000" id=28:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1721">28:41.000</a></div>
+        <div class="t">所以這個觀點是有理論的支持,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.000" id=28:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1724">28:44.000</a></div>
+        <div class="t">也有實驗的佐證的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:47.000" id=28:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1727">28:47.000</a></div>
+        <div class="t">那在這篇文章裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.000" id=28:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1729">28:49.000</a></div>
+        <div class="t">作者還講了一個非常有趣的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:51.000" id=28:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1731">28:51.000</a></div>
+        <div class="t">他說他覺得batch normalization的positive impact,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.000" id=28:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1735">28:55.000</a></div>
+        <div class="t">因為他說如果我們要讓network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:57.000" id=28:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1737">28:57.000</a></div>
+        <div class="t">這個error surface變得比較不崎嶇,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:00.000" id=29:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1740">29:00.000</a></div>
+        <div class="t">其實不見得要做batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:03.000" id=29:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1743">29:03.000</a></div>
+        <div class="t">感覺有很多其他的方法都可以讓error surface變得不崎嶇,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:07.000" id=29:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1747">29:07.000</a></div>
+        <div class="t">那他就試了一些其他的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.000" id=29:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1749">29:09.000</a></div>
+        <div class="t">發現說跟batch normalization performance差不多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:12.000" id=29:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1752">29:12.000</a></div>
+        <div class="t">甚至還稍微好一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:13.000" id=29:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1753">29:13.000</a></div>
+        <div class="t">所以他就講了下面這句感嘆,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.000" id=29:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1755">29:15.000</a></div>
+        <div class="t">他覺得說positive impact of batch norm on training,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.000" id=29:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1761">29:21.000</a></div>
+        <div class="t">可能是somewhat serendipitous,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:25.000" id=29:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1765">29:25.000</a></div>
+        <div class="t">怎麼是serendipitous呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:27.000" id=29:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1767">29:27.000</a></div>
+        <div class="t">這個字眼可能可以翻譯成偶然的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:30.000" id=29:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1770">29:30.000</a></div>
+        <div class="t">但偶然並沒有完全表達這個詞彙的意思,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.000" id=29:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1773">29:33.000</a></div>
+        <div class="t">這個詞彙的意思是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.000" id=29:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1775">29:35.000</a></div>
+        <div class="t">你發現了一個什麼意料之外的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:39.000" id=29:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1779">29:39.000</a></div>
+        <div class="t">舉例來說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.000" id=29:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1780">29:40.000</a></div>
+        <div class="t">盤尼西林就是意料之外的發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:44.000" id=29:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1784">29:44.000</a></div>
+        <div class="t">大家知道盤尼西林的由來就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:46.000" id=29:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1786">29:46.000</a></div>
+        <div class="t">有一個人叫做佛萊明,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:48.000" id=29:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1788">29:48.000</a></div>
+        <div class="t">他本來想要培養一些葡萄球菌,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:52.000" id=29:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1792">29:52.000</a></div>
+        <div class="t">但是因為他實驗沒有做好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:54.000" id=29:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1794">29:54.000</a></div>
+        <div class="t">他的葡萄球菌被感染了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:56.000" id=29:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1796">29:56.000</a></div>
+        <div class="t">有一些黴菌掉到他的培養皿裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:59.000" id=29:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1799">29:59.000</a></div>
+        <div class="t">發現那些黴菌會殺死葡萄球菌,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:02.000" id=30:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1802">30:02.000</a></div>
+        <div class="t">所以他就發現了盤尼西林,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:05.000" id=30:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1805">30:05.000</a></div>
+        <div class="t">所以這是一種偶然的發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.000" id=30:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1808">30:08.000</a></div>
+        <div class="t">這篇文章的作者也覺得batch normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:11.000" id=30:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1811">30:11.000</a></div>
+        <div class="t">也像是盤尼西林一樣是一種偶然的發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:15.000" id=30:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1815">30:15.000</a></div>
+        <div class="t">但無論如何它是一個有用的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:19.000" id=30:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1819">30:19.000</a></div>
+        <div class="t">那其實batch normalization不是唯一的normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:22.000" id=30:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1822">30:22.000</a></div>
+        <div class="t">normalization的方法有一把啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:25.000" id=30:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1825">30:25.000</a></div>
+        <div class="t">那這邊就是列了幾個比較知名的normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:27.000" id=30:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1827">30:27.000</a></div>
+        <div class="t">參考一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:29.000" id=30:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1829">30:29.000</a></div>
+        <div class="t">那講到這邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:30.000" id=30:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1830">30:30.000</a></div>
+        <div class="t">不知道有沒有同學有問題想要問的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:34.000" id=30:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1834">30:34.000</a></div>
+        <div class="t">線上有問題想要問的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:46.000" id=30:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1846">30:46.000</a></div>
+        <div class="t">如果沒有的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:48.000" id=30:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1848">30:48.000</a></div>
+        <div class="t">因為講到這邊剛好告一個段落,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.000" id=30:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1850">30:50.000</a></div>
+        <div class="t">雖然這堂課比較短,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:51.000" id=30:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1851">30:51.000</a></div>
+        <div class="t">但我們還是休息十分鐘,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:53.000" id=30:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=BABPWOkSbLE&t=1853">30:53.000</a></div>
+        <div class="t">十分鐘後再回來。</div>
+    </div>
+    
+</body>
+</html>   

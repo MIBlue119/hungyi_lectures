@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】概述增強式學習 (Reinforcement Learning, RL) (一) – 增強式學習跟機器學習一樣都是三個步驟</h2><a href=https://www.youtube.com/watch?v=XWukX-ayIrs><img src=https://i.ytimg.com/vi/XWukX-ayIrs/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGGUgZShlMA8=&rs=AOn4CLB5cVLqLTAdn_L5JNHSDY_TScqoUg></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=0">00:00.000</a></div>
+        <div class="t">好,那我們來上課吧,那這一堂課啊,我們要講的是Deep Reinforcement Learning,也就是RL,然後像這個RL啊,Reinforcement Learning啊,大家一定一點都不陌生,因為你知道很多很潮的應用,AlphaGo等等,它背後呢,用的就是RL的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:29.000" id=00:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=29">00:29.000</a></div>
+        <div class="t">那RL可以講的技術啊,非常非常的多,它不是在一堂課裡面可以講得完的,我甚至覺得說如果有人要把它開成一整個學期的課,可能也是有這麼多東西可以講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:43.000" id=00:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=43">00:43.000</a></div>
+        <div class="t">所以今天呢,這一堂課的目的並不是要告訴你有關RL的一切,而是讓大家有一個基本的認識,大概知道RL是什麼樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:55.000" id=00:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=55">00:55.000</a></div>
+        <div class="t">那RL相關的課程,你其實在網路上可以找到非常非常多的參考的資料,那RL如果要講得非常的尖色,其實也是可以講得非常的尖色的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07.000" id=01:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=67">01:07.000</a></div>
+        <div class="t">但是今天這一堂課啊,我們盡量避開太過理論的部分,我期待這一堂課可以讓你做到的並不是讓你聽著覺得,哇,RL很困難啊,搞不清楚在做什麼,而是期待讓你覺得說,啊,RL原來就只是這樣而已,我自己應該也做得起來。希望這一堂課可以達到這個目的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.000" id=01:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=89">01:29.000</a></div>
+        <div class="t">好,那什麼是reinforcement learning呢?到目前為止啊,我們講的幾乎都是supervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:37.000" id=01:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=97">01:37.000</a></div>
+        <div class="t">假設你要做一個image的classifier,你不只要告訴機器它的input是什麼,你還要告訴機器它應該輸出什麼樣的output,然後接下來呢,你就可以train一個image的classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:50.000" id=01:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=110">01:50.000</a></div>
+        <div class="t">那在多數這一門課講到目前為止的技術,基本上都是基於supervised learning的方法。就算是我們在講self-supervised learning的時候,我們其實也是很類似supervised learning的方法,只是我們的label不需要特別僱用人力去標記,它可以自動產生。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:10.000" id=02:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=130">02:10.000</a></div>
+        <div class="t">或者是我們在講auto-encoder的時候,我們雖然說它是一個unsupervised的方法,我們沒有用到人類的標記,但事實上我們還是有一個label,只是這個label不需要耗費人類的力量來產生而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=145">02:25.000</a></div>
+        <div class="t">但是RL就是另外一個面向的問題了。在RL裡面,我們遇到的問題是這樣子的。機器當我們給它一個輸入的時候,我們不知道最佳的輸出應該是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:41.000" id=02:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=161">02:41.000</a></div>
+        <div class="t">舉例來說,假設你要叫機器學習下圍棋,用supervised learning的方法好像也可以做。你就是告訴機器說,看到現在的盤是長這個樣子的時候,下一步應該落子的位置在哪裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.000" id=02:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=176">02:56.000</a></div>
+        <div class="t">但是問題是,下一步應該落子的位置到底應該在哪裡呢?哪一個是最好的下一步呢?哪一步是神之一手呢?可能人類根本就不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.000" id=03:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=188">03:08.000</a></div>
+        <div class="t">當然你可以說,讓機器閱讀很多職業棋士的棋譜,讓機器閱讀很多高段棋士的棋譜,也許這些棋譜裡面的答案,也許這些棋譜裡面給某一個盤是人類下的下一步,就是一個很好的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:24.000" id=03:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=204">03:24.000</a></div>
+        <div class="t">但它是不是最好的答案呢?我們不知道。在這個你不知道正確答案是什麼的情況下,往往就是RL可以派上用場的時候。所以當你今天發現你要收集有標注的資料很困難的時候,正確答案人類也不知道是什麼的時候,也許就是你可以考慮使用RL的時候。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.000" id=03:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=227">03:47.000</a></div>
+        <div class="t">但是RL在學習的時候,機器其實也不是一無所知的。我們雖然不知道正確的答案是什麼,但是機器會知道什麼是好,什麼是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:59.000" id=03:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=239">03:59.000</a></div>
+        <div class="t">機器會跟環境去做互動,得到一個叫做reward的東西,這我們等一下都還會再細講,所以機器會知道它現在的輸出是好的還是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:08.000" id=04:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=248">04:08.000</a></div>
+        <div class="t">藉由跟環境的互動,藉由知道什麼樣的輸出是好的,什麼樣的輸出是不好的,機器還是可以學出一個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:17.000" id=04:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=257">04:17.000</a></div>
+        <div class="t">接下來,這是今天這份投影片的outline。首先,我們會從最基本的RL的概念開始。在介紹這個RL概念的時候,有很多不同的切入點,也許你比較常聽過的切入點是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:33.000" id=04:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=273">04:33.000</a></div>
+        <div class="t">比如說,從markov decision process開始講起。我們這邊選擇了一個比較不一樣的切入點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.000" id=04:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=280">04:40.000</a></div>
+        <div class="t">我要告訴你說,雖然如果你自己讀RL的文獻的話,你會覺得,哇,RL很複雜哦,跟一般的machine learning好像不太一樣哦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:48.000" id=04:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=288">04:48.000</a></div>
+        <div class="t">但是我這邊要告訴你說,RL它跟我們這一門課學的machine learning是一樣的框架。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:56.000" id=04:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=296">04:56.000</a></div>
+        <div class="t">在今天這學期一開始的第一堂課就告訴你說,machine learning就是三個步驟。那RL呢?RL也是一模一樣的三個步驟,等一下會再跟大家說明。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.000" id=05:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=311">05:11.000</a></div>
+        <div class="t">在今天本學期這一門課的第一開始就告訴你說,什麼是機器學習?機器學習就是找一個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.000" id=05:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=321">05:21.000</a></div>
+        <div class="t">reinforcement learning,RL也是機器學習的一種,那它也在找一個function。它在找什麼樣的function呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.000" id=05:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=330">05:30.000</a></div>
+        <div class="t">在reinforcement learning裡面呢,我們會有一個actor,還有一個environment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:37.000" id=05:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=337">05:37.000</a></div>
+        <div class="t">那這個actor跟environment會進行互動,而你的這個environment,你的這個環境呢,會給actor一個observation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:46.000" id=05:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=346">05:46.000</a></div>
+        <div class="t">那這個observation呢,就是actor的輸入。那actor呢,看到這個observation以後呢,它會有一個輸出,這個輸出呢,叫做action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.000" id=05:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=358">05:58.000</a></div>
+        <div class="t">那這個action呢,會去影響environment。這個actor採取action以後呢,environment就會給予新的observation,然後actor呢,會給予新的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:10.000" id=06:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=370">06:10.000</a></div>
+        <div class="t">那這個observation是actor的輸入,那這個action呢,是actor的輸出。所以actor本身呢,它就是一個function,其實actor它就是我們要找的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.000" id=06:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=382">06:22.000</a></div>
+        <div class="t">這個function它的輸入就是環境給它的observation,輸出就是這個actor要採取的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=390">06:30.000</a></div>
+        <div class="t">而今天在這個互動的過程中呢,這個environment會不斷地給這個actor一些reward,告訴它說,你現在採取的這個action,它是好的還是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:42.000" id=06:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=402">06:42.000</a></div>
+        <div class="t">而我們今天要找的這個actor啊,我們今天要找的這個function,可以拿observation當作input,actor當作output的function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:49.000" id=06:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=409">06:49.000</a></div>
+        <div class="t">這個function的目標是要去maximize我們可以從environment獲得到的reward的總和,我們希望呢,找一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.000" id=07:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=420">07:00.000</a></div>
+        <div class="t">那用這個function去跟環境做互動,用observation當作input輸出action,最終得到的reward總和可以是最大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=429">07:09.000</a></div>
+        <div class="t">這個就是RL要找的function。那我知道這樣講,你可能還是覺得有一些抽象,所以我們舉更具體的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.000" id=07:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=439">07:19.000</a></div>
+        <div class="t">那等一下要舉的例子呢,都是用Space Invader當作例子啦,那Space Invader就是一個非常簡單的小遊戲,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.000" id=07:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=447">07:27.000</a></div>
+        <div class="t">那RL呢,最早的幾篇論文也都是玩,讓那個機器呢,去玩這個Space Invader這個遊戲。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=454">07:34.000</a></div>
+        <div class="t">在Space Invader裡面呢,你要操控的是下面這個綠色的東西,下面這個綠色的東西呢,是你的太空梭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.000" id=07:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=462">07:42.000</a></div>
+        <div class="t">你可以採取的行為,也就是action呢,有三個,左移、右移跟開火,就是這三個行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.000" id=07:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=469">07:49.000</a></div>
+        <div class="t">然後你現在要做的事情呢,就是殺掉畫面上的這些外星人啦,畫面上這些黃色的東西就是外星人啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.000" id=07:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=478">07:58.000</a></div>
+        <div class="t">然後你開火擊中那些外星人的話,那外星人就死掉了。那前面這些東西是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:04.000" id=08:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=484">08:04.000</a></div>
+        <div class="t">那個是你的防護罩,如果你不小心打到自己的防護罩的話,你的防護罩呢,也是會被打掉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.000" id=08:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=490">08:10.000</a></div>
+        <div class="t">那你可以躲在防護罩後面,你就可以擋住外星人的攻擊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=495">08:15.000</a></div>
+        <div class="t">然後接下來呢,會有分數,螢幕畫面上會有分數,當你殺死外星人的時候,你會得到分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.000" id=08:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=501">08:21.000</a></div>
+        <div class="t">或者是在有些版本的Space Invaders裡面呢,會有一個補給包從上面橫過去,飛過去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:28.000" id=08:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=508">08:28.000</a></div>
+        <div class="t">那你打到補給包的話,會被加一個很高的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:31.000" id=08:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=511">08:31.000</a></div>
+        <div class="t">那這個score呢,就是reward,就是環境給我們的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:36.000" id=08:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=516">08:36.000</a></div>
+        <div class="t">那這個遊戲呢,它是會終止的,那什麼時候終止呢?當所有的外星人都被殺光的時候就終止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.000" id=08:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=524">08:44.000</a></div>
+        <div class="t">或者是呢,外星人其實也會對你的母艦開火啦,外星人擊中你的母艦,這個你就被摧毀了,那這個遊戲呢,也就終止了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:55.000" id=08:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=535">08:55.000</a></div>
+        <div class="t">好,那這個是介紹一下Space Invaders這個遊戲。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:59.000" id=08:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=539">08:59.000</a></div>
+        <div class="t">好,那如果你今天呢,要用actor去玩Space Invaders,大概會像是什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:05.000" id=09:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=545">09:05.000</a></div>
+        <div class="t">現在你的actor啊,actor雖然是一個機器,但是它是坐在人的這個位置,它是站在人這個角度去操控搖桿,去控制那個母艦,去跟外星人對抗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.000" id=09:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=559">09:19.000</a></div>
+        <div class="t">而你的環境是什麼?你的環境呢,是遊戲的主機,遊戲的主機這邊去操控那些外星人去攻擊你的母艦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:30.000" id=09:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=570">09:30.000</a></div>
+        <div class="t">所以observation是遊戲的畫面,所以對actor來說,它看到的其實就跟人類在玩遊戲的時候看到的東西是一樣的,就是看到一個遊戲的畫面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.000" id=09:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=581">09:41.000</a></div>
+        <div class="t">那輸出呢,就是actor可以採取的行為,那可以採取哪些行為通常是事先定義好的,在這個遊戲裡面就只有向左、向右跟開火三種可能的行為而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:53.000" id=09:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=593">09:53.000</a></div>
+        <div class="t">那當你的actor採取向右這個行為的時候,它會得到reward,那因為在這個遊戲裡面只有殺掉外星人會得到分數,而我們就是把分數定義成我們的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:05.000" id=10:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=605">10:05.000</a></div>
+        <div class="t">那向左、向右其實並不會是不可能殺掉任何的外星人,所以你得到的reward就是0分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:12.000" id=10:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=612">10:12.000</a></div>
+        <div class="t">那你採取一個action以後呢,遊戲的畫面就變了。遊戲的畫面變的時候就代表了有了新的observation進來,你的actor就會決定採取新的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.000" id=10:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=625">10:25.000</a></div>
+        <div class="t">你的actor是一個function,這個function會根據through的observation輸出對應的action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:30.000" id=10:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=630">10:30.000</a></div>
+        <div class="t">那新的畫面進來,假設你的actor現在採取的行為是開火,而開火這個行為正好殺掉一隻外星人的時候,你就會得到分數。那這邊假設得到的分數是5分,殺掉一個外星人得到的分數是5分,那你就得到reward等於5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:46.000" id=10:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=646">10:46.000</a></div>
+        <div class="t">那這個就是拿actor去玩Space Invaders這個遊戲的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.000" id=10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=653">10:53.000</a></div>
+        <div class="t">那這個actor呢,他想要學習的是什麼呢?我們在玩遊戲的過程中會不斷地得到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=660">11:00.000</a></div>
+        <div class="t">那在剛才的例子裡面,做第一個行為的時候,向右的時候得到的是0分,做第二個行為開火的時候得到的是5分,那接下來你採取一連串行為都有可能給你分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:11.000" id=11:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=671">11:11.000</a></div>
+        <div class="t">而actor要做的事情,我們要學習的目標,我們要找的這個actor就是,我們想要認出一個actor,這個actor這個function,我們使用他在這個遊戲裡面的時候,可以讓我們得到的reward的總和會是最大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.000" id=11:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=688">11:28.000</a></div>
+        <div class="t">那這個就是拿actor去,這個就是RIO用在玩這個小遊戲裡面的時候做的事情。那其實如果把RIO拿來玩圍棋,拿來下圍棋,其實做的事情跟小遊戲其實也沒有那麼大的差別,只是規模跟問題的複雜度不太一樣而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:50.000" id=11:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=710">11:50.000</a></div>
+        <div class="t">那如果今天你要讓機器來下圍棋,那你的actor就是alphaGo,那你的環境是什麼?你的環境就是alphaGo的人類對手。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:01.000" id=12:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=721">12:01.000</a></div>
+        <div class="t">那alphaGo的輸入是什麼?你的這個actor的輸入是什麼?你的actor的輸入就是棋盤,棋盤上黑子跟白子的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.000" id=12:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=731">12:11.000</a></div>
+        <div class="t">那如果是在遊戲的一開始,棋盤上就空空如也,上面什麼都沒有,沒有任何黑子跟白子。那這個actor看到這個棋盤,他就要產生輸出,他就要決定他下一步應該落在哪裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.000" id=12:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=748">12:28.000</a></div>
+        <div class="t">那如果是圍棋的話,你的輸出的可能性就是有19X19個可能性,那這19X19個可能性,每一個可能性就對應到棋盤上的一個位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.000" id=12:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=759">12:39.000</a></div>
+        <div class="t">那假設現在你的actor決定要落子在這個地方,那這個結果就會輸入給你的環境,那其實就是一個棋勢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=770">12:50.000</a></div>
+        <div class="t">然後這個環境就會再產生新的observation,因為這個理事使這個棋勢也會再落一子,那現在看到的環境又不一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.000" id=13:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=782">13:02.000</a></div>
+        <div class="t">那你的actor看到這個新的observation,他就會產生新的action,然後就這樣反覆繼續下去,你就可以讓機器做下圍棋這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.000" id=13:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=792">13:12.000</a></div>
+        <div class="t">那在下圍棋這件事情裡面的reward是怎麼計算的呢?在下圍棋裡面,你所採取的行為幾乎都沒有辦法得到任何reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:25.000" id=13:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=805">13:25.000</a></div>
+        <div class="t">在下圍棋這件事情裡面,你會定義說,如果贏了就得到1分,如果輸了就得到-1分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=816">13:36.000</a></div>
+        <div class="t">也就是說,在下圍棋這整個你的actor跟環境互動的過程中,其實只有遊戲結束、只有整場圍棋結束的最後一子,你才能夠拿到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:49.000" id=13:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=829">13:49.000</a></div>
+        <div class="t">就你最後actor下一子下去,贏了就得到1分,那最後他落了那一子以後,遊戲結束了,他輸了,那就得到-1分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:59.000" id=13:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=839">13:59.000</a></div>
+        <div class="t">那在中間整個互動的過程中的reward就都算是0分,沒有任何的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.000" id=14:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=845">14:05.000</a></div>
+        <div class="t">那這個actor學習的目標就是要去最大化他可能可以得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:12.000" id=14:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=852">14:12.000</a></div>
+        <div class="t">好,剛才講的也許你都已經聽過了,那這個是RL最常見的一種解說方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=859">14:19.000</a></div>
+        <div class="t">那接下來要告訴你說,RL跟機器學習的framework它們之間的關係是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:26.000" id=14:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=866">14:26.000</a></div>
+        <div class="t">開學第一堂課就告訴你說,machine learning就是三個步驟。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.000" id=14:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=872">14:32.000</a></div>
+        <div class="t">第一個步驟,你有一個function,那個function裡面有一些未知數,unknown的variable,這些未知數是要被找出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.000" id=14:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=881">14:41.000</a></div>
+        <div class="t">第二步,定一個loss function,第三步,想辦法找出未知數去最小化你的loss,第三步就是optimization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:52.000" id=14:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=892">14:52.000</a></div>
+        <div class="t">而RL其實也是一模一樣的三個步驟。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.000" id=14:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=897">14:57.000</a></div>
+        <div class="t">我們先來看第一個步驟,第一個步驟,我們現在有未知數的這個function到底是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:05.000" id=15:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=905">15:05.000</a></div>
+        <div class="t">這個有未知數的function就是我們的actor,那在RL裡面,你的actor就是一個network,那我們現在通常叫它policy的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:16.000" id=15:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=916">15:16.000</a></div>
+        <div class="t">在過去,在還沒有把deep learning用到RL的時候,通常你的actor是比較簡單的,它不是network,它可能只是一個lookup table,告訴你說看到什麼樣的輸入就產生什麼樣的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.000" id=15:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=927">15:27.000</a></div>
+        <div class="t">那今天我們都知道要用network來當作這個actor,那這個network其實就是一個很複雜的function,這個複雜的function它的輸入是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:36.000" id=15:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=936">15:36.000</a></div>
+        <div class="t">它的輸入就是遊戲的畫面,就是遊戲的畫面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:41.000" id=15:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=941">15:41.000</a></div>
+        <div class="t">這個不是下圍棋啦,所以沒有黑子跟白子啦,那這邊如果是拿玩Space Invader當作例子的話呢,這個遊戲畫面上的pixel像素就是這個actor的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:58.000" id=15:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=958">15:58.000</a></div>
+        <div class="t">那它的輸出是什麼呢?它的輸出就是每一個可以採取的行為它的分數,每一個可以採取的action它的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:09.000" id=16:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=969">16:09.000</a></div>
+        <div class="t">舉例來說,輸入這樣的畫面給你的actor,你的actor其實就是一個network,它的輸出可能就是給向左0.7分,向右0.2分,開火0.1分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:21.000" id=16:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=981">16:21.000</a></div>
+        <div class="t">那事實上啊,這件事情跟分類是沒有什麼兩樣的,你知道分類就是輸入一張圖片,輸出就是決定這張圖片是哪一個類別,那你的network會給每一個類別一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.000" id=16:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=994">16:34.000</a></div>
+        <div class="t">你可能會通過一個softmax layer,然後每一個類別都會有一個分數,而且這些分數的總和是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:39.000" id=16:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=999">16:39.000</a></div>
+        <div class="t">那其實在RL裡面,你的actor,你的parsing network跟分類的那個network其實是一模一樣的,你就是輸入一張圖片,輸出其實最後你也會有一個softmax layer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1010">16:50.000</a></div>
+        <div class="t">然後呢,你就會left、right跟fire三個action各給一個分數,這些分數的總和你也會讓它是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:57.000" id=16:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1017">16:57.000</a></div>
+        <div class="t">那至於這個network的架構呢,那你就可以自己設計了,要設計怎麼樣都行,比如說如果輸入是一張圖片,也許你就會想要用CMM來處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1029">17:09.000</a></div>
+        <div class="t">不過在助教程式裡面其實不是用CMM來處理啦,因為在我們的作業裡面,其實在玩遊戲的時候不是直接讓我們的machine去看遊戲的畫面,讓它直接去看遊戲的畫面比較難做啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:21.000" id=17:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1041">17:21.000</a></div>
+        <div class="t">所以我們是讓你只看這個跟現在遊戲的狀況有關的一些參數而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.000" id=17:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1047">17:27.000</a></div>
+        <div class="t">所以在這個作業的sample code裡面呢,還沒有用到CMM那麼複雜,就是一個簡單的fully connected network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:36.000" id=17:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1056">17:36.000</a></div>
+        <div class="t">但是假設你要讓你的actor,他的輸入真的是遊戲畫面,那你可能就會採取這個CMM,你可能就用CMM當作你的network的架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.000" id=17:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1066">17:46.000</a></div>
+        <div class="t">甚至你可能說,我不要只看現在這個時間點的遊戲畫面,我要看整場遊戲到目前為止發生的所有事情,可不可以呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:55.000" id=17:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1075">17:55.000</a></div>
+        <div class="t">可以,那過去你可能會用RNN考慮現在的畫面跟過去所有的畫面,那現在你可能會想用transformer考慮所有發生過的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:06.000" id=18:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1086">18:06.000</a></div>
+        <div class="t">所以network的架構是你可以自己設計的,只要能夠輸入遊戲的畫面,輸出類似像類別這樣的action就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.000" id=18:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1096">18:16.000</a></div>
+        <div class="t">那最後機器會決定採取哪一個action,取決於每一個action取得的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.000" id=18:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1103">18:23.000</a></div>
+        <div class="t">常見的做法是直接把這個分數就當作一個機率,然後按照這個機率去sample,去隨機決定要採取哪一個action。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:33.000" id=18:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1113">18:33.000</a></div>
+        <div class="t">舉例來說,在這個例子裡面,向左得到0.7分,那就是有70%的機率會採取向左,20%的機率會採取向右,10%的機率會採取開火。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.000" id=18:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1126">18:46.000</a></div>
+        <div class="t">那你可能會問說,為什麼不是用upmax呢?為什麼不是看left的分數最高就直接向左呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1133">18:53.000</a></div>
+        <div class="t">你也可以這麼做,但是在助教的程式裡面,還有多數RL應用的時候,你會發現我們都是採取sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.000" id=19:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1143">19:03.000</a></div>
+        <div class="t">採取sample有一個好處是說,今天就算是看到同樣的遊戲畫面,你的機器每一次採取的行為也會略有不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.000" id=19:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1151">19:11.000</a></div>
+        <div class="t">那在很多的遊戲裡面,這種隨機性也許是重要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.000" id=19:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1155">19:15.000</a></div>
+        <div class="t">比如說你在做剪刀石頭布的時候,如果你總是會出石頭,就跟小叮噹一樣,那就很容易被打爆,如果你有一些隨機性,就比較不容易被打爆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:24.000" id=19:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1164">19:24.000</a></div>
+        <div class="t">那其實之所以今天的輸出是用隨機sample的,還有另外一個很重要的理由,那這個我們等一下會再講到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:32.000" id=19:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1172">19:32.000</a></div>
+        <div class="t">好,所以這是第一步。我們有一個function,這個function有unknown的variable,我們有一個network,那裡面有參數,這個參數就是unknown的variable,就是要被學出來的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.000" id=19:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1184">19:44.000</a></div>
+        <div class="t">這是第一步,接下來第二步,我們要定義loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:48.000" id=19:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1188">19:48.000</a></div>
+        <div class="t">在IO裡面,我們的loss長的是什麼樣子呢?我們再重新來看一下我們的機器跟環境互動的過程,那只是現在用不一樣的方法來表示剛才說過的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.000" id=20:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1202">20:02.000</a></div>
+        <div class="t">好,首先有一個初始的遊戲畫面,這個初始的遊戲畫面被作為你的actor的輸入,你的actor就輸出了一個action,比如說向右。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:13.000" id=20:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1213">20:13.000</a></div>
+        <div class="t">輸入的遊戲畫面呢,我們叫他S1,然後輸出的action呢,我們就叫他A1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:19.000" id=20:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1219">20:19.000</a></div>
+        <div class="t">那現在會得到一個reward,這邊因為向右,沒有做任何事情,沒有殺死任何的外星人,所以得到reward可能就是0分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.000" id=20:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1227">20:27.000</a></div>
+        <div class="t">採取向右以後,會看到新的遊戲畫面,這個叫做S2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:32.000" id=20:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1232">20:32.000</a></div>
+        <div class="t">根據新的遊戲畫面S2,你的actor會採取新的行為,比如說開火,這邊用A2來表示看到遊戲畫面S2的時候所採取的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.000" id=20:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1242">20:42.000</a></div>
+        <div class="t">那假設開火恰好殺死了一隻外星人,你的actor就得到reward,這個reward的分數是5分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:50.000" id=20:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1250">20:50.000</a></div>
+        <div class="t">然後採取開火這個行為以後,接下來你會看到新的遊戲畫面,那機器又會採取新的行為,那這個互動的過程就會反覆持續下去,直到機器在採取某一個行為以後,遊戲結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:06.000" id=21:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1266">21:06.000</a></div>
+        <div class="t">那什麼時候遊戲結束呢?就看你遊戲結束的條件是什麼嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:10.000" id=21:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1270">21:10.000</a></div>
+        <div class="t">舉例來說,採取最後一個行為以後,比如說向右移正好被外星人的子彈打中,那你的飛船就毀了,那遊戲就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.000" id=21:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1279">21:19.000</a></div>
+        <div class="t">或者是最後一個行為是開火,把最後一隻外星人殺掉,把最後一隻外星人殺掉,那遊戲也就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.000" id=21:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1285">21:25.000</a></div>
+        <div class="t">就是你執行某一個行為,滿足遊戲結束的條件以後,遊戲就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.000" id=21:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1291">21:31.000</a></div>
+        <div class="t">那從遊戲開始到結束的這整個過程被稱之為一個episode。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:37.000" id=21:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1297">21:37.000</a></div>
+        <div class="t">那在整個遊戲的過程中,機器會採取非常多的行為,每一個行為都可能得到reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:45.000" id=21:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1305">21:45.000</a></div>
+        <div class="t">把所有的reward統統集合起來,我們就得到一個東西,叫做整場遊戲的total reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:53.000" id=21:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1313">21:53.000</a></div>
+        <div class="t">那這個total reward呢,就是從遊戲一開始得到的R1,一直累加到遊戲最後結束的時候得到的RT,假設這個遊戲裡面會互動大提詞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.000" id=22:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1325">22:05.000</a></div>
+        <div class="t">那我們就得到一個total reward,我們這邊用大R來表示total reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:10.000" id=22:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1330">22:10.000</a></div>
+        <div class="t">其實這個total reward又有另外一個名字,叫做return。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1334">22:14.000</a></div>
+        <div class="t">你在這個RL的文獻上常常會同時看到reward跟return這兩個詞會出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:20.000" id=22:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1340">22:20.000</a></div>
+        <div class="t">那reward跟return其實有點不一樣,reward指的是你採取某一個行為的時候立即得到的好處,這個是reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.000" id=22:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1348">22:28.000</a></div>
+        <div class="t">把整場遊戲裡面所有的reward統統加起來,這個叫做return。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.000" id=22:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1353">22:33.000</a></div>
+        <div class="t">但是我知道說很快你就會忘記reward跟return的差別了,所以我們等一下就不要再用return這個詞彙,我們直接告訴你說整場遊戲reward的總和就是total reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:44.000" id=22:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1364">22:44.000</a></div>
+        <div class="t">而這個total reward就是我們想要去最大化的東西,就是我們訓練的目標。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.000" id=22:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1372">22:52.000</a></div>
+        <div class="t">那你可能會說這個跟loss不一樣啊,loss是要越小越好啊,這個total reward是要越大越好啊,所以有點不一樣吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:00.000" id=23:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1380">23:00.000</a></div>
+        <div class="t">但是我們可以說在RL的這個情境下,我們把那個total reward的負號,負的total reward就當作我們的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:12.000" id=23:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1392">23:12.000</a></div>
+        <div class="t">total reward是要越大越好,那負的total reward當然就是要它越小越好嘛,就我們完全可以說負的total reward就是我們的loss,就是RL裡面的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:25.000" id=23:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1405">23:25.000</a></div>
+        <div class="t">好,那在進入第三步之前,也許我們可以看一下怎麼回答同學們有沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.000" id=23:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1413">23:33.000</a></div>
+        <div class="t">有同學建議休息的時候可以關麥克風,這個我研究一下要怎麼關麥克風,其實我還不知道怎麼關麥克風。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:44.000" id=23:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1424">23:44.000</a></div>
+        <div class="t">講理論不好嗎?講理論沒有不好,那你可以看一下過去有關RL這個部分的錄影,我等一下在投影片裡面其實也有附上相關的錄影,那裡面是有講到比較多理論的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:59.000" id=23:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1439">23:59.000</a></div>
+        <div class="t">那今天我是期待說從更淺顯的角度來跟大家講RL這件事情,那你永遠可以在過去的上課錄影找到比較偏理論的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:11.000" id=24:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1451">24:11.000</a></div>
+        <div class="t">好,那如果大家暫時還沒有其他問題的話呢,我們就繼續講有關optimization的部分。好,那我們再把這個環境跟agent互動的這件事情再用不一樣的圖示再顯示一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.000" id=24:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1470">24:30.000</a></div>
+        <div class="t">這個是你的環境,你的環境輸出一個observation叫做S1,這個S1會變成你的actor的輸入,你的actor接下來就輸出A1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.000" id=24:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1482">24:42.000</a></div>
+        <div class="t">這個A1又變成環境的輸入,你的環境看到A1以後又輸出S2,然後這個互動的過程就會繼續下去,S2又輸入給actor,它就輸出A2,A2又輸入給environment,它就產生S3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.000" id=25:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1501">25:01.000</a></div>
+        <div class="t">這個互動一直下去直到滿足遊戲終止的條件。好,那這個S跟A所形成的sequence,就是S1、A1、S2、A2、S3、A3這個sequence又叫做trajectory,那我們用tau來表示trajectory。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.000" id=25:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1521">25:21.000</a></div>
+        <div class="t">好,那根據這個互動的過程,machine會得到reward,你其實可以把reward也想成是一個function,我們這邊用一個綠色的方塊來代表這個reward所構成的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:34.000" id=25:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1534">25:34.000</a></div>
+        <div class="t">那這個reward這個function有不同的表示方法,在有的遊戲裡面也許你的reward只需要看你採取哪一個action就可以決定了,不過通常我們在決定reward的時候光看action是不夠的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:47.000" id=25:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1547">25:47.000</a></div>
+        <div class="t">你還要看現在的observation才可以,因為並不是每一次開火你都一定會得到分數嘛,開火要正好有幾道外星人,外星人正好在你前面,你開火才有分數啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:57.000" id=25:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1557">25:57.000</a></div>
+        <div class="t">所以通常reward function在定義的時候不是只看action,它還需要看observation,同時看action跟observation才能夠知道現在有沒有得到分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:09.000" id=26:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1569">26:09.000</a></div>
+        <div class="t">所以reward是一個function,這個reward的function它拿A1跟S1當作輸入,然後它產生R1作為輸出,然後它拿A2跟S2當作輸入,產生R2作為輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:22.000" id=26:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1582">26:22.000</a></div>
+        <div class="t">把所有的R通通集合起來,把R1加R2加R3一直加到R大T全部集合起來,就得到R,這個就是total reward,也就是return,這個是我們要最大化要去maximize的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:37.000" id=26:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1597">26:37.000</a></div>
+        <div class="t">那這個optimization的問題它長的是什麼樣子呢?這個optimization的問題是這個樣子的,你要去找一個network,其實是network裡面的參數,你要去認出一組參數,這一組參數放在actor裡面,它可以讓這個R的數值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:57.000" id=26:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1617">26:57.000</a></div>
+        <div class="t">就這樣,結束了,整個optimization的過程就是這樣,你要去找一個network的參數,讓這邊產生出來的R越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:08.000" id=27:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1628">27:08.000</a></div>
+        <div class="t">乍看之下,如果這邊的environment、actor跟reward它們都是network的話,這個問題其實也沒有什麼難的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1638">27:18.000</a></div>
+        <div class="t">這個搞不好你現在都可以解,它看起來就有點像是一個recurrent network,這是一個recurrent network,然後你的loss就是這個樣子,那只是這邊是reward不是loss,所以你是要讓它越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:31.000" id=27:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1651">27:31.000</a></div>
+        <div class="t">你就去認這個參數,用gradient descent,你就可以讓它越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.000" id=27:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1655">27:35.000</a></div>
+        <div class="t">但是RL困難的地方是,這不是一個一般的optimization的問題,因為你的environment,這邊有很多問題導致說它跟一般的network training不太一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:46.000" id=27:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1666">27:46.000</a></div>
+        <div class="t">第一個問題是,你的actor的輸出是有隨機性的,這個A1它是用sample產生的,給定同樣的S1,每次產生的A1不一定會一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:59.000" id=27:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1679">27:59.000</a></div>
+        <div class="t">所以假設你把environment、actor跟reward合起來當作是一個巨大的network來看待,這個network可不是一般的network,這個network裡面是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:10.000" id=28:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1690">28:10.000</a></div>
+        <div class="t">這個network裡面的某一個layer每次產生出來的結果是不一樣的,這個network裡面的某一個layer的輸出每次都是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.000" id=28:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1701">28:21.000</a></div>
+        <div class="t">另外還有一個更大的問題就是,你的environment跟reward根本就不是network,它只是一個黑盒子而已,你根本不知道裡面發生了什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:32.000" id=28:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1712">28:32.000</a></div>
+        <div class="t">environment就是遊戲機,這個遊戲機裡面發生什麼事情你不知道,你只知道說你輸入一個東西會輸出一個東西,你採取一個行為,它會有對應的回應。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.000" id=28:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1724">28:44.000</a></div>
+        <div class="t">但是到底是怎麼產生這個對應的回應的,我們不知道,它只是一個黑盒子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:50.000" id=28:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1730">28:50.000</a></div>
+        <div class="t">而reward呢?reward可能比較明確,但它也不是一個network,它就是一條規則嘛,它就是一個規則說看到這樣子的observation跟這樣子的action會得到多少的分數,它就只是一個規則而已,所以它也不是network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.000" id=29:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1746">29:06.000</a></div>
+        <div class="t">而且更麻煩的地方是,往往reward跟environment它也是有隨機性的。如果是在電玩裡面,通常reward可能比較不會有隨機性,因為規則是定好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:20.000" id=29:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1760">29:20.000</a></div>
+        <div class="t">有一些IL的問題裡面reward是有可能有隨機性的,但是在environment裡面,就算是在電玩的應用中,它也是有隨機性的。你給定同樣的行為,到底遊戲機會怎麼樣回應,它裡面可能也是有亂數的,它可能每次的回應也都是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:38.000" id=29:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1778">29:38.000</a></div>
+        <div class="t">如果是下圍棋,你落子在同一個位置,你的對手會怎麼樣回應,每次可能也是不一樣的。所以環境很有可能也是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.000" id=29:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1791">29:51.000</a></div>
+        <div class="t">所以這不是一個一般的optimization的問題,你可能不能夠用我們這一門課已經學過的訓練network的方法來找出這個actor來最大化reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:02.000" id=30:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1802">30:02.000</a></div>
+        <div class="t">所以IL真正的難點就是我們怎麼解這個optimization的問題,怎麼找到一組network的參數可以讓R越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:13.000" id=30:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1813">30:13.000</a></div>
+        <div class="t">其實你再仔細想一想,這整個問題跟game其實有一曲同工之妙,它們有一樣的地方也有不一樣的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.000" id=30:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1824">30:24.000</a></div>
+        <div class="t">先說它們一樣的地方在哪裡。你記不記得在訓練game的時候,在訓練generator的時候,你會把generator跟discriminator結在一起,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:34.000" id=30:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1834">30:34.000</a></div>
+        <div class="t">然後你希望去調generator的參數,讓discriminator的輸出越大越好。今天在IL裡面,我們也可以說這個actor就像是generator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:46.000" id=30:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1846">30:46.000</a></div>
+        <div class="t">environment跟reward就像是discriminator,我們要去調generator的參數,讓discriminator的輸出越大越好,所以它跟game有一曲同工之妙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:00.000" id=31:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1860">31:00.000</a></div>
+        <div class="t">但什麼地方不一樣呢?在game裡面,你的discriminator也是一個neural network,你了解discriminator裡面的每一件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.000" id=31:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1869">31:09.000</a></div>
+        <div class="t">它也是一個network,你可以用gradient descent來train你的generator,讓discriminator得到最大的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:16.000" id=31:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1876">31:16.000</a></div>
+        <div class="t">但是在IL的問題裡面,你的reward跟environment,你可以把它們當discriminator來看,但它們不是network,它們是一個黑盒子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:26.000" id=31:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1886">31:26.000</a></div>
+        <div class="t">所以你沒有辦法用一般gradient descent的方法來調整你的參數,來得到最大的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:32.000" id=31:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1892">31:32.000</a></div>
+        <div class="t">所以這是IL跟一般machine learning不一樣的地方,但是我們還是可以把IL就看成三個階段,只是在optimization的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:41.000" id=31:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1901">31:41.000</a></div>
+        <div class="t">在你怎麼minimize loss,也就是怎麼maximize reward的時候,跟之前我們學到的方法是不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:50.000" id=31:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1910">31:50.000</a></div>
+        <div class="t">好,那這個就是有關IL跟machine learning三個步驟的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:56.000" id=31:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1916">31:56.000</a></div>
+        <div class="t">好,我們看一下大家有沒有問題問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:07.000" id=32:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1927">32:07.000</a></div>
+        <div class="t">好,有一位同學問說,為什麼負的total reward會等於loss呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:19.000" id=32:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1939">32:19.000</a></div>
+        <div class="t">我們在training的時候,在我們之前講過的所有的deep learning的training裡面,我們都是定義了一個loss,要讓這個loss越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:30.000" id=32:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1950">32:30.000</a></div>
+        <div class="t">在IL裡面,我們是定義了一個total reward R,然後我們要讓那個R越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:38.000" id=32:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1958">32:38.000</a></div>
+        <div class="t">但是要讓R越大越好這件事情,我們完全可以反過來說,就是我們要讓負的R,就是R乘上一個負號,越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:46.000" id=32:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1966">32:46.000</a></div>
+        <div class="t">所以我們就可以說R乘上一個負號,就是IL的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.000" id=32:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1977">32:57.000</a></div>
+        <div class="t">如果以前學的模型沒有固定random seed的話,也算是有隨機性嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.000" id=33:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1984">33:04.000</a></div>
+        <div class="t">這兩個隨機性是不一樣的。我們在之前學模型的時候沒有固定random seed,你是training的時候有隨機性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.000" id=33:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=1994">33:14.000</a></div>
+        <div class="t">就是你沒有固定random seed,你可能initialize的parameter不一樣,所以你每次訓練出來的結果不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:22.000" id=33:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2002">33:22.000</a></div>
+        <div class="t">但是IL是在testing的時候就有隨機性了,也就是說不是training的時候有隨機性,是測試的時候就已經有隨機性了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:33.000" id=33:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2013">33:33.000</a></div>
+        <div class="t">所以如果拿一般的training來比喻的話,就是你在network train好以後,你拿這個network在testing的時候,你想要使用它,你要把這個network使用在testing的狀況下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:46.000" id=33:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2026">33:46.000</a></div>
+        <div class="t">但發現說你給同樣的input,每次輸出都不一樣,這個才是IL的隨機性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:52.000" id=33:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2032">33:52.000</a></div>
+        <div class="t">所以IL是說你train好一個actor,actor你認好了,actor參數都是固定的,但你拿這個actor去跟環境互動的時候,每次的結果都是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:02.000" id=34:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2042">34:02.000</a></div>
+        <div class="t">因為你的環境就算是看到同樣的輸入,它每次給的輸出也可能是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:07.000" id=34:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2047">34:07.000</a></div>
+        <div class="t">所以IL是一個隨機性特別大的問題,所以你可以想見這個作業也確實是特別困難的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.000" id=34:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2056">34:16.000</a></div>
+        <div class="t">不過我覺得一個作業的難度有時候不好說,因為IL如果今天你沒有任何網路上參考資料的話,它可能是最難的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:25.000" id=34:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2065">34:25.000</a></div>
+        <div class="t">另外一方面,IL又蠻容易找到各式各樣的GitHub上的code,所以好像又沒有那麼難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:33.000" id=34:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2073">34:33.000</a></div>
+        <div class="t">但是IL的隨機性是會非常非常大的,就算是同樣的network,你每次測試的時候,結果都可以是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:03.000" id=35:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2103">35:03.000</a></div>
+        <div class="t">如果大家暫時沒有問題的話,我們就再繼續。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.000" id=35:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2122">35:22.000</a></div>
+        <div class="t">接下來我們就要講一個拿來解IL,拿來做optimization那一段常用的演算法,叫做policy gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:37.000" id=35:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2137">35:37.000</a></div>
+        <div class="t">如果你真的想知道policy gradient是哪裡來的,你可以參見過去上課的錄影,對policy gradient有比較詳盡的推導。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:46.000" id=35:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2146">35:46.000</a></div>
+        <div class="t">今天我們是從另外一個角度來講policy gradient這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:52.000" id=35:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2152">35:52.000</a></div>
+        <div class="t">在講policy gradient之前,我們先來想想看我們要怎麼操控一個actor的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:01.000" id=36:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2161">36:01.000</a></div>
+        <div class="t">我們要怎麼讓一個actor在看到某一個特定的observation的時候,採取某一個特定的行為呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:10.000" id=36:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2170">36:10.000</a></div>
+        <div class="t">要怎麼讓一個actor他的輸入是s的時候,他就要輸出action a hat呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:16.000" id=36:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2176">36:16.000</a></div>
+        <div class="t">那你其實完全可以把它想成一個分類的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:20.000" id=36:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2180">36:20.000</a></div>
+        <div class="t">也就是說,假設你要讓actor輸入s,輸出就是a hat,假設a hat就是向左好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:28.000" id=36:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2188">36:28.000</a></div>
+        <div class="t">假設你已經知道,假設你就是要教你的actor說,看到這個遊戲畫面,向左就是對的,你就是給我向左。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:36.000" id=36:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2196">36:36.000</a></div>
+        <div class="t">那你要怎麼讓你的actor學到這件事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:40.000" id=36:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2200">36:40.000</a></div>
+        <div class="t">那你就說,s是actor的輸入,a hat就是我們的label,就是我們的ground truth,就是我們的正確答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:50.000" id=36:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2210">36:50.000</a></div>
+        <div class="t">接下來,你就可以計算你的actor他的輸出跟ground truth之間的cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:56.000" id=36:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2216">36:56.000</a></div>
+        <div class="t">接下來就可以定義一個loss,假設你希望你的actor他採取a hat這個行為的話,你就定義一個loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:04.000" id=37:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2224">37:04.000</a></div>
+        <div class="t">這個loss呢,等於cross entropy,然後呢,你再去learn一個theta,你再去learn一個theta。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.000" id=37:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2232">37:12.000</a></div>
+        <div class="t">然後這個theta呢,可以讓loss最小,那你就可以讓這個actor的輸出跟你的ground truth越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:19.000" id=37:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2239">37:19.000</a></div>
+        <div class="t">你就可以讓你的actor學到說,看到這個遊戲畫面的時候,他就是要向左。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:25.000" id=37:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2245">37:25.000</a></div>
+        <div class="t">這個是要讓你的actor採取某一個行為的時候,你的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:31.000" id=37:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2251">37:31.000</a></div>
+        <div class="t">但是,假設你想要讓你的actor不要採取某一個行為的話,那要怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:37.000" id=37:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2257">37:37.000</a></div>
+        <div class="t">假設你希望做到的事情是,你的actor看到某一個observation s的時候,我就千萬不要向左的話,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:46.000" id=37:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2266">37:46.000</a></div>
+        <div class="t">其實很容易,你只需要把loss的定義反過來就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:51.000" id=37:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2271">37:51.000</a></div>
+        <div class="t">你希望你的actor採取a hat這個行為,你就定義你的大L等於cross entropy,然後你要minimize cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:01.000" id=38:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2281">38:01.000</a></div>
+        <div class="t">假設你要讓你的actor不要採取a hat這個行為的話,那你就定義一個loss叫做負的cross entropy,cross entropy成一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:11.000" id=38:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2291">38:11.000</a></div>
+        <div class="t">那你去minimize這個L,就是讓cross entropy越大越好,那你就是讓a跟a hat的距離越遠越好,那你就可以避免你的actor在看到s的時候去採取a hat這個行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:24.000" id=38:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2304">38:24.000</a></div>
+        <div class="t">所以我們有辦法控制我們的actor做我們想要做的事,只要我們給他適當的label跟適當的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:35.000" id=38:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2315">38:35.000</a></div>
+        <div class="t">所以假設我們要讓我們的actor看到s的時候採取a hat,看到s'的時候不要採取a hat'的話,要怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:45.000" id=38:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2325">38:45.000</a></div>
+        <div class="t">這個時候你就會說,given s這個observation,我們的光處叫做a hat,given s'這個observation的時候,我們有一個光處叫做a hat'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:56.000" id=38:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2336">38:56.000</a></div>
+        <div class="t">那對這兩個光處,我們都可以去計算cross entropy,我們都可以去計算cross entropy E1跟E2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:05.000" id=39:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2345">39:05.000</a></div>
+        <div class="t">然後接下來呢,我們就定義說我們的loss就是E1-E2,也就是說我們要讓這個case它的cross entropy越小越好,那這個case它的cross entropy越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:22.000" id=39:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2362">39:22.000</a></div>
+        <div class="t">然後呢,我們去找一個theta,去minimize loss,得到theta start,那就是一個可以在看到s的時候採取a hat,看到s'的時候採取a hat'的actor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:38.000" id=39:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2378">39:38.000</a></div>
+        <div class="t">所以藉由很像是在train一個classifier的這種行為,藉由很像是在train一個classifier的這種data,我們可以去控制一個actor的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:51.000" id=39:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2391">39:51.000</a></div>
+        <div class="t">好,我剛剛講到這邊,有沒有同學要問問題?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.000" id=39:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2399">39:59.000</a></div>
+        <div class="t">好,有一個同學問了一個非常好的問題,就是如果以alien的遊戲來說的話,因為只有射中alien才會有reward,這樣model不是就會一直傾向於射擊嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:14.000" id=40:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2414">40:14.000</a></div>
+        <div class="t">對,這個問題我們等一下會來解決它,之後的投影片就會來解決它。然後又有另外一個同學問了一個非常好的問題,就是哇,這樣不就回到supervised learning了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:26.000" id=40:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2426">40:26.000</a></div>
+        <div class="t">這個投影片這樣看起來就是在訓練一個classifier而已啊,我們就是在訓練classifier嘛,你只告訴他說看到s的時候就要輸出a hat,看到s'的時候就不要輸出a hat',這不就是supervised learning嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:40.000" id=40:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2440">40:40.000</a></div>
+        <div class="t">這就是supervised learning,這個就是跟supervised learningtrain一個image classifier是一模一樣的,但等一下我們會看到它跟一般的supervised learning不一樣在哪裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:52.000" id=40:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2452">40:52.000</a></div>
+        <div class="t">好,那我們就再繼續稍微看一段,我們再休息。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:58.000" id=40:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2458">40:58.000</a></div>
+        <div class="t">那所以呢,如果我們要訓練一個actor,我們其實就需要收集一些訓練資料,就收集訓練資料說,我希望在s1的時候採取a hat1,我希望在s2的時候不要採取a hat2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:16.000" id=41:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2476">41:16.000</a></div>
+        <div class="t">但你可能會問說,這個訓練資料哪來的?這個我們等一下再講,訓練資料哪來的。所以你就收集一大堆的資料,這個跟train一個image classifier很像的,這個s你就想成是image,這個a hat你就想成是label,只是現在有的行為是想要被採取的,有的行為是不想要被採取的,你就收集一堆這種資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:35.000" id=41:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2495">41:35.000</a></div>
+        <div class="t">你就可以去定義一個loss function,有了這個loss function以後,你就可以去訓練你的actor,去minimize這個loss function,就結束了,你就可以訓練一個actor,期待他執行我們的行為,期待他執行的行為是我們想要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:53.000" id=41:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2513">41:53.000</a></div>
+        <div class="t">而你甚至還可以更進一步,你可以說每一個行為並不是只有好或不好,並不是有想要執行跟不想要執行而已,它是有程度的差別的,有執行了非常好的,有nice to have的,有有點不好的,有非常差的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:13.000" id=42:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2533">42:13.000</a></div>
+        <div class="t">所以剛才我們是說每一個行為就是要執行、不要執行,這是一個binary的問題,我們就用正負1來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:23.000" id=42:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2543">42:23.000</a></div>
+        <div class="t">但是現在我們改成每一個s跟a的pair,它有對應的一個分數,這個分數代表說我們多希望機器在看到s1的時候執行a1 hat這個行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:40.000" id=42:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2560">42:40.000</a></div>
+        <div class="t">比如說這邊第一筆資料跟第三筆資料,我們分別是定正1.5跟正0.5,就代表說我們期待機器看到s1的時候它可以做a1 hat,看到s3的時候它可以做a3 hat,但是我們期待它看到s1的時候做a1 hat的期待更強烈一點,比看到s3做a3 hat的期待更強烈一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:06.000" id=43:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2586">43:06.000</a></div>
+        <div class="t">那我們希望它在看到s2的時候不要做a2 hat,我們期待它看到sn的時候不要做a1 hat,而且我們非常不希望它在看到sn的時候做a1 hat。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:20.000" id=43:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2600">43:20.000</a></div>
+        <div class="t">有了這些資訊,你一樣可以定義一個loss function,你只是在原來的cross entropy前面,本來cross entropy前面要嘛是正1要嘛是負1,現在改成乘上a1這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:40.000" id=43:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2620">43:40.000</a></div>
+        <div class="t">告訴它說,有一些行為我們非常期待actor去執行,有一些行為我們非常不期待actor去執行,有一些行為如果執行的是比較好的,有一些行為希望盡量不要執行比較好,但就算執行了也許傷害也沒有那麼大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:57.000" id=43:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2637">43:57.000</a></div>
+        <div class="t">所以我們透過這個an來控制說每一個行為我們多希望actor去執行,然後接下來有了這個loss以後,一樣train一個theta,train下去,你就找到一個theta star,你就有一個actor,它的行為是符合我們期待的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:12.000" id=44:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2652">44:12.000</a></div>
+        <div class="t">接下來的難點就是,要怎麼定出這一個a呢?這個就是我們接下來的難點,就是我們接下來要面對的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:24.000" id=44:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2664">44:24.000</a></div>
+        <div class="t">我們還有另外一個要面對的問題是,怎麼產生這個s跟a的pair呢?怎麼知道在s1的時候要執行a1,或在s2的時候不要執行a2呢?這個也是等一下我們要處理的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:54.000" id=44:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWukX-ayIrs&t=2694">44:54.000</a></div>
+        <div class="t">25分的時候再回來。</div>
+    </div>
+    
+</body>
+</html>   

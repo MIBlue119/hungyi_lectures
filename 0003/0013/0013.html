@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】生成式對抗網路 (Generative Adversarial Network, GAN) (一) – 基本概念介紹</h2><a href=https://www.youtube.com/watch?v=4OWp0wDu6Xw><img src=https://i.ytimg.com/vi/4OWp0wDu6Xw/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGDQgUCh_MA8=&rs=AOn4CLAoraRE7mKdGh7nCxcYdRXb58Bclg></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1">00:01.000</a></div>
+        <div class="t">各位同學大家好,那我們來繼續上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:05.000" id=00:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=5">00:05.000</a></div>
+        <div class="t">接下來我們要進入一個新的主題,我們要講生成這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.000" id=00:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=12">00:12.000</a></div>
+        <div class="t">生成有什麼樣特別的地方呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.000" id=00:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=16">00:16.000</a></div>
+        <div class="t">到目前為止,大家學到的network都是一個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:21.000" id=00:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=21">00:21.000</a></div>
+        <div class="t">你給他一個x,就可以輸出一個y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.000" id=00:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=24">00:24.000</a></div>
+        <div class="t">我們已經學到各式各樣的network架構可以處理不同的x,不同的y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.000" id=00:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=31">00:31.000</a></div>
+        <div class="t">我們已經學到輸入的x如果是一張圖片的時候怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.000" id=00:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=35">00:35.000</a></div>
+        <div class="t">我們也學到輸入的x如果是一個sequence的時候怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:39.000" id=00:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=39">00:39.000</a></div>
+        <div class="t">我們也學到輸出的y可以是一個數值,可以是一個類別,也可以是一個sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.000" id=00:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=46">00:46.000</a></div>
+        <div class="t">我們目前有講過的network架構其實應該可以涵括多數你日後會遇到的問題了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:54.000" id=00:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=54">00:54.000</a></div>
+        <div class="t">接下來我們要進入一個新的主題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:58.000" id=00:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=58">00:58.000</a></div>
+        <div class="t">這個新的主題是要把network當作一個generator來用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03.000" id=01:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=63">01:03.000</a></div>
+        <div class="t">我們要把network拿來做生成使用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07.000" id=01:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=67">01:07.000</a></div>
+        <div class="t">那把network拿來當作generator來使用有什麼樣特別的地方呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.000" id=01:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=71">01:11.000</a></div>
+        <div class="t">它特別的地方是現在network的輸入會加上一個random的variable,會加上一個z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.000" id=01:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=80">01:20.000</a></div>
+        <div class="t">那這個z是從某一個distribution sample出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=85">01:25.000</a></div>
+        <div class="t">所以現在network它不是只看一個固定的x得到輸出,它是同時看x跟z得到輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.000" id=01:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=94">01:34.000</a></div>
+        <div class="t">那你可能會問說network怎麼同時看x跟z呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:37.000" id=01:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=97">01:37.000</a></div>
+        <div class="t">那這個有很多不同的做法啦,就看你怎麼樣設計你的network架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:41.000" id=01:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=101">01:41.000</a></div>
+        <div class="t">舉例來說你可以說x是一個向量,z是一個向量,兩個向量直接接起來變成一個比較長的向量,就當作network的input,這樣可以嗎?這樣可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:50.000" id=01:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=110">01:50.000</a></div>
+        <div class="t">或者是假設你的x跟z正好長度一模一樣,把它們相加以後當作network的input,這樣可以嗎?這樣可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:58.000" id=01:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=118">01:58.000</a></div>
+        <div class="t">那z特別的地方是它是不固定的,每一次我們用這個network的時候都會隨機生成一個z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.000" id=02:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=126">02:06.000</a></div>
+        <div class="t">所以z每一次都不一樣,它是從一個distribution裡面sample出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.000" id=02:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=131">02:11.000</a></div>
+        <div class="t">那這個distribution這邊有一個限制是它必須夠簡單。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:16.000" id=02:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=136">02:16.000</a></div>
+        <div class="t">什麼叫夠簡單呢?所以這邊夠簡單的意思是我們知道它的式子長什麼樣子,我們可以從這個distribution去做sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:27.000" id=02:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=147">02:27.000</a></div>
+        <div class="t">舉例來說這個distribution可以是一個Gaussian distribution,你知道Gaussian distribution的式子,你知道怎麼從Gaussian distribution做sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:37.000" id=02:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=157">02:37.000</a></div>
+        <div class="t">它也可以是Uniform distribution,那Uniform distribution的式子你一定知道,你也知道怎麼從Uniform distribution做sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.000" id=02:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=165">02:45.000</a></div>
+        <div class="t">所以這個distribution的形狀你自己決定,你只要記得說它是簡單的,你能夠sample它的,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.000" id=02:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=174">02:54.000</a></div>
+        <div class="t">所以每次今天有一個x進來的時候,你都從這個distribution裡面做一個sample,然後得到一個output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:02.000" id=03:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=182">03:02.000</a></div>
+        <div class="t">隨著你sample到的z不同,y的輸出也就不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.000" id=03:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=188">03:08.000</a></div>
+        <div class="t">所以這個時候我們的network的輸出不再是單一一個固定的東西,而變成了一個複雜的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.000" id=03:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=198">03:18.000</a></div>
+        <div class="t">同樣的x作為輸入,我們這邊每次sample到不一樣的東西,通過一個複雜的network轉換以後,它就會變成一個複雜的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:28.000" id=03:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=208">03:28.000</a></div>
+        <div class="t">我們的network的輸出就變成了一個distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.000" id=03:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=212">03:32.000</a></div>
+        <div class="t">那這種可以輸出一個distribution的network,我們就叫它generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:37.000" id=03:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=217">03:37.000</a></div>
+        <div class="t">接下來我們就是要講怎麼訓練出這種generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.000" id=03:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=222">03:42.000</a></div>
+        <div class="t">那在講怎麼訓練generator之前,我們第一個想要回答的問題是,為什麼我們需要訓練generator?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=231">03:51.000</a></div>
+        <div class="t">為什麼我們需要generator?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:53.000" id=03:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=233">03:53.000</a></div>
+        <div class="t">輸入x輸出y,這樣固定的輸入跟輸出關係不好嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.000" id=03:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=238">03:58.000</a></div>
+        <div class="t">為什麼需要輸出是一個分布呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.000" id=04:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=241">04:01.000</a></div>
+        <div class="t">所以以下就舉個例子來跟你說明,為什麼輸出有時候需要是一個分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:08.000" id=04:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=248">04:08.000</a></div>
+        <div class="t">這邊舉的例子是video prediction,就是給機器一段的影片,然後它要預測接下來會發生什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:19.000" id=04:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=259">04:19.000</a></div>
+        <div class="t">這個例子是我從上面這個GitHub的連結找到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.000" id=04:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=263">04:23.000</a></div>
+        <div class="t">在這個連結裡面,它要做的事情是去預測小精靈這個遊戲接下來的遊戲畫面會長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:31.000" id=04:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=271">04:31.000</a></div>
+        <div class="t">不知道小精靈是什麼的人,這個就是小精靈一個真實的遊戲畫面了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:36.000" id=04:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=276">04:36.000</a></div>
+        <div class="t">那要怎麼做到video prediction呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.000" id=04:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=280">04:40.000</a></div>
+        <div class="t">你就給你的network過去的遊戲畫面,然後它的輸出就是新的遊戲畫面,下一個時間點的遊戲畫面就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:53.000" id=04:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=293">04:53.000</a></div>
+        <div class="t">要得到這樣的訓練資料一點都不困難,你只要不斷地去錄製有人在玩小精靈的畫面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=299">04:59.000</a></div>
+        <div class="t">然後你就可以知道說,給定這三個friend接下來會發生什麼事。你的訓練資料裡面有嘛,你一定有一堆錄製的影片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.000" id=05:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=307">05:07.000</a></div>
+        <div class="t">你就知道說,給定過去的資訊,接下來會發生什麼事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.000" id=05:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=311">05:11.000</a></div>
+        <div class="t">你就可以訓練你的network,讓它輸出的Y跟我們的目標越接近越好,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:19.000" id=05:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=319">05:19.000</a></div>
+        <div class="t">有人可能會問說怎麼輸出一張圖片?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.000" id=05:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=321">05:21.000</a></div>
+        <div class="t">一張圖片就是一個很長的向量啊,所以你只要讓你的network可以輸出一個很長的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.000" id=05:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=327">05:27.000</a></div>
+        <div class="t">然後這個向量整理成圖片以後,跟你的目標越接近越好,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:33.000" id=05:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=333">05:33.000</a></div>
+        <div class="t">其實在這個GitHub裡面,它不是直接把整個畫面當作輸入啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:38.000" id=05:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=338">05:38.000</a></div>
+        <div class="t">它是從畫面裡面只切一小塊當作輸入,就是它把這整個畫面切成很多塊,然後分開來處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.000" id=05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=344">05:44.000</a></div>
+        <div class="t">不過我們這邊為了簡化說明,就當作network是一次輸入整個螢幕上的畫面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:49.000" id=05:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=349">05:49.000</a></div>
+        <div class="t">但是這樣會有什麼問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.000" id=05:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=351">05:51.000</a></div>
+        <div class="t">如果你用剛才的方法,用我們學過的network training的方法,supervised learning train下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:57.000" id=05:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=357">05:57.000</a></div>
+        <div class="t">你得到的結果可能會是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.000" id=06:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=360">06:00.000</a></div>
+        <div class="t">這個是機器預測出來的結果,所以你看有點模模糊糊的,而且中間還會變換角色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:06.000" id=06:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=366">06:06.000</a></div>
+        <div class="t">那神奇的是,那個小精靈啊,走著走著居然就分裂了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.000" id=06:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=372">06:12.000</a></div>
+        <div class="t">它走到轉角的時候,就分裂成兩隻了,走到這邊又再分裂成兩隻了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:19.000" id=06:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=379">06:19.000</a></div>
+        <div class="t">然後有時候走著走著還會消失。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.000" id=06:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=382">06:22.000</a></div>
+        <div class="t">為什麼小精靈走著走著就分裂了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=385">06:25.000</a></div>
+        <div class="t">因為今天對這個network而言,在訓練資料裡面,同樣的輸入,有時候同樣的轉角,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:36.000" id=06:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=396">06:36.000</a></div>
+        <div class="t">有時候小精靈是往左轉,有時候小精靈是往右轉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.000" id=06:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=401">06:41.000</a></div>
+        <div class="t">這兩種可能性同時存在你的訓練資料裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:46.000" id=06:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=406">06:46.000</a></div>
+        <div class="t">你在訓練的時候,今天你的network得到的訓練指示是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:51.000" id=06:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=411">06:51.000</a></div>
+        <div class="t">給定這一段輸入,今天得到這一筆訓練資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.000" id=06:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=416">06:56.000</a></div>
+        <div class="t">它就要學到給定這一段輸入,輸出應該要往右轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.000" id=07:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=420">07:00.000</a></div>
+        <div class="t">給定這些訓練資料,有時候你會看到的是向左轉,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:05.000" id=07:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=425">07:05.000</a></div>
+        <div class="t">那機器就會學到給定這一段輸入,它要向左轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=429">07:09.000</a></div>
+        <div class="t">但是這兩種訓練資料很有可能同時都存在你的訓練機裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.000" id=07:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=435">07:15.000</a></div>
+        <div class="t">所以你的network學到的就是兩面討好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.000" id=07:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=438">07:18.000</a></div>
+        <div class="t">因為它需要得到一個輸出,這個輸出同時距離向左轉最近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.000" id=07:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=444">07:24.000</a></div>
+        <div class="t">同時也距離向右轉最近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.000" id=07:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=447">07:27.000</a></div>
+        <div class="t">那怎麼樣同時距離向左轉最近、向右轉最近呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:30.000" id=07:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=450">07:30.000</a></div>
+        <div class="t">也許就是同時向左也向右轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=454">07:34.000</a></div>
+        <div class="t">所以你的network就會得到一個錯誤的結果,向左轉是對的,向右轉也是對的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:40.000" id=07:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=460">07:40.000</a></div>
+        <div class="t">但是同時向左、向右轉反而是不對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:44.000" id=07:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=464">07:44.000</a></div>
+        <div class="t">那有什麼樣的可能性可以處理這個問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:47.000" id=07:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=467">07:47.000</a></div>
+        <div class="t">一個可能性就是讓機器的輸出是有機率的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:53.000" id=07:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=473">07:53.000</a></div>
+        <div class="t">讓它不再是輸出單一的輸出,讓它輸出一個機率的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.000" id=07:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=478">07:58.000</a></div>
+        <div class="t">當我們給這個network一個distribution的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.000" id=08:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=481">08:01.000</a></div>
+        <div class="t">當我們給這個network input加上一個Z的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:04.000" id=08:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=484">08:04.000</a></div>
+        <div class="t">它的輸出就變成了一個distribution,它的輸出就不再是固定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:11.000" id=08:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=491">08:11.000</a></div>
+        <div class="t">我們希望訓練一個network,它可以知道說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:14.000" id=08:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=494">08:14.000</a></div>
+        <div class="t">它的輸出的這個分布包含了向左轉的可能,也包含向右轉的可能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.000" id=08:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=501">08:21.000</a></div>
+        <div class="t">舉例來說,假設你選擇你的Z是一個比如說binary的random variable,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=507">08:27.000</a></div>
+        <div class="t">它就只有0跟1,然後可能各佔50%,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:30.000" id=08:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=510">08:30.000</a></div>
+        <div class="t">那也許你的network就可以學到說,Zsample到1的時候就向左轉,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:35.000" id=08:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=515">08:35.000</a></div>
+        <div class="t">Zsample到0的時候就向右轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.000" id=08:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=518">08:38.000</a></div>
+        <div class="t">這樣子你就可以解決這個世界有很多不可預測的東西這樣子的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:45.000" id=08:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=525">08:45.000</a></div>
+        <div class="t">那什麼時候我們會特別需要處理這種問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=529">08:49.000</a></div>
+        <div class="t">什麼時候我們會特別需要這種generative的model呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=534">08:54.000</a></div>
+        <div class="t">當我們的任務需要一點創造力的時候。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:57.000" id=08:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=537">08:57.000</a></div>
+        <div class="t">當然任務需要一點創造力這件事情是比較擬人化的講法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:02.000" id=09:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=542">09:02.000</a></div>
+        <div class="t">更具體一點的講法就是,我們想要找一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.000" id=09:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=546">09:06.000</a></div>
+        <div class="t">但是同樣的輸入有多種可能的輸出,而這些不同的輸出都是對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:15.000" id=09:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=555">09:15.000</a></div>
+        <div class="t">那同樣的輸入有多種不同可能的輸出,你就需要,就每個人都可以各自發揮嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:21.000" id=09:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=561">09:21.000</a></div>
+        <div class="t">就算是人來處理這個問題,可能每個人的答案也都不一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.000" id=09:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=565">09:25.000</a></div>
+        <div class="t">這個時候我們就說,讓機器具有創造的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=569">09:29.000</a></div>
+        <div class="t">那我們舉一個例子,舉例來說,畫圖這件事情可能就需要一些創造力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.000" id=09:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=575">09:35.000</a></div>
+        <div class="t">舉例來說,假設叫一個人畫一個紅眼睛的角色,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.000" id=09:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=579">09:39.000</a></div>
+        <div class="t">那每個人可能畫出來或你心裡想的動畫人物可能都不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.000" id=09:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=584">09:44.000</a></div>
+        <div class="t">有哪些角色是紅眼睛的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.000" id=09:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=586">09:46.000</a></div>
+        <div class="t">舉例來說,庫拉皮卡是紅眼睛的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=589">09:49.000</a></div>
+        <div class="t">他是骷髏塔族的,骷髏塔族的憤怒以後就會有紅眼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:54.000" id=09:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=594">09:54.000</a></div>
+        <div class="t">那輝夜也是紅眼睛的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.000" id=09:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=597">09:57.000</a></div>
+        <div class="t">那是因為庫拉皮卡從黑暗大陸回來以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.000" id=10:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=601">10:01.000</a></div>
+        <div class="t">利用他在黑暗大陸得到的資源成立了四公集團,輝夜其實是庫拉皮卡的子孫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.000" id=10:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=606">10:06.000</a></div>
+        <div class="t">到他那一代,火紅眼變成是顯性的,不用生氣火紅眼也會顯現出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.000" id=10:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=610">10:10.000</a></div>
+        <div class="t">所以庫拉皮卡跟輝夜他們都有火紅眼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.000" id=10:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=614">10:14.000</a></div>
+        <div class="t">所以同樣要畫一個紅眼睛的角色,每個人心裡想像的紅眼睛的角色都是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:20.000" id=10:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=620">10:20.000</a></div>
+        <div class="t">那這個時候我們就需要讓我們的機器model能夠output一個distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:27.000" id=10:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=627">10:27.000</a></div>
+        <div class="t">那還有什麼樣的例子會需要用到創造力呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.000" id=10:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=631">10:31.000</a></div>
+        <div class="t">舉例來說,對話這件事情,假設你要訓練一個聊天機器人,可能就需要一些創造力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:39.000" id=10:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=639">10:39.000</a></div>
+        <div class="t">舉例來說,假設你跟另外一個人說,你知道輝夜是誰嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:44.000" id=10:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=644">10:44.000</a></div>
+        <div class="t">其實有很多不同的答案,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:46.000" id=10:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=646">10:46.000</a></div>
+        <div class="t">輝夜他是秀枝院的學生會部會長,最近跟會長做了一些不可描述的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.000" id=10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=653">10:53.000</a></div>
+        <div class="t">我沒有說是什麼事情,所以也不算是暴雷。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:56.000" id=10:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=656">10:56.000</a></div>
+        <div class="t">但是我們知道說,輝夜其實還有另外一個成就。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:58.000" id=10:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=658">10:58.000</a></div>
+        <div class="t">其實雖然說輝夜這個動畫還沒有完結,但是他的後傳其實已經演完了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.000" id=11:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=663">11:03.000</a></div>
+        <div class="t">後來白銀一年早逝,所以輝夜就把自己的頭髮染白。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=667">11:07.000</a></div>
+        <div class="t">他為了想要離開傷心的地球,就坐著太空船到另外一個星球。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:11.000" id=11:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=671">11:11.000</a></div>
+        <div class="t">另外一個星球也有一些原始的生命,那些生命跟人類長得也是挺像的,他們還過著農耕的生活。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.000" id=11:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=677">11:17.000</a></div>
+        <div class="t">輝夜看到其中一個小國的國王長得跟白銀有點像,所以他就跟那個小國國王在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:22.000" id=11:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=682">11:22.000</a></div>
+        <div class="t">他們生下了一個小孩,就是六道仙人,於是就開創了忍者時代,真是可喜可賀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.000" id=11:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=688">11:28.000</a></div>
+        <div class="t">所以我們今天學到什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.000" id=11:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=690">11:30.000</a></div>
+        <div class="t">我們今天就是學到說,輝夜大小姐這個動畫,它真是一個了不起的動畫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=696">11:36.000</a></div>
+        <div class="t">它其實是在兩部大長篇中間的小品。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.000" id=11:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=699">11:39.000</a></div>
+        <div class="t">它既是獵人的後傳,也是火影忍者的前傳。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.000" id=11:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=703">11:43.000</a></div>
+        <div class="t">這三個故事是可以串在一起的,就是這麼回事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:47.000" id=11:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=707">11:47.000</a></div>
+        <div class="t">所以我們對機器說一句話,問它說輝夜是誰,其實每個人也可能都有不同的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:54.000" id=11:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=714">11:54.000</a></div>
+        <div class="t">這個時候,我們就需要Generative Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.000" id=11:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=718">11:58.000</a></div>
+        <div class="t">Generative Model其中一個非常知名的,就是Generative Adversarial Network,它的縮寫是GAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.000" id=12:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=729">12:09.000</a></div>
+        <div class="t">我們這堂課主要就是介紹Generative Adversarial Network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.000" id=12:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=734">12:14.000</a></div>
+        <div class="t">在介紹Generative Adversarial Network之前,我們就遇到一個問題,就是GAN要怎麼唸呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.000" id=12:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=742">12:22.000</a></div>
+        <div class="t">Google小姐唸起來是這個樣子的啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:25.000" id=12:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=745">12:25.000</a></div>
+        <div class="t">GAN GAN GAN</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:29.000" id=12:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=749">12:29.000</a></div>
+        <div class="t">就歌按四聲啦,就是這麼回事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=751">12:31.000</a></div>
+        <div class="t">好,那這個歌按四聲呢,這個GAN呢,它其實有很多各式各樣的變形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.000" id=12:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=759">12:39.000</a></div>
+        <div class="t">你可以在網路上找到一個GAN的動物園,找到一個GAN的ZOO。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.000" id=12:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=766">12:46.000</a></div>
+        <div class="t">那個GAN的動物園裡面呢,收集了超過500種以上的GAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.000" id=12:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=772">12:52.000</a></div>
+        <div class="t">那你知道每次有人發明了一個新的GAN的時候呢,它就會在前面加一個英文的字母。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.000" id=12:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=779">12:59.000</a></div>
+        <div class="t">但是你知道英文的字母是有限的啊,很快的英文的字母就被用盡了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:04.000" id=13:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=784">13:04.000</a></div>
+        <div class="t">舉例來說,在GAN的動物園裡面,至少就有六種的SGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.000" id=13:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=789">13:09.000</a></div>
+        <div class="t">它們都是不同的東西,但它們通通被叫做SGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.000" id=13:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=794">13:14.000</a></div>
+        <div class="t">甚至還發生了這樣子的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:16.000" id=13:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=796">13:16.000</a></div>
+        <div class="t">有一篇paper,它提出來的叫做Variational Autoencoder GAN,照理說應該縮寫成AEGAN或者是AGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:26.000" id=13:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=806">13:26.000</a></div>
+        <div class="t">但是作者呢,加了一個註解說,哎呀,AEGAN被別人用了啦,所有的英文字母看起來都被別人用了啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=812">13:32.000</a></div>
+        <div class="t">我只好叫做AlphaGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:35.000" id=13:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=815">13:35.000</a></div>
+        <div class="t">因為說GAN人實在太多了,所以就會發生這種狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:38.000" id=13:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=818">13:38.000</a></div>
+        <div class="t">而且你還可以跟你的同學比說,誰可以記得最多GAN的名字,然後從A念到Z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:45.000" id=13:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=825">13:45.000</a></div>
+        <div class="t">好,那我們現在等一下要舉的例子啊,就是要讓機器生成動畫人物的二次元人物的臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.000" id=13:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=832">13:52.000</a></div>
+        <div class="t">那等一下我們舉的例子呢,是Unconditional Generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:57.000" id=13:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=837">13:57.000</a></div>
+        <div class="t">什麼叫Unconditional Generation呢?就是我們這邊先把X拿掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:02.000" id=14:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=842">14:02.000</a></div>
+        <div class="t">那之後我們在講到Conditional Generation的時候,我們會再把X加回來,我們這邊呢,先把X拿掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:09.000" id=14:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=849">14:09.000</a></div>
+        <div class="t">所以我們的Generator,它輸入就是Z,它的輸出就是Y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:15.000" id=14:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=855">14:15.000</a></div>
+        <div class="t">那輸入的這個Z是什麼呢?我們等一下都假設Z呢,是一個Normal Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.000" id=14:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=861">14:21.000</a></div>
+        <div class="t">Z是從一個Normal Distribution sample出來的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:26.000" id=14:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=866">14:26.000</a></div>
+        <div class="t">那這個向量呢,通常會是一個Low Dimensional的向量,它的維度其實是你自定的啦,你自己決定的啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:33.000" id=14:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=873">14:33.000</a></div>
+        <div class="t">那通常你就定個50啊、100啊這樣子的大小,但是它是你自己決定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:40.000" id=14:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=880">14:40.000</a></div>
+        <div class="t">而你從這邊Z呢,你從這個Normal Distribution裡面呢,sample一個向量以後,丟到Generator裡面,Generator就給你一個對應的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.000" id=14:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=889">14:49.000</a></div>
+        <div class="t">那我們希望對應的輸出就是一個二次元人物的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:54.000" id=14:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=894">14:54.000</a></div>
+        <div class="t">那到底Generator要輸出什麼樣的東西,才會變成一個二次元人物的人臉呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.000" id=15:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=900">15:00.000</a></div>
+        <div class="t">其實這個問題沒有你想像的那麼困難,一張圖片就是一個非常高微的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:07.000" id=15:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=907">15:07.000</a></div>
+        <div class="t">所以Generator實際上做的事情,就是產生一個非常高微的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=912">15:12.000</a></div>
+        <div class="t">舉例來說,假設這是一個64x64然後彩色的圖片,那你的Generator輸出就是64x64x3那麼長的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:22.000" id=15:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=922">15:22.000</a></div>
+        <div class="t">把那個向量整理一下,就變成一張二次元人物的臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.000" id=15:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=927">15:27.000</a></div>
+        <div class="t">這個就是Generator要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:29.000" id=15:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=929">15:29.000</a></div>
+        <div class="t">當你輸入的向量不同的時候,你的輸出就會跟著改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.000" id=15:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=935">15:35.000</a></div>
+        <div class="t">所以你從這個Normal Distribution裡面sampleZ出來,sample到不同的Z,那你輸出出來的Y都不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=942">15:42.000</a></div>
+        <div class="t">但我們希望說,不管你這邊sample到什麼Z,輸出來的都是動畫人物的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.000" id=15:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=948">15:48.000</a></div>
+        <div class="t">那講到這邊,可能有同學會問說,這邊為什麼是Normal Distribution呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:53.000" id=15:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=953">15:53.000</a></div>
+        <div class="t">不能是別的嗎?可以是別的。這邊選別的,你其實也會問同樣的問題就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:58.000" id=15:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=958">15:58.000</a></div>
+        <div class="t">那我的經驗是,不同的Distribution之間的差異可能並沒有真的非常大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:05.000" id=16:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=965">16:05.000</a></div>
+        <div class="t">你還是可以找到一些文獻,試著去探討不同的Distribution之間有沒有差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:10.000" id=16:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=970">16:10.000</a></div>
+        <div class="t">但是這邊其實你只要選一個夠簡單的Distribution就行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:13.000" id=16:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=973">16:13.000</a></div>
+        <div class="t">因為你的Generator會想辦法把這個簡單的Distribution對應到一個複雜的Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:21.000" id=16:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=981">16:21.000</a></div>
+        <div class="t">所以你可以把選擇Distribution這件事情交給你的Generator來處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.000" id=16:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=987">16:27.000</a></div>
+        <div class="t">那這邊我們在等一下的討論裡面都假設是一個Normal Distribution就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.000" id=16:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=993">16:33.000</a></div>
+        <div class="t">那在GAME裡面一個特別的地方就是,除了Generator以外,我們要多訓練一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:39.000" id=16:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=999">16:39.000</a></div>
+        <div class="t">這個東西叫做Discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.000" id=16:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1003">16:43.000</a></div>
+        <div class="t">那這個Discriminator是做什麼的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:45.000" id=16:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1005">16:45.000</a></div>
+        <div class="t">這個Discriminator它的作用是,它會拿一張圖片作為輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1010">16:50.000</a></div>
+        <div class="t">那它的輸出是什麼呢?它的輸出是一個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:54.000" id=16:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1014">16:54.000</a></div>
+        <div class="t">這個Discriminator本身也是一個Neural Network,它就是一個Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1019">16:59.000</a></div>
+        <div class="t">它輸入一個東西,會輸出一個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.000" id=17:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1022">17:02.000</a></div>
+        <div class="t">它輸入一張圖片,它的輸出是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.000" id=17:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1025">17:05.000</a></div>
+        <div class="t">它的輸出就是一個數字,它輸出就是一個Scalar。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1029">17:09.000</a></div>
+        <div class="t">這個Scalar越大,就代表說現在輸入的這張圖片,越像是真實的二次元人物的頭像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:18.000" id=17:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1038">17:18.000</a></div>
+        <div class="t">舉例來說,這個是二次元人物的頭像,那就輸出1,假設1是最大的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.000" id=17:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1043">17:23.000</a></div>
+        <div class="t">這個也是畫得很好的,就輸出1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:26.000" id=17:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1046">17:26.000</a></div>
+        <div class="t">這個不知道在畫什麼,就輸出0.1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:28.000" id=17:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1048">17:28.000</a></div>
+        <div class="t">這個不知道在畫什麼,就輸出0.1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.000" id=17:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1050">17:30.000</a></div>
+        <div class="t">這是Discriminator的工作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:32.000" id=17:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1052">17:32.000</a></div>
+        <div class="t">至於Discriminator的Neural Network的架構,這也完全是你自己設計的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:37.000" id=17:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1057">17:37.000</a></div>
+        <div class="t">所以Generator它是個Neural Network,Discriminator也是個Neural Network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.000" id=17:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1062">17:42.000</a></div>
+        <div class="t">它們的架構長什麼樣子,你完全可以自己設計。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:45.000" id=17:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1065">17:45.000</a></div>
+        <div class="t">你可以用CNN,你可以用Transformer,都可以,只要你能夠產生出你要的輸入輸出就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1072">17:52.000</a></div>
+        <div class="t">在這個例子裡面,像Discriminator因為輸入是一張圖片,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:56.000" id=17:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1076">17:56.000</a></div>
+        <div class="t">你很顯然會選擇CNN,CNN在處理影像上有非常大的優勢,既然輸入是一張圖片,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.000" id=18:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1083">18:03.000</a></div>
+        <div class="t">那你的Discriminator很有可能裡面會有大量的CNN的架構。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.000" id=18:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1088">18:08.000</a></div>
+        <div class="t">至於實際上要用什麼樣的架構,這完全是問你自己,你完全可以自己決定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:14.000" id=18:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1094">18:14.000</a></div>
+        <div class="t">那GEN的基礎的概念是什麼呢?為什麼要多一個Discriminator呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:20.000" id=18:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1100">18:20.000</a></div>
+        <div class="t">這邊就講一個故事,這個故事跟演化是有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:25.000" id=18:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1105">18:25.000</a></div>
+        <div class="t">這是什麼呢?這不是一片枯葉,它其實是枯葉蝶的女胎。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:32.000" id=18:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1112">18:32.000</a></div>
+        <div class="t">枯葉蝶長得跟枯葉非常像,它可以躲避天敵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.000" id=18:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1116">18:36.000</a></div>
+        <div class="t">枯葉蝶的祖先其實也不是長得像枯葉一樣,也許他們原來也是五彩斑斕的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.000" id=18:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1123">18:43.000</a></div>
+        <div class="t">那為什麼他們長得像枯葉一樣呢?是因為有天擇的壓力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.000" id=18:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1128">18:48.000</a></div>
+        <div class="t">這個不是普通的麻雀,這個是波波,它不是普通的麻雀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1133">18:53.000</a></div>
+        <div class="t">那這個波波會吃枯葉蝶的祖先,在天擇的壓力之下,枯葉蝶就變成棕色的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.000" id=19:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1141">19:01.000</a></div>
+        <div class="t">因為波波它只會吃彩色的東西,它看到彩色的東西,知道是蝴蝶就把它吃掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1146">19:06.000</a></div>
+        <div class="t">看到棕色的東西,那個波波就覺得是枯葉,就可以騙過它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:10.000" id=19:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1150">19:10.000</a></div>
+        <div class="t">所以枯葉蝶的祖先在天擇的壓力之下,顏色就變成是棕色的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.000" id=19:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1155">19:15.000</a></div>
+        <div class="t">但是波波也是會演化的,所以波波為了要吃到這些枯葉蝶,有偽裝成枯葉的枯葉蝶,所以它也進化了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.000" id=19:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1167">19:27.000</a></div>
+        <div class="t">波波進化以後就是比比鳥。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.000" id=19:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1171">19:31.000</a></div>
+        <div class="t">比比鳥在判斷一個蝴蝶能不能吃的時候是用比較高明的手段,它不會只看顏色,它會看它的紋路。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:40.000" id=19:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1180">19:40.000</a></div>
+        <div class="t">它知道說沒有葉脈的是蝴蝶,有葉脈的才是真正的枯葉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:46.000" id=19:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1186">19:46.000</a></div>
+        <div class="t">在天擇的壓力之下,枯葉蝶就產生了擬態,產生了葉脈,想要騙過比比鳥。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.000" id=19:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1193">19:53.000</a></div>
+        <div class="t">但是比比鳥它也有可能會再進化。比比鳥進化是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:58.000" id=19:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1198">19:58.000</a></div>
+        <div class="t">比比鳥進化就是大比鳥,大比鳥可能可以分辨枯葉蝶跟枯葉的不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.000" id=20:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1206">20:06.000</a></div>
+        <div class="t">這個是演化的故事。對應到game,枯葉蝶就是generator,它的天敵就是discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:16.000" id=20:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1216">20:16.000</a></div>
+        <div class="t">現在我們generator要做的事情是畫出二次元的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.000" id=20:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1221">20:21.000</a></div>
+        <div class="t">那generator怎麼學習畫出二次元的人物呢?它學習的過程是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.000" id=20:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1227">20:27.000</a></div>
+        <div class="t">第一代的generator,它的參數完全是隨機的,所以它根本就不知道要怎麼畫二次元的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:36.000" id=20:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1236">20:36.000</a></div>
+        <div class="t">所以它畫出來的東西就是一些莫名其妙的雜訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:40.000" id=20:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1240">20:40.000</a></div>
+        <div class="t">那discriminator接下來它學習的目標是要分辨generator的輸出跟真正的圖片的不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:48.000" id=20:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1248">20:48.000</a></div>
+        <div class="t">那在這個例子裡面,可能非常的容易,對discriminator來說,它只要看說圖片裡面有沒有兩個黑黑的圓球,就是眼睛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:56.000" id=20:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1256">20:56.000</a></div>
+        <div class="t">有眼睛就是真正的二次元人物,沒有眼睛就是generator產生出來的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:03.000" id=21:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1263">21:03.000</a></div>
+        <div class="t">接下來generator就調整它裡面的參數,generator就進化了它調整它裡面的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:10.000" id=21:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1270">21:10.000</a></div>
+        <div class="t">它調整的目標是為了要騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:14.000" id=21:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1274">21:14.000</a></div>
+        <div class="t">假設discriminator判斷一張圖片是不是真實的依據,看的是有沒有眼睛,那generator就產生眼睛出來給discriminator看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:24.000" id=21:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1284">21:24.000</a></div>
+        <div class="t">所以generator產生眼睛出來,然後它可以騙過第一代的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:30.000" id=21:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1290">21:30.000</a></div>
+        <div class="t">但是discriminator也是會進化的,所以第一代的discriminator就變成第二代的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:36.000" id=21:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1296">21:36.000</a></div>
+        <div class="t">第二代的discriminator會試圖分辨這一組圖片跟真實圖片之間的差異,它會試圖去找出這兩者之間的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:47.000" id=21:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1307">21:47.000</a></div>
+        <div class="t">舉例來說,它發現這邊產生的圖片都是比較簡單的,都沒有頭髮也沒有嘴巴,那這些圖片是有頭髮也有嘴巴的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:59.000" id=21:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1319">21:59.000</a></div>
+        <div class="t">接下來第三代的generator就會想辦法去騙過第二代的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.000" id=22:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1325">22:05.000</a></div>
+        <div class="t">既然第二代的discriminator是看有沒有嘴巴來判斷是不是真正的二次元人物,那第三代的generator就會把嘴巴加上去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.000" id=22:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1336">22:16.000</a></div>
+        <div class="t">discriminator也會逐漸的進步,它會越來越嚴苛,然後期待discriminator越來越嚴苛,generator產生出來的圖片就可以越來越像二次元人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:29.000" id=22:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1349">22:29.000</a></div>
+        <div class="t">那因為這邊有一個generator,有一個discriminator,他們彼此之間是會互動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:34.000" id=22:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1354">22:34.000</a></div>
+        <div class="t">在最早,GaN是Ian Guffalo propose的,GaN的paper是發表在2014年的NIPS。最早在GaN的原始paper裡面把generator跟discriminator當作是敵人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:49.000" id=22:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1369">22:49.000</a></div>
+        <div class="t">如果你有看很多網路文章的話,它都會舉例說generator是做假鈔的,discriminator是警察,警察要抓做假鈔的人,假鈔就會越來越像,警察就會越來越厲害等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.000" id=23:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1381">23:01.000</a></div>
+        <div class="t">因為覺得generator跟discriminator中間有一個對抗的關係,所以就用了adversarial這個字眼,adversarial就是對抗的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:10.000" id=23:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1390">23:10.000</a></div>
+        <div class="t">但是至於generator跟discriminator,他們是不是真的在對抗呢?這只是一個擬人化的說法而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.000" id=23:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1397">23:17.000</a></div>
+        <div class="t">之前余仁傑的網路文章就是寫說,我們不可以虐待人工智慧,我們不可以讓人工智慧在鬥技場裡面彼此互相殘殺,這個是不道德的,我們應該要釋放這些generator跟discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1411">23:31.000</a></div>
+        <div class="t">但他們是不是在對抗,其實就只是人類的比喻,你也可以說他們其實是亦敵亦友的合作關係。所以generator跟discriminator的關係,用動畫來說就是寫作敵人念作朋友,就跟近藤光還有塔史亮一樣,或者是跟Naruto跟Sasuke一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:53.000" id=23:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1433">23:53.000</a></div>
+        <div class="t">接下來就實際上從演算法來講一下,generator跟discriminator是如何運作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:02.000" id=24:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1442">24:02.000</a></div>
+        <div class="t">以下就是正式來講一下這個演算法實際上是長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:07.000" id=24:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1447">24:07.000</a></div>
+        <div class="t">generator跟discriminator,他們就是兩個network,那network在訓練前,你要先初始化它的參數,所以我們這邊就假設說,generator跟discriminator他們的參數都已經被初始化了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.000" id=24:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1461">24:21.000</a></div>
+        <div class="t">初始化完以後,接下來你訓練的第一步是定住你的generator,只train你的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.000" id=24:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1470">24:30.000</a></div>
+        <div class="t">因為一開始你的generator的參數是隨機初始化的,那如果你又固定住你的generator,那他根本就什麼事都沒有做啊,他們的參數都是隨機的啊,所以你丟一堆向量給他,他的輸出都是亂七八糟的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.000" id=24:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1486">24:46.000</a></div>
+        <div class="t">那其實如果generator的參數是初始化的話,你連這樣子的結果都產生不出來,他產生出來的就很像是電視機壞掉的那種雜訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:55.000" id=24:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1495">24:55.000</a></div>
+        <div class="t">那你從這個Gaussian distribution裡面去random sample一堆vector,把這些vector丟到generator裡面,他就吐出一些圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:04.000" id=25:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1504">25:04.000</a></div>
+        <div class="t">那一開始這些圖片會跟正常的二次元人物非常的不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:10.000" id=25:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1510">25:10.000</a></div>
+        <div class="t">那你會有一個database,這個database裡面有很多二次元人物的頭像,這個去網路上爬個圖庫就有了,這個不難收集。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:19.000" id=25:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1519">25:19.000</a></div>
+        <div class="t">那你從這個圖庫裡面去sample一些二次元人物的頭像出來,接下來你就拿真正的二次元人物頭像跟generator產生出來的結果去訓練你的discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:34.000" id=25:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1534">25:34.000</a></div>
+        <div class="t">那discriminator他訓練的目標是什麼呢?他訓練的目標是要分辨真正的二次元人物跟generator產生出來的二次元人物他們之間的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.000" id=25:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1546">25:46.000</a></div>
+        <div class="t">講得更具體一點,你實際上的操作是這個樣子,你可能會把這些真正的人物都標1,generator產生出來的圖片都標0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:59.000" id=25:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1559">25:59.000</a></div>
+        <div class="t">接下來,對於discriminator來說,這就是一個分類的問題,或者是regression的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.000" id=26:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1566">26:06.000</a></div>
+        <div class="t">如果是分類的問題,你就把真正的人臉當作類別1,generator產生出來的這些圖片當作類別2,然後訓練一個classify就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.000" id=26:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1577">26:17.000</a></div>
+        <div class="t">或者是有人會把它當作regression的問題,那你就教你的discriminator說,看到這些圖片你就輸出1,看到這些圖片你就輸出0,都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:29.000" id=26:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1589">26:29.000</a></div>
+        <div class="t">總之discriminator就學著去分辨real的image跟產生出來的image之間的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:36.000" id=26:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1596">26:36.000</a></div>
+        <div class="t">但是實際上怎麼做?你可以當作分類的問題來做,也可以當作regression的問題來做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:43.000" id=26:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1603">26:43.000</a></div>
+        <div class="t">第二步,我們訓練完discriminator以後,接下來定住discriminator,改成訓練generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.000" id=26:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1612">26:52.000</a></div>
+        <div class="t">怎麼訓練generator呢?比較擬人化的講法是,我們就讓generator想辦法去騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:01.000" id=27:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1621">27:01.000</a></div>
+        <div class="t">因為剛才discriminator已經學會分辨真圖跟假圖的差異,真圖跟生成的圖片的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:07.000" id=27:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1627">27:07.000</a></div>
+        <div class="t">generator如果可以騙過discriminator,他可以產生一些圖片,discriminator覺得是真正的圖片的話,那generator產生出來的圖片可能就可以以假亂真。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1638">27:18.000</a></div>
+        <div class="t">但實際上,欺騙這件事情是怎麼操作的呢?它實際上的操作方法是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:26.000" id=27:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1646">27:26.000</a></div>
+        <div class="t">你有一個generator,generator吃一個向量作為輸入,從Gaussian distribution sample出來的向量作為輸入,然後產生一個圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:37.000" id=27:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1657">27:37.000</a></div>
+        <div class="t">接下來我們把這個圖片丟到discriminator裡面,discriminator會給這個圖片一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:43.000" id=27:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1663">27:43.000</a></div>
+        <div class="t">那generator他訓練的目標,discriminator的參數是固定的,我們只會調整generator的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:50.000" id=27:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1670">27:50.000</a></div>
+        <div class="t">generator訓練的目標是要discriminator的輸出值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:56.000" id=27:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1676">27:56.000</a></div>
+        <div class="t">那因為discriminator他本來訓練的時候,他的訓練的目標,他可以做的事情就是看到好的圖片,就給他大的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:04.000" id=28:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1684">28:04.000</a></div>
+        <div class="t">如果generator可以調整參數之後,輸出來的圖片discriminator會給予高分,那意味著generator產生出來的圖片是比較真實的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:16.000" id=28:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1696">28:16.000</a></div>
+        <div class="t">或者是講得更具體一點,實際上你的操作是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.000" id=28:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1701">28:21.000</a></div>
+        <div class="t">generator是一個network裡面有好幾層,然後discriminator也是一個network裡面有好幾層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:31.000" id=28:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1711">28:31.000</a></div>
+        <div class="t">我們把generator跟discriminator直接接起來,當作一個比較大的network來看待。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:38.000" id=28:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1718">28:38.000</a></div>
+        <div class="t">舉例來說,generator如果是五層的network,discriminator如果是五層的network,把他們接起來,我們就把它當作是一個十層的network來看待。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.000" id=28:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1729">28:49.000</a></div>
+        <div class="t">而這個十層的network裡面,其中某一層,某一個hidden layer,他的輸出很寬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.000" id=28:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1735">28:55.000</a></div>
+        <div class="t">他的輸出的dimension就跟圖片裡面pixel的數目乘3是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:01.000" id=29:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1741">29:01.000</a></div>
+        <div class="t">你把這個hidden layer的輸出做一下整理以後,就會變成一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.000" id=29:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1746">29:06.000</a></div>
+        <div class="t">所以這整個大的network裡面,其中某一層的輸出就是代表一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:13.000" id=29:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1753">29:13.000</a></div>
+        <div class="t">那我們要做的事情是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.000" id=29:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1755">29:15.000</a></div>
+        <div class="t">我們要做的是,這整個巨大的network,他會吃一個向量作為輸入,然後他會輸出一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:22.000" id=29:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1762">29:22.000</a></div>
+        <div class="t">那我們希望調整這個network,讓輸出的分數越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:27.000" id=29:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1767">29:27.000</a></div>
+        <div class="t">但是要注意一下,我們不會去調對應到discriminator的部分,我們不會去調這個巨大的network的最後幾層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:36.000" id=29:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1776">29:36.000</a></div>
+        <div class="t">為什麼不調最後幾層呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:38.000" id=29:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1778">29:38.000</a></div>
+        <div class="t">你可以想想看,假設調最後幾層的話,這整個遊戲就被hack了,因為假設你要輸出的分數越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:44.000" id=29:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1784">29:44.000</a></div>
+        <div class="t">我直接調最後output layer那個neuron的bias,把它設成一千萬,那不是輸出就很大了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.000" id=29:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1791">29:51.000</a></div>
+        <div class="t">所以discriminator這邊的參數是不能動的,我們只調generator的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:59.000" id=29:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1799">29:59.000</a></div>
+        <div class="t">至於怎麼調generator的參數呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:02.000" id=30:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1802">30:02.000</a></div>
+        <div class="t">這個訓練的方法跟我們之前訓練一般的network是沒有什麼不同的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.000" id=30:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1808">30:08.000</a></div>
+        <div class="t">我們之前說訓練network的時候就是定一個loss,然後你用gradient descent,讓loss越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:14.000" id=30:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1814">30:14.000</a></div>
+        <div class="t">那這邊呢,你也有一個目標,只是這個目標不是越小越好,而是越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.000" id=30:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1821">30:21.000</a></div>
+        <div class="t">那當然你也可以把discriminator output成一個負號當作loss,然後generator訓練的目標就是讓loss越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:32.000" id=30:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1832">30:32.000</a></div>
+        <div class="t">或者你也可以說,我們就是要讓discriminator output的值越大越好,然後我們用gradient descent,讓loss越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:40.000" id=30:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1840">30:40.000</a></div>
+        <div class="t">gradient descent會讓你的目標函數越大越好,我們用gradient descent去調generator,讓discriminator的輸出越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:48.000" id=30:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1848">30:48.000</a></div>
+        <div class="t">這是同一件事,這邊調訓練generator的方法,也是用gradient descent base的方法,跟我們之前在訓練一個一般network的時候是沒有什麼差異的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:00.000" id=31:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1860">31:00.000</a></div>
+        <div class="t">所以現在講了兩個步驟,第一個步驟,固定generator訓練discriminator,第二個步驟,固定discriminator訓練generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.000" id=31:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1870">31:10.000</a></div>
+        <div class="t">接下來呢,接下來就是反覆的訓練discriminator跟generator,訓練完discriminator以後,固定住discriminator,訓練generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:20.000" id=31:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1880">31:20.000</a></div>
+        <div class="t">訓練完generator以後,再用generator去產生更多的新的產生出來的圖片,再給discriminator做訓練。訓練完discriminator以後,再去訓練generator,反覆的去執行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:35.000" id=31:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1895">31:35.000</a></div>
+        <div class="t">所以你是訓練一陣子discriminator,訓練一陣子generator,訓練一陣子discriminator,再訓練一陣子generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:43.000" id=31:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1903">31:43.000</a></div>
+        <div class="t">generator跟discriminator,他們是反覆的去進行訓練。當其中一者進行訓練的時候,另外一個就固定住。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:53.000" id=31:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1913">31:53.000</a></div>
+        <div class="t">那你期待discriminator跟generator都可以做得越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:59.000" id=31:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1919">31:59.000</a></div>
+        <div class="t">好,那我們作業呢,其實下一個作業就是要做動畫人物的人臉生成啦。那你可能會問說,到底可以做到什麼樣的程度呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:08.000" id=32:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1928">32:08.000</a></div>
+        <div class="t">以下的結果是我在2017年的時候做的。我自己試著train了一下game,看看game是不是真的可以產生二次元的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:18.000" id=32:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1938">32:18.000</a></div>
+        <div class="t">那我訓練了,我把generatorupdate了100次以後。所謂generatorupdate100次的意思是說,discriminatortrain一下,generatortrain一下,discriminatortrain一下,generatortrain一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:29.000" id=32:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1949">32:29.000</a></div>
+        <div class="t">這樣往返100次以後,得到的結果是這樣子。嗯?不知道在做些什麼?但我接下來就再等了一下,train1000次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:40.000" id=32:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1960">32:40.000</a></div>
+        <div class="t">discriminator跟generator各自訓練,這樣反覆1000次以後,機器就產生了眼睛。機器知道說,人臉就是要有兩個眼睛,所以它就把眼睛標上去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.000" id=32:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1974">32:54.000</a></div>
+        <div class="t">訓練到2000次的時候,你發現嘴巴就出來了。訓練到5000次的時候,已經開始有一點人臉的樣子了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:03.000" id=33:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1983">33:03.000</a></div>
+        <div class="t">而且你發現說,機器學到說動畫人物就是要有那個水汪汪的大眼睛,所以它每個人的眼睛都塗得非常的大,都有反白,代表說反光,是水汪汪的大眼睛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:16.000" id=33:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=1996">33:16.000</a></div>
+        <div class="t">這個是訓練一萬次以後的結果,你會發現形狀已經有出來了,只是有一點模糊,很多地方有點暈開的感覺,好像是水彩畫的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:27.000" id=33:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2007">33:27.000</a></div>
+        <div class="t">接下來,這個是update兩萬次的結果,這個是update五萬次的結果,我後來就停在五萬次的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:36.000" id=33:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2016">33:36.000</a></div>
+        <div class="t">其實你在作業裡面是有機會做得比這個結果更好的,這個是助教制學生的時候做的結果,如果是最好,可能可以做到這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:48.000" id=33:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2028">33:48.000</a></div>
+        <div class="t">你會發現說這些人物都還不錯,只是偶爾會有一些崩壞,乍看之下可能比一些做畫畫風會崩壞的動畫公司,比如說魅飛魅,做得還要好一些了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:02.000" id=34:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2042">34:02.000</a></div>
+        <div class="t">其實,如果你有好的資料庫的話,當然我們提供給大家的資料是做不到這個地步的,如果你有真的非常好的資料的話,也許你可以做出真的很好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:14.000" id=34:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2054">34:14.000</a></div>
+        <div class="t">我在網路上找到了一個這樣子的結果,這個是用StyleGAN做的,用StyleGAN做起來可以做到這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:25.000" id=34:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2065">34:25.000</a></div>
+        <div class="t">我覺得非常驚人,這些都是用StyleGAN產生出來的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:36.000" id=34:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2076">34:36.000</a></div>
+        <div class="t">這邊他還產生了異色頭,我不知道算是畫錯呢,還是他刻意要產生異色頭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:43.000" id=34:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2083">34:43.000</a></div>
+        <div class="t">異色頭就是一眼白眼、一眼血輪眼這樣的概念。除了產生動畫人物以外,當然也可以產生真實的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:58.000" id=34:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2098">34:58.000</a></div>
+        <div class="t">有一個技術叫做ProgressiveGAN,它可以產生非常高清的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:04.000" id=35:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2104">35:04.000</a></div>
+        <div class="t">這邊考一下大家,這邊有兩排人臉,你覺得上面這一排是機器產生的,請舉手。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:14.000" id=35:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2114">35:14.000</a></div>
+        <div class="t">有一些同學,好,手放下。你覺得下面這一排是機器產生的,請舉手。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:21.000" id=35:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2121">35:21.000</a></div>
+        <div class="t">好,比較多,手放下。其實上下兩排都是機器產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:26.000" id=35:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2126">35:26.000</a></div>
+        <div class="t">所以這個顯然ProgressiveGAN它有辦法產生以假亂真的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:34.000" id=35:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2134">35:34.000</a></div>
+        <div class="t">甚至之前,有一個新聞我不知道是不是真的,有一個新創公司裡面有很多人,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:40.000" id=35:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2140">35:40.000</a></div>
+        <div class="t">但大家發現裡面那些人的頭像有點怪怪的,有人說那些頭像其實是用GAN生成的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:48.000" id=35:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2148">35:48.000</a></div>
+        <div class="t">那並不是真正的人物,那個公司沒有那麼多人,所以用GAN生成一些假人的照片,當作是假的員工。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:56.000" id=35:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2156">35:56.000</a></div>
+        <div class="t">那你可能會問說,要產生人臉有什麼用呢?我去路邊拍一個人產生出來的照片不是更像真的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:05.000" id=36:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2165">36:05.000</a></div>
+        <div class="t">但是用GAN你可以產生你沒有看過的人臉。舉例來說,用GAN你可以做到這樣子的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:12.000" id=36:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2172">36:12.000</a></div>
+        <div class="t">我們剛才說GAN這種Generator就是輸入一個像量,輸出一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:18.000" id=36:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2178">36:18.000</a></div>
+        <div class="t">那你不只可以輸入一個像量輸出一張圖片,你還可以把輸入的像量做內差,做Interpolation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:26.000" id=36:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2186">36:26.000</a></div>
+        <div class="t">把輸入的像量做內差以後會發生什麼事呢?你就會看到兩張圖片之間連續的變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:34.000" id=36:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2194">36:34.000</a></div>
+        <div class="t">舉例來說,你輸入一個像量,這邊產生一個看起來非常嚴肅的男人。你輸入一個像量,這邊產生一個笑口常開的女人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:42.000" id=36:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2202">36:42.000</a></div>
+        <div class="t">那你輸入這兩個像量中間的Interpolation,它的內差,你就會看到這個男人就逐漸地笑了起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:50.000" id=36:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2210">36:50.000</a></div>
+        <div class="t">或者是,這邊有更多的例子,你輸入一個像量,輸入的像量這邊是假的,但這邊產生出來的圖片是真的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:58.000" id=36:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2218">36:58.000</a></div>
+        <div class="t">你輸入一個像量,這邊產生一個往左看的人。你輸入一個像量,這邊產生一個往右看的人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:05.000" id=37:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2225">37:05.000</a></div>
+        <div class="t">你把往左看的人跟往右看的人做Interpolation,會發生什麼事呢?機器並不是傻傻地把兩張圖片疊在一起,變成一個雙面人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:15.000" id=37:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2235">37:15.000</a></div>
+        <div class="t">而是機器知道說,往左看的人臉跟往右看的人臉,介於他們中間的就是往正面看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:24.000" id=37:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2244">37:24.000</a></div>
+        <div class="t">在訓練的時候其實並沒有真的告訴機器這件事,但機器可以自己學到說,把這兩張臉做內差,應該會得到一個往正面看的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:35.000" id=37:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2255">37:35.000</a></div>
+        <div class="t">那說到Gang,剛才已經講過Gang是Ian Goodfellow在2014年的時候提出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.000" id=37:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2261">37:41.000</a></div>
+        <div class="t">你可能有聽過那個故事,不知道是不是真的,是一個傳說,Ian Goodfellow去酒吧看到兩個人吵架,於是就有了Gang的靈感。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:51.000" id=37:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2271">37:51.000</a></div>
+        <div class="t">然後回家第一次實作,就成功了,然後就結束了,然後就投了一個Paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:57.000" id=37:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2277">37:57.000</a></div>
+        <div class="t">但是他所謂的成功其實是長這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:03.000" id=38:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2283">38:03.000</a></div>
+        <div class="t">在2014年的時候,我第一次看到這個結果的時候,我覺得哇靠,還真的可以產生圖片,太厲害了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:09.000" id=38:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2289">38:09.000</a></div>
+        <div class="t">當然如果從今天的角度來看,你會覺得說,這樣你也算是有成功嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:14.000" id=38:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2294">38:14.000</a></div>
+        <div class="t">今天,比如說你用BigGang產生出來的圖片,可以做到像這個樣子的結果。這些圖片都是機器生成的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:23.000" id=38:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2303">38:23.000</a></div>
+        <div class="t">但仔細看一下,還是可以發現一些破綻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:26.000" id=38:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2306">38:26.000</a></div>
+        <div class="t">舉例來說,這隻狗他多了一個腳,或者是這個杯子,他左右沒有很對稱,他有點歪歪的,但這些圖片都是機器生成的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:38.000" id=38:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2318">38:38.000</a></div>
+        <div class="t">那有時候機器也會產生一些幻想中的角色,舉例來說機器就產生了一個網球狗啊,他就產生一個網球狗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:47.000" id=38:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2327">38:47.000</a></div>
+        <div class="t">把狗跟網球融合在一起,他會產生幻想中的角色,這個就是BigGang。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:55.000" id=38:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&t=2335">38:55.000</a></div>
+        <div class="t">講到這邊正好告一個段落,有關Gan的理論的部分我們會下一堂課再講,我們這邊先休息十分鐘,十分鐘後再回來。</div>
+    </div>
+    
+</body>
+</html>   

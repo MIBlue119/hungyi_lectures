@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Speaker Verification</h2><a href=https://www.youtube.com/watch?v=z3yvxvyP-lE><img src=https://i.ytimg.com/vi_webp/z3yvxvyP-lE/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=0">00:00.000</a></div>
+        <div class="t">好,那我們就開始上課吧。那接下來呢,我們要講speaker的verification。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:06.600" id=00:06.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=6">00:06.600</a></div>
+        <div class="t">好,那講到這邊呢,我們已經講過了輸入語音輸出文字的模型,輸入文字輸出語音的模型,輸入語音輸出語音的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:17.600" id=00:17.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=17">00:17.600</a></div>
+        <div class="t">那現在我們要講輸入語音輸出其他東西,比如說一個類別的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.800" id=00:24.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=24">00:24.800</a></div>
+        <div class="t">好,那有什麼樣這樣子的模型呢?這邊舉幾個例子。舉例來說,如果我們可以訓練一個模型,輸入是一段語音,輸出是現在這一段語音裡面說話的人,他的心情如何?他是高興的還是悲傷的?那這個叫做emotion recognition,這是輸入語音輸入類別的一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:47.800" id=00:47.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=47">00:47.800</a></div>
+        <div class="t">然後其他例子,舉例來說,輸入一段聲音訊號,那你可以根據這段聲音訊號裡面,讓模型猜出說這段聲音訊號裡面發生了什麼樣的事情,舉例來說,是不是有人開門?是不是有人在摔東西?是不是有人在打果汁?等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08.800" id=01:08.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=68">01:08.800</a></div>
+        <div class="t">那這個叫做sound event detection,那你可以想像說,這個應該還蠻實用的,如果你可以偵測有沒有人開門的話,你就可以在不裝監視器、不看影像的情況下只聽聲音,就知道說有沒有人進來。一方面可以做一個安保系統,另外一方面同時又可以保障使用這個系統的人的隱私。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32.560" id=01:32.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=92">01:32.560</a></div>
+        <div class="t">還有一些其他的任務是跟醫療比較有關係的,舉例來說,有可能做一個autism recognition,訓練一個模型,這個模型就聽一個小孩講幾句話,然後他可以判斷說這個小孩是不是有自閉症,那這個是真的有人在做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.560" id=01:54.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=114">01:54.560</a></div>
+        <div class="t">還有keyword spotting,keyword spotting也是輸入一段聲音,輸出就是yes、no,輸出就是這段聲音訊號有沒有在你的聲音訊號裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.560" id=02:06.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=126">02:06.560</a></div>
+        <div class="t">這些模型當然各自都有不同的研究方向,但是如果在講模型的架構上,你會發現講來講去就是大同小異,它們就是一個分類的問題,所以我們就不要都講。我們今天只集中來講一個任務,我們只講speaker的verification。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:27.560" id=02:27.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=147">02:27.560</a></div>
+        <div class="t">雖然我們只講speaker的verification,但你會發現說speaker verification裡面用的概念可以用到很多其他的地方,比如說像speaker verification裡面所用的模型,很多也都會出現在keyword spotting裡面,所以我們只講speaker verification就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:46.560" id=02:46.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=166">02:46.560</a></div>
+        <div class="t">我們先介紹一下我們今天要講的任務。除了speaker verification以外,還有其他任務是跟愚者有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:58.560" id=02:58.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=178">02:58.560</a></div>
+        <div class="t">第一個要講的跟愚者有關係的任務是speaker recognition,或者是又叫speaker identification,中文可以翻譯成愚者識別。speaker recognition要做的事情就是看一段語音是誰說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:17.560" id=03:17.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=197">03:17.560</a></div>
+        <div class="t">它就是一個非常標準的分類問題,你完全可以想像要怎麼做,所以這邊我們就不特別花時間來講speaker recognition。你可以想像說它就是一個標準的多類別的分類問題,你就要收集很多愚者的訊號,A的訊號一大堆,B的訊號一些,C的訊號一些,然後訓練一個分類的模型,輸入一段聲音訊號,告訴你說這段聲音訊號是A的confidence有多高,是B的confidence有多高,是C的confidence有多高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:46.560" id=03:46.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=226">03:46.560</a></div>
+        <div class="t">這是一個分類的問題,再看哪一個類別得到的confidence最大,哪一個類別得到的分數最高,就輸出那個類別當作最終的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.560" id=03:58.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=238">03:58.560</a></div>
+        <div class="t">那speaker verification,通常中文又翻譯成愚者驗證。愚者驗證做的事情是什麼呢?它是我們希望訓練一個模型,這個模型輸入兩段聲音,輸出是一個數值,判斷說這兩段聲音是不是同一個人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.560" id=04:14.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=254">04:14.560</a></div>
+        <div class="t">在speaker verification這樣的task裡面,你需要的就是一個模型,這個模型的輸入是兩段聲音訊號,輸出是一個scale,是一個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.560" id=04:24.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=264">04:24.560</a></div>
+        <div class="t">如果這個數值大於某個你事先定好的threshold,那麼就說這兩段聲音訊號是同一個人說的,如果小於一個threshold,那麼就說這兩段聲音訊號是不同人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.560" id=04:40.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=280">04:40.560</a></div>
+        <div class="t">所以可以想像說,這個模型在做的事情像是比對相似度,這個模型做的事情就是比對這兩段聲音訊號的相似度,看看它們有多像,它輸出這兩段訊號的相似程度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:53.560" id=04:53.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=293">04:53.560</a></div>
+        <div class="t">如果相似的程度很大,那就說是同一個人講的,相似的程度很小,就說是不同人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:00.560" id=05:00.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=300">05:00.560</a></div>
+        <div class="t">那像這樣speaker verification的系統有什麼用呢?它的用處很大,我們今天在日常生活中已經有機會使用到這樣子語者驗證的系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.560" id=05:11.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=311">05:11.560</a></div>
+        <div class="t">比如說你今天打電話去銀行客服,其實很多銀行都有speaker verification的系統,你打電話去客服,客服就會問你說要不要開啟語者驗證的功能,你說要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:22.560" id=05:22.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=322">05:22.560</a></div>
+        <div class="t">接下來,客服就會要求你念幾句話,這個念幾句話的過程叫做enrollment,你念的那幾句話就會以某種形式存在銀行的客服端。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:36.560" id=05:36.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=336">05:36.560</a></div>
+        <div class="t">接下來,下一次你再打電話進來的時候,就比對你現在的聲音跟你之前在註冊的時候,在做enrollment的時候所存的聲音的相似度。如果聲音的相似度超過某一個threshold,就說是同一個人,那就是本尊了,就不需要再做額外的驗證。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:54.560" id=05:54.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=354">05:54.560</a></div>
+        <div class="t">如果不是同一個人,那可能就需要人力介入再做更多額外的驗證。這個threshold一般就是人定的,這個threshold就代表說現在你的語者驗證的系統有多嚴苛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.560" id=06:07.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=367">06:07.560</a></div>
+        <div class="t">如果你的threshold設很高,意味著說兩段聲音訊號真的很像,才會被判斷成同一個人。如果設很低,兩段聲音訊號可能沒有那麼像,那也會被判斷成同一個人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.560" id=06:18.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=378">06:18.560</a></div>
+        <div class="t">那通常這個threshold是人設的,就看你要你的系統有多嚴苛,然後你就可以決定你的threshold要設多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.560" id=06:27.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=387">06:27.560</a></div>
+        <div class="t">那因為threshold通常是人設的,那我們要怎麼判斷兩個語者驗證系統的好壞呢?通常語者驗證系統你在評斷它的好壞的時候,你會用一個叫做equal error rate,它的縮寫是EER的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.560" id=06:45.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=405">06:45.560</a></div>
+        <div class="t">這個equal error rate是什麼意思呢?這個equal error rate的意思是說,因為不同的threshold會導致你的系統有不同的performance,有不同的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.560" id=06:56.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=416">06:56.560</a></div>
+        <div class="t">所以我們先把所有的threshold都窮取出來,劃成一條curve。也就是說我們先把threshold設很高,設1.0,當threshold設很高的時候,所有的聲音進來都會被判斷成是不同的語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.560" id=07:12.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=432">07:12.560</a></div>
+        <div class="t">假設你threshold設1.0,假設我們相似度算出來最高就是1.0,那threshold就設1.0,那這樣不管哪兩段聲音訊號進來,你的系統都會說它們就是不同的人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.560" id=07:24.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=444">07:24.560</a></div>
+        <div class="t">所以當你的系統無論如何都會說兩句聲音訊號是不同的人講的,同樣的語者的聲音被判斷成不同語者的機率,它的可能性就是100%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:37.560" id=07:37.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=457">07:37.560</a></div>
+        <div class="t">不同語者被判斷成同一個語者的可能性就很低,就變成是0%,因為你的系統無論如何都會說兩段聲音訊號是不同語者的,所以說是同一個語者的可能性就會是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.560" id=07:49.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=469">07:49.560</a></div>
+        <div class="t">所以不同語者被判斷成同一個語者這樣的錯誤的可能性就是0%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:54.560" id=07:54.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=474">07:54.560</a></div>
+        <div class="t">接下來你降低你的threshold,當你降低你的threshold的時候,你就有可能把不同的語者判斷成同一個語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.560" id=08:03.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=483">08:03.560</a></div>
+        <div class="t">當你的threshold很大的時候,同一語者被判斷成不同語者的可能性會比較大,而不同語者被判斷成同一語者的可能性會比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:18.560" id=08:18.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=498">08:18.560</a></div>
+        <div class="t">這邊有兩種不同的error,一種是同一語者被判斷成不同語者這樣的錯誤,一種是不同語者被判斷成同樣語者的這種錯誤。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:28.560" id=08:28.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=508">08:28.560</a></div>
+        <div class="t">你把threshold逐漸降低,最後這兩種錯誤就會黃金交叉。直到最後,如果你的threshold設0,也就是不管怎樣的兩段聲音訊號進來,你的系統永遠都說是同一個語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:44.560" id=08:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=524">08:44.560</a></div>
+        <div class="t">這個時候,把同一語者判斷成不同語者這樣錯誤的狀況就不會發生,但是把不同語者判斷成同一語者就會很容易發生,就會有100%的錯誤率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:58.560" id=08:58.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=538">08:58.560</a></div>
+        <div class="t">你藉由調整你的threshold,你就可以得到這樣子的一條曲線,這兩種錯誤的可能性就互為消長。接下來,你找出一個threshold,這個threshold讓你的兩種error的錯誤率是一模一樣的,這個東西就叫做equal error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.560" id=09:23.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=563">09:23.560</a></div>
+        <div class="t">你在report,你在寫在你的文章裡面說,你今天做了一個speaker verification,你的系統的效能有多好的時候,你就會show你的equal error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:33.560" id=09:33.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=573">09:33.560</a></div>
+        <div class="t">不同的speaker verification系統在評比的時候,你會用equal error rate來評比不同系統的效能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.560" id=09:41.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=581">09:41.560</a></div>
+        <div class="t">實際上,你在使用你的speaker verification系統的時候,threshold要設多高,可能是使用這個系統的開發者自己決定的,他決定說他現在這個語者驗證的系統要有多嚴格。但是,比較兩個不同語者驗證系統好壞的時候,我們就會先找出它的equal error rate,然後用它的equal error rate來評價一個系統的好壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.560" id=10:01.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=601">10:01.560</a></div>
+        <div class="t">這個是講怎麼評價這個語者驗證的系統。還有第三個跟語者有關的任務,叫做speaker的diarization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.560" id=10:13.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=613">10:13.560</a></div>
+        <div class="t">Diarization這個詞彙,我查了一下詞典,好像沒有這個詞彙,所以顯然它不是一個常用的詞彙。它的動詞的形態倒是在詞典中找得到。Diarize是說把一件事情記錄下來,把一件事情記錄在日記裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:35.560" id=10:35.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=635">10:35.560</a></div>
+        <div class="t">到底speaker的diarization是什麼意思呢?它實際上做的事情就是給你一段語音,在這段語音裡面,你的系統要判斷說誰在什麼時間說話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:48.560" id=10:48.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=648">10:48.560</a></div>
+        <div class="t">Diarization有人會翻譯成語者分群,但是它其實也不太像是分群。我這邊採用的是另外一個翻譯的方法,它叫做語者分段標記。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.560" id=11:00.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=660">11:00.560</a></div>
+        <div class="t">這可能比較接近speaker的diarization實際說的事情,因為speaker的diarization通常就分成兩個步驟。第一個步驟就是分段,第二個步驟就是標記。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:10.560" id=11:10.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=670">11:10.560</a></div>
+        <div class="t">更具體而言,speaker的diarization是怎麼做的呢?首先,你有一串很長的聲音訊號。聲音訊號可能是會議的錄音,可能是電話的錄音,裡面有好幾個人在講話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:25.560" id=11:25.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=685">11:25.560</a></div>
+        <div class="t">Speaker的diarization系統它第一件做的事情是segmentation,它先把聲音訊號切成一段一段。可能每一段就是一句話,或者是每一段就是一個段落,或者是每一段代表說是同一個語者說的話,不同段就代表說有一個語者的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:45.560" id=11:45.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=705">11:45.560</a></div>
+        <div class="t">接下來,你會做clustering。clustering這個步驟就是說,你要標記說每一段是哪一個語者講的。通常在speaker的diarization的時候有兩種狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.560" id=11:58.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=718">11:58.560</a></div>
+        <div class="t">一種狀況是,語者的數目是已經知道的。尤其像電話錄音這種狀況,通常就是兩個人講。比如說如果是客服的錄音,就一個人是客服,另外一個人是客戶。你只需要知道說哪些聲音訊號是客服講的,哪些聲音訊號是客戶講的就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.560" id=12:16.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=736">12:16.560</a></div>
+        <div class="t">如果是meeting,然後你又不知道有多少人的話,那就比較麻煩。你就需要用一些方法來看說哪些聲音訊號應該是屬於同一個人的。假設第一段聲音訊號,我們說把它標記為語者1,給它一個編號說它是1號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:33.320" id=12:33.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=753">12:33.320</a></div>
+        <div class="t">第二段聲音訊號,你覺得跟1號的聲音不太像,應該是不同人吧,所以你就給它2號。第三段聲音訊號,你比對一下覺得它跟第一段聲音訊號有點像,就說它是1號。再來第四段聲音訊號,它跟1號跟2號都不像,你就說它是3號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.060" id=12:50.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=770">12:50.060</a></div>
+        <div class="t">我今天不會細講speaker diarization這個技術,不過你會想見說其實在speaker diarization裏面,你也需要用到一些跟speaker recognition、跟speaker verification有關的技術,那你才能做speaker diarization這件事。不過speaker diarization還需要做segmentation,它要做的事情顯然是比其他的方法要更多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.280" id=13:12.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=792">13:12.280</a></div>
+        <div class="t">我今天就只focus在speaker verification上面。我們會講兩件事。第一件事情,我們會講說我們在課程中不斷反覆提到的speaker embedding,然後接下來我們會講end-to-end的speaker verification。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.920" id=13:32.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=812">13:32.920</a></div>
+        <div class="t">我剛才講說我們需要的就是一個模型,吃兩段聲音訊號輸出就是一個數值。實際上這個模型裏面長什麼樣子呢?我們說這個模型就是算兩段聲音訊號的相似度,因為我們要判斷兩段聲音訊號是不是同一個人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.040" id=13:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=831">13:51.040</a></div>
+        <div class="t">所以這個模型裏面,如果是比較傳統的speaker verification的model,它通常是這個樣子的。你會有某些方法,這個方法可以吃一段聲音訊號當作輸入,它的輸出就是一個向量,這個向量代表了語者的特徵,就是我們反覆提到的speaker embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.820" id=14:11.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=851">14:11.820</a></div>
+        <div class="t">這個向量代表了這段聲音訊號背後的speaker到底有什麼樣的特徵。這個方法應該要濾掉這段聲音訊號裏面的內容,只把跟語者特徵相關的部分把它抽取出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.800" id=14:25.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=865">14:25.800</a></div>
+        <div class="t">你有一個方法可以把語者的特徵,把speaker embedding抽取出來以後,接下來就容易了,你只需要計算這兩個embedding的相似度,根據這個相似度,你就可以判斷說這兩段聲音訊號是不是同一個人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:42.300" id=14:42.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=882">14:42.300</a></div>
+        <div class="t">通常speaker verification會分成三個步驟。第一個步驟叫做development,development要做的事情就是要找出這個可以產生speaker embedding的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.740" id=14:57.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=897">14:57.740</a></div>
+        <div class="t">你會收集一個corpus,這個corpus裏面有很多不同的人說話的聲音,根據這個不同的人說話的聲音,你就可以產生一個模型,這個模型給它一句段聲音,它就可以產生一個speaker embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.400" id=15:10.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=910">15:10.400</a></div>
+        <div class="t">第二個步驟叫做enrollment,enrollment就是你打電話給客服,客服問你要不要開通語者驗證系統,你說要,他就要求你唸幾句話,你唸那幾句話的過程就叫做enrollment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.760" id=15:25.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=925">15:25.760</a></div>
+        <div class="t">你唸幾句話,然後那些句子就會通過產生speaker embedding的model,然後把你的speaker embedding產生出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.300" id=15:35.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=935">15:35.300</a></div>
+        <div class="t">這是第二步,註冊的階段。如果今天你註冊的時候有好幾句話怎麼辦呢?一個常見的做法就是把好幾句話的speaker embedding統統平均起來,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.600" id=15:48.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=948">15:48.600</a></div>
+        <div class="t">第三步驟就是evaluation,也就是你下一次在打電話進去客服的時候,你的聲音會通過這個embedding的model產生一個speaker embedding的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.960" id=16:00.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=960">16:00.960</a></div>
+        <div class="t">接下來你就會比對你現在的vector跟你註冊時候的vector的相似度,如果這個相似度夠大,那就當作是同一個人,相似度不夠大,就當作是不同人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.080" id=16:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=974">16:14.080</a></div>
+        <div class="t">所以speaker verification它就有三個步驟,development,enrollment跟evaluation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:20.640" id=16:20.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=980">16:20.640</a></div>
+        <div class="t">這邊要強調一下,第一步驟所使用的這些speaker在第二步驟跟第三步驟並不會出現,就是你拿來訓練這個模型所用的speaker之後是不能夠再出現的,第二步驟註冊的人跟第三步驟評估的人不會在這個地方出現,不會在development的時候出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.920" id=16:41.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1001">16:41.920</a></div>
+        <div class="t">其實這整套speaker verification的想法就是metric based的meta learning,其實我們在講metric based的meta learning的時候還有一句話講說,其實speaker verification用的就是類似的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:57.920" id=16:57.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1017">16:57.920</a></div>
+        <div class="t">不過我們今天直接從speaker verification的角度切入,我們就不講meta learning,如果你想知道meta learning是什麼的話,請參見過去上課的錄影。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:06.880" id=17:06.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1026">17:06.880</a></div>
+        <div class="t">講這個模型之前,需要給大家一個概念,就是實際上在做development的時候,我們到底需要收集到多大的資料呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:17.120" id=17:17.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1037">17:17.120</a></div>
+        <div class="t">根據Google的paper,它們在文獻裡面用的資料是這個樣子的。Google實際上用的資料都會比它們寫在paper裡面的多。我們不管,我們data裡面,Google說它們用來訓練語者驗證的資料有多少呢?它們說它們有一萬八千個語者,總共有三千六百萬個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.400" id=17:42.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1062">17:42.400</a></div>
+        <div class="t">比全台灣每個人講一句話還要多,用這麼大量的資料來訓練speaker verification的model。不過,你手上沒有這種資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.360" id=17:51.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1071">17:51.360</a></div>
+        <div class="t">如果你今天要自己做實驗的話,有一些你可以用的benchmark corpus,最知名的就是VoxLab。VoxLab有兩個版本,比較大的版本有上百萬個句子,也有超過五千個speaker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:06.800" id=18:06.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1086">18:06.800</a></div>
+        <div class="t">所以你可以想見說,你今天要做一個比較好的,大家覺得ok的speaker verification的系統,你是需要這樣子量級的資料才是比較有機會的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.600" id=18:17.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1097">18:17.600</a></div>
+        <div class="t">接下來我們就講說怎麼抽speaker的embedding。最古老的、早期最有用的一個方法叫做i-vector。這個i-vector的i應該就是identity的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:35.760" id=18:35.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1115">18:35.760</a></div>
+        <div class="t">i-vector就是有一個什麼方法,它可以吃一段聲音訊號,接下來它抽出一個四百維的向量,那我們期待那個四百維的向量就代表了這段聲音訊號的語者的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.240" id=18:48.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1128">18:48.240</a></div>
+        <div class="t">那不管這段聲音訊號有多長,它是五秒、十秒還是十五秒,都是抽四百維的向量出來。不管今天輸入的語者的長度有多長,抽出的speaker embedding的長度,它的dimension都是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1144">19:04.000</a></div>
+        <div class="t">那其實i-vector是一個非常強的方法,我甚至覺得i-vector是在語音領域最後一個被deep learning打敗的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:14.080" id=19:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1154">19:14.080</a></div>
+        <div class="t">i-vector它支撐了很久很久,一直到我16年的時候,我都覺得在speaker verification,i-vector應該都還是比deep learning強的,一直到近年,i-vector才逐漸被其他deep learning的方法取代。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.040" id=19:27.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1167">19:27.040</a></div>
+        <div class="t">我覺得在16、17年那個時候,整個語音辨識已經都是deep learning了,但是i-vector還是佔據了speaker verification這個領域,直到它逐漸的終究的不敵deep learning的力量,慢慢的也是被deep learning取代了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.320" id=19:44.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1184">19:44.320</a></div>
+        <div class="t">接下來就進入deep learning的模型,其中最早的用deep learning抽speaker embedding的model叫做d-vector,d顯然就是deep learning的縮寫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:58.800" id=19:58.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1198">19:58.800</a></div>
+        <div class="t">d-vector是怎麼做的呢?d-vector的做法是這樣,你有一段聲音訊號,你把這個聲音訊號裡面截一小段出來,把這一小段丟到一個DNN裡面去。之所以要截一小段出來,而不是直接丟整個句子,是因為這邊沒有用RNN,DNN只能吃固定長度的東西,所以把句子截一小段出來丟給DNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.600" id=20:21.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1221">20:21.600</a></div>
+        <div class="t">而這個DNN要做什麼呢?這個DNN的目標是要做speaker的recognition,我們現在要做speaker verification,但是在產生這個d-vector的時候,在訓練這個可以抽d-vector的model的時候,我們把這個DNN當作speaker recognition的model來check。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.640" id=20:42.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1242">20:42.640</a></div>
+        <div class="t">由我們訓練一個model,這個model丟一段聲音訊號進來,它要去預測這段聲音訊號是哪一個speaker的,因為在你的訓練資料裡面,每一句聲音訊號是誰講的都有標記,你知道每一句聲音訊號是誰講的,所以你可以訓練一個模型,這個模型就吃一段聲音訊號,接下來就是預測這段聲音訊號是誰講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.920" id=20:59.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1259">20:59.920</a></div>
+        <div class="t">然後我們把這個模型最後一個layer的輸出抽出來,然後這個東西就是d-vector。那有人可能會問說,那為什麼不拿最終的輸出呢?如果拿最終輸出有一些比較大的壞處就是,最終的輸出,最後一個layer,最後的output layer,它的輸出是跟餘者數目有關的,比如說你餘者數目是5000,那這個vector就有5000位,那太大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:28.800" id=21:28.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1288">21:28.800</a></div>
+        <div class="t">而且你也不好自己調整,所以比較常見的d-vector的抽法是抽最後一個hidden layer的輸出,那最後一個hidden layer的輸出是你可以自由決定的,不需要受到餘者數量的限制,你可以自己決定512、1024、128等等是你自己決定的,那你就可以自己調d-vector的dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:50.000" id=21:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1310">21:50.000</a></div>
+        <div class="t">不過這個vector啊,它只看了這一小段聲音訊號的資訊,如果我們要看整個句子的資訊怎麼辦呢?因為我們實際上在speaker verification裡面,我們需要的是把一整個句子變成一個vector,那d-vector的想法也很簡單,它就說,一整個句子我們就切成很多很多的小段,那小段和小段之間可以有重疊也沒關係,每一個小段就抽一個vector出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.320" id=22:16.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1336">22:16.320</a></div>
+        <div class="t">然後把這些vector統統平均起來,然後就叫做d-vector,我們就拿這些vector、這些DNN到最後一個hidden layer輸出的representation把它平均起來,就把它當作是代表整個句子的餘者資訊的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.440" id=22:37.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1357">22:37.440</a></div>
+        <div class="t">那因為這個DNN本來在訓練的時候,它的目標就是要預測說,這小段聲音訊號是哪一個speaker講的,所以可以想像說,它的hidden layer裡面的representation應該跟餘者的資訊非常有關,所以把每一小段的這個vector平均起來,那得到的這個vector應該就是跟餘者的資訊頗有關聯的,所以我們就可以拿這個vector來當作speaker verification裡面抽speaker embedding的那一個方法,抽speaker embedding的那一個model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:08.440" id=23:08.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1388">23:08.440</a></div>
+        <div class="t">那其實d-vector並沒有真的in i-vector,看d-vector最早的文獻的話,它只說跟i-vector comparable,comparable的意思就是還是稍微略遜一籌,那個時候的賣點只是說,哇,居然deep learning可以欸,可以跟i-vector差不多欸,那時候大家還不熟deep learning,用deep learning就很潮這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:29.880" id=23:29.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1409">23:29.880</a></div>
+        <div class="t">而後來呢,有了x-vector,那x-vector的performance真的就比i-vector好啦,那x-vector的x是指什麼呢?呃,其實我不知道這樣,如果有人知道的話再告訴我,我覺得會不會就只是沒有什麼意義,就是之前的vector叫d-vector,那我現在取個不同的名字就胡亂安個x上去,我真的不知道為什麼叫做x-vector,有人知道再告訴我好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:52.880" id=23:52.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1432">23:52.880</a></div>
+        <div class="t">那x-vector跟d-vector最大的不同是什麼呢?剛才的d-vector這邊每一個DNN是分開訓練的,那在x-vector裡面有不一樣的想法,因為我們實際上要做的事情是看一整個句子抽取speaker的資訊,所以x-vector比d-vector更進一步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:13.320" id=24:13.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1453">24:13.320</a></div>
+        <div class="t">它在訓練它的speaker recognition model的時候,它就是看一整個句子,根據一整個句子的資訊來預測說speaker是哪一個。所以它一樣跟d-vector一樣有很多DNN,但DNN的這些輸出呢,我們會把它集合起來,把它aggregate起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:32.580" id=24:32.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1472">24:32.580</a></div>
+        <div class="t">那怎麼把它aggregate起來呢?有很多的方法,在x-vector的原始的配合裡面它是說,這邊有一堆vector,我們把這些vector的mean算出來當作一個vector,把它的variant算出來當作一個vector,把這兩個vectorconcatenate起來,這樣子也可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:49.580" id=24:49.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1489">24:49.580</a></div>
+        <div class="t">那把這兩個vector呢,再丟到一些DNN裡面去,然後這個DNN呢,最終要做的事情是speaker recognition,根據這一整段聲音訊號,通過這些DNN,再通過statistic的pooling,再通過DNN,然後最後呢,要預測是哪一個語者。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:07.080" id=25:07.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1507">25:07.080</a></div>
+        <div class="t">那把最後一個layer的representation一樣拿出來,這個東西就叫做x-vector。所以x-vector跟d-vector不一樣的地方是,在做d-vector的時候,是每一小段分開去訓練speaker recognition的model,再把每一小段的結果直接做一個平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:24.580" id=25:24.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1524">25:24.580</a></div>
+        <div class="t">x-vector在訓練的時候就已經考慮了一整段聲音訊號的資訊,它是把一整段的聲音訊號集合起來,變成x-vector。那你可能會想說,怎麼不用個LSTM呢?你可以用LSTM,今天很多人就會選擇用LSTM把這些vector讀過去,不就好了嗎?很多人會選擇這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.080" id=25:46.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1546">25:46.080</a></div>
+        <div class="t">那還有很多進階的方法,比如說有人會說做個attention bar,我們用個什麼方法產生每一個vector的attention weight,再把每一個audio segment產生出來的vector用weighted sum的方法加起來,d-vector只是平均起來,然後x-vector是statistic pooling產生mean跟variance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.080" id=26:06.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1566">26:06.080</a></div>
+        <div class="t">有沒有更好的方法呢?用attention的mechanism,任一個weight來把這些vector做weighted sum,你可以這麼做。還有更進階的方法,比如說一個方法叫做net VLAD,我們這邊就不細講net VLAD是什麼了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:23.920" id=26:23.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1583">26:23.920</a></div>
+        <div class="t">net VLAD其實是從影像那邊借來的一個方法,反正就是想辦法從一整段聲音訊號裡面產生一個固定長度的向量。net VLAD是覺得說,假設有一段非常長的聲音訊號,也許不是通通都是語者的聲音吧,裡面搞不好有一些是雜訊、有一些是silence,我們能不能用某一些方法只取出我們覺得需要關注的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.360" id=26:49.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1609">26:49.360</a></div>
+        <div class="t">這個是net VLAD想要做的事情。實際上它怎麼做的,我就把文獻留在這邊給大家參考。總之,今天你有各式各樣的方法可以把一整段聲音訊號變成一個vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.680" id=27:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1622">27:02.680</a></div>
+        <div class="t">當然,他們最終做的事情都是先做speaker recognition,用speaker recognition串完以後得到speaker embedding,再把speaker embedding拿去做speaker verification。概念是很像的,只是模型隨著時代的演進,慢慢會有各式各樣的變化。至於它今天有什麼樣的變化,我們就不細講了,這個就留給大家自己研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:28.120" id=27:28.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1648">27:28.120</a></div>
+        <div class="t">最後,在下課前,我們來講一下end-to-end的模型。我們說speaker verification的問題就是輸入兩段聲音訊號,輸出就是這兩段訊號像或者不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:41.760" id=27:41.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1661">27:41.760</a></div>
+        <div class="t">在剛才前一個段落裡面,我們說在這個模型裡面應該要有一個什麼方法去抽出代表speaker的representation,抽出speaker embedding,只要計算speaker embedding的相似度,就可以知道說這兩段聲音訊號是不是同一個人講的了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:58.660" id=27:58.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1678">27:58.660</a></div>
+        <div class="t">但是,我們今天有沒有辦法把speaker embedding跟計算相似度這件事情jointly learn呢?因為我們產生speaker embedding以後,我們怎麼計算相似度呢?最常用的方法就是我們把speaker embedding做一下normalization,然後計算一下它的cosine similarity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:19.460" id=28:19.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1699">28:19.460</a></div>
+        <div class="t">也許就會有人問你說,為什麼是cosine similarity,為什麼不是別的東西?那你只要回答說,如果我當初選別的算similarity的方法,你也會問同樣的問題,等等,你很難回答。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:30.120" id=28:30.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1710">28:30.120</a></div>
+        <div class="t">今天,能不能夠把計算相似度跟抽speaker embedding這兩件事情一起學呢?放在同一個model一起學呢?這樣子你就可以把speaker embedding跟後面做計算相似度這件事情配合得更好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:46.660" id=28:46.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1726">28:46.660</a></div>
+        <div class="t">而如果你要訓練這樣end-to-end的模型,你要怎麼準備你的資料呢?我們今天手上有的資料,一般在做speaker verification的時候,你手上有的資料就是你有一堆的speaker,每一個speaker都說了一堆的話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.660" id=29:02.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1742">29:02.660</a></div>
+        <div class="t">假設你今天預設說你的語者就是會講K個句子來當作註冊的句子,那你要怎麼產生你的訓練資料呢?你的positive example是這個樣子的。你先隨便選一個speaker,speaker i,從speaker i的句子裡面,他講過的話裡面取K句出來當作註冊的句子,取另外一個句子出來當作測試的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:27.420" id=29:27.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1767">29:27.420</a></div>
+        <div class="t">然後就希望說我們把這K句註冊的句子丟到模型裡面,我們把這個測試的句子,evaluation的句子也丟到模型裡面,在這個positive example裡面,輸出的值必須要越大越好,因為他們是同一個語者的聲音,所以輸出的值要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:42.860" id=29:42.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1782">29:42.860</a></div>
+        <div class="t">如果是negative example呢?如果是negative example的話就是,你先選一個語者i出來,再從他的講過的句子裡面選K句出來,你再另外挑一個語者j的句子出來,然後你說,今天你的模型輸出這K個註冊的句子跟這一個另外一個語者的句子,他輸出的這個值要越小越好,因為這是不同語者的聲音訊號,所以輸出的值要越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:07.060" id=30:07.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1807">30:07.060</a></div>
+        <div class="t">那這是一種準備你的訓練資料的方法,但他只是其中一種方法,還有別的方法,比如說有一個方法叫做generalized end-to-end,g-e-to-e,這可能是今天比較常用的方法啦,有其他的方法來準備訓練資料,那這個部分呢,也留給大家研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:25.220" id=30:25.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1825">30:25.220</a></div>
+        <div class="t">那end-to-end的模型實際上他內部的構造是怎麼樣呢?這邊他內部的構造啊,完全是仿造傳統的speaker verification的model,你有K個註冊的句子,每一個句子都會通過一個network,這個network就是剛才扮演的剛才抽speaker embedding的角色,產生一個vector,這樣產生出來的vector就是speaker embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:49.660" id=30:49.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1849">30:49.660</a></div>
+        <div class="t">那evaluation utterance也是一樣,通過一個network,然後產生一個vector。好,然後接下來呢,我們把這些enrollment的utterance他的vector平均起來,產生一個vector,藍色的vector,再把這個vector呢,跟這個紅色的vector計算他的相似度,那相似度計算的部分啊,他也可以是一個network,最終得到一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:12.900" id=31:12.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1872">31:12.900</a></div>
+        <div class="t">訓練的時候就是end-to-end,怎樣的end-to-end法呢?如果這些enrollment的句子跟這個evaluation的utterance是同一個人講的,如果這些註冊的句子跟這個測試的句子是同一個人講的,那你就希望輸出的分數越高越好。如果今天是不同人講的,你就希望他輸出的分數越低越好,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:36.740" id=31:36.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1896">31:36.740</a></div>
+        <div class="t">那這些network就扮演了抽speaker embedding的角色,然後這個similarity他也可以是一個network,不過在文件上比較常見的設計是這個樣子,比較常見的設計就是把這兩個vector做那個cosine similarity,然後做完cosine similarity以後,你再做一些小小的shift,把它乘上一個weight,再加上一個bias,然後就得到最終的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:02.220" id=32:02.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1922">32:02.220</a></div>
+        <div class="t">你會發現說他跟原來的speaker verification在架構上非常的像,他也有抽speaker embedding,也有算相似度,只是現在抽speaker embedding的部分跟算相似度的部分是end-to-end的,是jointly一起訓練的,是包在同一個model一起訓練的,跟剛才verification的方法拆成兩階段來訓練,是拆成兩階段來運作,是不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:26.860" id=32:26.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1946">32:26.860</a></div>
+        <div class="t">在做這種speaker verification的時候,又分成text-dependent跟text-independent。text-dependent的意思就是說,我們已經設計好說在enrollment的時候你要說什麼話,在evaluation的時候你要說什麼話,比如說在enrollment跟evaluation的時候你都是說芝麻開門跟芝麻關門這樣子,阿里巴巴與四十大道那個就是這樣做,就是芝麻開門跟芝麻關門。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:53.740" id=32:53.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1973">32:53.740</a></div>
+        <div class="t">不過他們沒有做speaker verification,所以隨便什麼阿里巴巴都可以闖進他們的山洞,這個實在是不太行,所以他們需要speaker verification的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:02.060" id=33:02.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=1982">33:02.060</a></div>
+        <div class="t">這個text-independent就是,今天enrollment的時候你就讓你的speaker隨便講,evaluation的時候也讓speaker隨便講,看看在隨便講的情況下,你的network有沒有辦法做到無視句子裡面的內容、無視文字的部分,只把語者的特徵抽取出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:21.900" id=33:21.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2001">33:21.900</a></div>
+        <div class="t">如果你今天要做text-independent的時候,你可以再加一個discriminator。這個discriminator做的事情就是,根據這個vector,根據這個抽speaker embedding的network output這個vector,去判斷說這個vector屬於哪一段文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:41.100" id=33:41.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2021">33:41.100</a></div>
+        <div class="t">所以這個discriminator的作用有點像語音辨識,就是根據這個vector判斷它的文字的內容是什麼,根據這個vector判斷原來輸入的聲音訊號的文字內容是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:53.280" id=33:53.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2033">33:53.280</a></div>
+        <div class="t">你的speaker embedding的network在訓練的時候,它就要想辦法去騙過discriminator。我們在講voice conversion的時候,其實也用過非常類似的技術,發現說這個技術大的思路都是大同小異。你這個speaker embedding的network就要去騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:12.080" id=34:12.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2052">34:12.080</a></div>
+        <div class="t">如果這個speaker embedding的network可以騙過discriminator,就意味著這個network可以做到把文字的資訊濾掉,只包含語者的資訊。接下來這個network的其他部分,也是可以end-to-end,就直接做訓練的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:28.720" id=34:28.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2068">34:28.720</a></div>
+        <div class="t">有關speaker verification的部分,因為時間的關係,我們其實就講到這邊,講到這邊正好到一個段落,所以我們就下課啦。看大家有沒有問題,如果有問題的話,你就可以在線上問,我看一下大家有沒有問題,如果你沒有問題的話,其實我們上課就上到這邊,我們就可以下課啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:50.480" id=34:50.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2090">34:50.480</a></div>
+        <div class="t">我們講到這邊正好到一個段落,所以我們就下課啦。Equal LLA的意義是什麼?因為今天在做speaker verification的時候,你有兩種錯誤。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:08.080" id=35:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2108">35:08.080</a></div>
+        <div class="t">一種錯誤是,明明是同樣的人講的,你把它當作不同人。另外一種錯誤是,明明是不同人講的,你把它當作同樣的人。但是這兩種錯誤的大小其實是互為消長的,它們中間是一個tradeoff。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:28.560" id=35:28.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2128">35:28.560</a></div>
+        <div class="t">這個tradeoff其實取決於你的threshold設的多高。所以今天你不能說兩個系統設不同的threshold,所以它們有不同的error,然後你也拿來做比較。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:42.140" id=35:42.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2142">35:42.140</a></div>
+        <div class="t">所以今天實際上在比較的時候,它會說,我們就把這個不同的系統,我們都把它的threshold調到說兩種錯誤。所謂兩種錯誤就是,同樣的語者對辯是不同的語者,不同的語者對辯是同樣的語者。這兩種錯誤值的大小是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:58.880" id=35:58.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=z3yvxvyP-lE&t=2158">35:58.880</a></div>
+        <div class="t">看這個一樣的error是多少,那你就只report這個error。希望這樣有回答到你的問題。</div>
+    </div>
+    
+</body>
+</html>   

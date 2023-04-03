@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Text Style Transfer and Unsupervised Summarization/Translation/Speech Recognition</h2><a href=https://www.youtube.com/watch?v=WROBoprE0js><img src=https://i.ytimg.com/vi_webp/WROBoprE0js/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=0">00:00.000</a></div>
+        <div class="t">這一堂課,我們要講text style transfer。你可能會覺得說,text style transfer顧名思義就是改文字的風格,但是等一下這一門課會告訴你說,text style這個東西,其實可以指的是比風格更廣泛的東西,text style transfer它的應用是比你想像的還要更大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:26.120" id=00:26.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=26">00:26.120</a></div>
+        <div class="t">講到這種風格轉換,影像的風格轉換,這個大家都很熟悉了,你已經在很多地方看過影像風格轉換的應用和介紹。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:37.320" id=00:37.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=37">00:37.320</a></div>
+        <div class="t">在這一門課裡面,我們也講過語音的風格轉換,就是voice conversion。在這一堂課裡面,我們要來講文字的風格轉換。文字的風格轉換顧名思義就是,我們現在有兩堆文字的資料,這兩堆文字的資料有不同的書寫風格。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01.200" id=01:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=61">01:01.200</a></div>
+        <div class="t">所謂的書寫風格,其實它可以指非常廣泛不同的面向。舉例來說,我可以說,有一種書寫風格都是悲觀的、負面的書寫風格,另外一種都是正面的文字,我們把它叫做另外一種書寫的風格,我們想把它來互相作為轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.520" id=01:22.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=82">01:22.520</a></div>
+        <div class="t">你也可以說,我的一種風格是八卦版的書寫風格,另外一種風格是撒花版的書寫風格,這樣也可以。總之,我們就是有兩堆文字,我們希望能夠訓練一個模型,這個模型可以把左邊這一堆文字轉成右邊這一堆文字,或者是右邊這一堆文字轉成左邊這一堆文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:44.800" id=01:44.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=104">01:44.800</a></div>
+        <div class="t">如果我們現在所謂的兩種書寫風格,分別是正面的跟負面的書寫風格,那我們就是希望我們可以訓練一個模型,這個模型可以吃一句,比如說負面的句子,然後把這個負面的句子轉成正面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:00.240" id=02:00.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=120">02:00.240</a></div>
+        <div class="t">這個問題,如果你有pair的data,你知道一個負面的句子對應到哪一個正面的句子,那問題就結束了,你只需要訓練一個sequence to sequence的模型,把一個負面的句子轉成正面的句子,整個訓練就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.680" id=02:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=135">02:15.680</a></div>
+        <div class="t">問題就是,在textile transfer這個領域裡面,通常你不會有成對的資料,我們根本不知道一個負面的句子應該對應到哪一個正面的句子,所以我們很難直接去訓練,用supervised learning的方法去訓練這個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.040" id=02:32.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=152">02:32.040</a></div>
+        <div class="t">所以怎麼辦呢?我們需要用unsupervised learning的方法,我們需要訓練模型從unparalleled,從沒有成對的文字裡面,從兩種風格的文字但是沒有成對的文字裡面,去進行學習文字風格轉換這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.180" id=02:49.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=169">02:49.180</a></div>
+        <div class="t">這樣的技術,我相信對大家來說也不陌生,因為影像風格轉換或者語音風格轉換,也就是voice conversion,就是這麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:00.520" id=03:00.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=180">03:00.520</a></div>
+        <div class="t">所以你會發現說,我們用在文字風格轉換裡面的技術跟用在voice conversion裡面的技術,其實是大同小異。所以我們等一下講的文字風格轉換的技術,你都幾乎可以在我們之前講的voice conversion那堂課裡面找到對應的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:21.060" id=03:21.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=201">03:21.060</a></div>
+        <div class="t">舉例來說,假設我們現在要做文字風格轉換的話,那我們可能會怎麼做呢?你可能會訓練一個discriminator,然後這個discriminator看過很多正面的句子,他知道正面的句子長什麼樣子,他去分類說一個句子是正面的還是負面的,然後你希望你的generator把一個負面的句子轉成正面的句子,這個正面的句子丟給discriminator以後,discriminator會覺得它是一個正面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:48.140" id=03:48.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=228">03:48.140</a></div>
+        <div class="t">那我們在講這個cycle game的時候已經強調過很多次,光有一個generator一個discriminator是不夠的,我們還需要另外一個network,這個network呢,我們這邊可以叫做recontractor,他就是要把正面的句子轉回原來的負面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:07.820" id=04:07.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=247">04:07.820</a></div>
+        <div class="t">而對這第一個sequence-to-sequence model來說,對這個generator來說,他有兩個目標,一個目標是他把負面的句子轉成正面的句子,這個正面的句子丟給discriminator以後,discriminator會覺得它是正面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.440" id=04:23.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=263">04:23.440</a></div>
+        <div class="t">同時,這個正面的句子再丟給另外一個sequence-to-sequence model,這個sequence-to-sequence model可以把這個正面的句子轉回原來一句負面的句子。就這個負面的句子被轉成正面的以後,還能再轉回同樣一句負面的句子,這樣可以確保說你文字的內容不會跑掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.380" id=04:45.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=285">04:45.380</a></div>
+        <div class="t">你可以確保說從負面轉成正面,只是分隔換了,但是這個句子的架構不會跑掉,這個句子的架構仍然是非常類似的,你才能夠把這個正面的句子轉回原來那一句負面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.580" id=04:57.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=297">04:57.580</a></div>
+        <div class="t">而這些東西就是psycho-game,跟影像的psycho-game或者是我們在講voice conversion的psycho-game,沒有什麼太大的不同。但是如果我們把psycho-game這樣的技術直接用在文字上,有一點是跟audio是不一樣的,仍然是值得拿出來跟大家分享的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.360" id=05:21.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=321">05:21.360</a></div>
+        <div class="t">這什麼樣的地方不一樣呢?我們知道今天我們在訓練一個discriminator的時候,我們會把generator跟discriminator接起來,當作是一個比較大的內我。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.700" id=05:41.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=341">05:41.700</a></div>
+        <div class="t">而generator它今天訓練的目標就是要去騙過discriminator,generator要去調整它的輸出,讓它的輸出丟到discriminator以後,得出來的結果是我們想要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:55.440" id=05:55.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=355">05:55.440</a></div>
+        <div class="t">我們會把generator跟discriminator接起來,當作一個巨大的內我,然後訓練我們的generator,用gradient descent,用backpropagation,訓練我們的generator,讓discriminator可以得到我們想要的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.840" id=06:09.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=369">06:09.840</a></div>
+        <div class="t">在影像上、在語音上這件事情沒有問題,在作業的時候我們已經做過在語音上怎麼做類似的技術,我相信這個對大家來說都不成問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:20.300" id=06:20.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=380">06:20.300</a></div>
+        <div class="t">但是在文字上就有點不一樣了。在文字上有什麼不一樣的地方呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:26.700" id=06:26.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=386">06:26.700</a></div>
+        <div class="t">我們來看看在文字上,我們的generator通常是一個sequence-to-sequence model,我們現在要做文字風格轉換,輸入一個句子,輸出另外一個句子,那這個時候你最直覺會想到的就是sequence-to-sequence model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:43.140" id=06:43.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=403">06:43.140</a></div>
+        <div class="t">這跟我們在做voice conversion的時候不一樣,我們在做voice conversion的時候,你沒有用sequence-to-sequence model,你只是單純兜一個CNN,然後就可以把一段聲音轉成另外一段長度一樣的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:55.560" id=06:55.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=415">06:55.560</a></div>
+        <div class="t">但是我們現在是要把一段文字轉成另外一段長度不一樣的文字,所以我們可能要用sequence-to-sequence model,這可能是我們比較好的選擇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:08.560" id=07:08.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=428">07:08.560</a></div>
+        <div class="t">主持人問:「現在聽到unsupervised都會想到self-supervised,但是其實還是不太一樣。」</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:22.300" id=07:22.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=442">07:22.300</a></div>
+        <div class="t">對,其實這是一個好問題。什麼是unsupervised,什麼是self-supervised,這個當然是一個定義的問題。但我覺得有一些我們所謂unsupervised learning的技術,我也不覺得它會算是self-supervised learning的property。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.220" id=07:41.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=461">07:41.220</a></div>
+        <div class="t">舉例來說,像我們現在講的cycle game的技術,它也是unsupervised learning的,它也是沒有用到label data的。但是我們就不會說它是self-supervised learning,因為它並沒有做這種自己predict自己的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:55.460" id=07:55.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=475">07:55.460</a></div>
+        <div class="t">要有自己predict自己的這種事情,才是self-supervised learning。沒有的話,我覺得它是更廣義的unsupervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.760" id=08:02.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=482">08:02.760</a></div>
+        <div class="t">現在希望有這樣回答到漸層的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.760" id=08:10.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=490">08:10.760</a></div>
+        <div class="t">這個generator是一個sequence-to-sequence model。sequence-to-sequence model在這門課裡面大家也聽到不想再聽了,我們知道sequence-to-sequence model是怎麼回事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.760" id=08:21.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=501">08:21.760</a></div>
+        <div class="t">我們有這個紅色的vector,這個紅色的vector假設是從attention那邊取來的context vector。context vector丟到一個RNN裡面,然後會產生一個word distribution,token distribution,根據token distribution進行sample,sample出來的結果,在下一個time state再丟到RNN裡面,再得到下一個distribution,然後再進行sample,然後把sample到的結果再丟到RNN裡面,再產生distribution,再進行sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:50.760" id=08:50.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=530">08:50.760</a></div>
+        <div class="t">所以,這是一個sequence-to-sequence model運作的過程。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:55.760" id=08:55.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=535">08:55.760</a></div>
+        <div class="t">這個sequence-to-sequence modelsample出來的結果會丟到discriminator裡面,discriminator把這個sample出來的結果讀進去以後,那它要輸出一個分數,判斷說現在這個句子,如果是在這個文字風格轉換裡面,就是要判斷說現在這個句子是不是具有某種風格,舉例來說是不是正面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:17.760" id=09:17.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=557">09:17.760</a></div>
+        <div class="t">如果是一般的game的話,你會說接下來我們要做的事情就是調整generator的參數,希望discriminator的輸出越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:28.760" id=09:28.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=568">09:28.760</a></div>
+        <div class="t">一般在做game的時候,我們會把generator跟discriminator合起來當作是一個network,然後你用gradient descent的方法,用backpropagation的方法,把這個error的signal一路從輸出一直流流流,倒流到輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:47.760" id=09:47.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=587">09:47.760</a></div>
+        <div class="t">這個是非常typical的方法。但是今天在做文字的時候,你會發現你有沒有辦法用gradient descent或gradient ascent呢?沒有辦法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:00.760" id=10:00.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=600">10:00.760</a></div>
+        <div class="t">為什麼沒有辦法呢?為什麼沒有辦法用我們熟悉的gradient descent base的方法呢?那是因為在generator跟discriminator中間,輸出的地方有sample這件事,有一個隨機的sample存在。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.760" id=10:17.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=617">10:17.760</a></div>
+        <div class="t">這個時候,如果我們把generator跟discriminator當作一個network的時候,這個network裡面有sample這件事情,而sample這件事情是不能為分的,所以整個network變成是不能為分的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.760" id=10:31.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=631">10:31.760</a></div>
+        <div class="t">你不能夠單純用我們熟悉的gradient descent這一套方法來訓練我們的generator,讓discriminator的輸出越大越好。所以怎麼辦呢?在文獻上就有各式各樣的方法試圖解決這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:48.760" id=10:48.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=648">10:48.760</a></div>
+        <div class="t">其實這是一個非常大的主題,我們今天沒有辦法細講,但我這邊就列了一大堆文獻給大家參考,告訴你說有非常多的研究試圖處理這個沒有辦法為分的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.760" id=11:03.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=663">11:03.760</a></div>
+        <div class="t">這一系列的研究,大致可以分成三大類。第一個是用Campbell Softmax,第二個是想辦法讓generator產生continuous,可為分的東西,避開sample這件事情,丟給discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.760" id=11:21.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=681">11:21.760</a></div>
+        <div class="t">第三招是用reinforcement learning。那你可能會問我說,這三招哪一招比較強呢?這個不好說啦。reinforcement learning跟continuous input,我認為這個第二個方法跟第三個方法是比較流行的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:44.760" id=11:44.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=704">11:44.760</a></div>
+        <div class="t">至於第二個方法跟第三個方法,哪一個比較強,就不好說了。很多人會說,reinforcement learning訓練不穩定,所以要用continuous input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:56.480" id=11:56.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=716">11:56.480</a></div>
+        <div class="t">有人會說,continuous input結果不好,所以要reinforcement learning。但reinforcement learning又很吃tips,你要有好的tips,要參數調得好,用一大堆小秘訣,結果才會好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.160" id=12:11.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=731">12:11.160</a></div>
+        <div class="t">所以這個怎麼處理剛才講的不能為分的問題,今天算是一個未解的問題。這三個方法,我們就很快地都帶大家看過一遍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.660" id=12:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=742">12:22.660</a></div>
+        <div class="t">那Campbell Softmax這個方法,我們今天不打算細講,只是告訴你說,有這個技術就好了,關鍵字留在這邊,你可以自己再去查。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.600" id=12:31.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=751">12:31.600</a></div>
+        <div class="t">它主要的想法其實就是用了這個reparameterization的trick,也就是它的這個想法跟VAE很像,在做VAE的訓練的時候裡面有用到一個reparameterization的trick,那Campbell Softmax就是用了這個trick。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.360" id=12:53.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=773">12:53.360</a></div>
+        <div class="t">那用了這個trick可以導致什麼結果呢?我們就直接講結論。用了這個trick以後,用了Campbell Softmax以後,它的結論就是,本來做sample這件事情是不能為分的,但是我們現在把做sample這件事情變成是可為分的,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.360" id=13:14.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=794">13:14.360</a></div>
+        <div class="t">那第二招呢,是給discriminator一個continuous的input,那怎麼給discriminator一個continuous的input呢?這個想法是這樣,你說既然sample沒有辦法為分,那我們何不就避開sample呢?怎麼避開sample?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=812">13:32.000</a></div>
+        <div class="t">我們不要給discriminator看這個sample的結果,直接給discriminator看這個token distribution。token distribution是continuous的,它可以被看成是一個向量,把這個向量直接丟給discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:47.680" id=13:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=827">13:47.680</a></div>
+        <div class="t">因為discriminator吃的是這個continuous的input,那整個network裡面,從generator一直到discriminator中間,就沒有sample這個步驟了。沒有sample這個步驟,我們就可以把generator跟discriminator合起來,當作是一個network,我們就可以直接訓練我們的generator去maximizediscriminator的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:08.400" id=14:08.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=848">14:08.400</a></div>
+        <div class="t">這是一個簡單、好用的方法。想法非常單純,但是它可以直接讓我們避開sampling的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:17.620" id=14:17.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=857">14:17.620</a></div>
+        <div class="t">這個方法這麼單純,那為什麼沒有非常非常廣泛被使用呢?為什麼還有人在研究各式各樣的解法,為什麼不是直接就用這個continuous input的解法呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:29.400" id=14:29.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=869">14:29.400</a></div>
+        <div class="t">因為這個解法有一個非常嚴重的問題,這個問題是這樣的。我們說discriminator做的事情是什麼?discriminator做的事情就是要判斷說,現在你給他的東西對不對。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:42.680" id=14:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=882">14:42.680</a></div>
+        <div class="t">真正的discriminator會看到real的data,你會給discriminator比如說都是正面的句子,然後再給discriminatorgenerator的輸出,叫他判斷說,現在他看到的是正面的句子、真正的句子、人寫的句子,還是generator的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.860" id=15:00.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=900">15:00.860</a></div>
+        <div class="t">但是人寫的句子,如果把它表示起來,把它對機器來說看到的人寫的句子是什麼樣子呢?對機器來說看到的人寫的句子就是一串向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.440" id=15:15.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=915">15:15.440</a></div>
+        <div class="t">人寫的句子裡面的每一個token會被一個向量來表示,這個向量通常就是一個one-half的vector,也就是每一個token被看作是一個向量,而這個向量裡面只有一維是1,而其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.920" id=15:35.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=935">15:35.920</a></div>
+        <div class="t">但是對generator的輸出,因為generator的輸出是一連串的distribution,如果你把這一連串的distribution丟給discriminator的話,對discriminator來說他會發現,這個generator的輸出跟真正的data就是不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:53.680" id=15:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=953">15:53.680</a></div>
+        <div class="t">一個是one-half,要嘛是0,要嘛是1,另外一個是continuous的,它不會是全1或者是全0,它會是一個distribution,就算是有一些值,dimension它的值特別高,還是會有一些dimension稍微有一些值的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:10.640" id=16:10.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=970">16:10.640</a></div>
+        <div class="t">所以對一個discriminator來說,要分辨這兩種資料的差異實在太容易了。對一個discriminator來說,要分辨一串vector sequence是不是真正的句子,就看它是不是one-half就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:24.380" id=16:24.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=984">16:24.380</a></div>
+        <div class="t">所以如果你實際上用這一種方法,用這個continuous input的方法來操作,如果你沒有弄好的話,你會發現說你的discriminator什麼都沒有學到。它學到的就是,看一個vector它到底是不是one-half。一旦是one-half,它就說是真的,不是one-half就說是假的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.540" id=16:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1003">16:43.540</a></div>
+        <div class="t">那你的generator為了要騙過discriminator,你的generator為了輸出一串vector sequence,discriminator覺得像是real sentence,它第一件想要做的事情就是,讓它的distribution越sharp越好,讓它這些distribution越接近one-half也越好,所以你會發現說結果就是什麼都學不到,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.560" id=17:05.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1025">17:05.560</a></div>
+        <div class="t">但是這種方法在實作上也不是完全不可行的。如果你採用一些其他的比較弱的discriminator,在訓練的時候你給discriminator下比較大的constraint,比如說如果你是用WGAN,如果你不知道WGAN的話是什麼也沒有關係,反正WGAN就是在訓練的時候給discriminator下比較大的constraint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.280" id=17:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1047">17:27.280</a></div>
+        <div class="t">舉例來說,WGAN要求discriminator必須是要一個one-listed function,discriminator必須要是夠continuous、夠smooth的。那你給這個discriminator比較大的constraint,弱化了discriminator的能力,也許它就沒有那麼輕易地可以區別出real sentence跟generated sentence之間的差別。那這樣子,你就可以還是用continuous input這一招來訓練你的generator跟discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:54.620" id=17:54.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1074">17:54.620</a></div>
+        <div class="t">講到這邊,有一件事情在頭影片上沒有講的,也許你會馬上想到說,那為什麼要用one-hot vector呢?我們可以不要用one-hot vector了,我們把每一個token用它的continuous representation,現在大家都會勸word embedding,都會勸BERT了,我們把每一個token用它的continuous representation來表示,不就好了嗎?它就是continuous的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:22.680" id=18:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1102">18:22.680</a></div>
+        <div class="t">然後generator的輸出,當然如果這邊是continuous的representation,是word embedding,這邊是token的distribution,還是會有問題,因為兩邊還是太不像了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.820" id=18:34.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1114">18:34.820</a></div>
+        <div class="t">所以你可以說,這邊是continuous representation,是word embedding,然後這邊把這個distribution換成embedding的weighted sum,就根據這個distribution來把embedding做interpolation,來做weighted sum。那也許就可以製造兩組vector sequence,它們本質上是沒有那麼容易被區別開來的,那這樣也許就可以混淆discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.340" id=19:01.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1141">19:01.340</a></div>
+        <div class="t">要求discriminator,不能只看這些vector的表面的這個shape,不能只看這些vector表面的變化來判斷它是real的還是generated,要看更深層的跟語意有關的東西才能夠判斷。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:14.180" id=19:14.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1154">19:14.180</a></div>
+        <div class="t">所以用word embedding這招其實也可以,而且往往會給我們帶來不錯的結果。所以continuous這一招,如果你加上word embedding的話,還是大有可為的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.080" id=19:27.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1167">19:27.080</a></div>
+        <div class="t">那最後一招是reinforcement learning。那reinforcement learning的想法是什麼呢?它其實就是遵循我們在機器學習這門課講reinforcement learning的時候提過的一個秘訣。這個秘訣是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.180" id=19:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1182">19:42.180</a></div>
+        <div class="t">什麼東西不能微分,就用reinforcement learning用policy gradient硬勸一發就結束了。你要記得這個口訣,看到不能微分的東西,就用reinforcement learning解就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.760" id=19:56.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1196">19:56.760</a></div>
+        <div class="t">所以用reinforcement learning放在文字的game training裡面,就是用了這個秘訣,發現不能微分嗎?好,那就換成reinforcement learning。換成reinforcement learning是怎麼樣一回事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.500" id=20:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1212">20:12.500</a></div>
+        <div class="t">就是你的generator變成reinforcement learning裡面的agent。你現在sample出來的這些token變成這個agent所採取的action。如果是在打電玩裡面,你的agent可以採取的action,比如說上下左右跟開火。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:32.580" id=20:32.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1232">20:32.580</a></div>
+        <div class="t">那現在你就想成每一個token代表的意思就跟上下左右開火是一樣的,只是現在你的token可能很多,可能有上萬個,就代表說你現在可以採取的行為有上萬個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:44.560" id=20:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1244">20:44.560</a></div>
+        <div class="t">現在你的generator產生出來的token就是reinforcement learning裡面你的agent所採取的action。然後你的discriminator是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:55.740" id=20:55.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1255">20:55.740</a></div>
+        <div class="t">你的discriminator就是environment,就是你的agent去互動的環境。那discriminator輸出的這個分數就是reward,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:06.400" id=21:06.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1266">21:06.400</a></div>
+        <div class="t">然後接下來你就用RL的algorithm,比如說policy gradient,當然你也可以用任何更進階的方法去train你的agent,然後讓reward越高越好,也就是讓discriminator的輸出越高越好,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:22.580" id=21:22.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1282">21:22.580</a></div>
+        <div class="t">但是這邊跟game有一個不一樣的地方就是,在game裡面你的environment是固定的,也就是說根據你的action計算出reward這件事情是固定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:36.680" id=21:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1296">21:36.680</a></div>
+        <div class="t">比如說你在下圍棋的時候,怎麼樣叫輸,怎麼樣叫贏,規則是固定的。你在打電玩的時候,殺死一隻怪物得多少分,這個規則是固定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:46.360" id=21:46.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1306">21:46.360</a></div>
+        <div class="t">但現在因為我們的環境是一個discriminator,這個discriminator也是一個network,這個network也會隨著訓練而改變的,這個discriminator的參數也是會改變的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:58.500" id=21:58.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1318">21:58.500</a></div>
+        <div class="t">所以就變成說,我們整個訓練的過程中,我們的reward function,我們的environment是會不斷改變的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.580" id=22:05.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1325">22:05.580</a></div>
+        <div class="t">就好像你在下圍棋的時候,圍棋的規則居然是不斷改變的,你在打電玩的時候,電玩的規則居然是不斷改變的,殺一隻怪有時候是五分,有時候是一千分,還變來變去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.860" id=22:16.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1336">22:16.860</a></div>
+        <div class="t">因為這個規則會變來變去,會導致這個RL的訓練變得更加更加困難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:24.740" id=22:24.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1344">22:24.740</a></div>
+        <div class="t">因為本來RL你在規則不變的情況下,訓練起來都已經夠卡了,現在規則居然還會變來變去,而這個訓練起來真的是卡到不行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:35.700" id=22:35.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1355">22:35.700</a></div>
+        <div class="t">所以啊,今天這個reinforcement learning的方法表面上聽起來好像可行,實際上做起來你會覺得千難萬難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:44.840" id=22:44.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1364">22:44.840</a></div>
+        <div class="t">因為我們知道RL很難訓練文明,以訓練不穩定而文明,Gan也是以訓練不穩定而文明,兩個東西加起來就變成一個災難,大爆炸,根本就訓練不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.380" id=23:01.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1381">23:01.380</a></div>
+        <div class="t">所以今天如果你要用RL來訓練你的generator,去騙過discriminator,然後進而把這個技術用在文字風格轉換裡面,用在psychogan裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:14.060" id=23:14.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1394">23:14.060</a></div>
+        <div class="t">也許你是需要一些tips的,如果你要用RL的話,你需要一些tips,需要什麼樣的tips呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:20.660" id=23:20.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1400">23:20.660</a></div>
+        <div class="t">在文件上有各式各樣的招數啦,後來DeepMind發了一篇paper叫做SquashGan,裡面就把各式各樣用RL來訓練generator的tips都試了一輪,然後看看哪些技術是有用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:39.020" id=23:39.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1419">23:39.020</a></div>
+        <div class="t">這邊他們用來評量他們系統好壞的方法用的是FED,FED的值是越小越好,我們這邊就不詳細跟大家講說什麼是FED,總之你記得說FED這個東西就是值越小越好,值越小代表你的generator產生出來的文字越好,代表你的generator的訓練越成功。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:03.020" id=24:03.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1443">24:03.020</a></div>
+        <div class="t">那這個SquashGan裡面呢,他給我們什麼樣的發啟式呢?他告訴我們什麼呢?首先他說有一個非常重要的tips,這邊叫做Sequence Gain Step,這個tips如果不用你根本train不起來,所以他們的baseline是有用這個tips的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:25.020" id=24:25.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1465">24:25.020</a></div>
+        <div class="t">然後接下來他們發現說大的batch size是有效的,不過這個你只能聽聽就好,因為他的batch size是你根本沒辦法開這麼大,大的batch size非常有效,一旦加大的batch size,你perform從這邊一路降到這邊,不過這個你自己沒辦法做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.020" id=24:42.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1482">24:42.020</a></div>
+        <div class="t">Discriminator加一些regularization有用,用pre-trained way embedding有用,用一些reinforcement learning的tips也有用。好,那接下來呢,我們就很快的跟大家分享一下,這一個一定要用的tips是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.020" id=24:58.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1498">24:58.020</a></div>
+        <div class="t">那為什麼今天這個IL的訓練會這麼困難呢?尤其是在把IL放在Gan的訓練裡面,為什麼會這麼困難呢?因為今天在這個Gan的訓練裡面,要看generator產生完一段完整的文字以後,才會給這段完整的文字一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.020" id=25:21.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1521">25:21.020</a></div>
+        <div class="t">舉例來說,你的generator產生一句話,說you is bad,那當然這是一個很爛的句子,discriminator知道他跟人寫的一點都不像,所以他就會輸出一個很低的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:32.020" id=25:32.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1532">25:32.020</a></div>
+        <div class="t">但是從generator的角度來說,他只知道說他產生這一串文字,產生這一串token以後,得到一個很低的分數。但到底是哪一個token導致分數這麼低,不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.020" id=25:45.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1545">25:45.020</a></div>
+        <div class="t">所以,今天在這個問題裡面,他的reward是非常非常的sparse的。他跟下圍棋比較像,跟打電玩比較不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:55.020" id=25:55.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1555">25:55.020</a></div>
+        <div class="t">因為打電玩,你在很多timestamp都可以得到reward,你只要殺到一隻怪,你就得到一些分數了。所以,如果是打電玩的話,有一些電玩遊戲的reward並沒有那麼sparse。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:05.020" id=26:05.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1565">26:05.020</a></div>
+        <div class="t">比較像圍棋,就是一整盤棋下完,你才知道輸或贏,你才得到一個分數。所以,今天在這個reinforcement learning的問題裡面,reward是非常sparse的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.020" id=26:17.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1577">26:17.020</a></div>
+        <div class="t">你都只會在一整個句子產生完以後,才得到一個分數,所以這導致訓練非常的困難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:24.020" id=26:24.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1584">26:24.020</a></div>
+        <div class="t">所以,就需要我們剛才說的那個tip,那個tip又叫做reward for every generation step。那reward for every generation step,顧名思義就是,我們不只要給一整個句子分數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.020" id=26:38.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1598">26:38.020</a></div>
+        <div class="t">discriminator還要學會說給句子的每一個subsequence都一個分數。這個discriminator要去衡量u這個sequence好不好,再衡量u is好不好,再衡量u is good好不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.020" id=26:52.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1612">26:52.020</a></div>
+        <div class="t">那discriminator就會告訴generator說,u其實是好的,u is才是差的,u is good是差的。那generator就會知道說,u其實是好的,到u is才是差的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:04.020" id=27:04.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1624">27:04.020</a></div>
+        <div class="t">那顯然,is這個token generator不對,那generator可以比較快發現說什麼地方做得不對,generator可以比較快修正他的參數,比較快,比較容易訓練起來,比較快得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:17.020" id=27:17.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1637">27:17.020</a></div>
+        <div class="t">那要怎麼做到讓discriminator給每一個generator輸出的subsequence都給一個分數呢?那這邊就有各式各樣不同的方法,那我們這邊就不細講,也是列一些文獻給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:34.020" id=27:34.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1654">27:34.020</a></div>
+        <div class="t">那在文獻上大致有三個方法,第一個方法就是用Monte Carlo的search,這招呢跟alpha go用的方法很像啊,就是你把這個u啊,接下來再sample更多的句子,它是用u開始的,然後通通都丟給discriminator衡量,再把衡量的結果平均起來,就知道說這個subsequence它的結果有多好,這個是Monte Carlo的search。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:59.020" id=27:59.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1679">27:59.020</a></div>
+        <div class="t">然後還有一招就是你要訓練一個特別的discriminator,這個特別的discriminator他會知道說給一個subsequence,那這個subsequence他的分數是好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:12.020" id=28:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1692">28:12.020</a></div>
+        <div class="t">然後接下來還有一個方法叫做stepwise evaluation,那stepwise evaluation特別的地方就是你訓練一個特殊的discriminator,他看到一整個sequence的時候,他一面讀,他讀you is good這個sequence,每看一個token就給一個分數,每看一個token就給說現在這個sequence我看到這個token為止,那這個sequence到底好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:37.020" id=28:37.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1717">28:37.020</a></div>
+        <div class="t">我們這邊就是留了一些文獻給有興趣的同學自己參考,基本上目前看來Monte Carlo search這個方法是有效的,不過它運算量太大了,所以你自己可能做起來不會太舒爽,運算量太大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.520" id=28:53.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1733">28:53.520</a></div>
+        <div class="t">那stepwise evaluation往往可以得到跟Monte Carlo search差不多的做法,那第二個方法往往比較差,那第三個方法在我們經驗上可以跟第一個方法差不多,而且它的運算量又比第一個方法小很多,所以這個stepwise evaluation看起來是一個可以嘗試的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.020" id=29:15.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1755">29:15.020</a></div>
+        <div class="t">接下來就是看一下,如果你真的用cycle gap做textile transfer的話得到的結果怎樣,這個是我們實際做的結果了,那我們這個作業裡面就是要做一個類似的東西,你就訓練一個cycle gap,把負面的句子轉成正面的句子,那做起來結果大概是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:37.020" id=29:37.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1777">29:37.020</a></div>
+        <div class="t">比如說,負面的句子是胃疼、沒睡醒、各種不舒服。那通過你的generator一個sequence to sequence model以後,你的sequence to sequence model的輸出就是生日快樂、睡醒、超級舒服。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:50.020" id=29:50.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1790">29:50.020</a></div>
+        <div class="t">輸入的句子是,我都想去上班了,真夠賤的。那機器的輸出就是,我都想去睡了,真帥的。所以機器知道說這個上班的相反就是去睡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:00.020" id=30:00.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1800">30:00.020</a></div>
+        <div class="t">或者你跟機器說,暈死了吃燒烤,竟然遇到一個變態狂。機器就說,哈哈好,吃燒烤,竟然遇到一個帥狂。它自己發明了奇怪的詞彙,它覺得變態狂的相反就是帥狂。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:14.020" id=30:14.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1814">30:14.020</a></div>
+        <div class="t">那你跟機器說,我肚子痛的厲害,機器就說,我生日快樂的厲害,也不知道在說什麼。但是你發現說,負面的句子跟正面的句子的轉換中間還是有些規則的。舉例來說,胃疼跟肚子痛,它的相反都是生日快樂。機器知道說肚子有毛病,它的相反就是生日快樂。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:37.020" id=30:37.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1837">30:37.020</a></div>
+        <div class="t">這個就是我們作業的其中一個題目,就是我們下一個作業要做的事情。除了這種句子做正負面的轉換以外,還可以做更廣泛的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.020" id=30:50.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1850">30:50.020</a></div>
+        <div class="t">比如說在這篇ICLR的paper裡面,他們試了把relax轉成annoy,把放鬆轉成很煩躁。那放鬆的句子是怎麼樣呢?放鬆的句子是sitting by the Christmas tree and watching Star Wars after cooking dinner, what a nice night。這個是一個放鬆的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:14.020" id=31:14.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1874">31:14.020</a></div>
+        <div class="t">那煩躁的句子是什麼呢?煩躁的句子是sitting by the computer and watching The Voice for the second time tonight, what a horrible way to start the weekend。The Voice就是一個節目啦,我不知道為什麼看The Voice兩次會讓人覺得很煩躁。意思就是這個節目不好看嗎?我不知道,反正機器自動覺得看The Voice就是煩躁就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:38.020" id=31:38.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1898">31:38.020</a></div>
+        <div class="t">那還有一個annoy的句子是getting a speeding ticket in front of work is not what I wanted to start this month。那relax的句子呢,就把這個煩躁的句子轉成放鬆的句子,那機器覺得放鬆的版本應該是這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:56.020" id=31:56.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1916">31:56.020</a></div>
+        <div class="t">getting a haircut followed by a cold foot massage in the morning is how I wanted to start the month。就機器知道說什麼樣的句子是人會覺得放鬆的,什麼樣的句子人會覺得煩躁的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:09.020" id=32:09.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1929">32:09.020</a></div>
+        <div class="t">那他這邊還嘗試做了男性的句子轉女性的句子,意思就是說他在social media上收集了很多男性的po文跟女性的po文,然後接下來嘗試讓它互轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.020" id=32:28.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1948">32:28.020</a></div>
+        <div class="t">不過這個牽涉到兩性話題往往就非常sensitive,為了避免被認為有性別歧視,作者特別在文章裡面下了一個非常長的註腳,告訴你說他其實沒有性別歧視的意涵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:41.020" id=32:41.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1961">32:41.020</a></div>
+        <div class="t">他下了這個非常長的註腳,告訴我們說男性跟女性的刻板印象是不對的,也許我們用這個技術就可以找出這種刻板印象等等。總之,他加了一個非常政治正確的註腳。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:55.020" id=32:55.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1975">32:55.020</a></div>
+        <div class="t">男性說的句子是什麼呢?男性說的句子是,"Beard makes you look like a viking",你的鬍子讓你看起來像是一個維京人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.820" id=33:06.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=1986">33:06.820</a></div>
+        <div class="t">如果轉成女性的版本,就會說,"你的頭髮讓你看起來像是一個mermaid",你的頭髮讓你看起來像是一個美人魚。不知道為什麼,反正這個機器自動覺得男生就要講viking,女生就要講mermaid。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:22.020" id=33:22.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2002">33:22.020</a></div>
+        <div class="t">或者是女生說,"He's so gorgeous, can't wait for cuddle",can't wait for cuddle的意思好像是說等不及要給他一個擁抱,well done。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.520" id=33:34.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2014">33:34.520</a></div>
+        <div class="t">男性說,"Bro, he's so__________, he's so__________," is毒品、成癮等等的意思,一個俚語字,就是一個東西很好的意思。can't wait for cuddle, well done bro。男性可能就會常常說bro。反正這個都是機器跑出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:59.840" id=33:59.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2039">33:59.840</a></div>
+        <div class="t">它還收集了年輕人講的話跟老年人講的話,然後把它們互轉,看看年輕人講話的風格跟老年人講話的風格有什麼不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:10.300" id=34:10.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2050">34:10.300</a></div>
+        <div class="t">我是看不太出來,為什麼上面這個句子算是年輕人講,下面這個句子算是老年人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:15.660" id=34:15.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2055">34:15.660</a></div>
+        <div class="t">不過我覺得年輕人講跟老年人講,現在看這些例子裡面有一個非常明顯的差異,就是年輕人講話的句子裡面比較有表情符號,老年人講話比較沒有表情符號就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:29.260" id=34:29.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2069">34:29.260</a></div>
+        <div class="t">所以,用這個文字風格轉換,你可以做各式各樣fancy的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:35.940" id=34:35.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2075">34:35.940</a></div>
+        <div class="t">我們剛才講的技術是Psychogap,我們知道在影像風格轉換的領域裡面,如果你有多個種風格,你可能就不會選擇Psychogap,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:51.600" id=34:51.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2091">34:51.600</a></div>
+        <div class="t">因為你要每個風格兩兩間,每種風格兩兩間都訓練一個generator,太麻煩了,你可能會採取Stargate的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:01.180" id=35:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2101">35:01.180</a></div>
+        <div class="t">我們在講Voice Conversion的時候也講過,Stargate也有被用在Voice Conversion上,如果你要讓多個人的聲音互換,你可能會選擇採用Stargate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:12.460" id=35:12.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2112">35:12.460</a></div>
+        <div class="t">在文字上也有Stargate,有一個東西叫做Style Transformer,在講座位的時候助教會給更詳細的解說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.340" id=35:23.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2123">35:23.340</a></div>
+        <div class="t">Style Transformer就是文字版的Stargate,就看原來Stargate是怎麼做的,Stargate怎麼用在影像跟語音上的,用在文字上的,就是一樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:37.000" id=35:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2137">35:37.000</a></div>
+        <div class="t">那我就把Paper的截圖放在這邊,總之我就是要告訴你說,Stargate這樣的想法也是可以用在文字上的,它叫做Style Transformer,助教在講作業的時候會有更詳細的說明。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:50.380" id=35:50.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2150">35:50.380</a></div>
+        <div class="t">那講到目前為止,你可能就會想說,我們在講Voice Conversion的時候說這種語音風格轉換,有兩大類的做法,一大類的做法是Psychogap,另外一大類的做法是做Feature的Distinctangle。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:06.660" id=36:06.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2166">36:06.660</a></div>
+        <div class="t">那在文字風格轉換,會不會也可以做一樣的事情呢?我們在講文字風格轉換,我們剛才已經講了Psychogap那個系列的做法,那能不能夠做Feature的Distinctangle呢?是可以做Feature的Distinctangle的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:22.660" id=36:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2182">36:22.660</a></div>
+        <div class="t">在Voice Conversion裡面,我們說我們可以有兩種Encoder,一個抽Content出來,一個抽Speaker的資訊出來,之後只要把Speaker的部分換掉,我們就可以做到Voice Conversion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:35.000" id=36:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2195">36:35.000</a></div>
+        <div class="t">那其實在文字風格轉換裡面,我們也有機會做一模一樣的事情,我們可以訓練一個Encoder把文字的內容抽出來,再訓練另外一個Encoder把文字的風格抽出來,接下來你有一個Decoder,它把內容的資訊讀進來,把風格的資訊讀進來,還原原來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:57.740" id=36:57.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2217">36:57.740</a></div>
+        <div class="t">訓練的時候,當然做一個Auto Encoder訓練,但是你需要讓你的Encoder有兩個分別Encode不同的資訊。兩個Encoder可以Encode不同的資訊以後,如果你要做到文字風格轉換,你只要把Encoder這邊輸出的這個Code換掉,Decoder期待它就可以產生不同風格的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:18.200" id=37:18.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2238">37:18.200</a></div>
+        <div class="t">這邊的原理,做在文字風格轉換上的原理,跟語音的風格轉換,也就是Voice Conversion,其實是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:28.640" id=37:28.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2248">37:28.640</a></div>
+        <div class="t">所以在文獻上確實有這系列的方法,這邊我們就不用細講,我就從Paper上的截圖出來放在這邊,告訴你說這些文獻都試圖做了Feature Disentangle的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:42.380" id=37:42.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2262">37:42.380</a></div>
+        <div class="t">那怎麼做到Feature Disentangle呢?其實用在文字上的方法,跟用在Voice Conversion上的方法也是大同小異,最早的一系列的方法就是採用了類似Gan的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:56.900" id=37:56.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2276">37:56.900</a></div>
+        <div class="t">你加一個Discriminator,然後你要求Content Encoder的輸出,Discriminator沒辦法看出它是什麼Style。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:04.940" id=38:04.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2284">38:04.940</a></div>
+        <div class="t">不過你會發現說這一系列的做法,這一系列做Feature Disentangle的做法,尤其是用Gan來做到Disentangle這件事的Paper,都是比較早的Paper,都是17年的Paper,那這個就是兩三年前的Paper,你知道在Deep Learning這一個領域,兩三年前的Paper就是很舊很舊的Paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:25.120" id=38:25.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2305">38:25.120</a></div>
+        <div class="t">所以會發現是比較早年的時候,人們會採取這種Feature Disentangle的做法,然後想辦法用Gan的技術來做到Feature Disentangle這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:36.180" id=38:36.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2316">38:36.180</a></div>
+        <div class="t">但是為什麼近年來這一招比較沒有那麼常被採用呢?你會發現如果做文字風格轉換,往往是Psychogan那個系列的方法,Performance比較好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:48.120" id=38:48.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2328">38:48.120</a></div>
+        <div class="t">為什麼呢?一個可能的原因是,文字其實要壓縮成Embedding,一個句子要壓縮成Embedding,實際上做起來並沒有那麼容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:59.500" id=38:59.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2339">38:59.500</a></div>
+        <div class="t">在17、16年的時候,那個時候很流行用VAE來訓練文字的Sequence-to-Sequence Encoder,VAE很早就被用在影像上,然後你說我們可以把影像壓縮成Embedding,壓縮到Latent Space,然後在Latent Space上面做一些Warping,在Latent Space上面移動,就可以產生各式各樣不同的影像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:24.220" id=39:24.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2364">39:24.220</a></div>
+        <div class="t">但是很快就會有人想說,我們能不能把這樣的技術套用到文字上呢?我們能不能夠把一個句子做Projection,壓到Embedding Space上面,然後在Embedding Space上面做移動,然後就產生各式各樣不同風格的句子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:43.000" id=39:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2383">39:43.000</a></div>
+        <div class="t">結果我發現說,這麼做還頗困難的。你蠻難把一個Sentence壓到一個Latent Space,然後在Latent Space上面做移動以後,產生出來的句子都是正確的,都是合文法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:56.380" id=39:56.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2396">39:56.380</a></div>
+        <div class="t">也許一個原因就是文字本身是Discrete的。你把這些文字壓縮到Continuous Space,壓縮到Latent Space以後,也許在Latent Space上面有非常多的空洞,而這些空洞是沒有辦法產生文字的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:14.920" id=40:14.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2414">40:14.920</a></div>
+        <div class="t">你把文字、把這些句子硬是壓縮到一個Latent Space,那這個Latent Space裡面可能有非常多的空洞,你那些句子只佔了Latent Space的一小個區塊而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:29.500" id=40:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2429">40:29.500</a></div>
+        <div class="t">Latent Space裡面有非常多的地方,你Sample到了,你是沒有辦法產生句子的。所以你要把句子壓縮到一個Latent Space,發現說沒有那麼容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:38.800" id=40:38.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2438">40:38.800</a></div>
+        <div class="t">所以,這樣子的想法就逐漸逐漸在文字風格轉換裡面被發現說,也許沒有那麼有效,還是Psycho Gap那個系列的方法,也許Performance是比較好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:53.600" id=40:53.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2453">40:53.600</a></div>
+        <div class="t">在文字風格轉換裡面,倒是有一個蠻有趣的想法,我覺得是值得跟大家分享的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:59.280" id=40:59.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2459">40:59.280</a></div>
+        <div class="t">我們說,把一個句子壓到一個Latent Space,把它用一個Vector來表示,或用一個Vector Sequence來表示,有點困難。文字本身是Discrete的,壓到一個Continuous Space也許不那麼容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:13.880" id=41:13.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2473">41:13.880</a></div>
+        <div class="t">但我們能不能夠把這些Discrete的文字也變成把它的Content抽出來,但是Content用Discrete的東西來表達呢?怎麼把Content用Discrete的東西來表達呢?也許就是用另外一段文字來表達。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:31.120" id=41:31.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2491">41:31.120</a></div>
+        <div class="t">文字本身是Discrete的嘛,我們能不能讓Content Encoder抽出來的,不是人根本沒有辦法判斷的Continuous的向量,而是一些句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:41.080" id=41:41.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2501">41:41.080</a></div>
+        <div class="t">舉例來說,Content Encoder能不能夠讀一個句子說The food is delicious,然後它知道說Delicious跟風格比較有關係,就假設我們現在的風格是一個是正面的風格,一個是負面的風格。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:52.680" id=41:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2512">41:52.680</a></div>
+        <div class="t">那Delicious跟風格這件事情比較有關係,跟Sentiment跟一個句子是不是正面負面比較有關係。所以Content Encoder就把Delicious這個形容詞給它抹掉,它就只留下The food is這個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:07.000" id=42:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2527">42:07.000</a></div>
+        <div class="t">Content Encoder現在輸出的不是Latent Representation,而直接輸出一個句子,把Delicious那個詞彙拿掉,然後把這個有刪除一些詞彙的句子,加上這個Style,然後要求Decoder還原原來的句子是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:24.920" id=42:24.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2544">42:24.920</a></div>
+        <div class="t">那這個Style假設是Positive的Style,那Decoder可能就會知道說這個丟掉的詞彙應該要補Delicious上去。那這樣子的做法在文獻上也確實是有的,這邊就列一些文獻給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:40.760" id=42:40.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2560">42:40.760</a></div>
+        <div class="t">舉例來說,這篇這個NASL18的文獻,它就會給Machine開一個句子,然後接下來把句子裡面它說跟Attribute、Marker有關的東西,也就是跟Style有關的東西,就把它直接cut掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:56.760" id=42:56.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2576">42:56.760</a></div>
+        <div class="t">比如說Horrible啊、Very rude啊,就把它cut掉。不過在這篇文獻裡面用的比較是Rule-based的方法,就是哪些詞彙應該被cut掉是用一些規則決定的,不是end-to-end訓練出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:10.280" id=43:10.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2590">43:10.280</a></div>
+        <div class="t">然後這篇ACL18的文獻,它怎麼cut掉一些詞彙,它就有想辦法讓它有辦法end-to-end的訓練。它有兩個module,有一個它叫做neutralization的module,可以讓句子變得中性的module,其實就是我這邊的content encoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:29.360" id=43:29.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2609">43:29.360</a></div>
+        <div class="t">有一個emotionalization的module,其實就是我這邊講的decoder。這個neutralization的module給它一個句子,the food is very delicious,它會自動把delicious這個詞彙蓋起來,然後就得到the food is very。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:43.680" id=43:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2623">43:43.680</a></div>
+        <div class="t">The food is very,會透過這個emotionalization的module,你告訴這個emotionalization的module說我要產生負面的句子,它就說the food is terrible,你跟它說我要產生正面的句子,它就說the food is very delicious。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:56.720" id=43:56.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2636">43:56.720</a></div>
+        <div class="t">至於這個neutralization的module,要怎麼學到蓋掉一些詞彙呢?因為蓋掉這一些詞彙是沒有辦法直接微分的,蓋掉詞彙這件事情它也是discrete的,它本身沒有辦法被微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:12.400" id=44:12.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2652">44:12.400</a></div>
+        <div class="t">那怎麼讓這個network學到要蓋掉哪些詞彙呢?這個是用reinforcement learning應勸的。不過在這篇payment裡面,它也試圖用了一個比較好的initialization,它給這個neutralization的module一個比較好的initialization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:29.160" id=44:29.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2669">44:29.160</a></div>
+        <div class="t">它有去訓練一個classifier,這個classifier會先告訴我們說在這個句子裡面哪些詞彙是跟sentiment比較有關,跟風格比較有關。所以它會先initialize,知道說哪些詞彙是比較傾向於應該被蓋掉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:46.340" id=44:46.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2686">44:46.340</a></div>
+        <div class="t">它是從這個classifier告訴它哪些詞彙比較應該被蓋掉的狀況開始學起。這個是文字風格轉換的部分。剛才我有說過,文字的風格的應用其實比你想像的更為廣泛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:07.280" id=45:07.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2707">45:07.280</a></div>
+        <div class="t">我們剛才舉的例子是說,我們把正面的句子跟負面的句子分別當作兩種書寫的風格。但其實我們也可以把長的文章當作一種書寫的風格,把簡短的摘要當作另外一種書寫的風格。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:22.580" id=45:22.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2722">45:22.580</a></div>
+        <div class="t">如果我們可以把文章當作一種風格,摘要當作一種風格,其實我們就可以直接訓練一個模型,它可以把文章轉成摘要而不需要任何標註的資料,那我們就可以做到unsupervised attractive summarization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:40.120" id=45:40.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2740">45:40.120</a></div>
+        <div class="t">過去如果你要做summarization,你要訓練一個sequence to sequence的model讀一篇文章,輸出它的摘要,你可以用supervised learning的方法。只要你可以收集到一大堆文章跟它對應的摘要,你就可以直接訓練這樣子的模型,幫助我們做到摘要這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:57.980" id=45:57.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2757">45:57.980</a></div>
+        <div class="t">但是要產生這種label的資料,其實是非常耗費人力的。如果做unsupervised attractive summarization的話,我們就可以做到說,就給機器讀一大堆文章,給機器看一大堆摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:11.540" id=46:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2771">46:11.540</a></div>
+        <div class="t">這些文章跟這些摘要不需要是來自同樣的來源,這些文章跟摘要不需要有對應的關係,它們可以來自於不同的來源。但是我們就是告訴機器說,人類寫的文章的風格長什麼樣子,人類寫的摘要的風格長什麼樣子,然後讓機器在這兩種風格間進行轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:31.920" id=46:31.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2791">46:31.920</a></div>
+        <div class="t">那怎麼做呢?這個想法就跟cycle gap,我們剛才講的文字風格轉換的想法是一模一樣的,那就完全把同樣的技術套過來,硬勸下去,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:43.380" id=46:43.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2803">46:43.380</a></div>
+        <div class="t">你訓練一個discriminator,這個discriminator給他一篇文章,他可以判斷說這篇文章是人寫的摘要,還是你的generator所產生出來的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:53.820" id=46:53.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2813">46:53.820</a></div>
+        <div class="t">然後除了把文章變成摘要的sequence-to-sequence model以外,你還需要另外一個sequence-to-sequence model,它的工作就是把摘要還原回原來的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:04.480" id=47:04.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2824">47:04.480</a></div>
+        <div class="t">你要讓一篇文章被縮寫以後,仍然有辦法被擴寫回原來的文章,這樣縮寫以後的摘要才可以包含文章中最重要的資訊。拿一個discriminator去確保說這段文字是人可以讀得懂的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:24.060" id=47:24.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2844">47:24.060</a></div>
+        <div class="t">用這樣的方法,確實有機會用unsupervised learning的方法讓機器學會做摘要這件事情。這個是這篇ELNLP的文章在English Gigaworld上面所呈現的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:39.820" id=47:39.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2859">47:39.820</a></div>
+        <div class="t">在做摘要的時候,一般我們評估一個摘要系統的好壞,用的是Roche這個分數。Roche這個分數是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:48.340" id=47:48.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2868">47:48.340</a></div>
+        <div class="t">Roche這個分數,我們今天就不會細講,但它的精神就是,你機器產生出來的摘要跟人產生出來的摘要越像,一樣的詞彙越多,Roche的分數就越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:04.120" id=48:04.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2884">48:04.120</a></div>
+        <div class="t">所以,你今天在做摘要的時候,每篇文章都會有人寫的摘要作為光處。你的sequent-to-sequent model讀一篇文章以後,它會自己產生它自己的摘要。你把機器產生的摘要跟人寫的摘要去比對,它們中間有多少共用的詞彙,你算出來的就是Roche的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:23.160" id=48:23.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2903">48:23.160</a></div>
+        <div class="t">有人可能會說,那這樣Roche的分數不是只考慮字面上有沒有用共同的詞彙,它不是沒有考慮到句子本身的意思嗎?沒有考慮到更深的句子的語意嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:34.080" id=48:34.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2914">48:34.080</a></div>
+        <div class="t">嗯,對,Roche沒有考慮更深的句子的語意,它只看字面上有沒有共同的詞彙而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:41.020" id=48:41.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2921">48:41.020</a></div>
+        <div class="t">不過,這個是在摘要這個領域現在最常用的做法,所以多數人都可以接受說,我們就用Roche來評估摘要的好壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:49.920" id=48:49.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2929">48:49.920</a></div>
+        <div class="t">如果是supervised learning的方法,這邊supervised learning的方法應該是用了三百萬篇以上的新聞跟它對應的摘要,如果是supervised learning的方法,你得到Roche的分數是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:04.760" id=49:04.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2944">49:04.760</a></div>
+        <div class="t">其實做摘要的時候,你都會做一個trivial的baseline,因為摘要這個問題往往有一個非常簡單的做法,就是給一篇文章,我們把文章的前幾句拿出來就當作摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:19.640" id=49:19.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2959">49:19.640</a></div>
+        <div class="t">尤其是現在做的英文GIGA,或者是一個新聞的COPUS,它裡面的文章都是新聞,新聞往往前幾句直接抽出來就是好的摘要了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:29.820" id=49:29.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2969">49:29.820</a></div>
+        <div class="t">所以,你會有一個trivial的baseline,直接把新聞的前幾句抽出來當作摘要,看看量出來的Roche怎麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:37.220" id=49:37.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2977">49:37.220</a></div>
+        <div class="t">你會發現說,其實把新聞的前幾句直接抽出來得到的結果也還可以,它不是隨機的,它不是結果整個爛掉,你去量出來的Roche分數還是有一些的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:49.720" id=49:49.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2989">49:49.720</a></div>
+        <div class="t">不過supervised learning的方法還是比trivial的方法,也就是文章直接抽前幾句出來當作摘要,它的結果還要好一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:57.700" id=49:57.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=2997">49:57.700</a></div>
+        <div class="t">我們剛才講的,用psycho game的那一套unsupervised learning的做法,結果怎麼樣呢?如果今天你的文章跟摘要都是來自於同一個COPUS,那這個有點cheating了,那也可以得到這樣子的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:12.180" id=50:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3012">50:12.180</a></div>
+        <div class="t">比trivial還要好,當然不太可能贏過supervised learning,不過遠比trivial還要好,代表說unsupervised learning還是有學到一些比跟抽文章的前幾句還要更複雜的policy、更複雜的行為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:26.760" id=50:26.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3026">50:26.760</a></div>
+        <div class="t">而那如果是non-match的case呢?也就是你的文章是來自於一個COPUS,你的文章是來自於englishgigaworld這個COPUS,但是你的摘要是來自於別的COPUS,你的摘要是跟這些文章沒有什麼關係的摘要,只是要讓機器看到說人寫的摘要大概長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:45.960" id=50:45.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3045">50:45.960</a></div>
+        <div class="t">你會發現說你得到的performance跟剛才講的你的摘要跟文章來自同一個COPUS其實也沒有差那麼多,而且都仍然比trivial的方法還要好得多,都還是比trivial的方法還要好得多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:01.260" id=51:01.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3061">51:01.260</a></div>
+        <div class="t">那這個是unsupervised的summarization,這邊列了更多文獻類似的方法給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:17.260" id=51:17.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3077">51:17.260</a></div>
+        <div class="t">好,建成他打了LCS問號,我知道你想問什麼,你想問Rogue L的L是不是LCS對不對?對,這個L就是LCS,那你們猜得到1跟2是什麼嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:40.260" id=51:40.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3100">51:40.260</a></div>
+        <div class="t">1就是OneGrid,2就是BiGrid,L就是LCS。所以Rogue這個方法真的是很簡單,OneGrid就是今天你機器產生出來的摘要跟他的答案裡面有多少Unigrid是一樣的,那2就是有多少BiGrid是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:00.460" id=52:00.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3120">52:00.460</a></div>
+        <div class="t">所以可以想見說BiGrid一樣的比例當然是比Unigrid一樣的比例高,所以Rogue2的分數當然是比Rogue1還要低。那L就是LCS。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:13.760" id=52:13.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3133">52:13.760</a></div>
+        <div class="t">那當然Rogue這個分數大家都有很多意見,覺得說這是什麼只量Unigrid、BiGrid的overlap感覺太簡單了,這個太爛了,不過目前為止還沒有更好的方法可以取代Rogue這個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:29.260" id=52:29.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3149">52:29.260</a></div>
+        <div class="t">而且有趣的事情就是,有一篇文獻它其實去研究Rogue這個分數跟人類感知,人類真的評分一個summary好壞的時候的correlation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:40.860" id=52:40.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3160">52:40.860</a></div>
+        <div class="t">神奇的是,你直覺可能會覺得Rogue2或Rogue3或Rogue4後面這個數值越高,也許跟人的感知越像,但發現Rogue1居然才是跟人的感知最像的,也不知道為什麼。總之這是一個神奇的、但大家都可以接受的evaluation measure。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:11.760" id=53:11.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3191">53:11.760</a></div>
+        <div class="t">我們上課囉。剛才我們講到摘要這件事。文字風格轉換有更廣泛的應用,我們可以說文章是一種風格,可以說摘要是另外一種風格。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:26.160" id=53:26.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3206">53:26.160</a></div>
+        <div class="t">到目前為止,我們說的兩種風格的文字只是書寫的style不同,它們仍然是同樣的語言。但是如果我們說所謂的兩種不同風格的句子,一邊是英文一邊是中文,機器能不能夠自動學到在兩種語言間進行轉換呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:49.120" id=53:49.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3229">53:49.120</a></div>
+        <div class="t">如果機器可以自動學到在兩種語言間進行轉換,機器就可以做到unsupervised translation,它就可以做到unsupervised翻譯,自動把英文翻中文,中文翻英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:02.940" id=54:02.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3242">54:02.940</a></div>
+        <div class="t">我們知道說,一般在做摘要的時候,你當然要有訓練,你又要有大量的成對的資料,你要知道說How are you就是對應到你好嗎,goodbye就是對應到再見,這樣才有辦法讓機器學會做摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:16.420" id=54:16.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3256">54:16.420</a></div>
+        <div class="t">但是用這種文字風格轉換的方法,我們有機會就給機器讀一堆英文、讀一堆中文,然後它就自動學會做摘要這件事了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:26.480" id=54:26.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3266">54:26.480</a></div>
+        <div class="t">怎麼做的呢?最早這一系列的研究是從word embedding的mapping開始做起的。word embedding的mapping是什麼意思呢?最早的時候覺得說,單純給兩堆完全不一樣的句子讓機器學會做摘要太難了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:44.260" id=54:44.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3284">54:44.260</a></div>
+        <div class="t">但是也許給機器一堆word embedding,讓機器學會word by word的翻譯,還不需要學句子對句子的翻譯,太難了。讓它知道說,狗就對應到dog,貓就對應到cat,能不能夠學到這件事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:03.160" id=55:03.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3303">55:03.160</a></div>
+        <div class="t">所以這邊的基本概念是說,每一個語言,我們都可以有那一個語言的word embedding。你知道,收集那一個語言的一大堆文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:14.660" id=55:14.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3314">55:14.660</a></div>
+        <div class="t">建成問說:「可是這樣說到speech上,卻好像不能把中文換到英文,可視為VCA,不然就可以做到end-to-end的speech translation了。」</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:35.660" id=55:35.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3335">55:35.660</a></div>
+        <div class="t">我瞭解你的意思。如果我們收集一大堆中文的聲音跟一大堆英文的聲音,套用這邊的文字風格轉換的方法,也許你就可以自動做到語音的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:49.860" id=55:49.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3349">55:49.860</a></div>
+        <div class="t">不過我從來沒有看過有人真的成功做到語音翻譯這件事。我現在要講的是文字對文字的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:02.660" id=56:02.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3362">56:02.660</a></div>
+        <div class="t">哦,我瞭解你的問題了。你是要說,在做voice conversion的時候,給機器一堆中文跟一堆英文的聲音,為什麼它不是學到翻譯這件事?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:16.500" id=56:16.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3376">56:16.500</a></div>
+        <div class="t">它可能只能夠改一下口音,它可能學不到翻譯這件事。這是一個我覺得上代研究的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:26.040" id=56:26.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3386">56:26.040</a></div>
+        <div class="t">就是你給機器兩堆聲音,叫它做voice conversion。如果一堆是中文的聲音,一堆是英文的聲音,它能夠學到做翻譯這件事嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:38.540" id=56:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3398">56:38.540</a></div>
+        <div class="t">目前看起來恐怕是有點困難,它可能只能夠學到比較接近訊號層級的東西,比如說在中文的聲音裡面加點英文口音,在英文的聲音裡面加點中文口音,它可能做不到翻譯這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:51.780" id=56:51.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3411">56:51.780</a></div>
+        <div class="t">是,那為什麼?是不是你需要給discriminator看比較long term的資訊,看一整個句子的資訊,它才比較有機會做到翻譯這件事?還是你的資料量夠多,它就可以學到做翻譯這件事?這仍然是一個上代研究的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:08.440" id=57:08.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3428">57:08.440</a></div>
+        <div class="t">主持人問:「所以語音帶有的資訊比較多,是不是這樣?文字是意義上的,語音是訊號層面的。」</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:23.100" id=57:23.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3443">57:23.100</a></div>
+        <div class="t">你想想看,我們今天在做這一系列方法的時候,我們的方法不外乎就是psychogap,也就是有一個discriminator判斷說你的generator輸出的聲音像不像。如果你今天有兩堆聲音,一堆是中文,一堆是英文,discriminator在判斷一個句子像不像那堆英文的句子的時候,它到底憑藉的是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:47.300" id=57:47.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3467">57:47.300</a></div>
+        <div class="t">如果你直接為discriminator聲音訊號加判斷說這個句子是不是英文,它真的有辦法讀懂這個句子裡面的詞彙嗎?恐怕沒有辦法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:00.680" id=58:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3480">58:00.680</a></div>
+        <div class="t">它可能比較有機會的就只有看到訊號層級的東西,抓一些跟發音比較相關的資訊,抓一些有沒有特別的聲音訊號的pattern出現,它可能沒有辦法做到語意層級的東西。所以你可能就沒有辦法直接用psychogap這樣的方法做到語音上的翻譯,你只能夠做到這個訊號層級的轉換而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:24.180" id=58:24.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3504">58:24.180</a></div>
+        <div class="t">希望這樣有回答到你的問題。對,這其實是一個可以研究的問題。也許你讓你的discriminator強一點,他在判斷一個句子像不像是那堆英文的句子的時候,他能夠真的看到語意的資訊的話,也許你也是有機會做到翻譯,也不是完全不可能的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:42.440" id=58:42.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3522">58:42.440</a></div>
+        <div class="t">好,那這個word embedding的mapping要做的事情就是,每一個語言我們都可以訓練出它的word embedding,想辦法把不同語言的word embedding對在一起,讓同樣意思的詞彙,它們的word embedding就是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:03.880" id=59:03.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3543">59:03.880</a></div>
+        <div class="t">什麼意思呢?假設我們現在有一堆英文的data,你拿去訓練出英文的word embedding,你有一大堆中文的data,你去拿去訓練出中文的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:16.760" id=59:16.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3556">59:16.760</a></div>
+        <div class="t">當然,因為中文跟英文的embedding是分開訓練的,所以你沒有辦法期待說,這邊rabbit的embedding正好就跟兔子的embedding一模一樣。不太可能,兩堆不同的資料訓練出來,就算是同樣意思的詞彙,那它們的embedding也會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:35.500" id=59:35.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3575">59:35.500</a></div>
+        <div class="t">但是你會發現說,這兩堆資料所訓練出來的embedding,它們中間可能就只差了一個轉換而已,而且這個轉換很有可能就只是一個linear的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:49.320" id=59:49.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3589">59:49.320</a></div>
+        <div class="t">也就是你把左邊這堆項量,這邊每一個embedding都可以視為一個項量,這些項量都乘上同一個transform w,也許就會變成右邊這堆項量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:01.280" id=01:00:01.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3601">01:00:01.280</a></div>
+        <div class="t">那在今天這個例子裡面,其實你只要把這些embedding稍微做一下逆時鐘的旋轉,你稍微把jump移一下,swim移一下,rabbit移一下,fish移一下,做一下逆時鐘的旋轉,就可以把左邊這堆embedding變成右邊這堆embedding了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:22.000" id=01:00:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3622">01:00:22.000</a></div>
+        <div class="t">為什麼會這樣子呢?因為我們知道說wear embedding表示的是詞彙和詞彙之間的關係,所以今天在英文裡面,也許rabbit跟jump的關係,fish跟swim的關係,跟中文裡面兔子跟跳的關係,還有魚跟游的關係,其實是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:43.760" id=01:00:43.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3643">01:00:43.760</a></div>
+        <div class="t">所以,如果wear embedding真的抓到詞彙之間的關係,embedding和embedding之間的距離就是這些詞彙的關係,而在不同語言裡面提到同樣意思的詞彙,它們的關係都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:58.640" id=01:00:58.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3658">01:00:58.640</a></div>
+        <div class="t">你拿不同語言的資料訓練出來的embedding,它們的點和點之間會有一樣的關係,但這兩堆點之間可能就只差了一個linear transform,就差了一個旋轉而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:12.120" id=01:01:12.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3672">01:01:12.120</a></div>
+        <div class="t">所以接下來的問題就是,我們怎麼把這一個旋轉找出來?你有一堆英文的embedding訓練出來了,你有一堆中文的embedding訓練出來了,它們是不一樣的,但你能不能夠找到一個linear transform,把它乘上這堆英文的embedding以後,得到中文的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:31.960" id=01:01:31.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3691">01:01:31.960</a></div>
+        <div class="t">如果你可以做到這件事,那你就可以做到word by word的翻譯了。那怎麼做到這件事呢?比較簡單的想法是supervised的想法,也就是我們已經知道說在英文裡面某一些詞彙,就確定對到中文裡面的一些詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:50.920" id=01:01:50.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3710">01:01:50.920</a></div>
+        <div class="t">當然你可以透過找工讀生來幫你標註說jump就是跳,rabbit就是兔子,有些工讀生幫你標註,然後得到這個資訊。但是我們當然希望這整個process可以更自動,工讀生用得越少越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:05.500" id=01:02:05.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3725">01:02:05.500</a></div>
+        <div class="t">所以怎麼辦呢?也許不同的語言通通都有阿拉伯數字,不同的語言雖然有很多不同的詞彙,也許它們都有阿拉伯數字,而同一個阿拉伯數字在不同的語言裡面,意思都是一樣的,1就都是1,2就都是2,0就都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:23.360" id=01:02:23.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3743">01:02:23.360</a></div>
+        <div class="t">所以我們其實有一堆天然的label data,我們很自動的就可以知道說英文裡面的1就對應到中文裡面的1。所以我們就有一些成對的資料,通過成對的資料,我們就可以訓練出這個w,就會把這個wapply在其他我們不知道對應關係的詞彙上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:44.320" id=01:02:44.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3764">01:02:44.320</a></div>
+        <div class="t">所以這個是supervised learning的想法。當然除了supervised learning以外,我們希望我們可以做到更自動的結果,更unlabel的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:55.560" id=01:02:55.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3775">01:02:55.560</a></div>
+        <div class="t">所以其實就有一系列的做法,試圖在連這種數字都沒有用的情況下,完全unlabel的情況下,想辦法把兩組不同的embedding把它們map在一起,想辦法把其中一組embedding做某種旋轉以後變成另外一種embedding,我們就可以直接做到詞彙對詞彙的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:15.900" id=01:03:15.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3795">01:03:15.900</a></div>
+        <div class="t">這系列的研究非常非常多,有一篇19年的paper對這系列的研究做了一些整理。我就直接把這篇paper裡面的圖表列在這邊,我們就不細講技術。總之就是要告訴你說,這系列的方法非常多,這也是今天非常熱門的一個研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:34.320" id=01:03:34.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3814">01:03:34.320</a></div>
+        <div class="t">大概怎麼做,其實你也不難猜想到。舉例來說,你可以用game的技術,你可以把w當作你的generator,然後把w這個generator乘上這些embedding,就等於把這些embedding通過這個generator得到輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:51.380" id=01:03:51.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3831">01:03:51.380</a></div>
+        <div class="t">然後你再訓練一個discriminator,希望這些embedding通過generator以後的輸出跟右邊這堆embedding越接近越好。這也是一個想法,你可以用game的概念把這兩堆embeddingmap在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:04.840" id=01:04:04.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3844">01:04:04.840</a></div>
+        <div class="t">也有一些比較匪夷所思的,像有一個匪夷所思的做法就是,兩堆資料直接做PCA,然後神奇的就是它就會被map在一起了。這個也不太好解釋,總之有些神奇的發現是說,兩堆embedding做PCA,然後就align在一起了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:25.140" id=01:04:25.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3865">01:04:25.140</a></div>
+        <div class="t">總之,文件上有各式各樣的發現跟方法,這個是一個很大的領域,大家可以再慢慢深入去研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:33.020" id=01:04:33.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3873">01:04:33.020</a></div>
+        <div class="t">所以,用這樣子的技術,我們可以做到詞對詞的翻譯,但我們沒有考慮詞彙之間的語序,所以用這種方法你當然不會得到非常好的翻譯的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:44.740" id=01:04:44.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3884">01:04:44.740</a></div>
+        <div class="t">但是這一系列的做法,今天也得到了很大的突破。舉例來說,有一個叫做vecmap的方法,它是ACO182的paper,它就得到了蠻驚人的結果。它這個結果是這樣子的,它這邊有英文,這個應該是對義大利文的翻譯吧,還有英文對德文的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:04.620" id=01:05:04.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3904">01:05:04.620</a></div>
+        <div class="t">然後呢,這邊列了一些方法是過去的supervised learning的方法,過去這些supervised learning的方法居然有用到5k的資料,也就是它們有5000個pair data,它有5000個英文的詞彙,它直到對應到另外拿5000個義大利文的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:22.660" id=01:05:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3922">01:05:22.660</a></div>
+        <div class="t">然後它發現說,它這些unsupervised learning的方法,今天經過了好多年的研究,很多人的努力以後,經過一大堆的trick,現在這種unsupervised learning的方法居然還可以比supervised learning的方法還要好上一些,這個蠻神奇的,這個方法叫做vecmap。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:44.000" id=01:05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3944">01:05:44.000</a></div>
+        <div class="t">還有很多其他的方法,比如說muse,我們這邊就不細講。接下來,我們就要做真正的unsupervised translation了,也就是句子對句子的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:56.180" id=01:05:56.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3956">01:05:56.180</a></div>
+        <div class="t">怎麼做句子對句子的翻譯呢?在這套想法裡面,假設你有兩個language,我們這邊用language A跟language B來表示兩個language,我們要把language A翻譯成language B,或者是language B翻譯成language A。但是我們只有一堆A的資料,一堆B的資料,我們沒有A跟B之間的對應關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:18.780" id=01:06:18.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3978">01:06:18.780</a></div>
+        <div class="t">那怎麼辦呢?這邊用的想法跟share latent space的想法比較像。這邊用的想法是這樣子的,我們先串language A的encoder跟language A的decoder,還有language B的encoder跟language B的decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:36.140" id=01:06:36.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=3996">01:06:36.140</a></div>
+        <div class="t">這個language A的encoder跟language A的decoder,他們串起來就是一個autoencoder,sentence A丟進這個encoder,然後decoder會還原原來的句子。sentence B丟進B的encoder,decoder B會還原出原來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:52.340" id=01:06:52.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4012">01:06:52.340</a></div>
+        <div class="t">但在訓練的時候,其實你會需要給sentence A跟sentence B加一些noise。這邊的noise就是把一些詞彙隨機丟掉,或者是把一些詞彙改變它的順序等等。有點像是我們在講self-supervised learning的時候,我們有提到Bot這個技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:10.100" id=01:07:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4030">01:07:10.100</a></div>
+        <div class="t">Bot這個技術也是訓練一個sequence-to-sequence model,但是它把input的sentence做各式各樣的處理以後,加入各式各樣的干擾以後,要讓你的autoencoder沒有辦法那麼容易還原原來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:25.460" id=01:07:25.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4045">01:07:25.460</a></div>
+        <div class="t">這邊這個unsupervised translation做了很類似的事情,你需要在輸入的句子裡面加一些雜訊,所謂加一些雜訊的意思是把一些詞彙可能做隨機的兌換,你更改一個句子裡面詞彙的順序,然後讓你的autoencoder沒有那麼容易還原原來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:42.440" id=01:07:42.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4062">01:07:42.440</a></div>
+        <div class="t">之所以要這麼做,是因為我們今天的encoder-decoder中間還會串一個attention。如果你中間沒有串一個attention,結果通常是很差的。你如果處理輸入句子、輸出句子的這種狀況,你就是要用sequence-to-sequence model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:58.120" id=01:07:58.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4078">01:07:58.120</a></div>
+        <div class="t">所以,你的decoder會有attention。如果今天輸入的句子跟輸出的句子一模一樣,那你什麼都沒有學到,直接用attention把詞彙一個一個copy過去就好了。所以,你需要在輸入加一些雜訊,把這個input的句子跟output的句子比較不一樣,這樣你的decoder才不能單純憑attention就產生我們要的結果,就產生輸出的一模一樣的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:23.860" id=01:08:23.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4103">01:08:23.860</a></div>
+        <div class="t">訓練完這兩個autoencoder以後,接下來可以幹嘛呢?接下來我們的期待是,也許訓練完這兩組autoencoder以後,把Aencoder拿出來,把Bdecoder拿出來,把Aencoder的輸出去接給Bdecoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:46.260" id=01:08:46.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4126">01:08:46.260</a></div>
+        <div class="t">那你也許就可以輸入sentence A,輸入Alanguage的sentence,然後通過A的encoder,再通過B的decoder以後,得到Bsentence的結果。那你就可以把Alanguage的sentence翻譯成Blanguage的sentence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:02.940" id=01:09:02.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4142">01:09:02.940</a></div>
+        <div class="t">但事實上並沒有這麼容易,因為這兩個encoder是分開訓練的,所以沒有什麼理由說這兩個encoder會用同樣的方式來encode資訊。這個decoder A看得懂encoder A的embedding,decoder B看得懂encoder B的embedding,但並不代表decoder B看得懂encoder A的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:24.800" id=01:09:24.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4164">01:09:24.800</a></div>
+        <div class="t">對decoder B來說,看到這些東西就是一堆亂碼,不知道在做什麼,所以他不可能得到正確的翻譯。所以怎麼辦呢?接下來就是要用各式各樣的trick來解決這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:37.800" id=01:09:37.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4177">01:09:37.800</a></div>
+        <div class="t">舉例來說,你可以加一個discriminator,這個discriminator會去判斷說,今天encoder A的embedding跟encoder B的embedding,encoder A跟encoder B的輸出有什麼不同。encoder A跟encoder B除了要encode正確的資訊讓decoder可以還原以外,他們也要想辦法讓他們的輸出越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:01.260" id=01:10:01.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4201">01:10:01.260</a></div>
+        <div class="t">encoder A跟encoder B要想辦法讓他們的輸出的distribution越接近越好,這樣decoder會沒有辦法分別這兩者輸出的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:09.440" id=01:10:09.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4209">01:10:09.440</a></div>
+        <div class="t">我們期待說,當這兩者輸出的分佈很接近,decoder沒有辦法分出差別的時候,decoder B不只可以看得懂encoder B encode的輸出,他也可以看得懂encoder A encode的結果。期待decoder可以幫助我們做到這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:27.420" id=01:10:27.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4227">01:10:27.420</a></div>
+        <div class="t">不過光是有decoder是不夠的,你還要有更多其他的trick,舉例來說,你需要有這樣一招,你把language A的sentence丟到encoder A,然後再丟給decoder B,產生一個language B的sentence,再把language B的sentence拿過來當做encoder B的輸入,然後通過encoder B,再丟給decoder A,得到language A的sentence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:52.880" id=01:10:52.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4252">01:10:52.880</a></div>
+        <div class="t">然後呢,你要讓這邊輸入的句子,這邊輸入一個language A的句子,先轉成B language,然後再從B language轉回A language,然後你要讓輸入跟輸出越接近越好。這個就是unsupervised translation,另外一個需要用到的trick。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:11.840" id=01:11:11.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4271">01:11:11.840</a></div>
+        <div class="t">但是光有這個trick也不夠,因為想想看,對這些encoder decoder來說,有一個方法可以hack這個trick,他可以說,我現在輸入how are you,通過encoder A,再通過decoder B,他輸出再見,然後呢,接下來呢,把再見丟到encoder B,只要encoder B跟decoder A學會說,我們把再見再對回how are you,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:38.060" id=01:11:38.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4298">01:11:38.060</a></div>
+        <div class="t">因為我們現在完全沒有label data啊,Machine根本不知道說,how are you不應該對到再見啊。反正他只要學到說,how are you就是對應到再見,然後再見能夠對回how are you,那你也可以讓這邊的輸入跟這邊的輸出越接近越好啊。但是你還是沒有辦法讓機器學會unsupervised translation,你還是沒辦法讓機器學會做翻譯這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:59.840" id=01:11:59.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4319">01:11:59.840</a></div>
+        <div class="t">所以怎麼辦呢?還有一招就是,你需要有借重另外一個unsupervised translation的model。這個unsupervised translation的model我就放在這邊,那這個unsupervised translation的model他當然可能performance不好啦,如果你已經有一個好的unsupervised translation的model,那你還做什麼unsupervised translation,你都做完了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:21.620" id=01:12:21.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4341">01:12:21.620</a></div>
+        <div class="t">這邊有另外一個有點爛的unsupervised translation的model,也許輸入how are you,他沒辦法正確翻譯,但他可以翻譯成how money,就亂翻譯通,但至少有點接近不會差太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:35.440" id=01:12:35.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4355">01:12:35.440</a></div>
+        <div class="t">那你這個encoder B跟decoder A就不能夠亂學了,他們就會說,他要至少學到說把how money對回how are you,那因為這個encoder B在學習的時候啊,他輸入常常會加一些雜訊,剛才在講那個訓練autoencoder的時候,我說這個encoder的輸入都會加一些雜訊,所以他也許會學到說,媽好你這個錯誤的詞彙順序就是某一種雜訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:02.640" id=01:13:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4382">01:13:02.640</a></div>
+        <div class="t">然後之後呢,如果輸入不是媽好你,而是你好嗎,他也可以直到翻譯成how are you。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:09.960" id=01:13:09.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4389">01:13:09.960</a></div>
+        <div class="t">那這個另外一個比較爛的unsupervised translation的model是哪裡來的呢?他可以就用我們剛才使用word embedding mapping的技術所找到的那個word by word的translation得到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:23.700" id=01:13:23.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4403">01:13:23.700</a></div>
+        <div class="t">我們已經知道怎麼詞彙對詞彙的翻譯,而且這個詞彙對詞彙的翻譯往往都做的還可以啊,只是詞彙的順序不太對而已,那你可以把這個詞彙對詞彙的翻譯先當成這邊的another model,然後這個不jointly train,這個固定下來,然後只train這邊的encoder B跟decoder A。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:45.320" id=01:13:45.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4425">01:13:45.320</a></div>
+        <div class="t">那這個training的process就可以反覆的再進行,就是你現在已經把encoder B跟decoder A train好,接下來就把encoder B跟decoder A當作是新的另外一個固定的model,然後再重新去訓練這一條path,總之你可以反覆的iterative的去訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:08.740" id=01:14:08.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4448">01:14:08.740</a></div>
+        <div class="t">就初始的時候的unsupervised translation的model是word embedding,詞彙對詞彙的model,但是你有比較好的unsupervised translation的model以後,你就可以把過去的model替換掉,然後iterative的去bootstrap,一步一步的去禁錮布尼的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:24.740" id=01:14:24.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4464">01:14:24.740</a></div>
+        <div class="t">那這個實驗結果做出來是怎樣呢?這類unsupervised translation的方法比較早的是一篇IKEA 2018的paper,當時我看到這個結果的時候覺得非常的驚人,它的結果是這樣子的,它做了英文法文還有英文德文的翻譯,那橫軸是supervised learning所用的訓練資料的數目。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:50.240" id=01:14:50.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4490">01:14:50.240</a></div>
+        <div class="t">從10的四次方的pair data,一直到10的七次方的pair data,那可以想見說pair data越多,performance就越來越好,supervised learning你需要大量的pair data,pair data越多,performance就越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:06.700" id=01:15:06.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4506">01:15:06.700</a></div>
+        <div class="t">那unsupervised learning呢?如果我們今天有一堆英文、一堆法文,或一堆英文、一堆德文,不給機器任何pair data,讓它直接去學,得到的結果如何呢?得到的結果是這邊的橫線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:20.700" id=01:15:20.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4520">01:15:20.700</a></div>
+        <div class="t">所以就會發現說,unsupervised learning用10個median的data,跟supervised learning用100k的data得到的結果是差不多的,也就是說假設你只有100k的data,或者是你的data量少於100k,你甚至可以直接就做unsupervised learning就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:46.860" id=01:15:46.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4546">01:15:46.860</a></div>
+        <div class="t">unsupervised learning做出來的結果可以跟supervised learning用100k的data得到的performance差不多,這個結果當時是蠻驚人的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:56.380" id=01:15:56.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4556">01:15:56.380</a></div>
+        <div class="t">接下來同一個團隊就不斷的把系統持續的進步,本來是用sequence-to-sequence的translation model,後來在sequence-to-sequence的translation model裡面還加上了phrase-based的translation model,一個比較typical、比較傳統的model,可以補強sequence-to-sequence的model不足,結果又可以讓unsupervised learning的performance又再進步了一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:23.740" id=01:16:23.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4583">01:16:23.740</a></div>
+        <div class="t">這邊是指這個part是只用sequence-to-sequence的model的結果,這邊是sequence-to-sequence加上phrase-based的model的結果在這個地方,可以進步一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:36.460" id=01:16:36.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4596">01:16:36.460</a></div>
+        <div class="t">近年來比較大的進步來自於有了BERT這個一系列的model。過去這些方法是沒有用BERT的,因為那個時候還沒有BERT,現在有了BERT,有了BERT以後就怎麼樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:51.340" id=01:16:51.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4611">01:16:51.340</a></div>
+        <div class="t">有了BERT以後,你的這些encoder、decoder當然可以用BERT來pre-train,用BERT pre-train以後performance又暴增,這個是有BERT之前的結果。有了BERT以後,performance就好很多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:06.060" id=01:17:06.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4626">01:17:06.060</a></div>
+        <div class="t">這個是做翻譯的,所以翻譯這邊的數值是blue-score。其實blue-score跟剛才講的road也是蠻像的,也是差不多的意思,也都是算機器的翻譯跟人的翻譯之間有多少詞彙是overlap的,精神是蠻像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:24.120" id=01:17:24.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4644">01:17:24.120</a></div>
+        <div class="t">總之overlap越多,人翻譯的結果跟機器翻譯的結果共同的詞彙越多,這些算出來的分數就越高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:32.200" id=01:17:32.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4652">01:17:32.200</a></div>
+        <div class="t">可以發現說很明顯的,有了BERT的東西以後,blue的分數,翻譯的品質又再上升了一個層級。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:42.440" id=01:17:42.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4662">01:17:42.440</a></div>
+        <div class="t">當然如果你用supervised learning的結果還是更好啦,但是這邊是完全unsupervised learning得到的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:50.080" id=01:17:50.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4670">01:17:50.080</a></div>
+        <div class="t">好,那這個是翻譯的部分,接下來我要講一個更瘋狂的,是unsupervised的語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:03.080" id=01:18:03.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4683">01:18:03.080</a></div>
+        <div class="t">剛才到目前為止,我們的兩堆資料都仍然是文字,都是token。但是如果我們一邊放聲音訊號,另外一邊放的是文字,有沒有可能就讓機器直接學會做語音辨識呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:22.080" id=01:18:22.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4702">01:18:22.080</a></div>
+        <div class="t">一般做語音辨識的時候,我們當然需要成對的聲音跟文字。但是用這種style transfer的方法,能不能夠給機器一堆聲音,再給它一堆文字,它就自動學會把這些聲音對應到文字,就做到unsupervised的語音辨識呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:40.080" id=01:18:40.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4720">01:18:40.080</a></div>
+        <div class="t">這個就是接下來我們要跟大家分享的主題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:44.080" id=01:18:44.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4724">01:18:44.080</a></div>
+        <div class="t">那要怎麼做到unsupervised的語音辨識呢?你會發現這個套路跟其他方法,跟cycle band基本上就是一樣的。我相信你聽到這邊,這已經是第四次講這個技術了,你一定覺得非常的膩。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:59.080" id=01:18:59.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4739">01:18:59.080</a></div>
+        <div class="t">我們有一堆文字,有一堆聲音,它們不是成對的,它們是來自於不同的來源。我們現在的generator,其實它就是一個語音辨識系統。這個語音辨識系統,它吃一段聲音訊號出來,它產生語音辨識的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:16.080" id=01:19:16.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4756">01:19:16.080</a></div>
+        <div class="t">接下來,我們有訓練一個discriminator,這個discriminator會去看說,這個輸出的結果像不像是人寫的文字。一個discriminator看很多人寫的文字,discriminator知道人寫的句子長什麼樣子,給他一個句子,他可以判斷是人寫的句子還是你的語音辨識系統產生出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:37.080" id=01:19:37.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4777">01:19:37.080</a></div>
+        <div class="t">這個想法就跟psychogen差不多,但唯一比較不一樣的地方是說,這個ASR,照理說我們今天已經有講過語音辨識的部分了。我們說語音辨識,你可以用CTC,可以用sequence-to-sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:52.080" id=01:19:52.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4792">01:19:52.080</a></div>
+        <div class="t">但是在最開始,我們實驗室剛開始做這一套技術的時候,我看到這個unsupervised translation居然可以做起來以後,我就覺得,能不能夠挑戰unsupervised的語音辨識呢?兩邊不同語言的文字都可以互相轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:09.080" id=01:20:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4809">01:20:09.080</a></div>
+        <div class="t">如果一邊是語音,另外一邊是文字,有沒有機會把他們互相轉換呢?我最剛開始做的時候覺得這個問題應該非常困難,所以我們一開始是比較保守一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:23.080" id=01:20:23.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4823">01:20:23.080</a></div>
+        <div class="t">我們的ASR不是一個sequence-to-sequence的model,我們先做了一些手腳,我們先用一個acoustic token discovery的技術,把這些聲音訊號變成token,把continuous的聲音訊號變成discrete的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:41.080" id=01:20:41.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4841">01:20:41.080</a></div>
+        <div class="t">這個acoustic token discovery這種技術其實在語音領域也是發展了十年以上了,那細節我們就不講。總之,讓我們先看了一大堆聲音訊號以後,他可以從這些聲音訊號裡面找出常出現的pattern。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:56.080" id=01:20:56.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4856">01:20:56.080</a></div>
+        <div class="t">比如說他知道說,這三段聲音訊號蠻像的,那我們就給他一個編號,叫做編號1,這兩段蠻像的就說他們是編號2,這三段蠻像的就說他們是編號4,等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:08.080" id=01:21:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4868">01:21:08.080</a></div>
+        <div class="t">那通常每一個token可能可以對應到某一個封領,但我們因為是unsupervised,你只收集一大堆聲音訊號,你完全沒有這些聲音訊號對應的文字,所以你並不知道說哪一個token對應到哪一個封領。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:24.080" id=01:21:24.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4884">01:21:24.080</a></div>
+        <div class="t">對你來說,每一個token就只有一些編號而已。但是如果我們今天可以用某一個方法,那這個token discovery的方法很複雜啦,那我們這邊就不細講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:38.080" id=01:21:38.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4898">01:21:38.080</a></div>
+        <div class="t">我們這邊用的是我們實驗室之前在2018年propose的一個方法,總之給機器聽一大堆聲音訊號,這段聲音訊號可以變成一個token的sequence。那我想說,把這堆聲音訊號變成token的sequence以後,那不就變成跟翻譯的問題是一樣的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:54.080" id=01:21:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4914">01:21:54.080</a></div>
+        <div class="t">你可以把這個token的sequence當作是一種全新的語言,那我們就直接套用翻譯的技術來做unsupervised translation的技術,來做到unsupervised的ASR。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:08.080" id=01:22:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4928">01:22:08.080</a></div>
+        <div class="t">而且最後我們甚至做得更簡單一點,我們就直接run一個mapping的table,這個mapping的table會把這個token的ID對應到某一個封領。我們甚至沒有run什麼太複雜的sequence to sequence model啊等等,反正就是run一個table,這個table可以把token變成封領。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:32.080" id=01:22:32.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4952">01:22:32.080</a></div>
+        <div class="t">接下來的其他方法就跟cycle game差不多啦,就是你需要一個discriminator確定說這邊output的封領的sequence看起來像不像是正常的句子的封領sequence等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:43.080" id=01:22:43.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4963">01:22:43.080</a></div>
+        <div class="t">那這個結果做得怎麼樣呢?我們是做在一個叫做timid corpus上面啦,那我們分成兩個case,一個case是oracle,也就是我們有一堆文字,有一堆聲音訊號,但文字跟聲音訊號是來自於同一個data set。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:58.080" id=01:22:58.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4978">01:22:58.080</a></div>
+        <div class="t">所以文字跟聲音訊號它們中間其實是有對應關係的,我們只是不告訴機器這堆聲音對到哪堆文字,但這堆聲音每一句話對應的文字其實在文字的data set裡面是存在的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:13.080" id=01:23:13.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=4993">01:23:13.080</a></div>
+        <div class="t">另外一個case是把語音跟文字分開,就是這邊的聲音訊號跟這邊的文字是沒有對應關係的,這邊的聲音訊號在文字裡面找不到對應,這邊的文字在聲音訊號裡面找不到對應。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:28.080" id=01:23:28.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5008">01:23:28.080</a></div>
+        <div class="t">那這個就是我們實驗的結果啦,如果你今天是supervised learning,我們有跟大家介紹過RNN transducer嘛,它可以做到17.7%的phone error rate,這邊是用phone error rate來量performance,所以這個值是越低越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:54.080" id=01:23:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5034">01:23:54.080</a></div>
+        <div class="t">那如果今天你用HNN的話,用比較好的feature,比較好的各式各樣的tip,你也可以做到21%左右的phone error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:04.080" id=01:24:04.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5044">01:24:04.080</a></div>
+        <div class="t">那我剛才講的那個unsupervised ASR的方法可以做到什麼樣的地步呢?可以做到76%的phone error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:14.080" id=01:24:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5054">01:24:14.080</a></div>
+        <div class="t">你可能覺得說76%的phone error rate,這個很爛啊,這個爛爆啦,這邊都是21啊,10幾啊,這個76%啊,它是phone error rate,它不是正確率啊,它是錯誤率啊,錯誤率這麼高,整個爛掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:28.080" id=01:24:28.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5068">01:24:28.080</a></div>
+        <div class="t">但是我們看到這個結果的時候覺得,誒,這個方向其實是可行的,因為機器它是有學到東西的,它學到的結果不是random的,雖然是76%很爛,但是它是有學到一些東西的,所以我們就有信心的繼續做下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:45.080" id=01:24:45.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5085">01:24:45.080</a></div>
+        <div class="t">那這個下一個版本啊,我們的這個generator是取自於iclear19年的一篇文章,那這個generator是怎麼做的呢?這個generator是這樣子的,我們知道說語音的輸入其實是一串acoustic feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:01.080" id=01:25:01.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5101">01:25:01.080</a></div>
+        <div class="t">我們先把這些acoustic feature每一個都丟到一個DNN裡面,然後這個DNN的輸出呢,就是一個phony,但我們沒有用任何label的資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:11.080" id=01:25:11.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5111">01:25:11.080</a></div>
+        <div class="t">所以一開始machine並不知道說每一個acoustic feature通過這個DNN以後應該要產生什麼樣的phony,那這個DNN是要透過在cycle gap裡面的這個discriminator被訓練出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:24.080" id=01:25:24.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5124">01:25:24.080</a></div>
+        <div class="t">而我們的generator就是要吃一串acoustic feature產生一串phony的sequence,但這個並不是語音的結果,因為在真正的語音辨識裡面是好幾個acoustic feature才能對到一個phony。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:37.080" id=01:25:37.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5137">01:25:37.080</a></div>
+        <div class="t">那怎麼體現這件事呢?首先我們有一套技術是做這個unsupervised的phony segmentation,所以我們有一套技術可以自動的找出phony和phony之間的boundary。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:50.080" id=01:25:50.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5150">01:25:50.080</a></div>
+        <div class="t">這個技術呢,細節我們就不講,總之這是來自於我們index speech17年的一篇文章,那它可以自動的找出phony和phony之間的boundary。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:58.080" id=01:25:58.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5158">01:25:58.080</a></div>
+        <div class="t">找出phony之間的boundary以後,我們就知道說這一串acoustic feature它對應到同一個phony,這一串acoustic feature對應到同一個phony,這一串acoustic feature對應到同一個phony。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:10.080" id=01:26:10.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5170">01:26:10.080</a></div>
+        <div class="t">所以接下來我們就從這一串acoustic feature所得到的輸出裡面sample一個結果出來,這一串feature裡面sample一個結果出來,這一串feature裡面sample一個結果出來,當作最終的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:21.080" id=01:26:21.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5181">01:26:21.080</a></div>
+        <div class="t">然後這個就是你的整個generator的輸出,那這個generator的輸出會給discriminator看,然後generator整體的訓練目標就是要去騙過discriminator,讓discriminator覺得輸出的這串phony sequence看起來像是真正句子所對應的phony sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:38.080" id=01:26:38.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5198">01:26:38.080</a></div>
+        <div class="t">那講到這邊你可能會問說,怎麼這麼麻煩,為什麼要設計一個奇怪的generator,為什麼不直接用一個sequence to sequence model,讀一串acoustic feature out of phony sequence就好了呢?我們有這樣試,然後結果很爛,就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:54.080" id=01:26:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5214">01:26:54.080</a></div>
+        <div class="t">然後有人可能會說,這邊怎麼只用DNN呢?怎麼不用個RNN呢?我們發現只要這個generator裡面有RNN,結果就會爛掉。為什麼generator裡面有RNN,結果就會爛掉呢?因為我們今天不希望generator隨便產生phony sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27:15.080" id=01:27:15.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5235">01:27:15.080</a></div>
+        <div class="t">對generator來說,有一個非常簡單的方法可以騙過discriminator,就是它產生非常好的phony sequence,看起來非常像真正句子的phony sequence,但是完全無視輸入的acoustic feature,那generator就可以騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27:32.080" id=01:27:32.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5252">01:27:32.080</a></div>
+        <div class="t">而如果你的generator裡面有RNN,對RNN來說,它蠻容易做到無視這些acoustic feature,然後就直接自己自顧自地產生好的phony sequence去騙過discriminator。所以我們發現說,這個generator你在設計的時候,你要下一些比較大的constraint才有可能會得到比較好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27:51.080" id=01:27:51.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5271">01:27:51.080</a></div>
+        <div class="t">其實今天這一整套unsupervised learning的想法,包括unsupervised ASR、unsupervised machine translation都有差不多類似的問題,就是你在你的方法裡面需要很多的tip,給你的generator下一些constraint才有可能會得到比較好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:28:08.080" id=01:28:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5288">01:28:08.080</a></div>
+        <div class="t">這是一些實驗的結果,我們發現如果我們今天改了我們的generator,我們用第二個版本比較複雜,裡面至少有一個DNN的generator,剛才第一個版本裡面generator沒有DNN,它只是一個lookup table。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:28:23.080" id=01:28:23.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5303">01:28:23.080</a></div>
+        <div class="t">如果我們第二個版本裡面是有DNN的話,我們就可以把phone error rate從76%壓到48.6%,當然這是match的case。在non-match的case,其實performance也沒有掉太多,我們可以得到50%的phone error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:28:38.080" id=01:28:38.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5318">01:28:38.080</a></div>
+        <div class="t">所以machine是真的有在unsupervised的情況下學到一些東西的,它至少可以答對一半的phoning。我們還有什麼樣改進的方式呢?我們發現phoning boundary的好壞,其實對performance來說影響是非常關鍵的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:28:56.080" id=01:28:56.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5336">01:28:56.080</a></div>
+        <div class="t">所以我們希望一邊訓練unsupervised的語音辨識,一邊想辦法找到更好的phoning boundary。所以這邊的做法是這個樣子,我們有一個初始的phoning boundary,有了這個初始的phoning boundary,我們可以透過game的方法得到第一代的語音辨識系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29:19.080" id=01:29:19.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5359">01:29:19.080</a></div>
+        <div class="t">然後這個第一代的語音辨識系統可以再去辨識那些unlabeled的聲音訊號,我們得到一些transcription。而這些transcription是sudo的label,它並不是正確的,並不是人標的transcription,是我們初代的語音辨識系統,unsupervised的語音辨識系統產生的transcription。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29:39.080" id=01:29:39.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5379">01:29:39.080</a></div>
+        <div class="t">那有這些transcription以後呢,我們就可以訓練一個hidden markup model,訓練一個hidden markup model可以去告訴我們phoning的boundary。有了新的phoning boundary以後呢,我們就可以再重新訓練我們的unsupervised語音辨識的系統,然後就反覆的循環。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29:57.080" id=01:29:57.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5397">01:29:57.080</a></div>
+        <div class="t">得到好的boundary,就有更好的語音辨識系統,有了更好的語音辨識系統,就可以得到更好的phoning boundary,iterative的去做。當然未來也可以想想看有沒有辦法把找phoning boundary跟unsupervised語音辨識這兩個model接在一起,and train的訓練啦,不過我們還沒有做出這個部分的成果就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30:14.080" id=01:30:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5414">01:30:14.080</a></div>
+        <div class="t">我們發現如果今天用剛才講的iterative去找更好的phoning boundary的話,我們可以把phone error rate一路從50%壓到33%,但可能會覺得說這個35%的phone error rate跟state of the art比如說17%的phone error rate,它仍然有一段很大的差距。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30:35.080" id=01:30:35.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5435">01:30:35.080</a></div>
+        <div class="t">但是如果你看過去的文獻的話,在同一個converse上,在1990年代剛有hidden muggle model,剛把hidden muggle model用在語音辨識上的時候,其實那個時候的錯誤率也差不多是33%左右。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30:53.920" id=01:30:53.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5453">01:30:53.920</a></div>
+        <div class="t">所以今天其實如果講得比較誇大一點,就騙麻瓜的講法,就是今天unsupervised learning的方法其實已經追上了三十年前supervised learning的方法。也許你期待在三十年後,2050年,unsupervised learning的方法就可以跟今天的supervised learning的方法一樣好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31:15.840" id=01:31:15.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5475">01:31:15.840</a></div>
+        <div class="t">剛才講的是完全unsupervised,我們知道在做語音辨識的時候,也許你還是可以找到一些工讀生幫你標註一些資料,所以也許我們沒有必要做完全的unsupervised,我們可以試一下semi-supervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31:30.840" id=01:31:30.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5490">01:31:30.840</a></div>
+        <div class="t">那如果semi-supervised learning是怎樣呢?就是你的generator今天產生出你的語音辨識的結果的時候,不只要騙過discriminator,另外一方面有少量的audio我們知道對應的正確的transcription,正確的文字是什麼,我們希望這些audio他們有對應的transcription的audio,它產生出來的文字跟人類的標註越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:31:53.840" id=01:31:53.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5513">01:31:53.840</a></div>
+        <div class="t">如果用這個方法的話,假設你有100個小時的這個有標註的資料跟一些沒有標註的資料的話,那你可以把錯誤率從21.7%的word error rate壓到18.7%的word error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32:12.840" id=01:32:12.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5532">01:32:12.840</a></div>
+        <div class="t">那這個呢是semi-supervised learning。好,那剛才講的方法是cycle gate那個系列的方法,我們知道說在做這種style transfer的時候,除了cycle gate系列的方法以外,還有這個feature disentangle這個系列的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32:31.840" id=01:32:31.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5551">01:32:31.840</a></div>
+        <div class="t">那能不能做feature disentangle這個系列的方法呢?也可以用feature disentangle這個系列的方法。那用這樣子的方法呢,在debris speech上有人可以得到76.3%的word error rate,那你可能覺得70幾%word error rate很高啊,那這是word error rate啊,這個是詞彙的辨識錯誤率啊,這個代表機器70幾%錯誤率代表機器一定是有學到東西的,它不是隨機猜的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32:57.840" id=01:32:57.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5577">01:32:57.840</a></div>
+        <div class="t">那wordstreet journal上如果有一點的pair的資料,可以得到60幾%的word error rate。如果在lsj speech上,那你有20分鐘的pair的資料,可以得到11.7%的phone error rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:33:10.840" id=01:33:10.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5590">01:33:10.840</a></div>
+        <div class="t">所以這個系列的做法,做feature disentangle的做法看起來也是可行的。那甚至有人嘗試做了unsupervised speech translation,什麼意思呢?就是你有一堆英文的聲音,一堆德文的文字,用style transfer的方法運作,居然可以稍微做到一點speech translation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:33:34.840" id=01:33:34.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5614">01:33:34.840</a></div>
+        <div class="t">那performance當然是不可能太好啦,performance是有點糟,如果你有supervised一定是可以做得遠比unsupervised好啦。那機器在unsupervised的情況下居然是有學到東西的。驚人的地方並不是它performance真的很好,而是它是有學到東西的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:33:52.840" id=01:33:52.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5632">01:33:52.840</a></div>
+        <div class="t">這個就是今天想要跟大家分享的text style transfer,它不是只能單純轉換文字的風格,它也可以用來做unsupervised translation,也可以做unsupervised的語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34:06.840" id=01:34:06.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=WROBoprE0js&t=5646">01:34:06.840</a></div>
+        <div class="t">那這個就是我們下一個作業的主題啦,所以我們就把下一個作業需要的knowledge先跟大家講完。那今天因為也12點10分了,我們就在這邊下課啦。那大家有問題還可以提出來,不然我們就下課啦。</div>
+    </div>
+    
+</body>
+</html>   

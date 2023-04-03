@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>Deep Learning Theory 3-2: Indicator of Generalization</h2><a href=https://www.youtube.com/watch?v=pivB5jEBOQw><img src=https://i.ytimg.com/vi_webp/pivB5jEBOQw/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=0">00:00.000</a></div>
+        <div class="t">好,那我們接下來要講的是一些跟generalization有關的indicator,那我等下下一頁會告訴你說我們到底要講什麼,反正我們現在知道這樣子,其實network的capacity非常的巨大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:21.280" id=00:21.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=21">00:21.280</a></div>
+        <div class="t">所以今天在一個network它所定出來的這個function的set裡面,有很多function都可以達到training error是零這件事情,那我們今天要做到generalization,意思就是說我們要從這些training error都是零的function裡面挑出一個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:40.960" id=00:40.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=40">00:40.960</a></div>
+        <div class="t">弄到testing set上,apply到testing set上,它的這個正確率會最高的,它的generalization的gap最小的,它最不會overfitting的那個function,現在問題就是怎麼挑出那一個function,就好像是說現在你只有四個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:58.400" id=00:58.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=58">00:58.400</a></div>
+        <div class="t">如果你做一個regression,它們只有四個點,你可以用藍色的線來fit這四個點,也可以用紅色的線來fit這四個點,它們的error都是零,但是我們都知道說我們要挑藍色的線,不要挑紅色的線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.760" id=01:11.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=71">01:11.760</a></div>
+        <div class="t">紅色的線有可能是overfitting,藍色的線比較可能會給我們generalization的結果,那在deep learning上也是一樣,這個function也有zero的error,這個function也有zero的error,到底要挑哪一個function才能夠給我們最好的generalization的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27.200" id=01:27.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=87">01:27.200</a></div>
+        <div class="t">當然有人可能會問說,就算能夠發現說有哪些indicator給我們最好的generalization的結果,那我們搞不好有一個最簡單的可以知道說這兩個network誰比較不會overfitting的方法,怎麼做呢?一秒鐘就弄個validation set結束這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:46.400" id=01:46.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=106">01:46.400</a></div>
+        <div class="t">就是說你現在有這個network,它的error是零,這個network也是error是零,那你想要知道說誰的generalization能力比較好,你就弄一個development set或者又叫做validation set,是前年的時候沒有看過的,然後在那個validation set上去測這兩個network的佔取錯誤率,那你就知道說誰是overfitting,誰的performance比較好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:08.320" id=02:08.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=128">02:08.320</a></div>
+        <div class="t">所以為什麼我們要找這些indicator呢?有另外一個重要的理由是,當我們找出這些indicator,我們知道說一個network有什麼樣的特性的時候它比較不容易overfitting的話,我們在training的時候就可以把這些indicator把它塞進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:24.880" id=02:24.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=144">02:24.880</a></div>
+        <div class="t">舉例來說,我們知道說在做regularization的時候,我們把loss function裡面再加一個regularization term,因為我們知道說今天如果一組參數它的none,可能one none或two none比較小的話,它可能比較能夠generalize,所以我們就可以直接把它塞到objective function裡面,讓我們找到一個比較能夠generalize的solution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:46.320" id=02:46.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=166">02:46.320</a></div>
+        <div class="t">那今天假設我們知道說在network上代表regularization能力的indicator是什麼,我們就可以同樣把這件事情塞到network裡面,塞到network training的過程裡面,讓我們train出比較能夠generalize的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:02.320" id=03:02.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=182">03:02.320</a></div>
+        <div class="t">等一下會跟大家分享兩個知名的indicator,一個叫做sharpness,一個叫做sensitivity。在講之前,我們剛才在上一堂課看到一個很驚人的結果,就是給networkrandom的label,它可以硬是全部記起來,給它real的label,當然它也可以得到正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:25.600" id=03:25.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=205">03:25.600</a></div>
+        <div class="t">不管是給它real的label還是給它random的label,它都可以train出100%的正確率,它都可以train出0%的error rate,但是實際上如果你把那個network的參數拿出來分析,會發現說它們的參數其實看起來是非常不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.000" id=03:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=225">03:45.000</a></div>
+        <div class="t">舉例來說,這是Cypher10上面第一個hidden layer的參數,其中一個case是用real的label train,另外一個case是用random的label train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:57.500" id=03:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=237">03:57.500</a></div>
+        <div class="t">好,大家來猜一猜哪邊是real的label,哪邊是random的label。憑著你的常識和直覺,你覺得哪邊是real的label,哪邊是random的label呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:08.200" id=04:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=248">04:08.200</a></div>
+        <div class="t">你覺得左邊這個比較像是random的labeltrain出來的network舉手底下?好,手放下。你覺得右邊這個比較像是random的labeltrain出來的舉手底下?沒有,其實這個不是計中計,就跟大家猜的一樣,這個就是用random的labeltrain出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.200" id=04:24.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=264">04:24.200</a></div>
+        <div class="t">所以跟我們直覺想起來是一樣的,這個filter看起來比較複雜、比較奇怪,這個filter看起來比較make sense,裡面有很多感覺很有用的pattern,比如說斜線、直線等等。所以左邊這個是用random的labeltrain出來,右邊這個是用real的labeltrain出來,跟大家的直覺是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.200" id=04:44.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=284">04:44.200</a></div>
+        <div class="t">所以今天一個network,它是在一個非常overfitting的狀況,還是沒有overfitting的狀況,它看起來可能是不一樣的,所以我們要找出說到底什麼樣的特徵代表一個network它有沒有overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.320" id=04:57.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=297">04:57.320</a></div>
+        <div class="t">這個是另外一個實驗結果,這個實驗結果也是做一下random的label,然後這五條不同顏色的線,我們等一下先看右邊這張圖,這五條不同顏色的線代表用了不同程度的、不同量的random label,所以黃色這條線代表說所有的data都是對的,然後20%random、40%random、60%random一直到80%random。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.520" id=05:27.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=327">05:27.520</a></div>
+        <div class="t">那你會發現說,雖然這四個network在training set上,你train到最後,錯誤率都是零,它們都是一樣好,在training set上看起來是一樣好的,但實際上這五個network,它們train出來的function是不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:43.320" id=05:43.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=343">05:43.320</a></div>
+        <div class="t">右邊這張圖就是想要表示說,它們的function有什麼樣不一樣的地方。這個縱軸,這個作者propose的一個measure叫做ratio of critical sample。那什麼是critical sample呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:59.000" id=05:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=359">05:59.000</a></div>
+        <div class="t">它的意思是說,現在你train好一個network以後,那你拿出你的testing set,你把一筆data丟進去,你把testing set裡面的一筆data丟進去,然後接下來看說,在那個testing set的附近的某一個範圍內,有沒有其他data它的level是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.560" id=06:22.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=382">06:22.560</a></div>
+        <div class="t">如果有的話,就叫做critical sample。大家知道我的意思嗎?你現在假設你做的是image classification,每一筆testing data就是高維空間中的一個點,你這testing data都拿出來,然後接下來就你的network去對每一張testing去做level,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.480" id=06:44.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=404">06:44.480</a></div>
+        <div class="t">我要level說,這個叫做1,這個叫做1,這個叫做1,這個叫做1,這個叫做2,這個叫做3這樣。然後一個正常的network,假設它沒有overfit的話,通常我們會相信說,比較接近的這些點,它們應該就是有同樣的level,因為所有的e檔都蠻像的,所以它們在高維空間中應該比較接近,所以它們有同樣的level。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:05.920" id=07:05.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=425">07:05.920</a></div>
+        <div class="t">如果今天是一個硬fit的network,卻在random level上overfit的network,它的level可能就很怪,這個是7,1,這個是7,這個是3,這個是4,這個是6等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.060" id=07:18.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=438">07:18.060</a></div>
+        <div class="t">所以今天所謂的critical point的意思是說,我們把testing set的每一筆data都拿出來,以那筆data當作圓心,畫一個半徑是R的圓,然後看在這個半徑是R的球體的範圍之內,有沒有其他的testing set,它的level跟圓心的這個點的level,如果是,它就是一個critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:37.800" id=07:37.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=457">07:37.800</a></div>
+        <div class="t">所以如果critical point越多意味著什麼?代表我們那個function,它所代表的這個形狀越奇怪,因為它input只要有一點點的變化,它的output就會是不同的level。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.700" id=07:49.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=469">07:49.700</a></div>
+        <div class="t">所以這個圖就告訴我們說,如果今天是在一個很overfit的情況下,深紅色這一條線,critical point的ratio最多,然後如果全部都是對的,critical point的ratio最小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.620" id=08:01.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=481">08:01.620</a></div>
+        <div class="t">那左邊呢?左邊是這五個不同的case在training data上的正確率,training和testing data上的正確率,這邊它沒有把圖示標出來,實現是training data上的正確率,那發現training data上不管是哪一個case,通通跑到100%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:18.420" id=08:18.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=498">08:18.420</a></div>
+        <div class="t">那虛線是testing data的正確率,那你會發現說如果所有的data都是對的,那testing的正確率當然最高是黃色這一條線,如果是錯的,都80%是錯的,那當然testing的正確率最低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.720" id=08:32.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=512">08:32.720</a></div>
+        <div class="t">那這邊還有一個有趣的現象,如果你看深紅色,最深的紅色這一條線的話,你發現它testing上的正確率是先增加後減少的,這邊有個peak,然後先增加後減少,這意味著什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.620" id=08:49.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=529">08:49.620</a></div>
+        <div class="t">這意味著network在訓練的初期,它其實是有學到有用的東西的,因為這個正確data裡面是80%random,20%real,所以顯然network先從那20%real的data裡面先去學到一些有用的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.500" id=09:06.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=546">09:06.500</a></div>
+        <div class="t">所以它在這個testing,它從20%real的data裡面先學到有一些有用的東西,所以它在testing的正確率在初期是先上升的,它是有學到東西的,只是到後來,隨著它看的data越來越多,它想要硬記剩下80%不make sense的東西,所以結果才爛掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.300" id=09:27.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=567">09:27.300</a></div>
+        <div class="t">它先記了有用的東西,才去記沒有用的東西,所以它的結果才爛掉,這是一個有趣的發現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.780" id=09:34.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=574">09:34.780</a></div>
+        <div class="t">這個是另外一個發現,是要講說如果今天一個network是trained在real的data跟trained在random的data上,它看起來有什麼不一樣?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.780" id=09:44.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=584">09:44.780</a></div>
+        <div class="t">這個實驗是這樣子,紅色這條線代表的是random的label,綠色這條線代表的是real的label,橫軸代表的是trained data的量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.260" id=09:57.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=597">09:57.260</a></div>
+        <div class="t">綜軸是什麼?綜軸是去evaluate那個參數的weight的num,比如說l2num、l1num等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:07.260" id=10:07.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=607">10:07.260</a></div>
+        <div class="t">這個fnum什麼我們就不要講,反正有各種不同的算參數的num的方法,那l2num就是大家在做regularization的時候非常熟悉的,等著看l2num就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:18.940" id=10:18.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=618">10:18.940</a></div>
+        <div class="t">那這個告訴我們什麼?這個告訴我們說今天當一個network它處在overfitting的狀況的時候,它確實它的l2num是比較大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:30.300" id=10:30.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=630">10:30.300</a></div>
+        <div class="t">而這間接告訴我們說,我們加上l2的regularization,可能是make sense的,因為一個network處在overfitting的狀態的時候,它的l2num是比較大的,當它沒有overfitting的時候,它的l2num是比較小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.780" id=10:45.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=645">10:45.780</a></div>
+        <div class="t">好,那接下來我們就要講一些現在人們覺得對偵測一個network是不是overfitting有用的一些indicator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:57.780" id=10:57.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=657">10:57.780</a></div>
+        <div class="t">最近提出來的一個叫做sensitivity,這是一個非常新的paper,是Google,我忘記是DeepMind還是Google Brain做的,它是投稿到ICLR2018,然後是有被accept。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.300" id=11:13.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=673">11:13.300</a></div>
+        <div class="t">好,那在講sensitivity之前,我們要先跟大家講一下什麼是Jacobian的metric,我們之前已經講過Hessian的metric,那有另外一個metric叫做Jacobian的metric。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:25.820" id=11:25.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=685">11:25.820</a></div>
+        <div class="t">Jacobian的metric定義是什麼呢?我們現在假設有一個function y等於f of x,那這個function的input x是一個三維的vector,y是一個二維的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.780" id=11:38.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=698">11:38.780</a></div>
+        <div class="t">那所謂Jacobian的metric的意思就是說,我們拿x對y去做偏為分,講到這邊你可能有點困惑,就是x是一個vector,y也是一個vector,拿vector去對vector做偏為分到底是啥意思?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:56.300" id=11:56.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=716">11:56.300</a></div>
+        <div class="t">就如果是拿一個variable對一個function output的一個loss做偏為分,這個你知道,對vector對vector做偏為分是什麼意思?這邊的意思是這個樣子,我們就是把每一個x的element跟每一個y的element,兩兩去做偏為分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.740" id=12:14.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=734">12:14.740</a></div>
+        <div class="t">我們就是拿x1對y1還有y2做偏為分,x2對y1、y2做偏為分,x3對y1、y2做偏為分,也就總共得到六個值,把它放到一個metric裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.620" id=12:27.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=747">12:27.620</a></div>
+        <div class="t">這個東西就是partial x,partial y,這個東西就是Jacobian metric,當然這個放法也是有講究的,假設你這個x是放在分子的地方,那你是把x放在row,然後把y的放在,說錯了,x放在color,y放在row這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.300" id=12:52.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=772">12:52.300</a></div>
+        <div class="t">所以今天y1、y2,第一個row通通是分子都是y1,第二個row分子都是y2,第一個color分母都是x1,第二個color分母都是x2,第三個color分母都是x3,定義就是這樣排的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.300" id=13:09.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=789">13:09.300</a></div>
+        <div class="t">所以今天就舉個例子說Jacobian metric是什麼,假設你這個function f,input是x1、x2、x3,它會output y1等於x1加x2、x3,y2等於兩倍的x3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:21.540" id=13:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=801">13:21.540</a></div>
+        <div class="t">接下來我們計算x對y的Jacobian metric,這個是x,那假設這個是y,上面這個是y1,這個是y2,我們算x對y的Jacobian metric,怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:34.140" id=13:34.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=814">13:34.140</a></div>
+        <div class="t">我們就先把x1對y1做偏微分,x1對y1做偏微分得到多少?得到1,然後接下來我們再把,因為橫軸是x1、x2、x3嘛,所以x1對y1做偏微分是1,然後x2對y1做偏微分得到x3,x2對x3對y1做偏微分得到x2,那這是第一個row。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:58.700" id=13:58.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=838">13:58.700</a></div>
+        <div class="t">第二個row呢,把x1、x2、x3分別對y2做偏微分,把x1、x2、x3分別對y2做偏微分,x1對兩倍x3做偏微分得到0,x2對兩倍x3做偏微分也得到0,x3對兩倍的x3做偏微分得到2,所以Jacobian就是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.180" id=14:19.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=859">14:19.180</a></div>
+        <div class="t">那有了Jacobian matrix以後呢,你可以根據Jacobian matrix定義出一個network對某一筆data的sensitivity,但是要注意的事情是,這個所謂的sensitivity啊,你光拿一個network本身沒辦法算sensitivity,一定要network加上一個input的data才能夠算sensitivity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:42.540" id=14:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=882">14:42.540</a></div>
+        <div class="t">所以這個sensitivity的實用性是比較limited,就是你要有data的時候,就data已經給你了,你光拿到network你沒辦法算sensitivity,要有data以後才能算sensitivity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.380" id=14:57.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=897">14:57.380</a></div>
+        <div class="t">那這個所謂的sensitivity的network對某一筆data的sensitivity,我們就用一個function f來表示,某一個f對某一個data的sensitivity是什麼呢?就是它的Jacobian matrix的Frobenius norm。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.420" id=15:12.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=912">15:12.420</a></div>
+        <div class="t">Jacobian matrix大家已經知道了,那Frobenius norm是什麼呢?Frobenius norm就是把這個matrix裡面的每一個element平方和再開一個號,就是Frobenius norm。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:23.140" id=15:23.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=923">15:23.140</a></div>
+        <div class="t">所以今天假設f of x就是你的network,它的output是一個vector,network就是input一個vector,vector x,output一個vector y,而你算出x對y的Jacobian,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:33.980" id=15:33.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=933">15:33.980</a></div>
+        <div class="t">把這個Jacobian matrix裡面的每一個element取平方和,然後再開個號,你就得到這個network它對input的這筆data x的sensitivity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.540" id=15:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=944">15:44.540</a></div>
+        <div class="t">那這個結果其實非常的直覺,對不對?這個sensitivity的意思就是說,我現在input這筆data如果有一個小量的變化的話,對我的輸出到底是有多少的變化?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.340" id=15:57.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=957">15:57.340</a></div>
+        <div class="t">那這個Jacobian matrix它想要evaluate就是,x這個vector對y這個vector它有多大的影響?當input的這個x這個vector有少量變化的時候,y它對in到底會有多少變化?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:09.820" id=16:09.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=969">16:09.820</a></div>
+        <div class="t">那這個存起來就是Jacobian matrix,這個值越大代表x的某一維對y的某一維的影響越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.140" id=16:17.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=977">16:17.140</a></div>
+        <div class="t">所以我們把這些值通通取平方和,就代表說,x整體來說,當它有一些變化的時候,它對y有多大的變化?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.020" id=16:27.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=987">16:27.020</a></div>
+        <div class="t">所以這個sensitivity非常的直覺,就input有一個變化的時候,對那個結果y到底有沒有什麼樣的變化?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.100" id=16:34.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=994">16:34.100</a></div>
+        <div class="t">那sensitivity對跟generalization之間的關係,雖然沒有理論的證明,但是從直覺上,你就知道說,這顯然是很有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:42.980" id=16:42.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1002">16:42.980</a></div>
+        <div class="t">如果今天某一個network對某一筆data非常的sensitive,那可能就意味著這個network它不夠robust了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.060" id=16:50.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1010">16:50.060</a></div>
+        <div class="t">它很有可能今天input這個data受到Noise一干擾,它output就不對,所以它就不夠robust,它的generalization能力就不夠好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.540" id=16:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1019">16:59.540</a></div>
+        <div class="t">其實regularization也可以看作是一再minimize sensitivity,因為說做regularization的時候,我們其實會希望我們network的weight,它的值越接近零越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.620" id=17:13.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1033">17:13.620</a></div>
+        <div class="t">那今天如果你network的weight值越接近零越好,其實你就是讓它的output越平滑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.620" id=17:19.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1039">17:19.620</a></div>
+        <div class="t">如果你有上那個machine learning的話,第一堂課我們就講過說,加入regularization以後,你認出來的那個function是會比較平滑的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:32.660" id=17:32.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1052">17:32.660</a></div>
+        <div class="t">那比較平滑其實就是意味著它的sensitivity是比較小的,因為input有變化的時候,output的變化是比較小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.660" id=17:42.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1062">17:42.660</a></div>
+        <div class="t">好,那個sensitivity它必須要有data的時候你才能夠算sensitivity,所以你可以用的那個用法就是,假設現在有一筆testing dataX進來,但是沒有label,你只有那個testing的data,你可以先去算它的sensitivity,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.700" id=18:01.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1081">18:01.700</a></div>
+        <div class="t">它就會告訴你說,現在這筆testing data,你到時候有沒有可能做對,就如果sensitivity越高,那你就越有可能得到的答案是錯誤的,那等於就是machine它可以告訴你說,針對這筆testing data,它的confidence有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.340" id=18:18.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1098">18:18.340</a></div>
+        <div class="t">好,那這邊這個圖是想要講說sensitivity這件事,其實跟你的data的metaphor是非常有關係的,也就是說,今天在你的training data有出現的那些位置附近,sensitivity會比較小,在training data沒有出現的地方,它的sensitivity會比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.460" id=18:48.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1128">18:48.460</a></div>
+        <div class="t">可以見得呢?今天的做法就是說,首先在那個高維空間中,先隨便畫一個橢圓形,在橢圓形上等距離的sample一些點,然後每個點你都去算它的sensitivity,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.660" id=19:06.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1146">19:06.660</a></div>
+        <div class="t">你會發現說,如果你是隨機畫一個橢圓形,它基本上得到的是黑色這條線,那sensitivity在這個橢圓形上逛一圈,差別不大。好,那接下來我們看說,假設我們拿三筆training data,我們得到的是這個深紅色這條線,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.380" id=19:31.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1171">19:31.380</a></div>
+        <div class="t">拿三筆training data,那這三筆training data代表的是不同的數字,假設做mnist的話就是不同的digit,那把這三張圖片,這三張圖片其實就是高維中的三個點嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.180" id=19:44.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1184">19:44.180</a></div>
+        <div class="t">那三個點你可以根據三個點就畫出一個圓嘛,在這個圓上走一圈,在這個圓上走一圈,你會發現說呢,當你走到這三張圖片的附近的時候,你的sensitivity是特別低的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:01.220" id=20:01.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1201">20:01.220</a></div>
+        <div class="t">那在圖片跟圖片中間,因為這個地方如果你取個點,這個地方你取個點,這個地方你取個點,看起來不像是image,它看起來不像是一個正常會出現的圖片,這個時候呢,它的sensitivity就特別高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:15.300" id=20:15.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1215">20:15.300</a></div>
+        <div class="t">那如果最後這個紅色這條線也是一樣,只是說它取了三張圖片,是三張圖片代表同樣的數字,如果是代表同樣的數字的話,你會發現說在圖片和圖片之間,它的sensitivity是比較低的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:32.980" id=20:32.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1232">20:32.980</a></div>
+        <div class="t">而如果visualize的話,結果也是一樣。這個visualize的圖是什麼意思呢?其實在這個圖上有一個小小的東西,不知道大家有沒有發現,這個圖上是有三個數字的,你有看到嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:48.660" id=20:48.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1248">20:48.660</a></div>
+        <div class="t">你有看到嗎?這是隱藏的,你要有很強的同力才能夠看出來。其實它這邊你看,這邊有一個6,這邊有一個6,這邊有一個5,你有看到嗎?這邊有三張圖片,這邊有三張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:04.620" id=21:04.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1264">21:04.620</a></div>
+        <div class="t">它說,你知道,在高維空間中你拿三點,你就可以定義一個平面嘛,對不對?它說,我們現在用這三張圖片在高維空間中所得到的那三個點定義一個平面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.300" id=21:19.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1279">21:19.300</a></div>
+        <div class="t">叫做ReLU Network,它是Piecewise Linear的,它input跟output關係是Piecewise Linear,然後你就可以在那三個點定義出來的平面上把那個Piecewise Linear的方式畫出來,然後每一個piece用不同的顏色表漢,就可以看到現在有一塊一塊的樣子,非常的複雜,萬花筒這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.480" id=21:42.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1302">21:42.480</a></div>
+        <div class="t">這個是Trending之前的時候的ReLU Network長這個樣子,它發現Trend之後長這個樣子,你會發現說這些區塊有些地方變得比較大,有些地方變得比較小,而那三張圖片落在哪裡呢?那三張圖片落在這裡,這裡跟這裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:04.380" id=22:04.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1324">22:04.380</a></div>
+        <div class="t">你就發現說,在有出現圖片的地方的附近,那個ReLU的那個區間是比較大的,就那個Piecewise Linear的那個Piece是比較大,然後在區間和區間之間,這個地方沒有數字的地方,Piece是比較小,就代表說今天在這個區域,如果你有對input進行移動的話,output變化可能是比較小,在這邊你input移動的話,你可能一次就越過好幾個不同的Pieces。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:34.120" id=22:34.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1354">22:34.120</a></div>
+        <div class="t">那你可能在這個地方有移動的時候,它的output就會比較大,它的sensitivity就比較大,所以這個實驗室想要告訴我們說,今天Trend好一個Network,它在你的Trending Data的Manifold上面,也就是有Trending Data有出現的地方的附近,它的sensitivity會比較低,但是在Data沒有出現的地方,它的sensitivity就比較高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:55.520" id=22:55.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1375">22:55.520</a></div>
+        <div class="t">好,那有這個東西有什麼用呢?它可以來預測你的Network能不能夠generalize,這個是文獻上的結果,它就說我們試一些方法,這些方法是我們都知道說可以導致Network比較能夠generalize,比如說一個很極端的是,現在圖上的每一個點代表同樣的一筆Network,然後把它Trend了兩次,一次是用True Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用False Label,一次是用</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:25.520" id=23:25.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1405">23:25.520</a></div>
+        <div class="t">Random Label,然後圖上的這個值代表的是generalization的gap,也就是Trending Error跟Testing Error之間的差,如果你今天是用True Label,你有可能會overfit你的Trend跟Test之間的差很大,但也有可能不overfit你的Trend跟Test之間的差很小,但是如果你是用Random Label,一定overfit你的True跟Test之間的差,不管你是用哪一組參數固定都是這麼大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:55.520" id=23:55.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1435">23:55.520</a></div>
+        <div class="t">那這個圖呢,是generalization的gap,那如果你今天沒有Label Data就沒有辦法算generalization的gap,但是你可以算那個Jacobian的None,那Jacobian None這邊算出來是這個樣子,這個圖表比較不明顯,我們看下面這個例子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:17.520" id=24:17.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1457">24:17.520</a></div>
+        <div class="t">这是有没有做data augmentation,我们知道搜索到说有做data augmentation可以对抗overfitting,可以减少generalization的gap,事实上还是如此,你会发现说如果没有做data augmentation,不管你是用什么样的方法,不管你是用什么,这边不同的点就代表你的network的hyperparameter,比如说layer的数目,它的learning rate等等是不一样的,今天如果你没有data augmentation,它generalization的gap都是这么大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:47.520" id=24:47.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1487">24:47.520</a></div>
+        <div class="t">不管你用什么network,gap都是这么大。那如果有data augmentation,你就有机会,但是不一定,有可能还是很大,但你就有机会它的generalization的gap是比较小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.580" id=24:58.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1498">24:58.580</a></div>
+        <div class="t">那你会发现说,如果我们今天秀的不是generalization的gap,我们的横轴跟纵轴换成Jacobian的null,就是对testing data每一笔data的Jacobian null的平均,因为testing有很多笔data,把testing data每一笔拿出来算Jacobian null的平均,你会发现说,这个点没有办法完全一样,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:17.940" id=25:17.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1517">25:17.940</a></div>
+        <div class="t">但你会发现说,我们确实观察到,如果是有做data augmentation的时候,Jacobian null都比较小,没有做data augmentation的时候,Jacobian null就比较大,你的network是比较sensitive的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:32.160" id=25:32.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1532">25:32.160</a></div>
+        <div class="t">这个是其他的结果啦,那你会发现说,我们就不要细讲,那这个图只要告诉你说,generalization的gap跟Jacobian null,它们呈现的结果是蛮一致的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:43.880" id=25:43.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1543">25:43.880</a></div>
+        <div class="t">这个图也是想要直接秀说,sensitivity跟Jacobian null的关系,做在不同实验上,有Cypher 10,有Cypher 100,有Adnist,有Fashion Adnist,这图上每一个点就代表一个network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:57.640" id=25:57.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1557">25:57.640</a></div>
+        <div class="t">trade好一个network以后,计算它在testing set上的generalization gap,接下来计算它在testing set上的sensitivity,你就会发现说sensitivity跟generalization,它们是成正比的,这意味着说我们可以用sensitivity来预测一个network,它的generalization能力好不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:16.560" id=26:16.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1576">26:16.560</a></div>
+        <div class="t">所以以后如果你没有testing data的label,但有一笔testing data进来,你就可以先用sensitivity来预测说,有没有可能答对,那你说假设预测你很不可能答对,那怎么办呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:27.600" id=26:27.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1587">26:27.600</a></div>
+        <div class="t">其实你就可以说,这笔data我就丢掉,比如说交给人来做label,因为它可能是机器没有办法答对的,那这个在实作上就会是蛮有用的application,这个我们跳过。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.800" id=26:38.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1598">26:38.800</a></div>
+        <div class="t">接下来,下一个东西要讲的是sharpening。那sharpening是什么呢?其实sharpening这个东西很早以前就有人观察到了,它是来自一个非常远古的传说。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:53.800" id=26:53.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1613">26:53.800</a></div>
+        <div class="t">1997年的时候就有paper讨论sharpness跟generalization之间的关系,2000年以前嘛,所以那个对我们来说就是很远古的时代。所以在远古的时代,其实人类就知道说,你今天在training的时候,你最后找到的solution,我们假设我们找到的solution就是一个local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:16.400" id=27:16.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1636">27:16.400</a></div>
+        <div class="t">这个local minima,它是在一个很sharp的山谷里面,还是在一个很flat的山谷里面,会影响到最后这一个solution,一寸寸的network这组参数,它的generalization能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:30.040" id=27:30.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1650">27:30.040</a></div>
+        <div class="t">假设这个是你的training set上面的loss,然后假设你经过training以后,它有两个local minima,那有时候你training的时候可能会找到这一个local minima,有时候你training的时候可能会走到这一个local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:50.920" id=27:50.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1670">27:50.920</a></div>
+        <div class="t">那这个local minima,它是在一个比较平坦的峡谷里面,这个local minima,它是在一个比较鲜蕊的峡谷里面。你要不要凭着直觉猜一下,现在在deep learning community的通验里面,哪一个case是比较容易overfitting的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:10.120" id=28:10.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1690">28:10.120</a></div>
+        <div class="t">凭着你的直觉猜一下,你觉得如果是这一个flat的密码,它比较容易overfitting的同学举手一下,没有,如果你觉得这个sharp的密码,它比较容易overfitting的同学举手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:27.520" id=28:27.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1707">28:27.520</a></div>
+        <div class="t">几乎全班,好,把手放下,好,大家的直觉跟古圣先贤想的是差不多的。所以古圣先贤怎么想的呢?假设现在training和testing,之所以training和testing的error不一样,是因为training data distribution和testing data distribution还是有一些差异的嘛,所以你training的loss的error surface长这个样子,随着参数的变化,loss的error surface的变化是这个样子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:52.960" id=28:52.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1732">28:52.960</a></div>
+        <div class="t">那testing的时候可能是跟training的时候有一个误差,可能形状差不多,但是有一个误差,那如果有这个误差的时候,你会发现说,如果是一个flat的密码,你从这个点拉上去,在testing上的loss是比较小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:13.440" id=29:13.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1753">29:13.440</a></div>
+        <div class="t">而在另外一个case,在sharp的密码,你可能只要偏一点,本来是在山谷,谷底就变到山峰了,本来是在谷底,偏一点,就下到山峰去了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.440" id=29:23.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1763">29:23.440</a></div>
+        <div class="t">所以今天在sharp的密码,只要training和testing有一点mismatch,那你的结果就差了,那就是generalization的能力就差了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:32.000" id=29:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1772">29:32.000</a></div>
+        <div class="t">如果是flat的密码,你今天偏一点,你的loss不会变太多,training和testing的loss不会变太多,代表它generalization的能力是比较好的。那其实从这个角度,也有可能有机会解释说,为什么network它自带regularization,为什么network通常train出来,它就会有好的generalization的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:53.760" id=29:53.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1793">29:53.760</a></div>
+        <div class="t">因为这是一个想象,就想象说,现在这种local密码是比较好,这种是比较差的。要不然这种local密码,它的山谷比较宽,所以它的流域是比较大的,它的流域很大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:05.280" id=30:05.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1805">30:05.280</a></div>
+        <div class="t">而这种local密码,它的流域比较窄,它的流域比较小,所以如果你random sample一个初始值,你比较容易random sample在这种地方,然后用归间decent,你就跑到好的local密码了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:18.800" id=30:18.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1818">30:18.800</a></div>
+        <div class="t">你random sample在这种地方的几率就比较低,所以今天跑到这种地方的几率就比较低。这可以解释为什么network自带regularization,为什么它train出来,其实不容易overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:34.400" id=30:34.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1834">30:34.400</a></div>
+        <div class="t">但这就只是一个解释而已,有可能我们今天讲的东西在几年后看起来就好像讲一些太阳绕着地球转一样的荒谬,因为deep learning的领域其实变化是非常快的,今天觉得是这个样子,也许明天就不是这样子了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:49.440" id=30:49.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1849">30:49.440</a></div>
+        <div class="t">那怎么定义sharpness呢?我们在作业里面的bonus会叫大家算一下sharpness,其实sharpness这个东西并没有一个固定的定义,你怎么样爽就怎么样算,你就用你觉得爽的方法算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:04.800" id=31:04.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1864">31:04.800</a></div>
+        <div class="t">那有不同的方法来定义它,举例来说,假设这个是你的谷底,它是theta star,我们要怎么算这个山谷它有多尖锐呢?我们就往上拉epsilon这样的距离,然后画一条横线,然后看这条横线切过山谷的这个切面有多大,这个切面越大当然代表越平坦,切面越小当然就代表越尖锐。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:31.840" id=31:31.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1891">31:31.840</a></div>
+        <div class="t">那因为现在这个图是画在一维的平面上,就假设参数是一维的,所以这个sharpness的定义是这个线的长度,如果是二维的有两个参数,那sharpness的定义就是一个平面的面积,如果是三维的参数就变成是体积,如果是高维的话就是高维空间中的体积这样。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:53.440" id=31:53.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1913">31:53.440</a></div>
+        <div class="t">没有的话呢,我们就讲一下第二个definition,那这个第二个definition是什么呢?其实跟第一个definition也没有太大的差别啦,其实这个definition到时候你在作业里面你只要高兴就好,等一下助教会讲一下说在文献上最常见的那个definition长的是什么样子,但你可以用自己喜欢的方式来算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.600" id=32:17.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1937">32:17.600</a></div>
+        <div class="t">好,那这个第二个definition是什么呢?第二个definition更直观,我们在theta star当作原型,然后画一个球,画一个球,画一个球,那个球的半径呢,它是epsilon,然后再看这个球画出来的这个范围内最大的loss是多少,那假设最大的loss算出来是L of theta prime,那就把最大的loss减掉谷底的loss,把L of theta prime减掉L of theta star,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:47.560" id=32:47.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1967">32:47.560</a></div>
+        <div class="t">它中间的差距呢就是这个三谷的sharpness,好,然后接下来呢我们就要看一下说这个sharpness有什么用呢?那现在最常见的和sharpness最有关系的就是bench size,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:05.800" id=33:05.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=1985">33:05.800</a></div>
+        <div class="t">那我们发现说,这个这件事啊,这个是老早就有人知道,上古时代大家就知道的事情,上古时代大家就知道说bench size对training是很重要的,bench size越大,你的training的,你的network的performance就会越差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:21.940" id=33:21.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2001">33:21.940</a></div>
+        <div class="t">举例来说,我把reference列在这边,横轴是bench size的变化,64,128,256,512到64K,这个你自己没有办法做的这样子,那纵轴呢是image net它的error,testing上面的error,validation上面的error,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:38.160" id=33:38.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2018">33:38.160</a></div>
+        <div class="t">你会发现说bench size越大,validation的error就越大,好,再来的问题是说,现在的validation的error越大,到底是什么原因造成的呢?是overfitting吗?还是training根本就没有穿好?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:54.160" id=33:54.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2034">33:54.160</a></div>
+        <div class="t">我们在讲做上Machine Learning的时候,也就有讲过很多次说,你今天要知道你的network到底performance好还是不好,第一个要先检查training set上的performance,才知道说它到底是不是overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:06.060" id=34:06.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2046">34:06.060</a></div>
+        <div class="t">所以光看这个图,我们不知道说比较大的bench size到底是很容易overfitting,还是training其实穿不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:13.280" id=34:13.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2053">34:13.280</a></div>
+        <div class="t">但是我们可以看下面这个结果,这是另外一个文献的结果,它试了左边这个应该是at least,右边这个是cypher 10,然后SB代表的是小的bench size,那小的bench size是256,LB是large的bench size,large的bench size是data set的十分之一啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:30.520" id=34:30.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2070">34:30.520</a></div>
+        <div class="t">那cypher 10有五万笔data,十分之一,那就是五千笔data了。好,那这个十线是testing的error,我们先看虚线,虚线是training的error,training的正确率,我们看右边这个图好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:47.480" id=34:47.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2087">34:47.480</a></div>
+        <div class="t">在cypher 10上,不管是大的bench size,还是小的bench size,你train了够多epoch,最后它们的正确率是一样的,它们正确率是一样的,就是e-train是一样的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:00.660" id=35:00.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2100">35:00.660</a></div>
+        <div class="t">但是你发现,如果你看testing的正确率,small bench size就是硬是比large bench size多了一截,在training上是一样的,在testing上small bench size performance比较好,这代表什么?这就是代表如果用small bench size来train的时候,它generalization的能力是比较好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:21.300" id=35:21.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2121">35:21.300</a></div>
+        <div class="t">那有人就推测说,small bench size,大的bench size或小的bench size这件事情,可能跟你最后找到的optimal是不是sharpness这件事情是有关系的,那有empirical的实验来佐证这件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:36.660" id=35:36.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2136">35:36.660</a></div>
+        <div class="t">而在这个实验上面就做了各式各样不同的model,从at least的timmy做到cypher 10、cypher 100。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:43.380" id=35:43.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2143">35:43.380</a></div>
+        <div class="t">所以我刚才看到那个F2其实是timmy,我说错了,它不是at least,它是timmy。好,那有人问timmy是什么?timmy是语音辨识的一个corpus,它不是image、影像辨识的corpus,它是语音辨识的corpus。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:58.220" id=35:58.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2158">35:58.220</a></div>
+        <div class="t">那这边就是试了这六个不同的model,它们在training data上的accuracy,还有在testing data上的accuracy。不管是large的bench size还是small bench size,它们在training set上的正确率其实都是差不多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:15.260" id=36:15.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2175">36:15.260</a></div>
+        <div class="t">但是在testing set上,你会发现说,小的bench size,它的testing的正确率就是比large的bench size大过一截,显示小的bench size所称赞的level,它不知道怎么回事,它generational能力就是比较好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:31.700" id=36:31.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2191">36:31.700</a></div>
+        <div class="t">那这个是什么样的原因呢?有一个可能的说法是,这件事情也许就跟我们找到的local minima的sharpness有关。我们用large的bench size的时候,我们比较容易找到那种很sharp的local minima,我们用small的bench size的时候,比较容易找到那种很宽的很flex的local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:53.100" id=36:53.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2213">36:53.100</a></div>
+        <div class="t">那这件事情在实验上有观察到这样的现象吗?有观察到这样的现象。反正这边的实验结果,如果我们看large的bench size跟small的bench size,用不同的axle,我们刚才说,你今天算那个bench size算那个sharpness的时候,你要画一个圆嘛,那这边就是画不同的半径。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.420" id=37:12.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2232">37:12.420</a></div>
+        <div class="t">不管画什么样的半径,你得到的结论是一样的,如果是large的bench size,你走到那些local minima,它的sharpness是比较大的,如果是small的bench size,你走到那些local minima,它都是比较平坦的,差一个数量级。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:31.580" id=37:31.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2251">37:31.580</a></div>
+        <div class="t">好,那这边有另外一个结果,那这个结果是跟那个Ian Goodfellow的visualization用的是一样的,他说small bench size是0这个点,large bench size是1这个点,然后你画这两个model,它们中间连线的loss的变化,然后也往左边画多画一点,也往右边多画一点。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:53.980" id=37:53.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2273">37:53.980</a></div>
+        <div class="t">好,这个蓝色的实线是training set的error,那么从这个图上我们就可以很明显的看出来说,这个small bench size跟large bench size,它们都走到一个像是local minima的地方,而small bench size它这个local minima是比较宽的,large bench size这个local minima是比较尖锐的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:20.140" id=38:20.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2300">38:20.140</a></div>
+        <div class="t">然后这个虚线是testing set上的loss的变化,反正有同学可能会想说,看training set跟testing set它们的local minima好像是在一样的位置,刚才不是说training跟test可能会有一些mismatch,shift一点点,这样才能够看出它们之间的差异嘛,对不对?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:40.620" id=38:40.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2320">38:40.620</a></div>
+        <div class="t">那我觉得其实是这个样子,今天这个shift不见得能够在这个图上看出来,因为你有没有想过这个shift这个是某一维的空间而已,我们今天的参数是在高维空间中的,所以它的shift不一定要在你观察这个方向shift,它搞不好是这样shift,所以我们看不出来,就这样子,对不对?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:02.380" id=39:02.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2342">39:02.380</a></div>
+        <div class="t">所以你会发现说,如果你看这两个loss,如果是看training的时候,这个点跟这个点,它的loss是一样低的,但是看testing的时候,这个loss跟这个loss,这个loss是比较高的,这个loss是比较低的,所以有可能是这边就是在这个方向上有一个shift,所以这个点可能已经不是一个local minima,它是距离local minima一段距离,所以它的loss比较高,然后这边可能离local minima比较接近,所以它的loss比较低这样。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:33.340" id=39:33.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2373">39:33.340</a></div>
+        <div class="t">这个是另外一个实验,跟刚才的结果也差不多,它就说我们来算一下testing的accuracy,蓝色这条线,横轴是batch size,batch size越来越大,testing的accuracy当然就越来越低了,那这个红色的线是sharpness,随着training的accuracy越来越低,batch size越来越大,sharpness就越来越大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:58.940" id=39:58.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2398">39:58.940</a></div>
+        <div class="t">这个实验是想要讲说sharpness和batch size是有一些关系的,好,那这个是今天这一堂课的结论了,就是说sensitivity可能跟好的generation有关系,freeness可能也跟好的generation有关系,这边打个问号,等下再告诉你说为什么打个问号。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:18.620" id=40:18.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2418">40:18.620</a></div>
+        <div class="t">然后这边是要跟我们讲说,假设你有一些好的indicator,知道说什么样的network比较容易generalize,那你在training的时候可以把这个东西塞进去,你的training process,希望你的network圈出来可以更generalize。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:31.900" id=40:31.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2431">40:31.900</a></div>
+        <div class="t">这边是一些reference,就给大家参考,这个第一篇是讲说,第一篇这个是要分析overfit跟没有overfit的network的差别,因为自从ICLR2017有那一天吓到大家吃手的那个paper以后,就是network其实可以印记,印记training data那篇实验以后,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:51.100" id=40:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2451">40:51.100</a></div>
+        <div class="t">在同年的workshop里面,马上就有另外一篇paper,表面上他们看它的题目好像是要against那一篇ICLR的base paper,但其实不是,因为它做出来的实验也是,就是network确实可以印记training data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:08.600" id=41:08.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2468">41:08.600</a></div>
+        <div class="t">但是当你的training data是true level跟random level的时候,它得到的network function是不太一样,特性是不太一样,后来那篇workshop paper就是破写成ICML的paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:19.980" id=41:19.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2479">41:19.980</a></div>
+        <div class="t">这边是要讲说fetch size跟generalization还有是不是sharpness之间的关系,然后既然知道sharpness是比较容易overfit,flat这个东西比较容易导致好的generalization的solution,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:38.420" id=41:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2498">41:38.420</a></div>
+        <div class="t">那这边就有一个提出一个新的方法叫做entropy SGD,那我们就不细讲,但它的精神就是想办法把这一个条东西,想办法把找flat的local minima这件事,把它塞到你的training process里面,希望network在training的时候尽量去找flat的local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:58.900" id=41:58.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2518">41:58.900</a></div>
+        <div class="t">然后这一篇是比较了各种不同的indicator,有一些是我们今天没有讲到的,然后最后这一篇是讲sensitivity,然后重点是倒数第二篇,倒数第二篇,它题目是sharp minima can generalize for deep network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:16.340" id=42:16.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2536">42:16.340</a></div>
+        <div class="t">你看,我们本来是说flat的minima可以generalize,但它其实是告诉我们说sharp的minima也可以generalize,所以你可以仔细读一下这一篇,这一篇会告诉你说,有关sharpness那一整套讲法,可能都是跟事实不符的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:32.340" id=42:32.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=pivB5jEBOQw&t=2552">42:32.340</a></div>
+        <div class="t">你会觉得说,刚才听了那么久,都是在浪费时间,我刚才犹豫说要不要讲这篇,因为我怕讲了这篇以后你等一下就生气了。你自己再回去,你有兴趣的话再回去看一下,这篇告诉你说,也许sharpness跟generalization的关系跟我们想象的不太一样,所以deep learning就是这么神奇。</div>
+    </div>
+    
+</body>
+</html>   

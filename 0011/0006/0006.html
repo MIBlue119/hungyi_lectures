@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>GAN Lecture 7 (2018): Info GAN, VAE-GAN, BiGAN</h2><a href=https://www.youtube.com/watch?v=sU5CG8Z0zgw><img src=https://i.ytimg.com/vi_webp/sU5CG8Z0zgw/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=0">00:00.000</a></div>
+        <div class="t">好,各位同學大家好,我們來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:09.560" id=00:09.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=9">00:09.560</a></div>
+        <div class="t">今天的計畫是這樣,今天會講四件事,會講一些用Gan和Feature Attraction有關的事情,然後會講Cycle Gan,或者是說怎麼用Gan做Unsupervised的Conditional Generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:27.920" id=00:27.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=27">00:27.920</a></div>
+        <div class="t">用Gan做Unsupervised的Conditional Generation是作業三至三要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:34.280" id=00:34.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=34">00:34.280</a></div>
+        <div class="t">接下來會講WGAN,最後會講Gan的一些應用,怎麼用Gan來做一個智能的Photoshop,最後主教會來講作業三至三。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:48.240" id=00:48.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=48">00:48.240</a></div>
+        <div class="t">第一堂課我們就先來講一下一些和用Gan做Feature Attraction有關的事情。我想先跟大家講的是InfoGan,大家在作業一或作業二裡面,作業三至一、三至二裡面都會train一個Gan。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06.040" id=01:06.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=66">01:06.040</a></div>
+        <div class="t">我們知道說Gan會input一個random的vector,然後就output一個你要的object。我們通常期待說input的那個vector,它的每一個dimension代表了某種specific的characteristic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.800" id=01:20.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=80">01:20.800</a></div>
+        <div class="t">你改了input的某個dimension,output就會有一個對應的變化,然後你可以知道說每一個dimension它做的事情是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.200" id=01:29.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=89">01:29.200</a></div>
+        <div class="t">但是實際上未必有那麼容易,如果你真的train了一個Gan的話,你會發現說input的dimension跟output的關係,有時候你觀察不到什麼關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:40.920" id=01:40.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=100">01:40.920</a></div>
+        <div class="t">這邊這是一個文獻上的例子,就假設你train了一個Gan,這個Gan它做的事情是手寫數字的生成,你會發現說你改了input的某一個維度,對output來說,這邊這個橫軸代表說改變了input的某一個維度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.700" id=01:59.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=119">01:59.700</a></div>
+        <div class="t">output的變化是看不太出規律的,比如說這邊的7突然中間寫了一橫也不知道是什麼意思,搞不清楚說改變了某一個維度,到底對output的結果起了什麼樣的作用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.100" id=02:15.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=135">02:15.100</a></div>
+        <div class="t">那為什麼會這樣呢?因為我們原先期待說,假設現在這個投影片上的這個二維平面代表著你的generator input的那個random vector的space,假設你今天input的vector只有兩維。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:28.840" id=02:28.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=148">02:28.840</a></div>
+        <div class="t">那我們通常期待說,在這個latent的space上面,不同的characteristic的object,它的分布是有某種規律性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:42.400" id=02:42.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=162">02:42.400</a></div>
+        <div class="t">我們這邊用不同的顏色來代表說,假設你在這個區塊,你使用這個區塊的vector當作generator的input,那它output會有這個藍色的特徵,這個區塊會有橙色的特徵,這個區塊會有黃色的特徵,這個區塊會有綠色的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:58.240" id=02:58.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=178">02:58.240</a></div>
+        <div class="t">我們本來的假設是說,這些不同的特徵,它們在latent space上的分布是有某種規律性的,但是實際上也許它的分布是非常不規則的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.900" id=03:11.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=191">03:11.900</a></div>
+        <div class="t">我們本來期待說,如果我們改變了input的那個vector的某一個維度,它就會從藍色變到黃色,再變到橙色,再變到藍色,它有一個固定的變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:22.120" id=03:22.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=202">03:22.120</a></div>
+        <div class="t">但是實際上,也許它的分布長得這個樣子,也許latent space跟你要生成的那個object之間的關係是非常繁複的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.460" id=03:32.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=212">03:32.460</a></div>
+        <div class="t">所以當你改變某一個維度的時候,你從藍色變到綠色,再變到黃色,又再變回藍色,你就覺得說不知道在幹嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:40.040" id=03:40.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=220">03:40.040</a></div>
+        <div class="t">所以infogame它就是想要解決這個問題。infogame的概念是這樣,這邊是一個原來的game,我們知道原來的game就是有一個generator,有一個discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:52.180" id=03:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=232">03:52.180</a></div>
+        <div class="t">在infogame裡面,你會把input的這個vector分成兩個部分,比如說假設input的vector是20維,就說前10維我們把它叫做C,後10維我們把它叫做C'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.300" id=04:06.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=246">04:06.300</a></div>
+        <div class="t">那在infogame裡面,你會train一個classifier,那這個classifier的工作是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:12.300" id=04:12.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=252">04:12.300</a></div>
+        <div class="t">這個classifier它的工作是它看generator的output,然後決定說根據generator這個output去預測現在generatorinput的C是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.880" id=04:23.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=263">04:23.880</a></div>
+        <div class="t">所以今天這個generator使這個vector產生了X,classifier要能夠從X裡面反推出原來generator輸入的C是什麼樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:37.080" id=04:37.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=277">04:37.080</a></div>
+        <div class="t">那在這個infogame裡面,你可以把這個classifier就視為一個decoder,那這個generator就視為一個encoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.160" id=04:45.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=285">04:45.160</a></div>
+        <div class="t">所以這個generator跟這個classifier合起來,你可以把它看作是一個autoencoder,不過它跟傳統的autoencoder做的事情是正好相反的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:54.160" id=04:54.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=294">04:54.160</a></div>
+        <div class="t">所以這邊加一個雙引號,因為我們知道傳統的autoencoder做的事情是給一張圖片,它把它變成一個code,再把code解回原來的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.000" id=05:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=303">05:03.000</a></div>
+        <div class="t">但是在infogame裡面,這個generator跟classifier所組成的autoencoder做的事情跟我們所熟悉的autoencoder做的事情是正好相反的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:13.880" id=05:13.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=313">05:13.880</a></div>
+        <div class="t">在infogame裡面,你的generator是一個code產生一張image,然後classifier要根據這個image決定說原來的code是什麼樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:24.760" id=05:24.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=324">05:24.760</a></div>
+        <div class="t">當然如果只有transgenerator跟classifier是不夠的,這個discriminator一定要存在。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.480" id=05:30.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=330">05:30.480</a></div>
+        <div class="t">為什麼這個discriminator一定要存在呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:33.120" id=05:33.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=333">05:33.120</a></div>
+        <div class="t">假設沒有這個discriminator的話,對generator來說,因為generator想要幫助classifier,讓classifier能夠成功地預測說X是從什麼樣的C弄出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.400" id=05:44.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=344">05:44.400</a></div>
+        <div class="t">如果沒有discriminator的話,對generator來說,最容易讓classifier猜出C的方式就是直接把C貼在這個圖片上,結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.320" id=05:52.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=352">05:52.320</a></div>
+        <div class="t">它就把C貼在圖片的中間,然後classifier只要知道說它去讀這個圖片中間的數值,就知道說C是什麼,那這樣就完全沒有意義,不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.640" id=06:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=362">06:02.640</a></div>
+        <div class="t">所以這邊你一定要有一個discriminator,discriminator會檢查說這張image看起來像不像是一個real image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.080" id=06:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=369">06:09.080</a></div>
+        <div class="t">如果今天generator為了要讓classifier猜出說C是什麼,而刻意地把C原本的數值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:15.840" id=06:15.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=375">06:15.840</a></div>
+        <div class="t">就我們本來期待的是說generator根據C所代表的資訊去產生對應的X,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.320" id=06:22.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=382">06:22.320</a></div>
+        <div class="t">但generator可能就直接把C原封不動地貼到這個圖片上,但是如果只是原封不動地把C貼到這個圖片上,那discriminator就會發現這件事情不對,發現說這看起來不像是真的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:34.400" id=06:34.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=394">06:34.400</a></div>
+        <div class="t">所以generator並不能夠直接把C放在圖片裡面,透露給classifier知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.240" id=06:41.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=401">06:41.240</a></div>
+        <div class="t">而那個info game在實作上的時候,你的discriminator跟classifier往往會share參數,因為它們都是吃同樣的image當作input,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.280" id=06:50.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=410">06:50.280</a></div>
+        <div class="t">不過它們output的地方不太一樣,一個是output scalar,一個是output,output一個code,output一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:57.000" id=06:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=417">06:57.000</a></div>
+        <div class="t">不過它們通常你可以讓它們的一些參數是share的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:01.560" id=07:01.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=421">07:01.560</a></div>
+        <div class="t">好,那為什麼用info game這個架構,為什麼加上classifier以後會有什麼樣的好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:08.080" id=07:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=428">07:08.080</a></div>
+        <div class="t">我們剛才說我們想要解的問題就是input的feature它對output的影響不明確這件事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.040" id=07:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=435">07:15.040</a></div>
+        <div class="t">那info game怎麼解決input的feature對output的影響不明確這件事呢?那info game的想法是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:22.600" id=07:22.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=442">07:22.600</a></div>
+        <div class="t">今天啊,為了要讓classifier可以成功地從這個imageX裡面知道說原來的inputC是什麼,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:31.200" id=07:31.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=451">07:31.200</a></div>
+        <div class="t">那generator要做的事情就是它必須要讓每一個C的每一個維度對output的X都有一個明確的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.080" id=07:41.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=461">07:41.080</a></div>
+        <div class="t">如果今天generator可以學到C的每一個維度對output的X都有一個非常明確的影響,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.840" id=07:46.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=466">07:46.840</a></div>
+        <div class="t">那classifier就可以輕易地根據output的image反推出原來的C是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.280" id=07:51.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=471">07:51.280</a></div>
+        <div class="t">那如果今天generator沒有學到讓C對output有明確的影響,就像我剛才看到的那個例子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.080" id=07:58.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=478">07:58.080</a></div>
+        <div class="t">你改了某一個dimension,對output的影響是很奇怪的,那classifier就會學不到說,無法從X反推說原來的C是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:09.040" id=08:09.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=489">08:09.040</a></div>
+        <div class="t">好,那在原來的info game裡面呢,它把input的C分成兩塊,一塊是C,一塊是Z塊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.520" id=08:15.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=495">08:15.520</a></div>
+        <div class="t">可是這個C呢,它是代表了某些特徵,也就是C的每一個維度代表圖片的某些特徵,它對圖片是會有非常明確的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.800" id=08:24.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=504">08:24.800</a></div>
+        <div class="t">比如說如果你是做手寫數字的生成,那C的某一個維度可能就代表了你現在寫的那個數字有筆劃有多粗,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:33.320" id=08:33.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=513">08:33.320</a></div>
+        <div class="t">那另外一個維度可能代表現在寫的數字的那個角度是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:36.800" id=08:36.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=516">08:36.800</a></div>
+        <div class="t">那其實在這個generator input裡面還有一個Z塊,在原始的info game裡面它還加一個Z塊,Z塊就代表的是純粹隨機的東西,代表的是那些無法解釋的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.760" id=08:48.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=528">08:48.760</a></div>
+        <div class="t">那有人可能就會問說,這個C跟這個Z塊到底是怎麼分的,我們怎麼知道前十維這個feature是應該對output有影響的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:59.200" id=08:59.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=539">08:59.200</a></div>
+        <div class="t">後十維這個feature它是屬於Z塊,對output的影響是隨機的呢?你不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.000" id=09:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=544">09:04.000</a></div>
+        <div class="t">但是這邊的這個道理是說,這個C並不是因為它代表了某些特徵而被歸類為C,而是因為它被歸類為C,所以它會代表某些特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.120" id=09:18.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=558">09:18.120</a></div>
+        <div class="t">大家可以聽得懂這個意思嗎?這是一個充滿著哲理的話,我不知道大家聽不聽得懂我的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:24.280" id=09:24.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=564">09:24.280</a></div>
+        <div class="t">它並不是因為它代表某些特徵,所以我們把它設為C,而是因為它被設為C以後,根據info game的training,使得它必須具備某種特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.160" id=09:35.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=575">09:35.160</a></div>
+        <div class="t">希望大家聽得懂我的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.120" id=09:38.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=578">09:38.120</a></div>
+        <div class="t">這個是文獻上的結果,第一張圖是認了info game以後,它改了C的第一維,然後發現C的第一維代表了第九,這個很神奇,你改了C的第一維以後,更動它的數值就從零跑到九。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.400" id=09:59.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=599">09:59.400</a></div>
+        <div class="t">這個B是原來的結果,但有時候普通的game output結果是很奇怪的,它改第二維,改第二維的話,你產生的數字的角度就變了,改第三維的話,你產生的數字就從筆畫很細變到筆畫很粗,這個就是info game。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.800" id=10:17.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=617">10:17.800</a></div>
+        <div class="t">另外一個跟大家介紹的叫做VAE game,VAE game是什麼呢?VAE game可以看作是用game來強化VAE,也可以看作是用VAE來強化game。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.040" id=10:32.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=632">10:32.040</a></div>
+        <div class="t">VAE我們在M聊的時候講過的,就是autoencoder的變形,variational的autoencoder。autoencoder大家都很熟,就是有一個encoder,incoder input x,output是一個z,decoder是那個z,output原來的x,你要讓input跟output越近越好,這個是variational的autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.000" id=10:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=655">10:55.000</a></div>
+        <div class="t">而如果是variational autoencoder的話,你還會給z一個constraint,希望z的分布像是一個normal distribution,在這邊圖上沒有把它畫出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.280" id=11:05.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=665">11:05.280</a></div>
+        <div class="t">那VAE game的意思是說,在原來的incoder、decoder之外,再加一個discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:12.080" id=11:12.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=672">11:12.080</a></div>
+        <div class="t">這個discriminator的工作就是check說,現在這個decoder的output的這個x看起來像不像是真的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.840" id=11:21.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=681">11:21.840</a></div>
+        <div class="t">如果我們看前面的incoder跟decoder,它們合起來是一個autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.400" id=11:27.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=687">11:27.400</a></div>
+        <div class="t">如果我們看後面的decoder跟discriminator,在這邊這個decoder扮演的角色其實是generator,我們看這個generator跟discriminator,它們合起來是一個game。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.560" id=11:39.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=699">11:39.560</a></div>
+        <div class="t">所以在train這個VAE game的時候,一方面incoder、decoder要讓這個reconstruction的error越小越好,但是同時這個decoder,也就是這個generator做到另外一件事,它會希望它output的image越realistic越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:55.360" id=11:55.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=715">11:55.360</a></div>
+        <div class="t">如果我們今天從VAE的角度來看,原來我們在trainVAE的時候,我們是希望input跟output越接近越好,但是對image來說,你如果單純只是讓input跟output越接近越好,VAE的output不見得會變得realistic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.440" id=12:12.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=732">12:12.440</a></div>
+        <div class="t">它通常產生的東西就是很模糊的,如果你自己實際做過VAE生成的話,它產生的圖片就是很模糊的,因為你根本不知道怎麼算x跟input跟output的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.280" id=12:22.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=742">12:22.280</a></div>
+        <div class="t">如果你的loss是用1的l2node,那Machine學到的東西就會很模糊。那怎麼辦?你就加一個discriminator,你就會迫使這個autoincoder在生成這個image的時候,不是只是minimize reconstruction error,同時還要產生比較realistic image,讓discriminator覺得是realistic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:40.640" id=12:40.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=760">12:40.640</a></div>
+        <div class="t">所以從VAE的角度來看,加上discriminator可以讓它的output更加realistic。那如果從GAN的角度來看呢,我們前面這邊,這個generator加discriminator合起來是一個GAN,然後在前面放一個incoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.880" id=12:53.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=773">12:53.880</a></div>
+        <div class="t">從GAN的角度來看,本身如果在trainGAN的時候,原來在trainGAN的時候,你是隨機input一個vector,你就希望那個vector最後可以變成一個image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.720" id=13:03.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=783">13:03.720</a></div>
+        <div class="t">對你的generator來說,它從來沒有看過真正的image長什麼樣子,它要花很多力氣,你需要花很多的時間去調參數,才能夠讓generator真的學會真正的image,產生真正的image,知道image長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:19.800" id=13:19.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=799">13:19.800</a></div>
+        <div class="t">但是現在,如果你加上了一個autoencoder的架構,今天在學的時候,generator不是只要騙過discriminator,它同時要minimize reconstruction error。你的generator在學的時候,它不是只要騙過discriminator,它還有一個目標,它知道說真正的image長什麼樣子,它想要去產生一張看起來像是incoder input的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.760" id=13:41.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=821">13:41.760</a></div>
+        <div class="t">它在學習的時候,有一個目標不是只看discriminator的feedback,不是只看discriminator傳來那邊歸零的,所以VAEGAN學起來會比較穩一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.760" id=13:52.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=832">13:52.760</a></div>
+        <div class="t">好,那在VAEGAN裡面,這個encoder它要做的事情就是要minimize reconstruction error,同時它希望Z它的分布接近一個normal distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:04.640" id=14:04.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=844">14:04.640</a></div>
+        <div class="t">那對generator來說,它也是要minimize reconstruction error,然後同時它想要去騙過discriminator。對discriminator來說,它要分辨一張image是真正的image還是生成出來的image,跟一般的discriminator是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.400" id=14:21.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=861">14:21.400</a></div>
+        <div class="t">好,那假如你對VAEGAN有興趣的話,這邊也是列一下這個algorithm,這個algorithm是這樣,我們有三個東西,一個encoder,一個decoder,一個discriminator,它們都是network,所以先initialize它們的參數,這樣就是它的algorithm。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:35.280" id=14:35.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=875">14:35.280</a></div>
+        <div class="t">這個algorithm是這樣說的,我們要先sample n個image,real的image,我們等一下可以直接sample出n個real的image。好,接下來,你再產生這n個image的code,我們把這個code寫作Zθ,你把X丟到encoder裡面產生Zθ,它們是真正的image的code。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.640" id=14:59.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=899">14:59.640</a></div>
+        <div class="t">好,那接下來,你再用decoder去產生image,你把這個真正的image的codeZθ丟到decoder裡面,decoder就會產生recontracted image,這邊寫作Xθ,Xθ是recontracted image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:17.680" id=15:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=917">15:17.680</a></div>
+        <div class="t">好,接下來,你samplen個Z,這個Z現在不是從某一張image生成的,它們是從一個normal distribution生成的,這邊的Z是從某一張image生成的,這邊的這個Z它是從一個normal distributionsample出來的,然後用這些從normal distributionsample出來的image,再丟到encoder裡面再產生image,這邊叫做Xθ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:39.920" id=15:39.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=939">15:39.920</a></div>
+        <div class="t">因為我們現在總共有三種image,一種是真的從database裡面sample出來的image,一個是把database裡面sample出來的image做encode,變成Zθ以後,再用decoder再還原出來,叫做Xθ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.800" id=15:52.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=952">15:52.800</a></div>
+        <div class="t">還有一個是generator自己生成的image,它不是看database裡面任何一張image生成的,它是從database裡面,不是從database裡面,它是自己根據一個normal distributionsample所生成出來的image,這邊寫成Xθ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.520" id=16:07.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=967">16:07.520</a></div>
+        <div class="t">再來在training的時候,你先train encoder,encoder的目標是什麼,他要minimize autoencoder reconstruction error,所以你要讓真正的imageXi跟reconstruct出來的imageXθ越接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:20.320" id=16:20.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=980">16:20.320</a></div>
+        <div class="t">這個不是encoder,抱歉抱歉,這個是一個decoder,等一下告訴我你叫什麼名字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:47.200" id=16:47.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1007">16:47.200</a></div>
+        <div class="t">這是一個decoder,抱歉抱歉,這是一個decoder,這邊我們要講什麼,現在你有原來input的image跟reconstruct的image,encoder的目的是什麼,他希望原來input的image跟reconstruct的imageX跟Xθ越接近越好,這是第一件他要做的事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:12.480" id=17:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1032">17:12.480</a></div>
+        <div class="t">第二件他要做的事情是,他希望這個X產生出來的Xθ跟normal distribution越接近越好,這是本來VAE要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.720" id=17:22.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1042">17:22.720</a></div>
+        <div class="t">接下來,你的decoder要做的事情是,他同時也要minimize reconstruction error,但他有另外一個工作是,他希望他產生出來的東西可以騙過discriminator,他希望他產生出來的東西discriminator會給他高的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.320" id=17:38.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1058">17:38.320</a></div>
+        <div class="t">而現在decoder其實會產生兩種東西,一種是Xθ是reconstruct的image,通常reconstruct的image就是會看起來整個結構比較好,但是比較模糊,這個Xθ產生一個reconstruct的image,這個reconstruct的image丟到discriminator裡面,分數要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.040" id=17:57.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1077">17:57.040</a></div>
+        <div class="t">那你把這個Xθ,就是machine自己生出來的image,不是reconstruct的image,是自己生出來的image丟到discriminator裡面,希望值越大越好。最後輪到discriminator,discriminator要做的事情是,如果是一個real的image給他高分,如果是fake的image,fake的image有兩種,一種是reconstruct出來的,一種是自己生存出來的,都要給他零分,這是VAE game的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:22.160" id=18:22.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1102">18:22.160</a></div>
+        <div class="t">那其實我還看過另外一個做法是,discriminator他不是一個binary的classifier,我們之前看到discriminator都是一個binary的classifier,他就是要鑑別說一張image是real的還是fake的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:35.540" id=18:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1115">18:35.540</a></div>
+        <div class="t">那其實還有另外一個做法是,discriminator其實是一個三個class的classifier,先給他一張image,他要鑑別說他是real的還是generated的還是reconstruct的。因為其實generated的image跟reconstruct的image,他們其實本質上看起來還是頗不像的,所以你可以把他們視為,在右邊的這個algorithm裡面,是把generated跟reconstruct視為同一個class,就是fake的class,都叫做fake的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.040" id=19:03.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1143">19:03.040</a></div>
+        <div class="t">但是我有看過做法是說,把generated出來的image跟reconstruct出來的image視為兩種不同的image,那discriminator必須去學著鑑別這兩種的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:18.820" id=19:18.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1158">19:18.820</a></div>
+        <div class="t">那generated在學的時候,這是discriminator,discriminator要把一張image分成,一進一步一張image,discriminator要把它分成三類,但對generated來說,他有可能產生generated image,他有可能產生reconstructed image,他要試著讓這兩種image,discriminator都誤判認為他是real的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:39.780" id=19:39.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1179">19:39.780</a></div>
+        <div class="t">這個是VAE GAN,VAE GAN是去修改了autoencoder,那還有另外一個技術叫做bygand,那bygand他也是修改了autoencoder,他怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.580" id=19:56.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1196">19:56.580</a></div>
+        <div class="t">我們知道在autoencoder裡面,你有一個encoder,你有一個decoder,那在autoencoder裡面,你是把encoder的output丟給decoder去做reconstruction,但是在bygand裡面不是,在bygand裡面,你就有一個encoder,有一個decoder,但是他們的input跟output不是接在一起的,encoder是一張image,他就變成一個code。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:19.580" id=20:19.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1219">20:19.580</a></div>
+        <div class="t">decoder呢,decoder是你從一個normal distribution裡面sample一個d出來丟進去,他就產生一張image,但是我們並不會把encoder的輸出丟給decoder,並不會把decoder的輸出丟給encoder,這兩個是分開的,你有一個encoder,你有一個decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.140" id=20:35.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1235">20:35.140</a></div>
+        <div class="t">那你說這兩個是分開的,那他們怎麼學呢?在autoencoder裡面你可以學的是因為你收集了一大堆image,要讓autoencoder的input等於autoencoder的output,現在encoder跟decoder各自都只有一邊,encoder只有input,他不知道output target是什麼,decoder他只有input,他不知道output的image應該長什麼樣子,那怎麼學這個encoder跟decoder呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:00.340" id=21:00.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1260">21:00.340</a></div>
+        <div class="t">這邊的做法就是再加一個discriminator,這個discriminator呢,他是吃encoder的input加output,他是decoder的input加output,他同時吃一個z吃一個x,他同時吃一個code的z跟一個image的x,一起吃進去,然後他要做的事情是鑑別這個x跟z的pair,他們是從encoder來的還是從decoder來的,所以他要鑑別一個pair,他是從encoder來的還是從decoder來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.300" id=21:31.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1291">21:31.300</a></div>
+        <div class="t">其實這個bygand還有另外一個技術跟他非常的相近,其實不只是相近,根本就是一模一樣,叫做ali,bygand跟ali如果沒記錯的話是同時發表在iclear的2017上面,他們有什麼差別呢?就是沒有任何差別這樣,完全不同的兩群人居然想出了一模一樣的方法,而且我發現bygand的citation比較高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:58.500" id=21:58.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1318">21:58.500</a></div>
+        <div class="t">我想原因就是因為他有gand,然後ali,他沒有用到gand這個字眼,所以citation就少一點了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:04.260" id=22:04.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1324">22:04.260</a></div>
+        <div class="t">我們先講一下bygand的algorithm,然後再告訴你說為什麼bygand這樣做到底是有什麼樣的道理,我們先講一下他的algorithm,我們說我們現在有一個encoder,有一個decoder,有一個discriminator,我們剛才講vaegand的時候,他有一個encoder,有一個decoder,有一個discriminator,不過這邊bygand的運作方式跟vaegand是非常不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.420" id=22:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1348">22:28.420</a></div>
+        <div class="t">bygand有一個encoder,有一個decoder,有一個discriminator,在每一個iteration裡面,你會sample n個realistic的image出來,你會sample n個code出來,你用這些code,這邊encoder會做的事情是根據這個,剛才講錯,這個不是sample出來,你先從你的database這邊sample出n張真的image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:54.260" id=22:54.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1374">22:54.260</a></div>
+        <div class="t">然後把這些真的image丟到你的encoder裡面,那encoder會output code,你就得到了n組code,你得到了n個data,得到n個code。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:04.500" id=23:04.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1384">23:04.500</a></div>
+        <div class="t">這個是用encoder生出來的東西,然後接下來你用decoder生東西,decoder怎麼生東西呢?你sample n個code,這個從一個normal distribution sample出來,把這些code丟到encoder,丟到decoder裡面,那decoder就產生他自己生成的image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:22.660" id=23:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1402">23:22.660</a></div>
+        <div class="t">所以這邊沒有delta的東西都是真的,那有delta的東西就是生成的,這邊有n個realistic的image生成出n個code,這邊有n個code生成出n個image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.460" id=23:35.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1415">23:35.460</a></div>
+        <div class="t">接下來你要認一個discriminator,discriminator的工作是說,給他encoder的input跟output給他高分,給他decoder的input跟output給他低分,如果這個pair是encoder的input跟output給他高分,如果這個pair是decoder的input跟output就給他低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:57.860" id=23:57.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1437">23:57.860</a></div>
+        <div class="t">那有人就會問說,為什麼是encoder會給高分,decoder會給低分呢?其實反過來講,你也會問同樣的問題,不管你是要讓encoder高分,decoder低分,還是encoder低分,decoder高分,是一樣的,這個意思是完全一模一樣的,你認出來的結果也會是一樣的,並沒有什麼差別,只是選其中一個方法來做就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:22.660" id=24:22.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1462">24:22.660</a></div>
+        <div class="t">那encoder跟decoder要做的事情就是去騙過discriminator,如果discriminator要讓encoder的input跟output高分,decoder的input跟output低分,那encoder要聯手起來,讓encoder的input跟output,讓discriminator給他低分,讓decoder的input跟output,讓discriminator給他高分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:43.940" id=24:43.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1483">24:43.940</a></div>
+        <div class="t">所以discriminator要做什麼事?encoder跟decoder就要聯手起來,去騙過discriminator就對了,那到底是要讓encoder高分還是decoder高分,那個是無關緊要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:55.780" id=24:55.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1495">24:55.780</a></div>
+        <div class="t">好,那這個是by game的algorithm,那我們再看看by game這麼做到底是有什麼道理呢?那我們知道by game做的事情,discriminator做的事情,就是在evaluate兩組sample出來的data,到底它們接不接近,我們上週有講過說,你從real的database裡面sample一堆image出來,用你的generatorsample一堆image出來,一個discriminator做的事情,其實就是在量這兩堆image的某種divergence到底接不接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.540" id=25:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1525">25:25.540</a></div>
+        <div class="t">所以今天的這個道理是一樣的,我們可以把encoder的input跟output合起來,當作是一個joint distribution,encoder的input跟output合起來有一個joint distribution,我們寫成p of xz, decoder的input跟output合起來也是另外一個joint distribution,q of xz。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:42.180" id=25:42.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1542">25:42.180</a></div>
+        <div class="t">今天discriminator要做的事情就是去衡量這兩個distribution之間的差異,然後discriminator希望透過discriminator的引導,讓這兩個distribution之間越近越好,就像在原來的game裡面,我們希望pg generator生成出來的data distribution跟p data越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:01.860" id=26:01.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1561">26:01.860</a></div>
+        <div class="t">那這邊的道理是完全一模一樣的,discriminator希望encoder的input跟output所組成的joint probability跟decoder的input跟output所組成的joint probability,這兩個data的distribution越接近越好,p跟q這兩個distribution越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:18.900" id=26:18.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1578">26:18.900</a></div>
+        <div class="t">所以eventually在理想的狀況下,應該會學到說,p這個distribution,也就是encoder的input跟output所組成的distribution,跟q這個distribution這樣的distribution,它們是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:33.860" id=26:33.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1593">26:33.860</a></div>
+        <div class="t">如果最後它們認到一模一樣的時候,會發生什麼事情呢?你可以輕易地證明說,這個沒什麼好特別證明的,你用直觀想一下,其實就是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:43.940" id=26:43.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1603">26:43.940</a></div>
+        <div class="t">你可以輕易地知道說,今天如果p跟q的distribution是一模一樣的,你把一個東西x塊,一個image x塊丟到encoder裡面,讓它給你一個code z塊,你再把z塊丟到decoder裡面,讓它給你一個image x塊,x塊會等於原來的input的x塊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.100" id=27:02.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1622">27:02.100</a></div>
+        <div class="t">就是你把x塊丟進去,它會產生z塊,你把z塊丟到decoder裡面,它會產生原來的x塊,你把z double塊丟到decoder裡面,讓它產生x double塊,再把x double塊丟到encoder裡面,讓它產生z double塊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:19.860" id=27:19.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1639">27:19.860</a></div>
+        <div class="t">所以今天encoder的input產生一個output,再把output丟到decoder裡面,會產生原來encoder的input。今天decoder給它一個input,它產生一個output,再把它的output丟到encoder裡面,它會產生一模一樣的input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:34.980" id=27:34.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1654">27:34.980</a></div>
+        <div class="t">雖然說今天實際上在training的時候,encoder跟decoder並沒有接在一起,但是透過discriminator會讓encoder、decoder在理想上最終達成以下的特性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:47.380" id=27:47.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1667">27:47.380</a></div>
+        <div class="t">所以有人就會問說,那這樣encoder跟decoder做的事情是不是就好像是說,你今天認了一個autoencoder,這個autoencoder input一張image,它變成一個code,再把code用decoder解回原來一樣的image,那你還要認一個反向的autoencoder,所謂的反向的autoencoder的意思是說,今天這個decoder是一個code,它產生一張image,再從這個image還原回原來的code。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:14.420" id=28:14.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1694">28:14.420</a></div>
+        <div class="t">你要讓input跟output越像越好,你要讓incoder的input跟decoder的output越像越好,你要讓decoder的input跟incoder的output越像越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:25.140" id=28:25.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1705">28:25.140</a></div>
+        <div class="t">那今天假設在理想的狀況下,by gain它可以認到optimal的結果,確實會跟同時認這樣子的一個encoder跟autoencoder得到的結果是一樣的。那有人就會問說,那為什麼就不認這樣子的一個encoder跟一個inverse的autoencoder就好了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:47.780" id=28:47.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1727">28:47.780</a></div>
+        <div class="t">為什麼不這樣認就好了呢?為什麼還要引入gain呢?我這樣不是聽起來感覺像是化蛇添足嗎?我覺得如果你用by gain認的話,你得到的結果其實還是會不太一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:00.540" id=29:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1740">29:00.540</a></div>
+        <div class="t">我在這邊想要表達的意思是說,你認一個by gain跟認一個下面這個autoencoder,它們在最佳的solution,它們的optimal solution是一樣的,但是它們的error surface是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:16.700" id=29:16.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1756">29:16.700</a></div>
+        <div class="t">如果這兩個model都train到optimal的case,你得到的結果會是一樣的,但實際上你不可能train到optimal的case,by gain你無法真的認到P跟Q的distribution一模一樣,autoencoder你無法認到input跟output真的會一模一樣,這件事情是不可能發生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.580" id=29:33.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1773">29:33.580</a></div>
+        <div class="t">所以你不會真的收斂到optimal的solution,在不是收斂到optimal的solution的狀況下,這兩種方法認出來的結果就會不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:42.900" id=29:42.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1782">29:42.900</a></div>
+        <div class="t">那到底有什麼不一樣呢?我這邊沒有把那個文獻上的圖片列出來,如果你看一下文獻上的圖片的話,一般的autoencoder你認完以後,input一張image,它就是recontract另外一張image,跟原來的input很像,然後比較模糊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:58.020" id=29:58.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1798">29:58.020</a></div>
+        <div class="t">這個大家應該都知道,autoencoder就是這麼回事嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:00.940" id=30:00.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1800">30:00.940</a></div>
+        <div class="t">那如果用by gain的話,你其實也是認出了一個autoencoder,你認了一個encoder,一個decoder,它們合起來就是一個autoencoder,但是當你把一張image丟到這個encoder,再從這個decoder輸出來的時候,其實你可能會得到的output跟input是非常不像的,它會比較清晰,但是非常不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:19.260" id=30:19.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1819">30:19.260</a></div>
+        <div class="t">比如說你把一隻鳥丟進去,它output還會是一隻鳥,但是是另外一隻鳥,所以這個就是by gain的特性,你可以去看一下它的paper,它認出來的結果會跟…</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.400" id=30:31.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1831">30:31.400</a></div>
+        <div class="t">就是說,如果跟autoencoder比起來,它們的最佳的solution是一樣的,但是實際上你認出來的結果會發現說,這兩種autoencoder,就是你用這種minimize reconstruction error方法認的一個autoencoder,還是用by gain認的autoencoder,它們的特性其實是非常不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.180" id=30:50.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1850">30:50.180</a></div>
+        <div class="t">by gain的autoencoder,它比較能夠抓到語意上的資訊,就像我剛才說的,你input一隻鳥,它知道它是一隻鳥,它output也是一隻鳥,它reconstruct出來的結果,它decoder output也是一隻鳥,但是不是同一隻鳥,這就是一個還蠻神奇的結果就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:05.000" id=31:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1865">31:05.000</a></div>
+        <div class="t">這個是by gain,有by gain,by就是2的意思,那就有3,就是triple gain,其實triple gain跟by gain也是…該怎麼說,我其實沒有打算要仔細講triple gain,但是之後你會知道說為什麼我要在這邊特別放一個triple gain,我們可以非常快的跟大家解釋一下triple gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:27.260" id=31:27.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1887">31:27.260</a></div>
+        <div class="t">在triple gain裡面有三個東西,一個discriminator,一個generator,一個classifier,如果我們先不要管這個classifier的話,其實triple gain本身就是一個conditional gain,我們上週講過了input一個東西,output一個東西,比如說input一個文字,然後就output一張圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:48.040" id=31:48.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1908">31:48.040</a></div>
+        <div class="t">generator就是吃一個condition,這邊condition寫成y,然後產生一個x,它把x跟y的pair丟到discriminator裡面,discriminator要分辨出generator產生出來的東西是fake的,然後real的data從database這邊sample出來的東西就是true的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:04.700" id=32:04.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1924">32:04.700</a></div>
+        <div class="t">所以generator跟discriminator合起來就是一個conditional gain,這邊是沒有什麼特別的地方,都是上週就已經講過的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:12.840" id=32:12.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1932">32:12.840</a></div>
+        <div class="t">那這邊再加一個classifier是什麼意思呢?這邊再加classifier的意思是說,其實擺gain是一個semi-supervised learning的做法,也就是在擺gain的那個setup裡面,不是擺gain是一個semi-supervised learning的做法,是triple gain是一個semi-supervised learning的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:30.640" id=32:30.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1950">32:30.640</a></div>
+        <div class="t">也就是在triple gain的setup裡面,你假設說你有少量的label data,但是大量的unlabeled data,也就是說你有少量的x跟y的pair,那你有大量的可能x跟y它們是沒有被pair在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:49.080" id=32:49.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1969">32:49.080</a></div>
+        <div class="t">所以今天這個triple gain它主要的目標是想要去學好一個classifier,這個classifier可以input這個x,然後就outputy,那你可以用label的data去訓練你的classifier,你可以從你有label的data的這個set裡面去samplexy的pair,去train你的classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:11.120" id=33:11.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=1991">33:11.120</a></div>
+        <div class="t">但是同時你也可以根據這個generator,這個generator會吃一個y產生一個x,你把generator產生出來的xy的pair也丟給這個classifier去學,它的用意就是增加training data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:23.600" id=33:23.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2003">33:23.600</a></div>
+        <div class="t">你本來有label的xy的pair很少,但是你有一大堆的x跟y是沒有pair的,所以你用generator去給它吃一些y讓它產生x,得到更多xy的pair去trainclassifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.440" id=33:34.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2014">33:34.440</a></div>
+        <div class="t">那這個classifier它也可以吃x,然後去產生y,那discriminator還會去鑑別說這個classifierinput跟output之間的關係看起來跟真正的xy的pair有沒有像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:47.720" id=33:47.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2027">33:47.720</a></div>
+        <div class="t">所以今天triple gain是一個semi-supervised learning的做法,那我們這邊就不特別再仔細地說它,只是告訴大家說有triple gain這個東西就有百gain,所以就要有triple gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:02.360" id=34:02.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2042">34:02.360</a></div>
+        <div class="t">最後我要很快地複習一下domain adversarial training,因為這個等一下在講cycle gain,在講supervised conditional generation的時候,我們是用得上這個技術的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.080" id=34:16.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2056">34:16.080</a></div>
+        <div class="t">這個技術其實在ML我們有講過,但是這邊就只是在複習一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:21.360" id=34:21.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2061">34:21.360</a></div>
+        <div class="t">這個domain adversarial training要做的事情是什麼呢?就是我們要認一個generator,這個generator的工作就是抽feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:27.680" id=34:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2067">34:27.680</a></div>
+        <div class="t">假設你是要做影像的分類,那這個generator的工作就是吃一張圖片,populate the feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:33.000" id=34:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2073">34:33.000</a></div>
+        <div class="t">我們今天在做machine learning的時候,我們很害怕遇到一個問題是你的training data跟testing data不match。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:40.960" id=34:40.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2080">34:40.960</a></div>
+        <div class="t">假設你今天training data是黑白的and list的,然後你的testing data是彩色的圖片,是彩色的數字,是彩色的and list的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.920" id=34:49.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2089">34:49.920</a></div>
+        <div class="t">那你可能會以為說,你在這個training data上train起來,apply到這個testing data上,搞不好也work,因為machine搞不好可以學到說,反正digit就是跟顏色無關,考慮形狀就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:01.360" id=35:01.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2101">35:01.360</a></div>
+        <div class="t">所以它在黑白圖片上認的東西也可以apply到彩色圖片上,但是事實上事與願違,machine就是很笨。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:09.120" id=35:09.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2109">35:09.120</a></div>
+        <div class="t">你實際上這個做,勸下去啊,勸在黑白圖片上,apply彩色圖片上,雖然你覺得說好像machine只要學到把彩色圖片自己在某個layer轉成黑白的,應該就可以得到正確的結果,但實際上不是,它很笨,它就是會打錯這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.760" id=35:23.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2123">35:23.760</a></div>
+        <div class="t">所以怎麼辦?我們希望有一個好的generator,這個generator做的事情是說,你現在training set跟testing set的data不match,沒有關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:32.680" id=35:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2132">35:32.680</a></div>
+        <div class="t">透過這個generator幫你抽出feature,然後在training set跟testing set雖然它們不match,它們的domain不一樣,它們不match,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:40.600" id=35:40.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2140">35:40.600</a></div>
+        <div class="t">但是透過這個generator抽出來的feature,它們有同樣的distribution,它們是matched,這個就是domain-adversarial training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:48.960" id=35:48.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2148">35:48.960</a></div>
+        <div class="t">那怎麼做呢?這個圖其實在machine learning的課有看過了,你就認一個generator,其實就是feature extractor,它是一張image,它會output一個feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:59.760" id=35:59.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2159">35:59.760</a></div>
+        <div class="t">然後你有一個domain classifier,其實這個domain classifier就是discriminator,這個discriminator的工作是要判斷說,現在這個feature來自於哪個domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:12.040" id=36:12.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2172">36:12.040</a></div>
+        <div class="t">假設你有兩個domain,domain x跟domain y,你要券在domain x上面,apply在domain y上面,你有兩個domain,domain x跟domain y,你要券在domain x上面,apply在domain y上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:23.440" id=36:23.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2183">36:23.440</a></div>
+        <div class="t">然後這個時候domain classifier要做的事情是分辨這個feature來自於domain x還是domain y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:30.400" id=36:30.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2190">36:30.400</a></div>
+        <div class="t">然後在這邊同時你又要有另外一個classifier,這個classifier的工作是根據這個feature判斷說,假設你現在是數字的分類,要根據這個feature判斷說它屬於哪個class,它屬於哪個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:45.080" id=36:45.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2205">36:45.080</a></div>
+        <div class="t">然後這三個東西是一起認的,但是實際上在真正implement的時候你不一定要一起認,在原始的domain reversal training的paper裡面,它就是一起認的,這三個network就是一起認的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:00.280" id=37:00.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2220">37:00.280</a></div>
+        <div class="t">只是這個domain classifier它的那個歸點在被publicate的時候,在這邊,在進入feature extractor之前,會成一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:10.880" id=37:10.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2230">37:10.880</a></div>
+        <div class="t">但是實際上你真的在implement的時候,你不一定要同時一起券,你可以iterative的券,就像game一樣,在game裡面你也不是同時券generator跟discriminator,你是iterative的去券。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:24.040" id=37:24.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2244">37:24.040</a></div>
+        <div class="t">有人可能會問說能不能夠同時券generator跟discriminator,其實是可以的,如果你去看那個fgame那篇paper的話,它其實就propose一個方法,它的generator跟discriminator是simultaneously同時券的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:38.400" id=37:38.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2258">37:38.400</a></div>
+        <div class="t">就跟原始的domain reversal training的方法是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.480" id=37:41.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2261">37:41.480</a></div>
+        <div class="t">有同學試過類似的做法,但發現說同時券其實是比較不穩的,如果是iterative券其實是比較穩的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:49.080" id=37:49.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2269">37:49.080</a></div>
+        <div class="t">如果你今天先券domain classifier,再券feature extractor,就先券discriminator,再券classifier,再券generator,iterative的去券,它的結果會是比較穩的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:04.680" id=38:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2284">38:04.680</a></div>
+        <div class="t">這個是domain reversal training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:08.480" id=38:08.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2288">38:08.480</a></div>
+        <div class="t">用類似這樣的技術,你可以做一件事情,叫做feature disentangle。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:15.920" id=38:15.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2295">38:15.920</a></div>
+        <div class="t">feature disentangle是什麼意思呢?我們用語音來做一下舉例。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:21.560" id=38:21.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2301">38:21.560</a></div>
+        <div class="t">其實在別的domain上,比如說image possessive或者是video possessive這樣的技術,其實也是用得非常多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:29.760" id=38:29.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2309">38:29.760</a></div>
+        <div class="t">我們用語音來做例子,假設你現在認一個語音的autoencoder,你認一個sequence-to-sequence的autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:39.400" id=38:39.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2319">38:39.400</a></div>
+        <div class="t">你認一個autoencoder,它inputs一段聲音訊號,把這段聲音訊號壓成code,然後再把這段code透過decoder解回原來的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:47.160" id=38:47.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2327">38:47.160</a></div>
+        <div class="t">你希望input跟output越接近越好,你希望認加一個sequence-to-sequence的autoencoder,它中間你的encoder會抽出一個latent representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:56.320" id=38:56.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2336">38:56.320</a></div>
+        <div class="t">那你現在你的期待是這個latent representation可以代表發音的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:02.560" id=39:02.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2342">39:02.560</a></div>
+        <div class="t">但是你發現你實際上train這樣的sequence-to-sequence的autoencoder的時候,你抽出來未必能讓中間的latent representation代表發音的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:11.400" id=39:11.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2351">39:11.400</a></div>
+        <div class="t">為什麼?因為中間的latent representation,它可能包含了很多各式各樣不同的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:17.800" id=39:17.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2357">39:17.800</a></div>
+        <div class="t">因為input一段聲音訊號,這段聲音訊號裡面不是只有發音的資訊,它還有語者的資訊,還有環境的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:25.440" id=39:25.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2365">39:25.440</a></div>
+        <div class="t">那對decoder來說,這個feature裡面一定必須要同時包含各種資訊,包含發音的資訊,包含語者的資訊,包含環境的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:34.080" id=39:34.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2374">39:34.080</a></div>
+        <div class="t">這個decoder根據所有的資訊合起來,才可以還原出原來的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:38.600" id=39:38.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2378">39:38.600</a></div>
+        <div class="t">那我們現在希望要做的事情是,知道說在這個vector裡面,到底哪些維度代表了發音的資訊,哪些維度代表了語者的資訊或者是其他的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:49.920" id=39:49.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2389">39:49.920</a></div>
+        <div class="t">那這邊你就需要用到一個叫做feature disentangle的技術。那現在這種技術就有很多的用處,因為你可以想像說,假設今天你可以認一個encoder,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:00.120" id=40:00.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2400">40:00.120</a></div>
+        <div class="t">它的output你知道哪些維是跟發音有關的,哪些維是跟語者有關的,那你可以只把發音有關的部分丟到語音辨識系統裡面去做語音辨識,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:10.360" id=40:10.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2410">40:10.360</a></div>
+        <div class="t">只跟語者有關的部分丟到語者的speaker verification,speaker verification中文怎麼翻啊?語者識別嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:19.600" id=40:19.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2419">40:19.600</a></div>
+        <div class="t">這個東西現在不是有很多很多的應用,比如說你打電話去花旗銀行的時候,它其實就會聲紋比對,聲紋比對,這個技術通常叫做聲紋比對。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:30.640" id=40:30.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2430">40:30.640</a></div>
+        <div class="t">你就把這個有關語者的資訊丟到聲紋比對的系統裡面去,然後它就會知道說現在是不是某個人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:39.000" id=40:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2439">40:39.000</a></div>
+        <div class="t">所以像這種feature disentangle技術有很多的應用,那怎麼做到feature disentangle這件事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:47.040" id=40:47.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2447">40:47.040</a></div>
+        <div class="t">現在假設你要認兩個encoder,一個encoder它的output就是發音的資訊,另外一個encoder它的output就是語者的資訊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:58.640" id=40:58.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2458">40:58.640</a></div>
+        <div class="t">然後decoder吃發音的資訊加語者的資訊合起來,還原出原來的聲音訊號。接下來你就可以把抽發音資訊的encoder拔出來,把它的output去接語音辨識系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:09.960" id=41:09.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2469">41:09.960</a></div>
+        <div class="t">因為你在做語音辨識的時候才會遇到一個問題,就是兩個不同的人說同一句話,它聽起來不太一樣,在聲音訊號上不太一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:18.040" id=41:18.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2478">41:18.040</a></div>
+        <div class="t">如果今天這個encoder可以把語者的variation,語者所造成的差異remove掉,對語音辨識系統來說當然辨識就會比較容易。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:26.480" id=41:26.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2486">41:26.480</a></div>
+        <div class="t">那對於這個聲文比對也是一樣,今天同一個人說不同的句子,但是聲音訊號其實也是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:35.680" id=41:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2495">41:35.680</a></div>
+        <div class="t">但是如果我們可以把這種發音的資訊,把這種content的資訊跟文字有關的資訊把它濾掉,只抽出語者的特徵的話,那對後面的聲文比對系統也是非常有用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:49.480" id=41:49.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2509">41:49.480</a></div>
+        <div class="t">那這件事怎麼做呢?怎麼讓機器自動學到說這個encoder,如果你這三個東西jointly learn,你當然沒有辦法保證說它的output一定要是發音的資訊,它的output一定要是語者的資訊,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:03.000" id=42:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2523">42:03.000</a></div>
+        <div class="t">那怎麼辦呢?你就需要加一些額外的content,比如說對語者的地方,你可能可以假設說,現在input一段聲音訊號在訓練的時候,我們知道哪些聲音訊號是同一個人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:14.080" id=42:14.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2534">42:14.080</a></div>
+        <div class="t">那這個假設其實也還蠻容易達成的,因為你可以假設說同一句話就是同一個人說的,同一句話你把它切成很多的小塊,每一小塊就是同一個人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:25.440" id=42:25.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2545">42:25.440</a></div>
+        <div class="t">所以今天對speaker的encoder來說,給它同一個人說的聲音訊號,雖然它們的聲音訊號可能不太一樣,但是output的這個vector,output的這個embedding要越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:37.200" id=42:37.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2557">42:37.200</a></div>
+        <div class="t">那同時假設今天input的兩段聲音訊號是不同人說的,那output的embedding就不可以太像,它們要有一些區別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:48.120" id=42:48.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2568">42:48.120</a></div>
+        <div class="t">但是就算是這樣做,你只能夠讓speaker encoder的output考慮語者的資訊,你沒有辦法保證說phonetic encoder的output一定是發音的資訊,因為也許語者的資訊也會被藏在這個綠色的vector裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:02.040" id=43:02.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2582">43:02.040</a></div>
+        <div class="t">所以怎麼辦?這邊你就可以用到domain-adversarial training的概念,你再另外去train一個speaker的classifier,你再去train一個speaker的classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:11.360" id=43:11.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2591">43:11.360</a></div>
+        <div class="t">這個speaker classifier它的作用是什麼呢?這個speaker classifier的作用是說,今天給它兩個vector,它去判斷說這兩個vector到底是同一個人說的還是不同的人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:23.080" id=43:23.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2603">43:23.080</a></div>
+        <div class="t">那phonetic encoder要做的事情就是去想辦法騙過這個speaker classifier。speaker classifier要盡力去判斷說,今天給它兩個vector,到底是同一個人說的還是不同人說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:33.140" id=43:33.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2613">43:33.140</a></div>
+        <div class="t">phonetic encoder要想盡辦法去騙過speaker classifier,但它這個其實就是一個gap,後面這個就是discriminator,前面就是generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:40.620" id=43:40.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2620">43:40.620</a></div>
+        <div class="t">那如果這個phonetic encoder可以騙過speaker classifier,speaker classifier完全無法從這些vector裡面判斷說到底是不是同一個人說的,那就意味著phonetic encoder它可以濾掉所有跟愚者有關的資訊,只保留和愚者無關的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:58.400" id=43:58.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2638">43:58.400</a></div>
+        <div class="t">好,那這個就是featured disinternal的技術,那這邊其實就是一些真正的實驗結果啦,那training是trained在一個叫做need free speech的corpus上面,它就是收集很多有聲書然後給機器去學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:12.060" id=44:12.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2652">44:12.060</a></div>
+        <div class="t">好,那這邊的結果是左邊是那個phonetic encoder的output,右邊是speaker encoder的output,那上面這兩個圖是不同每一個點就代表一段聲音訊號,這個圖上每一個點就代表一段聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:26.200" id=44:26.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2666">44:26.200</a></div>
+        <div class="t">那這邊不同顏色的聲音點代表說它的聲效背後對應的詞彙是不一樣的,但它們都是不同的人講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:35.300" id=44:35.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2675">44:35.300</a></div>
+        <div class="t">如果你看phonetic embedding output就會發現說同樣的詞彙它是被聚集在一起的,雖然它們是不同人講的,但是phonetic encoder知道說它會把愚者的資訊濾掉,知道說它們不同人講的聲效上不太一樣,但是這些都是同一個詞彙,這些都是同一個詞彙,這些都是同一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:55.460" id=44:55.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2695">44:55.460</a></div>
+        <div class="t">那如果你是看speaker encoder output,就會發現說speaker encoder output很明顯的就分成兩區,那不同的詞彙發音雖然不太一樣,但是因為現在這個speaker encoder已經把發音的資訊都濾掉,只保留愚者的資訊,就會發現說這些不同的詞彙都是混在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:18.680" id=45:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2718">45:18.680</a></div>
+        <div class="t">那下面是看說兩個不同顏色的點代表兩個不同的speaker,兩個不同的愚者他們所發出來的聲音訊號,那就會發現說如果是看phonetic embedding,看發音上面的資訊,因為兩個不同的人他們很有可能會說差不多的內容,他們說出來的可能就是那幾個詞彙,所以你會發現說如果你看phonetic encoder,這兩個人的東西是重疊在一起的,這兩個人的embedding是重疊在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:47.100" id=45:47.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=sU5CG8Z0zgw&t=2747">45:47.100</a></div>
+        <div class="t">那如果你看speaker encoder,就會發現說這兩個人的聲音是很明顯的分成兩群的,那這個就是featureless dissing table,那我這邊是舉語音做例子,但是它也可以用在影像等等其他的application上面。</div>
+    </div>
+    
+</body>
+</html>   

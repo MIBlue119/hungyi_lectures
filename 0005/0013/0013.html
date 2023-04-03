@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Speech Synthesis (2/2) - More than Tacotron</h2><a href=https://www.youtube.com/watch?v=Eau1Fr2x86Y><img src=https://i.ytimg.com/vi_webp/Eau1Fr2x86Y/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=0">00:00.000</a></div>
+        <div class="t">那在有了Tacotron之後呢?有了Tacotron是不是所有的問題就通通被解決,沒有什麼好再做研究的呢?其實不是,Tacotron並沒有解決所有的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.840" id=00:12.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=12">00:12.840</a></div>
+        <div class="t">首先第一個Tacotron會遇到的問題啊,是有時候它的發音會有錯。其實在原始的Tacotron paper裡面,在Tacotron 2的paper裡面,就已經有提到說Tacotron其實合出來的聲音的音質已經跟Ground Truth差不多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.020" id=00:31.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=31">00:31.020</a></div>
+        <div class="t">但是使用者,甚至這些這個測試的人啊,評估的人,還是覺得說真正的聲音比較好,Tacotron比較差。為什麼?因為Tacotron occasionally mispronunciation,它有時候會拼錯字。這個人可能很難接受說機器有一些字念出來的聲音居然是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.500" id=00:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=51">00:51.500</a></div>
+        <div class="t">那為什麼Tacotron會拼錯字呢?我們來看一下一般用語音合成,我們來看一下一般語音合成所使用的訓練資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02.780" id=01:02.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=62">01:02.780</a></div>
+        <div class="t">在語音合成有幾個比較知名的Corpus,一個是VCTK,一個是LJ Speech,另外一個是Nancy,就是Breezer的Challenge,總之就是這三個是蠻常用的語音合成的Corpus。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19.520" id=01:19.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=79">01:19.520</a></div>
+        <div class="t">那其實語音合成啊,你不見得真的需要非常大的資料,像LJ Speech它大概只有二十幾個小時,VCTK有四十幾個小時,那LJ Speech它是一個人的聲音有二十幾個小時,那就非常夠用了,一個人的聲音,如果你有二十幾個小時,合出來的聲音品質就拿來train這個Tacotron,合出來的聲音品質呢,就已經非常高,就已經非常足夠了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.820" id=01:43.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=103">01:43.820</a></div>
+        <div class="t">所以今天你要做語音合成,你不見得需要像語音辨識一樣,需要蒐集上萬小時的資料,如果你只要和某一個人的聲音,你只要蒐集十幾個小時的聲音訊號,其實往往就足夠。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:58.660" id=01:58.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=118">01:58.660</a></div>
+        <div class="t">但是因為我們蒐集的聲音訊號只有十幾個小時,那會遇到什麼樣的問題呢?你會發現說你蒐集到的聲音訊號裡面,它的詞彙量是不太夠的,VCTK它的詞彙量大概是五千,然後就算是Nancy這個Corpus,它的詞彙量也不過還不到兩萬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:22.440" id=02:22.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=142">02:22.440</a></div>
+        <div class="t">語音合成,我現在看到最大的公開Corpus可能是Libri Speech,它不是原來的Libri Speech,它是Libri TTS,它有五百八十五個小時,但就算它有五百八十五個小時,它裡面的英文的詞彙量也還不到十萬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:42.100" id=02:42.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=162">02:42.100</a></div>
+        <div class="t">你可能說,它有七八萬的詞彙量也應該很夠了吧?可是一般英文詞典的詞彙量可能都是十萬以上,有些英文的詞典,它的詞彙量甚至是超過十五萬以上,因為英文的詞彙非常非常多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.440" id=02:59.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=179">02:59.440</a></div>
+        <div class="t">所以對一個系統來說,它只看過上萬個英文的詞彙,一大堆的詞彙它都不認識啊,也許它今天在訓練這個Tabletron的過程中,它可以試著去學習怎麼把英文的character轉成英文的phoneme,它會試著去猜測說,每一個英文的詞彙到底應該要怎麼發音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:21.780" id=03:21.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=201">03:21.780</a></div>
+        <div class="t">但是因為它看過的詞彙量不夠,它看過的詞彙量可能是英文詞典的十分之一而已,所以它沒有辦法準確地估測出每一個詞彙應該有的發音方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.300" id=03:34.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=214">03:34.300</a></div>
+        <div class="t">所以有時候它看到新詞,看到生冷的詞,它會念錯。那因為它會念錯,所以使用者就非常難接受了,你今天一個語音合成系統居然有些詞彙是會念錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.600" id=03:45.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=225">03:45.600</a></div>
+        <div class="t">所以怎麼辦呢?有一個解決的方法是說,我們不要把character當作輸入,我們找一個比較好的詞典,找一個比較好的lexicon,lexicon裡面有文字跟phoneme之間的對應關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:00.480" id=04:00.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=240">04:00.480</a></div>
+        <div class="t">今天有人輸入一段話給Tacotron,我們不要直接把那個文字丟給Tacotron,我們把文字通過這個詞典,先轉成phoneme,把phoneme丟給Tacotron,問題就解決了。因為phoneme跟聲音是有直接的對應關係的,所以就不會發生那種念錯了,有念錯詞彙的情形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.700" id=04:20.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=260">04:20.700</a></div>
+        <div class="t">但是呢,如果我們今天用lexicon還是會有一些問題的,舉例來說,有一個句子,你想像機器念說what is n-c-o-v,那what詞典裡面有,你知道它的phoneme長什麼樣子,is詞典裡面有,你知道它的phoneme長什麼樣子,那n-c-o-v是新的詞彙,它到底怎麼念?它要念n-c-o-v嗎?還是n-c-o-v?還是n-c-o-v呢?不知道,不知道要怎麼念,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:47.320" id=04:47.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=287">04:47.320</a></div>
+        <div class="t">如果你用詞典的方法,可能就不知道要怎麼解決。但是世界上有太多這種新的詞彙,每天都在被造出來,所以如果你今天一定需要一個詞典,把文字轉成phoneme,才能夠做語音合成,那難道看到有新詞的句子都沒有辦法合成嗎?這樣子其實使用者也不太能夠接受。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.860" id=05:07.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=307">05:07.860</a></div>
+        <div class="t">所以怎麼辦呢?在那個百度的Deep Wall Street裡面有一個有趣的簡單做法,是今天我們可以讓Tapletron不只是看character,它也同時看phoneme,它看character跟phoneme混合起來的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.720" id=05:25.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=325">05:25.720</a></div>
+        <div class="t">也就是說,假設一個詞彙在詞典裡有,給它看phoneme,假設一個詞彙在詞典裡沒有,直接把它的字母拿出來丟給Tapletron,讓Tapletron自己去猜說這些字母應該要怎麼發音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.500" id=05:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=341">05:41.500</a></div>
+        <div class="t">所以你今天在訓練的時候,你就要給機器看這種character跟phoneme混合的輸入,今天在訓練的時候,你需要把某一些詞彙隨機的,不去看詞典,就某一些詞彙,你要隨機的用它的character來表示,所以今天你的Tapletron的輸入就會總是有phoneme跟character混合的結果,讓機器去學說,看到這種phoneme跟character混合的結果,要怎麼產生輸出,要怎麼產生聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:10.000" id=06:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=370">06:10.000</a></div>
+        <div class="t">那這樣做的好處還有一個好處是說,假設有一些詞彙你事後知道怎麼做了,NCOV你現在還不知道怎麼念,那你之後,你去問了專家學者以後,你知道NCOV應該要怎麼念了,那你就直接把這個詞彙加到你的lexicon裡面去,那你就可以直接修正你的Tapletron的發音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:33.260" id=06:33.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=393">06:33.260</a></div>
+        <div class="t">假設Tapletron念的發音,一些升等的詞彙,它自己猜測的發音是不對的,那你可以把正確的發音直接加到你的詞典裡面去,那你就可以立即矯正Tapletron的發音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.120" id=06:45.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=405">06:45.120</a></div>
+        <div class="t">有時候我們會把文法的資訊加到Tapletron的輸入裡面去,那為什麼要把文法的資訊加到Tapletron的輸入裡面去呢?文法的資訊可以帶給我們什麼樣的訊息呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:03.120" id=07:03.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=423">07:03.120</a></div>
+        <div class="t">文法的資訊可以帶給我們什麼樣的訊息呢?文法的資訊至少可以告訴我們說,哪些詞彙合起來算是一個片語。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.020" id=07:15.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=435">07:15.020</a></div>
+        <div class="t">舉例來說,這邊有一個句子,both of these two boys like eating apple,文法的資訊可以告訴我們說,these two boys是一個名詞片語,然後apple加eating是一個動詞片語,like eating apple又是另外一個片語。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:35.960" id=07:35.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=455">07:35.960</a></div>
+        <div class="t">那像這樣子,哪些詞彙合起來算是一個片語的資訊,對於語音合成可以帶來什麼樣的幫助呢?這邊舉一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.340" id=07:46.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=466">07:46.340</a></div>
+        <div class="t">有一天,小龍女對楊過說,我也想過過過過而過過的生活。楊過就想說,你在說什麼都聽不懂,怎麼這麼多過?但是如果我們可以加上文法的資訊,告訴語音合成系統說。語音合成系統如果要叫他念這個句子,他會念說過過過過而過過的生活,你就聽不懂他到底在念些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.520" id=08:12.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=492">08:12.520</a></div>
+        <div class="t">但是如果我們可以把一些文法的資訊加進去,我們可以告訴Tacotron說,想過是一個詞彙,過過是另外一個詞彙,過而是一個詞彙,過過的生活是一個詞彙,過而過過的生活合起來是一個更大的片語。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.640" id=08:32.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=512">08:32.640</a></div>
+        <div class="t">你把這些資訊告訴你的Tacotron,你的Tacotron可能就可以把聲音合得更好。舉例來說,他可以知道說在片語跟片語中間要稍微停頓一下。比如說,他可以說,我也想過過過過而過過的生活,聽起來就會比較好懂。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.060" id=08:54.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=534">08:54.060</a></div>
+        <div class="t">我在文獻上也看過有人嘗試把Bird當作是Tacotron的輸入。我們還沒有講過Bird,不過我相信在座很多同學應該都有或多或少聽過Bird這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:07.940" id=09:07.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=547">09:07.940</a></div>
+        <div class="t">Bird做的事情就是可以把每一個詞彙抽出它的representation,這個representation有非常豐富的語意的資訊。可以把這種語意的資訊,這種Bird抽出來的representation,當作是Tacotron的輸入。在文獻上看起來,這個方法也是有一些幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.840" id=09:29.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=569">09:29.840</a></div>
+        <div class="t">再來,我們要講Attention的部分。我們在介紹Tacotron的時候就已經講過,Attention對Tacotron來說是非常重要的,它就像是duration的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:45.500" id=09:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=585">09:45.500</a></div>
+        <div class="t">而且我們說Attention最好是像這樣對角線的狀況,縱軸代表Encoder的輸出,橫軸代表Decoder的輸出。而Decoder和Encoder之間所產生的Attention的關係,這個Attention的matrix,它最好看起來像是對角線那個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.400" id=10:10.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=610">10:10.400</a></div>
+        <div class="t">如果我們期待這件事情發生,期待我們的Attention像是一個對角線這樣子,那我們何不把我們的期待直接加到訓練的過程之中呢?我們能不能在訓練的時候就告訴我們的模型說,我們喜歡你在做Attention的時候,看起來像是對角線?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.740" id=10:31.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=631">10:31.740</a></div>
+        <div class="t">這一招就叫做Guided Attention。Guided Attention其實就是在原來Tacotron訓練的那些Loss的Term上再多加一個Term。原來在Tacotron的訓練裡面,你只是希望說Tacotron輸出的聲音訊號跟正確答案、跟你的光柱的聲音訊號越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.520" id=10:51.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=651">10:51.520</a></div>
+        <div class="t">但在Guided Attention裡面,你對Attention加了一個Regularization,你就畫了一個禁止進入的區域,像這個圖上的深紅色的箭頭就是禁止進入的區域。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.340" id=11:05.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=665">11:05.340</a></div>
+        <div class="t">如果今天禁止進入的區域裡面有Attention的weight,那你在訓練的時候就有一個Penalty。如果你今天在禁止進入的區域裡面有Attention的weight的話,Loss就比較大。沒有Attention的weight的話,Loss就比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:22.880" id=11:22.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=682">11:22.880</a></div>
+        <div class="t">在訓練的時候,你的Tacotron就會傾向於讓你的Attention只有集中在對角線的地方。這個就是Guided Attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.160" id=11:38.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=698">11:38.160</a></div>
+        <div class="t">剛才講到Guided Attention在訓練的時候要求Attention一定要在對角線的地方,不過這個只是一個Guide,並沒有強制告訴你說Attention一定要在對角線的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:53.840" id=11:53.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=713">11:53.840</a></div>
+        <div class="t">還有其他一些方法是可以給你的Attention非常強的限制的,比如說有一個方法叫做Monotonic的Attention,它會要求你的Attention一定要由左向右。這個細節我們就不講了,Monotonic的Attention是要求你的Attention一定要由左向右。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.920" id=12:14.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=734">12:14.920</a></div>
+        <div class="t">還有一些其他的方法,比如說Location-Aware的Attention,在Tacotron裡面其實也有被使用到。Tacotron的第二個版本就是用Location-Aware的Attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.700" id=12:27.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=747">12:27.700</a></div>
+        <div class="t">Location-Aware的Attention,我們其實在講語音辨識的時候也有講過,在做語音辨識的時候跟做語音合成的時候也是一樣的,你希望你的Attention像是一個對角線一樣。你希望你的Attention由左向右看起來像是一個對角線的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.080" id=12:46.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=766">12:46.080</a></div>
+        <div class="t">所以,你今天在產生Attention的時候,你必須要知道在前一個Time Step你產生出來的Attention長什麼樣子,所以就有Location-Aware的Attention這樣的想法。如果你已經忘記它是什麼的話,我把講語音辨識的時候的特本片放在這邊,大家可以參考之前上課的錄影。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.860" id=13:03.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=783">13:03.860</a></div>
+        <div class="t">其實,Attention有非常多可以研究的地方,有非常多的奇蹟、淫巧。大家可以參考這篇最新的ICATS 2020的paper,它告訴你說Attention對於Tacotron的語音合成有多麼的重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.100" id=13:22.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=802">13:22.100</a></div>
+        <div class="t">在這篇paper裡面做了一個有趣的實驗,我們就看下面這個圖就好。它的訓練資料是LJ Speech,它只拿LJ Speech裡面長度小於十秒鐘的聲音出來進行訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.860" id=13:37.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=817">13:37.860</a></div>
+        <div class="t">訓練的時候,所有的語音的長度都小於十秒,但是測試的時候,它故意讓機器去念哈利波特裡面的句子。哈利波特裡面有一些很長的句子,所以機器必須要合很長的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.880" id=13:54.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=834">13:54.880</a></div>
+        <div class="t">訓練的時候是十秒,但合成的時候,它特別挑一些超過十秒的聲音訊號,超過十秒的句子叫機器念,從十二秒到八十四秒,非常長的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.880" id=14:07.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=847">14:07.880</a></div>
+        <div class="t">它發現說,如果你的Attention選得不好,你選一般Content-based Attention,Content-based Attention就是我們最常見的,直接算Coffin Similarity,直接做Dapada那一種Attention,或者是你有考慮Location的Attention,其實都還是會壞掉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:24.680" id=14:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=864">14:24.680</a></div>
+        <div class="t">它發現說,這兩種大家比較常用的Attention,當你合的聲音訊號,舉例來說,如果是Location Sensitive Attention,你合出來的聲音訊號超過二十秒的時候,它就開始崩壞了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.340" id=14:37.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=877">14:37.340</a></div>
+        <div class="t">那怎麽知道你的語音合成的結果是崩壞的呢?這篇文章裡面是用Character Error Rate來衡量的,也就是它去衡量說,你現在合成出來的聲音訊號裡面有多少詞彙是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:51.440" id=14:51.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=891">14:51.440</a></div>
+        <div class="t">那我們怎麽知道說合成出來的聲音訊號裡面有多少詞彙是錯的呢?是人去聽嗎?不是。它是用Google的語音辨識系統去辨識一下語音合成的結果,然後再去跟原來正確的文字,你要這個語音合成系統念出來的文字做比對,你就可以知道說有多少地方是念錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.780" id=15:13.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=913">15:13.780</a></div>
+        <div class="t">當然這邊是假設語音辨識系統非常強的前提之下,你才能夠這麽做。假設語音辨識系統一定可以辨識對,那看看語音辨識系統辨識出來的結果跟你要機器念的結果有多大的差異。你就知道說差異越大,代表你語音合成的結果越差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.640" id=15:31.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=931">15:31.640</a></div>
+        <div class="t">這邊Pepper發現說,你如果叫TableTron去念一些比較長的句子,比訓練資料還要長得多的句子,訓練資料只有十秒,但叫他念一些超過二十秒的句子,他整個就會壞掉了。但是,這邊Pepper也提出了一些新的想法,第二代的GNN Attention、DCA Attention,發現說用他提出的方法,結果就會好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:53.400" id=15:53.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=953">15:53.400</a></div>
+        <div class="t">這個細節到底什麽是DCA,就留給大家自己研究。這邊只是想告訴大家說,其實並不是有TableTron就解決了語音合成的問題,就算是有TableTron,後面還有很多值得研究的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.120" id=16:11.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=971">16:11.120</a></div>
+        <div class="t">Attention還有更多更多的小技巧,葉頭影片裏面的技巧是來自於百度的第三代DeepVoice。第一個小技巧是說,大家既然這麽堅持Attention一定要是對角線的,那你何不就直接強制設定一定要是對角線的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.280" id=16:36.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=996">16:36.280</a></div>
+        <div class="t">在Guided Attention裏面是說,如果你今天走到非對角線的地方,就給你一些懲罰。但是在這個DeepVoice Drift裏面,他直接設定說,在Inference的時候,這個跟訓練的過程沒有關係,在使用這個TableTron的時候,在測試的時候,我們直接把所有在禁止進入的區域裏面的Attention的weight直接設定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.840" id=16:59.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1019">16:59.840</a></div>
+        <div class="t">就不算Attention的weight了,直接把這兩塊三角形的區域的Attention位置設定,就代表說Attention只准Attent在接近對角線的地方。他們發現說,這一招是蠻有用的,這一招跟Training一點關係都沒有,他在測試的時候,直接加上這一招就可以讓你的語音合成系統比較穩一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.280" id=17:25.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1045">17:25.280</a></div>
+        <div class="t">這篇Paper裏面還有一個神奇的方法是,他把在計算Attention的時候的Query跟Key都加上Positional Encoding。我們知道說,在做Attention的時候,你的Decoder會產生一個Query,你的Encoder會產生Key,這個Query跟Key做一些運算,比如說Buffada就可以產生Attention的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:49.800" id=17:49.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1069">17:49.800</a></div>
+        <div class="t">在這篇Paper裏面,他們把Key跟Query加上Positional Encoding,就等於是在計算Attention的時候告訴我們說,這個Key是在整個Decoder輸出的第幾個位置,希望這樣可以加強Attention的計算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.620" id=18:13.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1093">18:13.620</a></div>
+        <div class="t">最後還有一個有趣的地方是,這個Positional Encoding是怎麼來的呢?這個Positional Encoding居然是由Speaker的資訊來操控的。可能因為不同的Speaker,說話的速度是不太一樣的,所以用Speaker來操控。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.760" id=18:30.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1110">18:30.760</a></div>
+        <div class="t">這邊有個Speaker Embedding,我們下一份投影片就會講什麼是Speaker Embedding。現在只要知道說Speaker Embedding就代表了語者資訊就可以了,而這個Positional Encoding居然是由Speaker Embedding來操控的。也就是如果要和不同人的聲音的時候,這個Positional Encoding的方式是會不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.540" id=18:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1129">18:49.540</a></div>
+        <div class="t">不同人,你就有各自不同人的Personalized TTS Model。還有一招叫做Fast Speech。Fast Speech跟另外一個叫做Duration Informed Attention Network的這兩個方法,幾乎是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.940" id=19:11.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1151">19:11.940</a></div>
+        <div class="t">他們是在不同的團隊在同一個時間幾乎提出了一樣的想法,一個叫做Fast Speech,另外一個方法就是縮寫成Durian。Durian是什麼呢?Durian就是榴槤啦,大家都是模型命名大師,大家命名模型的時候都非常的有梗。這兩個想法是非常像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:33.900" id=19:33.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1173">19:33.900</a></div>
+        <div class="t">這個是怎麼做的呢?我們說今天在做語音合成的時候,我們問題就是要輸入一串字母,輸出就是比如說Spectrogram,就是一串Acoustic的Feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:47.220" id=19:47.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1187">19:47.220</a></div>
+        <div class="t">我們在講Tacotron的時候說,我們其實用了一個有Attention的Sequence-to-Sequence的Model,把Character讀進去,把聲音訊號輸出出來。我們之所以需要用到一個Sequence-to-Sequence的Model,就是因為輸入的Sequence的長度跟輸出的Sequence的長度是不同的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:04.500" id=20:04.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1204">20:04.500</a></div>
+        <div class="t">像這樣子的任務,用Sequence-to-Sequence的Model來解是最合適的。但是用Sequence-to-Sequence的Model,你就有可能遇到我們之前有提到的,它可能會有某一些詞彙就漏掉了,某一些詞彙被念了兩遍等等的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:24.040" id=20:24.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1224">20:24.040</a></div>
+        <div class="t">在Fast Speech跟During裡面,他們用的不是Sequence-to-Sequence的Model,他們採取了另外一個方法。這個方法是這個樣子的。首先一樣有一個Encoder,把這些Character變成Embedded。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.880" id=20:38.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1238">20:38.880</a></div>
+        <div class="t">接下來,有一個Duration的Model,這個Duration的Model做的事情是預測說每一個Character應該要念多長。之前我們在講Tangotron的時候是講說用Attention來決定每一個Character要念多長。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:57.260" id=20:57.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1257">20:57.260</a></div>
+        <div class="t">在這邊,直接另外另一個Duration的Model,這個Duration的Model會吃這邊的每一個Vector,然後決定說根據這個Vector所對應的字母,我們要念多長。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.680" id=21:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1271">21:11.680</a></div>
+        <div class="t">這邊這個數字231代表說,我們要把這個Encoder Output的Embedding複製幾次。比如說紅色的Vector丟到Duration的Model裡面輸出是2,那我們就把紅色的Vector複製兩次。藍色的Vector丟到Duration的Model輸出是3,藍色的Vector就有複製三次。黃色的Vector丟進去輸出是1,那黃色的Vector就只複製一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:33.620" id=21:33.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1293">21:33.620</a></div>
+        <div class="t">所以原來輸出的Sequence只有三個Vector,那經過這個Duration的Model以後,它就被延展了,延展成變成有六個Vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.820" id=21:44.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1304">21:44.820</a></div>
+        <div class="t">然後我們期待說這邊的Vector的數目跟你的Acoustic Feature的數目是一樣的,所以這個Duration的Model要自己學到說,怎麼把Encoder輸出比較短的Vector Sequence把它拉長,變得跟我們預計要輸出的Acoustic Feature的長度是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:03.820" id=22:03.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1323">22:03.820</a></div>
+        <div class="t">接下來有一個Decoder,就把這個Vector Sequence吃進去,然後產生Acoustic Feature,就是我們語音合成的結果了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.020" id=22:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1332">22:12.020</a></div>
+        <div class="t">講到這邊你會問說,那這個怎麼訓練這個模型呢?理論上當然我們只要有輸入、有輸出對應的關係,我們就可以End-to-End硬Train下去,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.000" id=22:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1348">22:28.000</a></div>
+        <div class="t">但是如果你仔細想想的話,就會覺得這個不太對啊,這個模型到底要怎麼訓練呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:35.000" id=22:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1355">22:35.000</a></div>
+        <div class="t">做Backpropagation的時候,當然我們已經知道這個Acoustic Feature Wrong Truth,所以做Backpropagation的時候,一路上Backpropagate回來走到這個路徑的時候,你是沒辦法微分的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:47.000" id=22:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1367">22:47.000</a></div>
+        <div class="t">這個Duration輸出的是Integer,它輸出的是這個正整數啊,那這個地方顯然有一個不能微分的地方,怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:58.000" id=22:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1378">22:58.000</a></div>
+        <div class="t">當然如果你要做得狂一點,你可以說我用Reinforcement Learning硬Train啦,不過Fast Speech跟During裡面都沒有用Reinforcement Learning,他們採取的是一個顯然是更容易的做法,他們的做法是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.000" id=23:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1391">23:11.000</a></div>
+        <div class="t">Inference的時候,我們讓Duration Model的輸出去Expand這個Sequence,把這個短的Sequence變成長的Sequence,這個是Inference的時候。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:21.000" id=23:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1401">23:21.000</a></div>
+        <div class="t">但Training的時候,採行了一個稍微不一樣的做法,Training的時候,Duration要輸出什麼東西,我們會給它一個正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.000" id=23:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1413">23:33.000</a></div>
+        <div class="t">要怎麼Expand這個Input的Sequence,要怎麼把Encoder的輸出伸展變長,變成Decoder的輸入,這個地方我們也用一個Wrong Truth來指導這個短的Sequence怎麼變成長的Sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:48.000" id=23:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1428">23:48.000</a></div>
+        <div class="t">也就是說,我們會先需要得到Character跟Acoustic Feature Sequence之間的Align的關係,我們會需要有Wrong Truth告訴我們說這邊的每一個Character,它所對應的Embedding到底應該要被重複幾次,才可以跟Output的Sequence一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.000" id=24:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1448">24:08.000</a></div>
+        <div class="t">就是每一個Character,它對應到Output的Acoustic Sequence,它的發音到底有多長。像這樣子的對應關係要怎麼得到呢?舉例來說,在First Speech的原始的Paper裡面,它是先Train了一個我們都知道的Tagotron,它先訓練了一個Tagotron。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:27.000" id=24:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1467">24:27.000</a></div>
+        <div class="t">然後根據Tagotron的Attention,它去想辦法計算說每一個Acoustic Feature應該被重複幾次,才會跟輸出的結果一樣長。這是First Speech的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:41.000" id=24:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1481">24:41.000</a></div>
+        <div class="t">理論上,你也可以說我跑一個語音辨識系統,做一下False Alignment,用一個語音辨識系統告訴我們說,如果這些Acoustic Feature要做語音辨識產生這些Character的話,這邊哪些Acoustic Feature對應到哪些Character。我覺得是可以啦,不過我沒有看過有人這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.000" id=24:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1498">24:58.000</a></div>
+        <div class="t">First Speech裡面用的是Tagotron來得到Input的Character跟Output的Acoustic Feature之間的關係。所以,你在訓練的時候,你會有光Troop,知道說紅色這個Vector就是要複製兩次,藍色的這個Vector就是要複製三次,黃色這個Vector就是要複製一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:18.000" id=25:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1518">25:18.000</a></div>
+        <div class="t">你會把這個正確的答案直接拿去Expand這個Encoder的Output變成Decoder的Input。所以,這邊用的是正確答案。另外,Duration這邊,你也會直接告訴Duration說,紅色的Vector就是要複製兩次,藍色的Vector就是要複製三次,黃色的Vector就是要複製一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.000" id=25:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1536">25:36.000</a></div>
+        <div class="t">所以,這邊會變成一個像是Regression的Problem。你就認說,看到這個紅色的Vector就要輸出2,看到藍色的Vector就要輸出3,看到黃色的Vector就是要輸出1。這是一個Regression的Problem,你可以直接認的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:51.000" id=25:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1551">25:51.000</a></div>
+        <div class="t">所以,實際在認的時候,你等於就是Encoder的輸出會拉出來給Duration,得到一個Prediction。這個Prediction要跟正確答案一樣。然後,在這個地方會有另外一個Ground Truth當作輸入,這個地方是不用Trend的,這個地方是正確答案,所以是不用Trend的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:10.000" id=26:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1570">26:10.000</a></div>
+        <div class="t">你在Trending的時候就只要End-to-End把這個Error從這邊傳下來就好,把Error從這邊傳下來就好。你就可以避開說,因為這個輸出需要是Discrete等等所造成的,在Trending的時候會有問題的這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.000" id=26:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1585">26:25.000</a></div>
+        <div class="t">好,這個是Fast Speech跟During。Fast Speech有沒有用呢?這一招有沒有用呢?這邊是引用了Fast Speech那篇Paper裡面的結果。這篇Paper裡面它說,如果我們用Tackle Trunk或者是另外一個Transformer的TTS,反正就是End-to-End的Trend一個TTS Model,你可以想像說就是把Tackle Trunk裡面的一些東西換成Transformer就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:51.000" id=26:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1611">26:51.000</a></div>
+        <div class="t">Tackle Trunk跟Transformer的TTS,它們在Fast Speech的測試資料上都會有很多Repeat的現象,會有Skip的現象,會有Sentence Error的現象,也就是說它會結巴,會有某一些詞彙沒念到,然後會有某一些詞彙居然是念錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:15.000" id=27:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1635">27:15.000</a></div>
+        <div class="t">而且會發現說,這個數字都還不小,測試資料總共只有五十句,Repeat、Skip、Error、Sentence、Error都發生十幾次,實在是很難讓人接受。如果用Fast Speech這一招,那Repeat、Skip、Error這樣子的狀況就不會出現了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:38.360" id=27:38.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1658">27:38.360</a></div>
+        <div class="t">你可以想像說,用Fast Speech那一招,我們等於是給我們的模型在Time Duration上一個更大的限制,所以就比較不會發生Repeat、Skip這樣子的現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.860" id=27:48.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1668">27:48.860</a></div>
+        <div class="t">你可能會說,看這個實驗結果,感覺Techotrap很弱啊,五十個句子裡面這種Skip十一次等於有五分之一的機率有犯錯啊,這個能讓人接受嗎?怎麼會這麼爛?當初Techotrap2的paper怎麼會把Techotrap誇得那麼強?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:08.260" id=28:08.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1688">28:08.260</a></div>
+        <div class="t">其實Techotrap也沒有這個實驗裡面呈現得那麼弱。如果你給它念一些正常的句子,比較像是你的訓練資料的句子,那其實Techotrap是可以表現得不錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.060" id=28:21.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1701">28:21.060</a></div>
+        <div class="t">但是在這五十個句子、在Fast Speech的測試資料裡面,他們是故意去為難Techotrap,他們故意去找了一些他們覺得在做語音合成的時候很容易慘掉的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:39.100" id=28:39.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1719">28:39.100</a></div>
+        <div class="t">舉例來說,這個是測試句子裡面的其中幾句,叫Techotrap念一串數字,或者叫Techotrap念個網址http://,然後看看他能不能夠念得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.300" id=28:53.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1733">28:53.300</a></div>
+        <div class="t">對Techotrap來說,念這些怪怪的句子就比較有難度,所以他就比較容易犯錯,Fast Speech結果會好一些。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.460" id=29:02.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1742">29:02.460</a></div>
+        <div class="t">TTS跟ASR我們都已經講過了。你會發現說,TTS跟ASR他們兩個互為表裡,互相正好是相反的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.540" id=29:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1757">29:17.540</a></div>
+        <div class="t">他們都可以用Sequence-to-Sequence Model加Attention來解,ASR吃語音產生文字,語音合成吃文字產生語音。他們兩個可以串在一起變成一個循環。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:34.900" id=29:34.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1774">29:34.900</a></div>
+        <div class="t">如果你有一個語音辨識系統,有一個語音合成系統,你就可以把他們串在一起變成一個循環,這個循環叫做Speech Chain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:44.900" id=29:44.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1784">29:44.900</a></div>
+        <div class="t">這個Speech Chain把一個ASR跟TTS接在一起,有什麼樣的妙用呢?這個妙用是你可以做Dual Learning,你可以讓ASR跟TTS互相去增進彼此的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:00.740" id=30:00.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1800">30:00.740</a></div>
+        <div class="t">怎麼讓ASR跟TTS互相去增進彼此的能力呢?假設你現在手上有一個TTS、有一個ASR,你可以收集到一大堆的聲音訊號,而這些聲音訊號是沒有文字標註的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:18.740" id=30:18.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1818">30:18.740</a></div>
+        <div class="t">你可能隨便從網絡上爬到一大堆聲音,你沒有錢,請工讀生來幫你做標註。那怎麼辦呢?你用你手上的語音辨識系統,把這些聲音轉成文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.180" id=30:31.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1831">30:31.180</a></div>
+        <div class="t">把這些聲音轉成文字以後,你就有文字跟聲音的Pair,你就有成對的文字跟聲音,你就可以拿這個成對的文字跟聲音來訓練一個語音合成的系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:45.240" id=30:45.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1845">30:45.240</a></div>
+        <div class="t">或者是換另外一個角度來看,你希望輸入一段聲音,ASR系統把它轉成文字,然後這串文字在丟給TTS以後應該要合成回一模一樣的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:57.780" id=30:57.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1857">30:57.780</a></div>
+        <div class="t">這個ASR跟TTS他們變成一個Auto Encoder,ASR是Encoder,TTS是Decoder,輸入一段聲音要還原回原來的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.080" id=31:10.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1870">31:10.080</a></div>
+        <div class="t">用這個方法,你可以再重新Train你的TTS。你也可以說,我現在有一大堆的文字,但我不知道這些字要怎麼念。沒關係,我們用語音合成系統,用TTS把它念出來,這樣我們就有文字跟聲音之間的對應關係,我們可以用文字跟聲音之間的對應關係去訓練一個語音辨識系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.900" id=31:30.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1890">31:30.900</a></div>
+        <div class="t">或者是,你可以想成有一段文字作為輸入,這段文字被轉成聲音,這段聲音再丟到語音辨識系統變成文字,要讓輸入輸出越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:42.760" id=31:42.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1902">31:42.760</a></div>
+        <div class="t">你可以把語音合成跟語音辨識串在一起做Dual Learning,把兩個輸入跟輸出相反的模型接在一起,讓他們一起訓練,讓他們增進彼此的能力,這個叫做Dual Learning。你可以用Dual Learning的方法來強化你的語音辨識跟語音合成系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:04.680" id=32:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1924">32:04.680</a></div>
+        <div class="t">這個應該是SpeechChain最早的Paper,在這篇Paper裡面就有講說,這個實驗我們就不細看,我們就很快帶過去就好,有一些成對的資料,有一些不成對的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:20.440" id=32:20.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1940">32:20.440</a></div>
+        <div class="t">如果你是做語音辨識的話,只用成對的資料,你的錯誤率是26%左右,但是加上這些非成對的資料,用我們剛才講的Dual Learning的方法去同時improve TTS跟ASR,那你的語音辨識系統就變好了,如果你看語音合成的部分,語音合成的結果也會跟著一起變好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:46.280" id=32:46.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1966">32:46.280</a></div>
+        <div class="t">這個是Dual Learning的部分,接下來我們來講可以被控制的TTS。為什麼我們要討論TTS能不能夠被控制這件事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:01.800" id=33:01.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1981">33:01.800</a></div>
+        <div class="t">因為一段聲音訊號裡面的組成其實包含了好幾個面向,一個是這段聲音訊號裡面說了什麼,而說了什麼這件事情可以用TTS裡面輸入的文字來操控。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:17.760" id=33:17.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=1997">33:17.760</a></div>
+        <div class="t">我們在使用Tekortron的時候,你輸入的文字就決定了你輸出的那句聲音訊號裡面講的是什麼樣的事情。但是這並不是一段聲音的全部,一段聲音訊號裡面所包含的資訊並不是只有它的內容,並不是只有它對應的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:36.940" id=33:36.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2016">33:36.940</a></div>
+        <div class="t">還有其他重要的資訊,什麼樣重要的資訊呢?它包含了是誰在說這句話。我們在講Voice Conversion的時候已經講過說,誰在說一句話是重要的,就算是同樣的內容,不同的人在說也可以達成不同的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:54.040" id=33:54.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2034">33:54.040</a></div>
+        <div class="t">那就算是同一句話,同一個人說,用不同的口氣說,用不同的speaking style來說,也會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:07.500" id=34:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2047">34:07.500</a></div>
+        <div class="t">如果是誰在說的話,意思就是我們要操控我們的語音合成系統,我們希望語音合成系統它合出來的聲音可以像是某個特定的人的聲音。像這樣的技術,也有人叫做Voice Coding,就是你的語音合成系統去聽到某個人的聲音,把它的聲音複製下來,你就可以用那個人的聲音來念你想要念的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:34.440" id=34:34.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2074">34:34.440</a></div>
+        <div class="t">像這樣子的Voice Coding,比較直覺的做法是說,假設你的目標語者你可以收集到非常多他的語料,那你就可以用目標語者的語料來微調你的語音合成系統,來調整你的語音合成系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:50.740" id=34:50.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2090">34:50.740</a></div>
+        <div class="t">這是一個方法,不過等一下會講說,其實有其他的方法可以做到Voice Coding這件事,因為很多時候你不見得能夠找到你的目標語者的聲音,你的目標語者你可能沒有辦法收集到數個小時的聲音來微調你的Tacotron、來微調你的語音合成系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:08.520" id=35:08.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2108">35:08.520</a></div>
+        <div class="t">所以我們需要別的方法,用更少量的資料就做到Voice Coding這件事。這個是誰在說的部分。那怎麼說呢?怎麼說的部分又包含了很多面向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.780" id=35:22.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2122">35:22.780</a></div>
+        <div class="t">同一句話、同樣的內容、同一個人,你可以用不同的語調來說,可以用不同的重音來說,可以用不同的旋律來說。而這些語調、重音、旋律等等,其實我們可以合起來稱之為Prosody,也就是異樣頓挫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:45.180" id=35:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2145">35:45.180</a></div>
+        <div class="t">同樣的句子、同樣的內容、同一個人在說,它的意涵可以是非常不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:54.080" id=35:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2154">35:54.080</a></div>
+        <div class="t">舉例來說,假設有一個人告訴你說,他明天七點就要起床,所以你不可以叫他凌晨一點要更新。你不會更新,你要先講。如果你的回答是說,那我也要去睡了,那這樣子聽起來是很和善的。如果你的回答是說,那我也要去睡了,那這樣子聽起來就很像重力可可的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:17.580" id=36:17.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2177">36:17.580</a></div>
+        <div class="t">所以,同一句話、同樣的人,但是用不同的口氣來說,聽起來也是非常不同的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:25.880" id=36:25.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2185">36:25.880</a></div>
+        <div class="t">什麼是Prosody呢?其實Prosody,你很難給它一個非常好的定義。我下面列的這個定義是來自一篇ICML的文章。在這篇文章裏面,它對Prosody的定義其實是負面表列的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:45.860" id=36:45.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2205">36:45.860</a></div>
+        <div class="t">我們不知道Prosody是什麼,但是我們知道Prosody不是什麼。Prosody就是聲音訊號裏面的變化,但這些變化不是來自於Phonetic,也就不是來自於你想要說什麼,不是來自於Speaker Identity,不是來自於誰說的,不是來自於Channel Effect,也就不是來自於你錄音的環境。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:10.500" id=37:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2230">37:10.500</a></div>
+        <div class="t">去掉這些內容、語者、錄音環境等等的因素,剩下的聲音的不同就叫做Prosody。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:18.440" id=37:18.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2238">37:18.440</a></div>
+        <div class="t">所以,Prosody是什麼東西,我們其實很難講清楚。我們通常中文就翻譯成異洋頓挫,但是我們很難描述什麼叫做異洋頓挫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:29.240" id=37:29.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2249">37:29.240</a></div>
+        <div class="t">既然像Prosody這種東西,我們人要描述都描述不清楚了,那你要怎麼操控機器,讓它講出你要的異洋頓挫呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.520" id=37:41.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2261">37:41.520</a></div>
+        <div class="t">這邊用的方法是這樣子的。你怎麼控制你的語音合成系統,合成出你想要的異洋頓挫呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:50.540" id=37:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2270">37:50.540</a></div>
+        <div class="t">一般的語音合成系統就是輸入一段文字,輸出一段聲音。如果你想要操控這個語音合成的異洋頓挫,你可以再給它一段聲音當作輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:01.280" id=38:01.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2281">38:01.280</a></div>
+        <div class="t">這段聲音叫做Reference的Audio。我講白話一點就是告訴機器說,請你跟我這樣說。告訴機器說,希望它講出來的聲音像是這一段Reference Audio,希望它跟著Reference Audio的Prosody來產生句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:20.900" id=38:20.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2300">38:20.900</a></div>
+        <div class="t">這個是Controllable的TTS。講到這邊你就會想到說,這個其實有點像是Voice Conversion。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:32.400" id=38:32.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2312">38:32.400</a></div>
+        <div class="t">我們在講Voice Conversion的時候,我們會說我們需要給Voice Conversion的Model兩段聲音,其中一段聲音我們會抽出Content,我們抽出它的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:42.320" id=38:42.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2322">38:42.320</a></div>
+        <div class="t">另外一段聲音呢,我們會抽出它的比如說語者的特徵,那我們就可以用藍色這段聲音的語者的特徵念黃色這段聲音的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:54.620" id=38:54.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2334">38:54.620</a></div>
+        <div class="t">把Voice Conversion跟Controllable TTS比起來,那你會發現說它們是有很多相像的地方,它們都有一段Reference Audio告訴我們語音合成系統說,現在合成出來的聲音它的風格應該是什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:11.200" id=39:11.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2351">39:11.200</a></div>
+        <div class="t">但是這段聲音的內容呢,在TTS Model裡面是由文字來操控的,那在Voice Conversion Model裡面你要有另外一段聲音訊號,這一段另外一段聲音訊號提供了這個Voice Conversion Model合成出來聲音的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:29.200" id=39:29.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2369">39:29.200</a></div>
+        <div class="t">這邊是把Controllable TTS跟Voice Conversion做一個比較,那等一下你會發現說Controllable TTS跟Voice Conversion它們的訓練其實是蠻類似的,因為它們模型看起來蠻像的,所以你會發現說它們的訓練也是用非常類似的方法來訓練的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:49.200" id=39:49.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2389">39:49.200</a></div>
+        <div class="t">大家有什麼問題就可以隨時提出來,我其實都是看得到的。那接下來就進入Controllable TTS訓練的部分,之前在講Tagotron的時候說我們怎麼訓練呢?訓練的時候你就是希望輸入一段文字,輸出的聲音訊號跟我們的Control跟正確答案越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:12.200" id=40:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2412">40:12.200</a></div>
+        <div class="t">如果是Controllable TTS,你就會同時給你的TTS Model一段Reference的Audio,那這個Reference的Audio是哪裡來的呢?在訓練的時候,這段Reference的Audio就是你的光處,也就是你期待說你的TTS Model可以從這裡抽取文字的資訊,從Reference Audio裡面抽取Prosody、Speaker的資訊,然後今天念出來的聲音訊號的內容來自於文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:41.200" id=40:41.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2441">40:41.200</a></div>
+        <div class="t">但是這段聲音訊號的餘者資訊或者是異樣頓挫的資訊是來自於Reference的Audio。然後接下來就End to End的訓練下去,輸出這段文字、輸出這段聲音,然後你要合成一段聲音跟你的光處越接近越好。這個其實就是Controllable TTS訓練的基本概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:02.200" id=41:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2462">41:02.200</a></div>
+        <div class="t">Inference的時候,你只要把Reference Audio換掉,那你期待說TTS Model它已經學到怎麼從這段聲音訊號裡面抽出餘者的資訊、抽出Prosody的資訊,那你就可以改變你合成出來聲音的餘者的資訊或者是Prosody的資訊。它的內容是來自於文字,但是其他內容以外的文字以外的資訊都來自於Reference的Audio。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:30.200" id=41:30.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2490">41:30.200</a></div>
+        <div class="t">這樣訓練,你很直覺的就可以想到一個問題,這個問題是什麼呢?我們今天在訓練的時候,其實這個TTS Model它看起來就像是一個Autoencoder。我們輸入一段聲音訊號、輸入一段文字,然後我們希望合成出的聲音訊號,其實跟我們輸入的聲音訊號一模一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:52.200" id=41:52.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2512">41:52.200</a></div>
+        <div class="t">也就是說,這個TTS Model,這種Controllable TTS Model,你根本就可以把它看成是一個Autoencoder,輸入一段聲音訊號,你要輸出一模一樣的聲音訊號。只是這個Autoencoder還多了一個額外的訊息,就是文字的訊息,它多了一個文字的Condition。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:10.200" id=42:10.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2530">42:10.200</a></div>
+        <div class="t">如果你這樣看的話,你就會發現說Controllable TTS聽起來好像有很大的問題,因為聲音訊號可以直接從這邊copy過去。也就是,你的TTS Model如果發現說,反正這邊所有的聲音訊號跟輸出的聲音訊號根本就是同一句,它才會學會說,我們就不要管這個文字了,我們就直接把輸入當作Reference的Audio直接複製到輸出去,就可以minimize我們的Loss這個訓練就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:35.700" id=42:35.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2555">42:35.700</a></div>
+        <div class="t">但是在Inference的時候,這顯然不是我們要的,因為你就會變成說,你明明要叫TTS唸Hello,只是用I love you的語調來唸Hello,但是現在它合成出來的內容都變了,你叫它和Hello,它就合了一個截然不同的句。這個顯然不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:54.540" id=42:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2574">42:54.540</a></div>
+        <div class="t">所以怎麼辦呢?在Controllable TTS裡面,一個重要的研究主題就是如何阻斷copy這件事情發生,如何讓你的TTS Model對Reference的Audio只抽語者的資訊,只抽positive的資訊,如何讓TTS的Model無視這段聲音訊號裡面文字的資訊,文字的資訊只可以來自於文字的輸入,Content的資訊只可以來自於文字的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:23.660" id=43:23.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2603">43:23.660</a></div>
+        <div class="t">那怎麼做到呢?舉例來說,你可以用Speaker Embedded Model,我們現在可以訓練一個模型,這個模型是吃一段聲音訊號進去,它就會吐出一個向量,這個向量它只包含了這段聲音訊號裡面語者的資訊,它會把這個內容的資訊完全無視掉,只抽出語者的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:46.300" id=43:46.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2626">43:46.300</a></div>
+        <div class="t">那我們在訓練我們的Controllable TTS的時候,這個Feature Attractor,這個可以抽Speaker Embedded Feature Attractor,就把它固定住,它是不跟著訓練的,把它固定起來,然後從這段聲音訊號裡面只抽出語者的資訊,等於是這段聲音訊號裡面只提供語者的資訊給你的TTS Model,你的TTS Model想合成出原來的聲音訊號,那它得看這段文字的內容才有機會合成出一模一樣的聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:13.980" id=44:13.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2653">44:13.980</a></div>
+        <div class="t">那用這樣子的方法,你就可以只從Reference Audio裡面抽語者的資訊,之後你只要替換掉Reference Audio,你就可以合成出不同人的聲音,你就可以做到用少量的資料,就做到Voice Cloning,假設你的Feature Attractor很好,它只需要非常少量的句子,非常少量的聲音的內容,就是聲音訊號,非常少量的聲音訊號就可以抽出Speaker Embedded的話,那你就可以用非常少量的某一個特定語者的聲音訊號,就做到Voice Cloning這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:44.380" id=44:44.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2684">44:44.380</a></div>
+        <div class="t">那還有另外一個做法叫做GST Tackle Trunk,這個GST就在Tackle Trunk前面,所以它顯然是一個Tackle Trunk的進階版,叫做GST Tackle Trunk,這個GST是Global Style Token的縮寫,等一下我們會跟大家講說所謂的Global Style Token在這邊指的是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:05.900" id=45:05.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2705">45:05.900</a></div>
+        <div class="t">那GST Tackle Trunk是怎麼運作的呢?我們說現在我們要做Controllable的TTS,所以我們的輸入不只是文字,還有一段Reference Audio。文字的部分,反正就按照原來Tackle Trunk的做法,有一個Encoder把這些文字吃進去,那產生每一個字母對應的Embedding,那接下來在原來Tackle Trunk裡面,你會有Attention,然後根據這個Encoder的輸出,產生出語音合成的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:33.260" id=45:33.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2733">45:33.260</a></div>
+        <div class="t">在GST Tackle Trunk裡面,這些Reference Audio也會通過一個Feature Attractor,但這個Feature Attractor是跟整個TTS的Model一起認出來的,跟剛才我們前面影片講的Speaker Embedding不一樣,在前面的投影片裡面,Speaker Embedding是事先用別的方法已經訓練好的,這個我們下一份投影片就會講到了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:53.740" id=45:53.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2753">45:53.740</a></div>
+        <div class="t">這邊這個Feature Attractor是跟語音合成系統,整個TTS的其他部分一起訓練出來的。這個Feature Attractor會抽出一個Vector,然後把這個Vector Duplicate,把它複製,把它跟Encoder的輸出的每一個向量,複製出跟Encoder輸出的向量一樣多的向量,然後把這個Feature Attractor的輸出跟Encoder的輸出把它Container起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:20.780" id=46:20.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2780">46:20.780</a></div>
+        <div class="t">文件上有人是Container起來,也有人是直接加起來,這個結果在經驗上是差不多的。然後再做一下Attention,接下來做Attention的部分,就跟原來的Tackle Trunk一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:33.420" id=46:33.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2793">46:33.420</a></div>
+        <div class="t">講到這邊的時候,大家可能會有的一個問題是,這個聲音訊號,我們把Reference Audio當作Feature Attractor的Input,難道Feature Attractor不會想要做複製這件事嗎?難道Feature Attractor不會把Content的資訊抽過來,讓Content的資訊在這邊流進來嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:55.020" id=46:55.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2815">46:55.020</a></div>
+        <div class="t">GST Tackle Trunk關鍵的地方就是,它對Feature Attractor的Network架構做了一個設計。這個Network架構的設計是為了避免讓Content的資訊可以直接透過Reference Audio流到Encoder的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:12.380" id=47:12.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2832">47:12.380</a></div>
+        <div class="t">GST Tackle Trunk是怎麼設計它的Feature Attractor呢?它是這樣設計的。首先,在Feature Attractor裡面有一個Encoder。這個Encoder吃這段聲音訊號進來,它可能是一個比如說LSTM,然後把這段聲音訊號吃進來,最後一個Time Step就輸出一個Vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:31.900" id=47:31.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2851">47:31.900</a></div>
+        <div class="t">那你說,欸?輸出的這個Vector就是這邊看到的這個Vector嗎?不是,這就是GST Tackle Trunk設計巧妙的地方。這個Encoder的輸出,不直接拿來當作整個Feature Attractor的輸出。它怎麼做呢?這個Encoder的輸出是Attention的Weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:52.620" id=47:52.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2872">47:52.620</a></div>
+        <div class="t">在這個Feature Attractor裡面還有另外一組Vector的Set。那這組Vector的Set你可以想成是Feature Attractor的參數,那它也是被訓練出來的。所以這邊有ABCD四個Vector,Vector裡面的值也是被訓練出來的,你可以想成它是Feature Attractor參數的一部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:11.980" id=48:11.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2891">48:11.980</a></div>
+        <div class="t">然後Encoder的輸出只是Attention的Weight。我們就會把Encoder的輸出去乘每一個Vector。Encoder的輸出就是Attention的Weight,那Encoder輸出的這個Value會乘上這些Vector,然後做Weighted Sum,然後得到最終的輸出。那這個輸出才是Feature Attractor最終的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:31.820" id=48:31.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2911">48:31.820</a></div>
+        <div class="t">所以這邊有趣的地方就是,Encoder它只能夠操控這個Attention的Weight。它這樣就會讓你的Encoder很難把Content的資訊直接帶出來,因為它只能夠操控怎麼把這些Vector做Linear的Combination。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:50.460" id=48:50.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2930">48:50.460</a></div>
+        <div class="t">那這些Vector做Linear Combination很難正好就產生Input的Reference Audio的Content,這些Vector你只能夠產生這個Weight,這個Reference Audio它只能夠產生這個Weight來操控這些Vector要怎麼做Linear的Combination。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:05.340" id=49:05.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2945">49:05.340</a></div>
+        <div class="t">那有這樣的限制以後,就很難直接把Reference Audio裡面的Content文字的資訊抽出來當作輸出了。那這邊這些Vector就是GST Tackle Trunk裡面的GST,也就是Global的Style Token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:22.940" id=49:22.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2962">49:22.940</a></div>
+        <div class="t">因為Trunk完這個GST Tackle Trunk以後呢,這個人們發現這裡面的每一個Vector,它就對應到說話的某一種Style。這邊的每一個Vector,如果你把它對應的Attention Weight調高,你就會發現聲音訊號裡面的某種異陽頓挫、某種Prosody的資訊被改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:46.780" id=49:46.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=2986">49:46.780</a></div>
+        <div class="t">舉例來說,在GST Tackle Trunk原始的Paper裡面就說,他們發現這些Token有一些神奇的效應。舉例來說,有某一個Token,它對應到輸出的聲音訊號,它的頻率是高還是低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:02.620" id=50:02.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3002">50:02.620</a></div>
+        <div class="t">你把那個Token對應的Attention Weight調大,輸出的聲音訊號,它的Pitch就變低了。那有某一個Token,你把它的Pitch調大,你的句子的Pitch就會由高到低。你把某一個Token的Pitch調大,那娛樂說話的速度就變快了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:24.140" id=50:24.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3024">50:24.140</a></div>
+        <div class="t">以下是真正的例子,文獻中的例子。你就把某一個Token所對應的Weight調大。那Weight本來是來自於你的Encoder,就是你會給一段Reference Audio,那段Reference Audio抽出這些Weight,抽出Attention的Weight,去把那些Token做Weight Dissound。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:42.220" id=50:42.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3042">50:42.220</a></div>
+        <div class="t">但現在我們其實也可以用手動的方法,去直接調每一個Dell Token對應的Weight應該是多少。這個Weight你可以自己手調。如果手調一下,你會發現說某一個Token,它就對應到語速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:57.900" id=50:57.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3057">50:57.900</a></div>
+        <div class="t">所以你把那個Token對應的Weight的值調大,你會發現說那個語者講話的速度就越來越快。然後有某一個Token對應到Animated。Animated我本來看這個字眼的時候,我有點猜不出來它到底是有點無法get到它是什麼意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:15.660" id=51:15.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3075">51:15.660</a></div>
+        <div class="t">那你實際聽一下以後,就會發現說它指的意思就是比較戲劇化。如果你把某一個Token的Weight調大,你會發現說合成出來的聲音就比較有上下起伏,比較有意揚頓挫,聽起來比較像是在演戲的感覺,聽起來比較有高低起伏。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:35.740" id=51:35.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3095">51:35.740</a></div>
+        <div class="t">所以,確實透過剛才講的Jesse Tickleton的部分,有機會認出一堆Style的Token,而每一個Style的Token,它就對應到某種講話的時候的Style。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:47.980" id=51:47.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3107">51:47.980</a></div>
+        <div class="t">那還有哪些其他的方法,防止Content的資訊直接被Copy到輸出的地方呢?有一個方法呢,我們在做Voice Conversion的時候有聽過,就是做一個Second Stage的Training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:04.460" id=52:04.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3124">52:04.460</a></div>
+        <div class="t">因為我們原來的Training是,輸入的聲音跟輸出的聲音總是一樣的,所以TTS Model就很聰明的學到說把輸入的聲音直接複製當成輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:14.460" id=52:14.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3134">52:14.460</a></div>
+        <div class="t">如果你在訓練的時候,你再多加一些訓練資料,這些訓練資料是文字跟輸入的Reference Audio,它們不是同一句話,文字的內容跟輸入的Audio的文字的內容刻意讓它是不一樣的,然後告訴TTS,你看到這樣子的輸入的Pair,那你要怎麼輸出?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:36.460" id=52:36.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3156">52:36.460</a></div>
+        <div class="t">可是問題就是,我們並沒有光Truth啊,我們並不知道這邊輸出的Target應該是多少啊,我們並不知道用I Love You的語調念Goodbye聽起來應該像是什麼樣子啊,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:50.460" id=52:50.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3170">52:50.460</a></div>
+        <div class="t">我們可以在後面呢,再加一個語音辨識的系統,那這個概念呢,就跟Game有點像啦,跟我們之前在做Voice Conversion的時候的Two-Stage Training的概念是非常類似的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:03.460" id=53:03.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3183">53:03.460</a></div>
+        <div class="t">這邊怎麼做呢?有一個語音辨識系統,它已經訓練好了,假如它是一個不錯的語音辨識系統,看到一段聲音訊號可以產生文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:10.460" id=53:10.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3190">53:10.460</a></div>
+        <div class="t">你現在呢,給你的Controllable的TTS Model一段文字跟一段Reference的Audio,然後這段TTS Model它就會產生一段聲音訊號,接下來把它做辨識,產生輸出文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:24.460" id=53:24.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3204">53:24.460</a></div>
+        <div class="t">那你希望你的TTS Model它輸入的文字跟最終輸出的文字越接近越好。如果今天TTS Model它只會把Reference Audio Copy出來,那Reference Audio裡面文字的內容跟輸入的文字的內容是不一樣的,那TTS Model根據這個ASR給它的feedback就會知道說它做得不好,那它就會調整,盡量不要從Reference的Audio去Copy文字的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:52.460" id=53:52.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3232">53:52.460</a></div>
+        <div class="t">那你可以訓練你的TTS Model,它訓練的目標就是Minimize這個語音辨識系統的語音辨識的錯誤率,那其他用這個方法,TTS Model就比較不會把文字的資訊從Reference Audio裡面抽出來,放在合成的結果裡面,這是一個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:08.460" id=54:08.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3248">54:08.460</a></div>
+        <div class="t">那還有其他的可能的限制這個TTS的方法,舉例來說,假設你的TTS Model跟ASR Model都是Sequence to Sequence的Model,都有Attention,那你可以做一件事情叫做Attention的Consistency,就對TTS Model來說輸入某一個字母產生的這一段聲音訊號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:28.460" id=54:28.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3268">54:28.460</a></div>
+        <div class="t">那你期待說你的語音辨識系統在看到同一段聲音訊號的時候,應該也要產生同樣的字母,那你就期待說你去學你的TTS Model,讓你的TTS Model它的Attention跟語音辨識系統的Attention是一致的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:44.460" id=54:44.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3284">54:44.460</a></div>
+        <div class="t">你也可以把這個當作TTS Model的一個訓練的目標,那這個是Two-Stage的Training。那有關語音合成的部分呢,講到這邊就告一個段落,我們就講了MQM的語音合成,還講了一些試圖解決Tagotron訓練問題的方法,然後講了Controllable的TTS。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:04.460" id=55:04.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3304">55:04.460</a></div>
+        <div class="t">能不能夠讓TTS學到的不是Speaker Identity,而是Positive?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:16.460" id=55:16.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3316">55:16.460</a></div>
+        <div class="t">您這個問題問得很好,其實這可以說是一個上代研究的問題。像我們剛才講的GST的Tagotron,我們怎麼知道說學完以後,它的每一個Global Style的那些Token是Positive的資訊而不是Speaker的資訊呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:39.460" id=55:39.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3339">55:39.460</a></div>
+        <div class="t">這個其實是因為,在Google原始的GST的Tagotron Paper裡面,它訓練的時候只有單一一個Speaker,所以就知道說GST的Tagotron那個Token裡面可能沒有語者的資訊,因為只有一個語者嘛,所以沒有什麼語者的資訊,都是Positive的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:00.960" id=56:00.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3360">56:00.960</a></div>
+        <div class="t">那我們實際上有試了拿多語者的資料來訓練以後,就會發現說,不同語者的聲音訊號其實是比較容易被包含在Token Style裡面,你會有很多的Token,它的資訊就是跟語者有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:15.460" id=56:15.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3375">56:15.460</a></div>
+        <div class="t">但你訓練完以後,你會搞不清楚說,哪些Token它對應的是語者的資訊,哪些Token對應的是Style的資訊。所以我覺得如果你要做得更好一點,你要把Speaker Identity跟Positive的資訊把它再做Disentangle的話,我覺得一個比較容易的方法在訓練的時候,你要知道Speaker的Identity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:41.460" id=56:41.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3401">56:41.460</a></div>
+        <div class="t">也就是知道說,哪些句子是同一個人講的。你希望說,從這些句子裡面,我們會抽出某些共同的Token。這些同一個Speaker講的句子裡面的共同的Token,它可能就代表了Speaker的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:58.960" id=56:58.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3418">56:58.960</a></div>
+        <div class="t">那再剩下的其他不是Content的資訊、不是Speaker的資訊,那就是Positive的資訊。希望這樣子有回答到你的問題。不過,這個仍然是一個尚待研究的問題,你會發現說還是有滿坑滿谷的文獻在做這方面的研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:16.880" id=57:16.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3436">57:16.880</a></div>
+        <div class="t">舉例來說,這個GST-Tekortron它在Control Style的時候,只用一個向量就想Control整個句子的Style。這樣子是一個好的Solution嗎?你要Control整個句子的Positive,是有辦法用一個向量表示的嗎?還是沒有辦法用一個向量來表示?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:40.180" id=57:40.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3460">57:40.180</a></div>
+        <div class="t">用一個向量來表示整個句子的Positive,會不會太粗了?會不會有很多東西沒有辦法表示?所以你會發現說,有些Control TTS的版本,它產生出來的這種Control Style的Vector不是只有一個Vector,它可能是一排Vector,可能長度是跟Input句子的長度一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:58.240" id=57:58.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3478">57:58.240</a></div>
+        <div class="t">有人覺得說,我們今天要Control Style,也許不能只是一個固定的Vector,它必須要是更細緻的、更fine-grained的,是每一小段聲音訊號都有一個Vector,我們才能夠真正的Control一個句子的Positive。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:11.260" id=58:11.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Eau1Fr2x86Y&t=3491">58:11.260</a></div>
+        <div class="t">所以,這個是一個上代研究的問題,那這邊其實是有很多東西是大家還可以思考跟深入研究的。所以希望這樣有回答到你的問題。</div>
+    </div>
+    
+</body>
+</html>   

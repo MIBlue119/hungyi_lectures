@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>GAN Lecture 3 (2018): Unsupervised Conditional Generation</h2><a href=https://www.youtube.com/watch?v=-3LgL3NXLtI><img src=https://i.ytimg.com/vi_webp/-3LgL3NXLtI/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=0">00:00.000</a></div>
+        <div class="t">主持人講作業三之三要用的東西,那你其實也不用緊張,就是作業三之三是bonus,所以這個是可做可不做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:08.640" id=00:08.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=8">00:08.640</a></div>
+        <div class="t">好,作業三之三,我們要講的是什麼呢?我們要講的是unsupervised conditional generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.600" id=00:16.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=16">00:16.600</a></div>
+        <div class="t">Conditional generation,我們上週已經講過了,就是machine,輸入一個東西,然後輸出一個東西,這個就是conditional generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:27.280" id=00:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=27">00:27.280</a></div>
+        <div class="t">我們前在作業三之二的時候,大家也做過conditional generation,但我們之前做的conditional generation是supervised。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.880" id=00:35.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=35">00:35.880</a></div>
+        <div class="t">舉例來說,在作業三之二裡面,我們是收集了很多image,這些image都有它對應的文字,你才能夠train一個conditional generation,吃文字, output image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:45.400" id=00:45.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=45">00:45.400</a></div>
+        <div class="t">但這邊我們想要討論的是,conditional generation這件事情能不能夠做到unsupervised。其實今天你可以看到很多的例子,conditional generation它可以是unsupervised,舉例來說,它可以是unsupervised的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06.080" id=01:06.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=66">01:06.080</a></div>
+        <div class="t">舉例來說,假設你有一個domain x的image,它們是real的photo,是風景照。你有domain y的image,它們是泛古的畫作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.480" id=01:17.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=77">01:17.480</a></div>
+        <div class="t">你可以lane一個generator,給它一張real的image,它output的image看起來就像是泛古的畫作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24.600" id=01:24.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=84">01:24.600</a></div>
+        <div class="t">而你在training的時候,你並不需要label的data,一般我們要train這種generator,如果是supervised conditional generation,你需要label告訴它說,看到這樣子的input,應該有什麼樣的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.440" id=01:38.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=98">01:38.440</a></div>
+        <div class="t">input,紅髮這個句子,那output就是一個紅頭髮的角色,到底長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.640" id=01:43.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=103">01:43.640</a></div>
+        <div class="t">但是今天假設你是要做這種比較類似風格轉換的task,你是要把一張風景照轉成泛古的畫作,你可以收集到一堆風景照,你可以收集到一堆泛古的畫作,但是你其實收集不到它們之間的link。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:58.760" id=01:58.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=118">01:58.760</a></div>
+        <div class="t">因為假設你收集一張風景照,只是日月潭,泛古沒有去過日月潭,所以它畫作裡面也沒有日月潭,所以你也根本就沒有辦法label這種link。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:07.160" id=02:07.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=127">02:07.160</a></div>
+        <div class="t">所以今天我們要討論的問題就是,有沒有辦法做到unsupervised conditional generation,只有兩堆data,machine自己學到說,怎麼從其中一堆轉到另外一堆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.320" id=02:19.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=139">02:19.320</a></div>
+        <div class="t">其實這樣的技術有很多的應用,不是只能夠用在影像上,雖然你今天在文獻上看到的多數的application都是影像,但是在語音或文字上,你當然也是可以做類似的事情的,之後我們會舉一些例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:34.000" id=02:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=154">02:34.000</a></div>
+        <div class="t">那conditional generation到底要怎麼做呢?這個unsupervised conditional generation,我在文獻上做一下,我審美一下文獻,我認為說大致上可以分成兩大類的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:48.960" id=02:48.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=168">02:48.960</a></div>
+        <div class="t">第一大類的做法是直接轉,什麼意思?直接認一個generator,input x domain的東西,想辦法轉成y domain的東西,等一下我們會講說,這樣子的generator到底要怎麼認出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:02.320" id=03:02.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=182">03:02.320</a></div>
+        <div class="t">那在經驗上,如果你今天要用的是這種direct transformation的方法,你的input output沒有辦法真的差太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.520" id=03:11.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=191">03:11.520</a></div>
+        <div class="t">今天這個generator,你給它一個input,output它通常只能夠小改而已。如果是影像的話,它通常能夠改的就是顏色、質地,所以如果是那種畫風轉換,真實的圖片轉成梵谷的畫作的風格,是比較有可能用第一個方法來實現的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.080" id=03:31.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=211">03:31.080</a></div>
+        <div class="t">今天假設你要轉的input和output差距很大,它們不是只有在顏色、紋理上面的轉換的話,那你就要用到第二個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.280" id=03:42.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=222">03:42.280</a></div>
+        <div class="t">第二個方法是這樣,假設你今天要做的是……這個不是真正的例子,今天的技術做不到這個程度就是了,等一下助教其實會demo一下他自己做出來是什麼樣子,今天的技術也做不到這樣的結果就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.160" id=04:01.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=241">04:01.160</a></div>
+        <div class="t">那這個怎麼做呢?如果你今天你的input和output差距很大,比如說你要把真人轉成動畫人物,那真人跟動畫人物就是不像,它不是你改改顏色或改改紋理就可以從真人轉成動畫人物的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.200" id=04:14.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=254">04:14.200</a></div>
+        <div class="t">那怎麼辦?你先認一個encoder,比如說第一個encoder做的事情就是吃一張人臉的圖,然後他把人臉的特徵抽出來,比如說這是男的,這是有戴眼鏡的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.720" id=04:28.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=268">04:28.720</a></div>
+        <div class="t">接下來你生一個decoder,這個decoder它畫出來的就是動畫的人物,它根據你input的這個人臉的特徵,比如說是男的,是有戴眼鏡的,去生出一個對應的角色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.200" id=04:40.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=280">04:40.200</a></div>
+        <div class="t">如果你input和output真的差很多的時候,你就可以做這一件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.440" id=04:44.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=284">04:44.440</a></div>
+        <div class="t">作業三就是一個bonus,根據過去的經驗,會有非常多人做真人的臉轉動畫人物。很多人會做這個,但是過去通常比較多人是用psycho game做,結果都還蠻失敗的,因為動畫人物的臉跟真人的臉不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:01.600" id=05:01.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=301">05:01.600</a></div>
+        <div class="t">如果要做動畫人物轉真人的臉,你可以考慮一下第二個做法,做起來看看會不會比較好一點。第一個做法是怎麼做的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:14.880" id=05:14.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=314">05:14.880</a></div>
+        <div class="t">第一個做法是說,我們要認一個generator,這個generatorinputX domain的東西要轉成Y domain的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.320" id=05:21.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=321">05:21.320</a></div>
+        <div class="t">那我們現在X domain的東西有一堆,Y domain的東西有一堆,但是合起來的pair沒有,我們沒有他們中間的link。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.000" id=05:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=328">05:28.000</a></div>
+        <div class="t">那generator怎麼知道給一個X domain的東西要offer什麼樣Y domain的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:32.360" id=05:32.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=332">05:32.360</a></div>
+        <div class="t">如果是supervised learning當然沒有問題,但現在是unsupervised,generator怎麼知道怎麼產生Y domain的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:38.120" id=05:38.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=338">05:38.120</a></div>
+        <div class="t">這個時候你就需要一個Y domain的discriminator,這個discriminator做的事情是,他看過很多Y domain的image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.600" id=05:45.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=345">05:45.600</a></div>
+        <div class="t">所以給他一張image,他可以鑑別說這張image是X domain的image還是Y domain的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.600" id=05:51.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=351">05:51.600</a></div>
+        <div class="t">接下來discriminator要做的事情,就是說給他一張image,他會判斷說他是X domain還是Y domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.320" id=05:58.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=358">05:58.320</a></div>
+        <div class="t">接下來generator要做的事情就是,想辦法去騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:03.600" id=06:03.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=363">06:03.600</a></div>
+        <div class="t">如果generator可以產生一張image去騙過discriminator,那generator產生出來的image就會像是一張Y domain的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.040" id=06:12.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=372">06:12.040</a></div>
+        <div class="t">如果Y domain現在是梵谷的畫作,generator產生出來的offer就會像是梵谷的畫作,因為discriminator知道梵谷的畫作長的是什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.880" id=06:21.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=381">06:21.880</a></div>
+        <div class="t">那現在的問題是說,generator他可以產生像梵谷畫作的東西,但完全可以產生一個跟input無關的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:29.400" id=06:29.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=389">06:29.400</a></div>
+        <div class="t">舉例來說,他可能就學到說他畫這張自畫像,就可以騙過discriminator,因為這張自畫像確實很像是梵谷畫的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.920" id=06:37.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=397">06:37.920</a></div>
+        <div class="t">但是這張自畫像跟輸入的圖片完全沒有任何半毛錢的關係,這個就不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.040" id=06:45.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=405">06:45.040</a></div>
+        <div class="t">所以我們今天不是要讓generator騙過discriminator就好,同時我們希望generator不只要騙過discriminator,generator的輸入和輸出是必須有一定程度的關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.520" id=06:56.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=416">06:56.520</a></div>
+        <div class="t">那這件事情怎麼做呢?在文獻上就有不同的做法,我們等一下會講到psycho-game,這個是最知名的做法。其實有一個最簡單的做法就是無視這個問題,直接做下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.480" id=07:09.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=429">07:09.480</a></div>
+        <div class="t">事實上有人試過,直接做下去也做得起來。舉例來說,你在做psycho-game的時候,你會看到很多人會做那個斑馬轉馬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:19.200" id=07:19.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=439">07:19.200</a></div>
+        <div class="t">那psycho-game有一個psycho-consistency的loss,等一下我們會講到。事實上,拔掉那個psycho-consistency的loss,你還是可以把馬轉成斑馬,還是work。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.640" id=07:27.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=447">07:27.640</a></div>
+        <div class="t">所以其實今天的一個可能性是,無視這個問題,直接就認一個generator,認一個discriminator,看看work不work。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:36.440" id=07:36.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=456">07:36.440</a></div>
+        <div class="t">為什麼這樣子有機會可以work呢?因為generator的input和output其實不會差太多。就假設你的generator沒有很深,那input總不會你input這個圖片,然後output一個泛谷的自畫像,這問題也差太多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.960" id=07:51.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=471">07:51.960</a></div>
+        <div class="t">所以今天其實generator,如果你沒有特別要求它的話,它其實喜歡input就跟output差不多。所以你給它這張圖片,它其實不太想要改太多,它希望改一點點就騙過discriminator就好,它不想要改太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:06.600" id=08:06.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=486">08:06.600</a></div>
+        <div class="t">所以今天你直接認一個這樣子的generator,這樣子的discriminator,不加額外的constraint,其實也是會work的,你可以自己試試看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.520" id=08:15.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=495">08:15.520</a></div>
+        <div class="t">那在下面這個文獻裡面,它就嘗試說,如果今天generator比較shallow,因為它比較淺,所以跟input跟output會特別像,那這個時候你就不需要做額外的constraint,就可以把這個generator認起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:30.240" id=08:30.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=510">08:30.240</a></div>
+        <div class="t">那如果你今天generator很深,而因為generator很deep,有很多層,那它就可以真的讓input和output非常不一樣,這個時候你就需要做一些額外的處理,免得讓input和output變成完全不一樣的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.520" id=08:42.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=522">08:42.520</a></div>
+        <div class="t">這是第一個方法,第一個方法就是不要管它。第二個方法是這樣,你去拿一個pre-trained好的network,比如說VGG之類的,拿一個pre-trained好的network,接下來你把這個generator的input跟output通通丟給這個pre-trained好的network,都丟給這個pre-trained好的network,然後得到比如說output一個embedded,output一個embedded。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.760" id=09:04.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=544">09:04.760</a></div>
+        <div class="t">接下來你在train的時候,generator一方面會想要騙過discriminator,讓它output的image看起來像是犯規的畫作,但是同時呢,這個generator它還有另外一個任務,它會希望這個pre-trained的model,他們embedded的output不要差太多,那這樣的好處就是,因為這兩個vector沒有差太多,所以代表說這張圖跟這張圖就不會差太多,generator的input跟output就不會差太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:33.800" id=09:33.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=573">09:33.800</a></div>
+        <div class="t">這個是第二個做法,第三個做法就是大家所熟知的cycle game,在cycle game裡面呢,你要train一個Xdomain到Ydomain的generator,你同時train一個Ydomain到Xdomain的generator,這個Ydomain到Xdomain的generator它的目的是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:53.400" id=09:53.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=593">09:53.400</a></div>
+        <div class="t">它的目的是說,給它一張Ydomain的圖,就像input一張風景畫,第一個generator把它轉成Ydomain的圖,接下來第二個generator把Ydomain的圖還原回原來一模一樣的圖,因為現在除了要騙過discriminator以外,generator得到了一個新的任務,要讓input跟output越像越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.560" id=10:13.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=613">10:13.560</a></div>
+        <div class="t">為了要讓input跟output越像越好,你就不可以在中間產生一個完全無關的圖,如果在這邊產生一個泛古的自畫像,第二個generator就無法從泛古的自畫像還原成一模一樣的原來的風景畫,因為它已經完全不知道說原來的輸入是什麼了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.320" id=10:29.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=629">10:29.320</a></div>
+        <div class="t">所以這張圖片必須要保留有原來輸入的資訊,那這樣第二個generator才可以根據這張圖片轉回原來的image,那這個就是psychogap,那這樣input跟output越接近越好,input一張image轉換以後要能夠轉得回來,這個兩次轉換要轉得回來這件事情就叫做psychoconsistency。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.840" id=10:52.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=652">10:52.840</a></div>
+        <div class="t">那psychogap你可以做雙向的,所謂雙向的意思是說,本來有a domain轉x domain轉y domain,y domain轉x domain,現在你再trim另外一個tab,把y domain的圖丟進來,然後把它轉成x domain的圖,同時你還有一個discriminator確保說今天這個generator它output的圖像是x domain的圖,接下來再把x domain的圖轉回原來y domain的圖,一樣希望input跟output越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.720" id=11:21.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=681">11:21.720</a></div>
+        <div class="t">然後這邊你就可以同時去trim,這邊有一個generator,這邊是第二個generator,有兩個discriminator,你就會把這兩個generator,這兩個discriminator一起去trim,這個就是psychogap。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.160" id=11:35.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=695">11:35.160</a></div>
+        <div class="t">這個是這樣啦,有人用psychogap把所有的動畫角色轉成銀色頭髮,但我聽起來並不是說psychogap可以把所有角色轉成銀色頭髮,而是這個人在銀色頭髮到底有多麼的執著這樣子,可以找一下他的code在這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:52.760" id=11:52.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=712">11:52.760</a></div>
+        <div class="t">其實psychogap現在還是有一些問題是沒有解決的,psychogap的一個問題就是,今年的NIPS有一篇paper叫做Psychogap a method of scanography,scanography是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.320" id=12:11.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=731">12:11.320</a></div>
+        <div class="t">scanography是影寫術,就是說psychogap會把input的東西藏起來,然後在output的時候再把它呈現出來,什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.600" id=12:22.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=742">12:22.600</a></div>
+        <div class="t">在那個paper裡面就舉一個例子,它說這是input,這個要做的事情是把真實的空拍照轉成看起來像是衛星的圖像,input是這張圖片,第一個generator把它轉成這樣子,第二個generator可以把它還原。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:44.120" id=12:44.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=764">12:44.120</a></div>
+        <div class="t">你會發現這個input和output是蠻像的,舉例來說這個屋頂上有一些黑點,在recontract回來以後還是有一些黑點,但神奇的地方是中間的這個image是沒有黑點的,那machine怎麼知道說這個屋頂應該是要有黑點的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:01.880" id=13:01.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=781">13:01.880</a></div>
+        <div class="t">所以input是有黑點的,那沒有問題,output也是有黑點的,但是中間的這個中間的產物居然是沒有黑點的,如果你只看到這張圖,對第二個generator來說,如果你只看到這張圖,屋頂上是沒有黑點的,你是怎麼知道上面應該要產生黑點的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:18.280" id=13:18.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=798">13:18.280</a></div>
+        <div class="t">所以有一個可能是,今天psycho game它雖然有psycho consistency的laws,強迫你input和output要越像越好,但是generator它有很強的能力把資訊藏在人看不出來的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.480" id=13:32.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=812">13:32.480</a></div>
+        <div class="t">比如說這些你要怎麼recontract這張image的資訊,可能是藏在這張image裡面,它可能用非常非常小的數值藏在image裡面讓你看不出來這樣,也許這個屋頂上仍然是有黑點的,只是你看不出來而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:46.720" id=13:46.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=826">13:46.720</a></div>
+        <div class="t">那如果是這樣子的情況,如果今天psycho game會藏資訊,那就失去psycho consistency的意義了,因為psycho consistency的意義就是為了要讓output的image,第一個generator,output的image跟input不要差太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.160" id=14:00.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=840">14:00.160</a></div>
+        <div class="t">但如果今天generator它很擅長藏資訊,然後再自己解回來,那這個output的image就會變成有可能跟input的image差距很大了,那這個就是一個上代研究的問題,就是psycho consistency不一定有用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:16.440" id=14:16.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=856">14:16.440</a></div>
+        <div class="t">資訊可能會自己學到一些方法去避開psycho consistency帶給你的constraint。那在文獻上,除了psycho game以外,你等下看到其他的game,比如說dual game、hystral game,這三個東西有什麼不同呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.540" id=14:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=870">14:30.540</a></div>
+        <div class="t">就是沒有什麼不同,就不同的人居然在幾乎同樣的時間提出一樣的方法,然後summit到不同的conference。人類的想法真的是很神奇,大家想的方法都差不多,你自己去仔細看看,這些方法其實就跟psycho game是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:53.100" id=14:53.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=893">14:53.100</a></div>
+        <div class="t">好,那現在還有一招叫做stargame,stargame是什麼呢?stargame是說,我們在做psycho game的時候,你只能夠把x domain轉成y domain,但有時候你會有一個需求是,你有多個domain,你要用多個domain互轉,比如說你有四個domain,你要在四個domain間互轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.020" id=15:12.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=912">15:12.020</a></div>
+        <div class="t">那這樣理論上,你就要學出C4取2個transformation的network,才能夠在四個domain間做互轉。那stargame它做的事情是,它只認了一個generator,但就可以在多個domain間互轉,而且等一下助教會demo那個stargame的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:32.700" id=15:32.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=932">15:32.700</a></div>
+        <div class="t">好,那我們這邊就很快地來,這個你可能在作業上也用不上了,不過還是跟大家很快地講一下stargame,那如果你有細節的問題的話,你再去check一下那個paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.660" id=15:44.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=944">15:44.660</a></div>
+        <div class="t">那stargame裡面是怎樣呢?在stargame裡面你要認一個discriminator,這個discriminator它會做兩件事,首先給它一張image,它要鑑別說這張image是real的還是fake的,那再來它要去鑑別說這張image它來自於哪一個domain,剛才說你可能有四個domain,它就問說它來自於這四個domain的哪一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:08.020" id=16:08.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=968">16:08.020</a></div>
+        <div class="t">然後在stargame裡面你只需要認一個generator就好,這個generator它的input是一張圖片跟你的目標的domain,就是你現在要把這張input的image轉成哪一個domain,它要有一個目標的domain,然後它根據這個image,根據這個目標的domain,就把新的image把它生成出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:29.920" id=16:29.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=989">16:29.920</a></div>
+        <div class="t">接下來再把這個同樣的image丟給同一個generator,把這張image丟fake generator出來的image丟給同一個generator,然後再告訴它說現在原來input的image是哪一個domain,然後再用這個generator核回另外一張圖片,那你要希望這邊的input跟這邊的output越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.200" id=16:49.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1009">16:49.200</a></div>
+        <div class="t">那這個東西就是psychoconsistency的loss,我們剛才在講psychogram的時候說input一張image,你要還原回一模一樣的image,經過兩次轉換以後還原回一模一樣的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:00.600" id=17:00.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1020">17:00.600</a></div>
+        <div class="t">那對這個generator來說做的事情是一樣的,告訴它說你把input image轉成target domain,它就轉了,接下來再告訴generator說給你這張轉出來的image,再給你原來的domain,你要轉回一模一樣的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.960" id=17:13.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1033">17:13.960</a></div>
+        <div class="t">等一下我們會看一個比較具體的例子,可能會比較了解。那這個discriminator做的事情就是要確認說這張轉出來的image到底對不對,確認兩件事,第一件事情是這張轉出來的image看起來有沒有真實,再來就是這張轉出來的image它是不是我們要的target domain,而且generator就要去想辦法騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.960" id=17:38.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1058">17:38.960</a></div>
+        <div class="t">這邊是一個比較realistic的例子,這些圖都是從paper裡面寫出來的,paper的圖它實在是畫做得太好了,所以我就沒有重做了這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.960" id=17:51.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1071">17:51.960</a></div>
+        <div class="t">這個target做的事情是什麼呢?就是你有一個discriminator,這個discriminator是一張image,它首先要判斷它是real的還是fake的,同時它要判斷這個image來自於哪一個domain。事實上在原始的paper裡面,它的domain並不是說就是五個domain,而是每一個domain都有一組編碼,這樣大家了解我的意思嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.960" id=18:17.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1097">18:17.960</a></div>
+        <div class="t">它並不是只有一個domain,而是說你可以說我要一個黑頭髮的角色,要一個男性的角色,要一個年輕的角色,這樣子叫做一個domain,這樣domain可以有很多個,不是只有數個而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.960" id=18:30.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1110">18:30.960</a></div>
+        <div class="t">所以今天是說給它這張image,這張image屬於哪個domain呢?這邊的編碼是00101,00101它就是一個褐色頭髮然後年輕的角色,這個discriminator要學到說,看到這張圖片必須要知道說它是褐色頭髮,是年輕的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:50.960" id=18:50.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1130">18:50.960</a></div>
+        <div class="t">那怎麼勸這個generator呢?你在勸這個generator的時候就是,你跟generator說,input這張圖片,我們想要把它轉domain10011,10011是什麼呢?10011是黑色頭髮男性然後年輕,所以就把這張圖片轉成一個黑色頭髮圖片,它本來是棕色頭髮嘛,然後再轉成黑色頭髮。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.960" id=19:16.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1156">19:16.960</a></div>
+        <div class="t">然後接下來呢,再把這個黑色頭髮的圖片也丟回原來的generator,然後跟它說現在要轉00101,00101是什麼呢?00101是棕色頭髮年輕的角色,所以它就把這個角色轉回棕色頭髮,那你希望input跟output的圖片越接近越好,這個是psychoconsistency的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:37.960" id=19:37.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1177">19:37.960</a></div>
+        <div class="t">那接下來呢,你要用discriminator去確保說這個output的image,一方面它是realistic的,另外一方面如果你今天output的image,你希望output10011,也就是黑頭髮男性年輕的角色,這個discriminator看到這張圖片必須要能夠判斷出它是10011,它是一個黑頭髮男性年輕的角色,這個呢就是stargame。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:59.960" id=19:59.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1199">19:59.960</a></div>
+        <div class="t">那剛剛那張圖舉的例子也是一模一樣啦,就是這邊有一個人他是生氣的domain,然後呢今天目標就是要把它轉成笑口常開的domain,然後discriminator確認說這張圖片不只看起來要真實,而且要看起來像是笑口常開,然後今天這個generator說把這張圖片再轉回生氣的樣子,希望input跟output越接近越好,這個是stargame。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:26.960" id=20:26.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1226">20:26.960</a></div>
+        <div class="t">那第二個做法呢,第二個做法是這個我們剛才有講過說呢,我們就是要認一個encoder,然後呢把一張input的圖片轉到某一個latent space,然後再從latent space把它轉回來,你用這個技術可以做到比較大的轉換,不過我們在這邊先稍微暫停休息一下十分鐘,十分鐘後再回來好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:56.960" id=20:56.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1256">20:56.960</a></div>
+        <div class="t">好,我們來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.960" id=21:26.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1286">21:26.960</a></div>
+        <div class="t">一個是人的domain,真人的人物頭像的domain,一個是動畫人物的domain,那你今天想要在這兩個domain間做互相轉換的話,那怎麼辦呢?你今天呢需要一個X-domain的encoder看到一張真人的頭像就把它的特徵抽出來,看到一個Y-domain的encoder看到真人的頭像就把它的特徵抽出來,那X-domain的encoder跟Y-domain的encoder他們可能是不一樣的,他們參數可能是不一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:53.960" id=21:53.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1313">21:53.960</a></div>
+        <div class="t">因為畢竟人臉和動畫人物的臉還是有一些差別,所以這兩個network不見得是一樣的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:00.960" id=22:00.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1320">22:00.960</a></div>
+        <div class="t">那你的X-domain的encoder吃這個image它會抽出它的attribute,所謂的attribute就是一個latent的vector,你input一張image,這個encoder的output就是一個latent的vector,你input一張image,這個encoderY的output就是一個latent的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:25.960" id=22:25.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1345">22:25.960</a></div>
+        <div class="t">Y-domain的encoder它產生出來的就是二次元人物的人臉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:30.960" id=22:30.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1350">22:30.960</a></div>
+        <div class="t">我們希望最後可以達到的結果是你給它一張真人的人臉,透過X-domain的encoder抽出latent的representation,那這個latent的representation它是一個vector,那我們期待說這個vector的每一個dimension就代表了input這張圖片的某種特徵,有沒有戴眼鏡是什麼性別等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.960" id=22:52.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1372">22:52.960</a></div>
+        <div class="t">接下來你用Y-domain的encoder吃這個vector,根據這個vector裡面所表示的人臉的特徵合出一張Y-domain的圖,我們希望做到這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:03.960" id=23:03.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1383">23:03.960</a></div>
+        <div class="t">但是實際上如果今天我們有X-domain跟Y-domain之間的對應關係,要做到這件事非常容易,因為就是一個supervised learning的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.960" id=23:11.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1391">23:11.960</a></div>
+        <div class="t">但現在我們是一個unsupervised learning的問題,只有X-domain的image跟Y-domain的image它們是分開的,那怎麼勸這些encoder跟這些decoder呢?可以這樣勸。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:22.960" id=23:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1402">23:22.960</a></div>
+        <div class="t">這兩個encoderX跟decoderX合起來組成一個autoencoder,input一張X-domain的圖,讓它reconstruct回原來X-domain的圖。你讓Y-domain的encoder跟Y-domain的decoder組成一個autoencoder,input一個Y-domain的圖,reconstruct回原來Y-domain的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:43.960" id=23:43.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1423">23:43.960</a></div>
+        <div class="t">我們知道這兩個autoencoder在train的時候,它們都是要minimize reconstruction error。用這樣的方法,你確實可以得到兩個encoder兩個decoder,但是這樣會造成的問題是,這兩個encoder這兩個decoder之間是沒有任何關聯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:00.600" id=24:00.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1440">24:00.600</a></div>
+        <div class="t">這邊你還可以多做一件事情是,你可以把discriminator加進來,你可以train一個X-domain的discriminator,強迫decoder的output看起來像是X-domain的圖。因為我們知道說,假設如果你只learnautoencoder,你只去minimize reconstruction error,decoder output的image會很模糊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:20.240" id=24:20.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1460">24:20.240</a></div>
+        <div class="t">你如果不要讓decoder的output的image模糊,你就會想要加一個discriminator。這個discriminator就是吃這張image,然後鑑別它是不是X-domain的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:32.600" id=24:32.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1472">24:32.600</a></div>
+        <div class="t">Y-domain的discriminator吃這張image,鑑別它是不是Y-domain的圖。這樣你會強迫你的X-domain的decoder跟Y-domain的decoder,他們output的image都比較realistic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.800" id=24:42.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1482">24:42.800</a></div>
+        <div class="t">你會發現說,這個encoder加這個decoder加這個discriminator,他們三個合起來,其實就是一個VAE GAN,對不對?我們上一堂課有講一個東西叫VAE GAN,它可以看作是強化VAE,或者可以看作是用GAN強化VAE,也可以看作是用VAE來強化GAN,都可以。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:00.320" id=25:00.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1500">25:00.320</a></div>
+        <div class="t">所以這個encoder加這個decoder加這個discriminator合起來,是一個VAE GAN。這個encoder加這個decoder加這個discriminator合起來,它是另外一個VAE GAN。但是因為這兩個VAE GAN,他們的training是完全分開的,完全各自獨立的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:15.040" id=25:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1515">25:15.040</a></div>
+        <div class="t">所以實際上train完以後,你會發現他們的latent space可能意思是不一樣的。也就是說,你今天丟一張這張人臉進去,變成一個vector,你把這個vector丟到這張圖片裡面,搞不好它產生的就是一個截然不同的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:31.840" id=25:31.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1531">25:31.840</a></div>
+        <div class="t">因為今天這兩組autoencoder是分開train的,也許上面這組autoencoder是用這個latent vector的第一維代表性別,第二維代表有沒有戴眼鏡,下面這個是用第三維代表性別,第四維有沒有戴眼鏡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.920" id=25:45.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1545">25:45.920</a></div>
+        <div class="t">如果是這樣子的話,你就做不起來,因為你input這張image,它變成一個vector,在解回來的時候,它會產生不一樣的圖片。也就是說,今天X這一群encoder跟decoder,還有Y這群encoder跟decoder,他們用的language是不一樣的,他們說的語言是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:05.120" id=26:05.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1565">26:05.120</a></div>
+        <div class="t">所以encoder吐出一個東西,被Xdomain的encoder吐出一個東西,要叫Ydomain的decoder吃下去,它output並不會跟Xdomain的encoder的input有任何的關聯性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:18.400" id=26:18.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1578">26:18.400</a></div>
+        <div class="t">接下來的問題就是,怎麼解決這件事?在文獻上就會有各式各樣的解法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:26.880" id=26:26.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1586">26:26.880</a></div>
+        <div class="t">一個常見的解法是,你讓不同domain的encoder跟decoder,它們的參數是被tie在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:36.640" id=26:36.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1596">26:36.640</a></div>
+        <div class="t">我們知道說encoder有好幾個hidden layer,Xdomainencoder有好幾個hidden layer,Ydomainencoder也有好幾個hidden layer,那你希望它們最後的幾個hidden layer參數是共用的,它們共用同一組參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:50.720" id=26:50.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1610">26:50.720</a></div>
+        <div class="t">可能前面幾個layer是不一樣的,但最後幾個layer必須是共用的。我只有兩個decoder,不同domain的decoder,它們前面幾個layer是共用的,後面幾個layer是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:01.440" id=27:01.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1621">27:01.440</a></div>
+        <div class="t">這樣的好處是什麼?這樣的好處是說,因為它們最後幾個hidden layer是共用的,也許因為透過最後幾個hidden layer是共用這件事,會讓這兩個encoder把image壓到latent space的時候,它們的latent space是同一個latent space,它們的latent space會用同樣的dimension來表示同樣的人臉的特徵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:27.440" id=27:27.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1647">27:27.440</a></div>
+        <div class="t">這樣的技術被用在couple game跟unit裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.320" id=27:32.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1652">27:32.320</a></div>
+        <div class="t">像這種share參數的task,它最極端的狀況就是這兩個encoder共用同一組參數,就是同一個encoder,只是在使用的時候吃一個flag,代表說現在要encode的image是來自於Xdomain還是Ydomain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:49.920" id=27:49.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1669">27:49.920</a></div>
+        <div class="t">所以大家知道意思嗎?就是說同一個encoder,但是input給它Xdomain image的時候,你要順便給它一個數值,比如說1,然後inputYdomain image的時候,你給它另外一個數值,比如說-1,讓它知道說現在encoder的是Xdomain還是Ydomain的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:05.920" id=28:05.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1685">28:05.920</a></div>
+        <div class="t">如果你今天要share參數的話,最極端的狀況就是這樣,最極端的狀況是兩個encoder,它們參數完全一樣,只是給它們不同的input的flag,讓它們知道說現在encoder的image不是在同一個Xdomain上,是不同的Xdomain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.120" id=28:21.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1701">28:21.120</a></div>
+        <div class="t">這個是第一招,還有很多滿坑滿谷的招式,比如說有一個就是加一個domain的discriminator,這個概念跟我們剛才在前一堂課講過的domain-adversarial-training是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:37.120" id=28:37.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1717">28:37.120</a></div>
+        <div class="t">它的概念是這樣子,原來Xdomain跟Ydomain都是自己搞自己的東西,但我們現在再加一個domain-discriminator,這個domain-discriminator要做的事情是給它這個latent的vector,它去判斷說這個vector是來自於Xdomain的image,還是來自於Ydomain的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.520" id=28:55.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1735">28:55.520</a></div>
+        <div class="t">這個domain-discriminator要判斷說這個vector是從Xdomain的image來的,還是從Ydomain的image來的。然後你的這兩個encoder,Xdomain encoder跟Ydomain encoder,它們的工作就是想要去騙過這個domain-discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.040" id=29:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1755">29:15.040</a></div>
+        <div class="t">那domain-discriminator沒辦法憑藉這個vector就判斷說它是來自於Xdomain還是Ydomain。如果今天domain-discriminator無法判斷說這個vector是來自於Xdomain和Ydomain,這樣意味著什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:29.320" id=29:29.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1769">29:29.320</a></div>
+        <div class="t">意味著說今天這個domain的image跟這個domain的image,它們都變成code的時候,它們的distribution都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.800" id=29:40.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1780">29:40.800</a></div>
+        <div class="t">那我們今天可以假設說真人,因為它們的distribution是一樣的,也許我們就可以期待同樣的維度就代表了同樣的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.680" id=29:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1791">29:51.680</a></div>
+        <div class="t">舉例來說,假設真人的照片男女比例是1比1,動畫人物的照片男女比例也是1比1,但實際上不是這樣子,我們就假設是1比1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.200" id=30:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1801">30:01.200</a></div>
+        <div class="t">因為男女的比例都是1比1,最後如果你要讓兩個domain的feature它的distribution一樣,那你就要用同一個維度來存這個男女比例是1比1的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:14.520" id=30:14.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1814">30:14.520</a></div>
+        <div class="t">如果是性別,你都要用低維來存,這樣它們的distribution才會變得一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.160" id=30:21.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1821">30:21.160</a></div>
+        <div class="t">所以假設你今天的這兩個domain,它們的attribute的distribution是一樣的,比如說男女的比例是一樣的,有戴眼鏡跟沒戴眼鏡的比例是一樣的,長髮短髮的比例是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.520" id=30:31.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1831">30:31.520</a></div>
+        <div class="t">那你也許期待說,透過domain discriminator,強迫這兩個domain的embedding的這個latent feature要是一樣的時候,那它們就會用同樣的dimension來表示同樣的事情,來表示同樣的characteristic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:46.000" id=30:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1846">30:46.000</a></div>
+        <div class="t">那這個是一招,那還有其他的招數,舉例來說也可以用cycle的consistency,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:54.080" id=30:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1854">30:54.080</a></div>
+        <div class="t">把這張image透過x encoder變成code,再透過y decoder把它解回來,然後把這張image再丟給y domain的encoder,再透過x domain的decoder把它解回來,然後希望input跟output越接近越好,那這個就是cycle consistency。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:12.640" id=31:12.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1872">31:12.640</a></div>
+        <div class="t">那如果把這個技術跟cycle game來做比較的話,我們剛才說cycle game就是有兩個formation的內容,那你的x domain encoder加y domain decoder,它們合起來就是從x domain轉到y domain,然後你這邊有一個discriminator確定說這個image看起來像不像是y domain的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:31.360" id=31:31.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1891">31:31.360</a></div>
+        <div class="t">接下來呢,你再從這邊進來,把這張image透過y domain的encoder跟x domain的decoder轉回原來的image,那你希望input的image跟output的image越接近越好,那這個跟cycle game的training其實就是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:48.880" id=31:48.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1908">31:48.880</a></div>
+        <div class="t">只是原來在cycle game裡面我們說從x domain到y domain generator就是一個network,我們沒有把它特別切成encoder跟decoder,只是在這邊我們會把它切成,把x domain到y domain的network切成說它有一個x domain的encoder,它有一個y domain的decoder,從y domain到x domain的network我們說它有一個y domain的encoder,它有一個x domain的decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:10.640" id=32:10.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1930">32:10.640</a></div>
+        <div class="t">Network的架構不太一樣,然後中間的那個latent space是shared的,但是實際上它們是這個training的criteria其實就是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:21.640" id=32:21.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1941">32:21.640</a></div>
+        <div class="t">像這樣的技術就用在combo game裡面,就是有各式各樣的game,世界上有各式各樣的game就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.480" id=32:28.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1948">32:28.480</a></div>
+        <div class="t">好,那還有一個叫做semantic consistency,semantic consistency是這樣,你把一張圖片丟進來,然後把它變成code,然後接下來你再把這個code用y domain的decoder把它合回來,再把y domain的image丟到y domain的encoder再把它合回來,那你希望透過x domain的encoder encode跟y domain的encoder encode,它的這個code要越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:55.840" id=32:55.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1975">32:55.840</a></div>
+        <div class="t">那這樣的好處是說,我們本來在做psychoconsistency的時候,你算的是這張image跟這張image,算的是兩個image之間的similarity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.600" id=33:06.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1986">33:06.600</a></div>
+        <div class="t">那如果是image和image之間的similarity,你通常算的是這種pixelwise的similarity,你沒有考慮semantic,你看它們的表象像不像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:15.520" id=33:15.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=1995">33:15.520</a></div>
+        <div class="t">那如果是在這個latent space上面考慮的話,那你就是算它們的semantic像不像,你算它們的latent code像不像,意思就是說你在算它們的semantic像不像,這個技術可以用在X game裡面,又有一個X game,因為這個東西看起來像X嘛,所以你也可以叫它X game這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:37.760" id=33:37.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2017">33:37.760</a></div>
+        <div class="t">其實你就是可以把世界二次元化了,這個是網路上一個現成的code叫kawaii-creator,它用的就是有點像我們剛才講的那個技術,但是這個是比較舊的code,所以有點不一樣,等一下你會看到要用unit做出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:56.240" id=33:56.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2036">33:56.240</a></div>
+        <div class="t">其實轉出來的結果是這樣子,這邊有兩個死臭酸宅,就可以把他們轉成萌妹子這樣子。你可能會問說這個技術有什麼用,這個技術很有用,我覺得我們應該要來大力推廣這種技術,為什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:15.680" id=34:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2055">34:15.680</a></div>
+        <div class="t">一方面就是說,比如說大家,如果線上課程我都是不露臉的,因為大家看到我的臉可能就會很生氣,如果是萌妹子的臉,大家可能就會比較高興,這是一個理由。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:26.160" id=34:26.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2066">34:26.160</a></div>
+        <div class="t">另外一個理由就是說,未來外星人會給我們降維打擊,降維打擊,知道嗎?就會把所有東西用二次元化,所以我們需要趕快把自己二維化,才可以走開降維打擊,所以這是未來我們應該要全力發展的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:40.160" id=34:40.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2080">34:40.160</a></div>
+        <div class="t">好,那這個就是讓世界二次元化,你也可以在你自己的作業三至四裡面看看你能不能做到這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:50.160" id=34:50.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2090">34:50.160</a></div>
+        <div class="t">好,那其實也可以做到Voice Conversion,Voice Conversion是什麼呢?Voice Conversion就是把A的聲音轉成B的聲音,這個技術一點都不稀奇,二十年前的阿利博士就已經做過了,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:03.520" id=35:03.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2103">35:03.520</a></div>
+        <div class="t">這技術並沒有什麼稀奇的,但是過去在阿利博士的時代是怎麼做的呢?過去的Voice Conversion要做的話,你就是要收集兩個人的聲音,就你講你要把A的聲音轉成B的聲音,你就把A找來念五十句話,B找來也念五十句話,他們要念一樣的句子,就A說好啊U,B也就說好啊U,A說good morning,B就說good morning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:26.240" id=35:26.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2126">35:26.240</a></div>
+        <div class="t">接下來怎麼做?你完全可以想像怎麼做,任一個model,比如說sequence to sequence model或者是什麼其他的,吃一個A的聲音,然後轉成B的聲音,就結束了,這就是一個supervised learning的problem,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:38.960" id=35:38.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2138">35:38.960</a></div>
+        <div class="t">但這樣的技術有很大的缺陷,舉例來說,假如你想把你的聲音轉成《新元結衣》的聲音,那你就先得把《新元結衣》請來跟你念一樣的五十句的句子,而且我們就要退一萬步,說你真的請到《新元結衣》好了,其實也不會說中文,所以他也沒辦法跟你念同樣的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:55.120" id=35:55.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2155">35:55.120</a></div>
+        <div class="t">所以怎麼辦?我們需要用game的技術,我們用今天學到的那些技術,你就可以在兩堆聲音間做互轉,你只要需要收集speaker A的聲音,再收集speaker B的聲音,他們兩個甚至可以說的就是不同的語言,一個說中文,一個說英文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:12.680" id=36:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2172">36:12.680</a></div>
+        <div class="t">用剛才講的第二個方法做下去,你就可以看看說,你能不能夠把A的聲音轉成B的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:24.280" id=36:24.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2184">36:24.280</a></div>
+        <div class="t">其實這邊有一個demo,我先和一個同學試了一下,看一下弄不弄得起來。我接一下麥克,接一下喇叭。這邊就是要把A的聲音轉成B的聲音。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.840" id=36:47.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2207">36:47.840</a></div>
+        <div class="t">A是我,有外國人啊,他不會說中文的外國人,我就說一句話,用外國人的聲音應念一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:09.440" id=37:09.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2229">37:09.440</a></div>
+        <div class="t">就是可以用那個外國人的聲音念一下,他是外國人,他不會說中文,所以他就是要有外國腔,他就是要有外國腔。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:23.240" id=37:23.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2243">37:23.240</a></div>
+        <div class="t">有人可能會問一個問題,怎麼不直接做一個personalized TTS就好了,你就收集外國人的聲音,作為他的語音合成系統,輸入文字,合出他的聲音就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:37.160" id=37:37.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2257">37:37.160</a></div>
+        <div class="t">但是這種voice conversion,它有一個不一樣的地方是說,你今天要保留有原來的那個說話人的種種的情緒語調在裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:49.720" id=37:49.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2269">37:49.720</a></div>
+        <div class="t">舉例來說,不過等一下那個例子是沒有特別成功的,舉例來說,如果我是用唱的,等一下,我試試看行不行,這個就是如果沒有聽出來的歌,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:18.860" id=38:18.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2298">38:18.860</a></div>
+        <div class="t">do you want to build a snowman,就是因為現在都沒有人要念博士,所以教授都會唱這首歌,那這首歌裡面也就是保有我們的情緒,你要感到我們希望在念博士的殷勤懇切。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:33.040" id=38:33.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2313">38:33.040</a></div>
+        <div class="t">所以我們今天在轉成語音的時候,希望那個殷勤懇切的情緒也能保留在裡面,雖然說其實沒有特別成功。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:39.720" id=38:39.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2319">38:39.720</a></div>
+        <div class="t">就不知道為什麼他的調有變這樣,可能跟我們預期的不太一樣就是了,但是反正就是可以轉成另外一個人的聲音這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:50.420" id=38:50.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-3LgL3NXLtI&t=2330">38:50.420</a></div>
+        <div class="t">以後就是,比如說我想說服你念博士的聲音,可能聽到我的聲音很討厭,所以沒辦法說服你,那如果用心緣結義的聲音,可能就可以說服你這樣子。</div>
+    </div>
+    
+</body>
+</html>   

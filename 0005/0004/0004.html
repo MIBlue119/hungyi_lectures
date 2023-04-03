@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Speech Recognition (4/7) - HMM (optional)</h2><a href=https://www.youtube.com/watch?v=XWTGY_PNABo><img src=https://i.ytimg.com/vi_webp/XWTGY_PNABo/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=0">00:00.000</a></div>
+        <div class="t">各位同學,大家早!那我們就來上課吧!</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=30">00:30.000</a></div>
+        <div class="t">大家好,我是LAS,CTC,還有RNN的transducer。今天我們要從HNN開始,來看看說今天的這些技術跟HNN有什麼樣的關係,來發現說這些遠古的血脈還在今天的技術中流淌。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.580" id=00:51.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=51">00:51.580</a></div>
+        <div class="t">接下來,我們就要回到至少十年前,做時光機回到十年之前,看看過去在做語音辨識、在還沒有deep learning的時候,人們是怎麼看待這個問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05.160" id=01:05.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=65">01:05.160</a></div>
+        <div class="t">我們說語音辨識就是輸入一串vector X,然後產生一串token Y。過去把這個問題想像成我們可以用統計的模型來解它,所以如果我們可以統計出P of Y given X,我們可以統計出給一段vector sequence、給一段acoustic feature sequence產生一個token sequence的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.540" id=01:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=94">01:34.540</a></div>
+        <div class="t">我們能夠統計出這個機率以後,接下來我們在做語音辨識的時候,你唯一需要做的事情就是窮取所有可能的token sequence,看哪一個token sequence帶進去這個機率模型裡面算出來的機率最大,那這個就是你語音辨識的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.440" id=01:56.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=116">01:56.440</a></div>
+        <div class="t">其實今天這些end-to-end的model,LAS,CTC,RNN transducer等等,你其實都可以看作是在試圖model這個P of Y given X,等一下我們會再提到這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.480" id=02:11.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=131">02:11.480</a></div>
+        <div class="t">另外一個你看到這個式子會問的問題是說,我們怎麼可能窮取所有可能的Y呢?如果Y是所有可能的token sequence,那這個可能的token sequence雖然太多了,我們怎麼可能窮取所有可能的token sequence去計算它的機率呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:29.180" id=02:29.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=149">02:29.180</a></div>
+        <div class="t">這件事情,你需要有比較好的演算法,透過一些approximation才能做到這件事情,那這個不是我們今天會講的。過去如果你要做這個題目,其實往往沒有那麼容易,這可能都是一本碩士論文,甚至是一本博士論文等級這樣子的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.660" id=02:47.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=167">02:47.660</a></div>
+        <div class="t">那這個找機率最大的Y這件事,我們往往叫做decode,叫做解碼,這個應該是從通訊那邊來的一個專有名詞,我們把看到哪一個X、哪一個Y機率最大這件事情叫做解碼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.460" id=03:05.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=185">03:05.460</a></div>
+        <div class="t">那接下來,這個P of Y given X可以經過一番拆解,根據貝斯定理可以拆解成P of X given Y乘以P of Y再除以P of X,那P of X跟我們解這個upmax的problem是沒有關係的,所以你可以把P of X拿掉,所以剩下你要做的事情就是找一個Y,它可以讓P of X given Y乘上P of Y的機率最大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.440" id=03:31.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=211">03:31.440</a></div>
+        <div class="t">而P of X given Y前面這一項叫做acoustic model,後面這一項叫做language model。像這樣子的式子,你一定在很多地方已經反覆地看過了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:45.060" id=03:45.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=225">03:45.060</a></div>
+        <div class="t">那acoustic model過去常用的就是H&M,就是hidden markup model,language model我們之後也會講到。這個language model,表面上看起來就是,如果你是用hidden markup model,你必須要搭配language model,那才符合我們這邊講的這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.560" id=04:04.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=244">04:04.560</a></div>
+        <div class="t">如果是一般的end-to-end model,因為直接在解這個,已經直接在做這件事情了,所以也許不需要language model。但事實上,對一般的end-to-end model而言,雖然已經直接在model P of Y given X,但是加上language model往往還是有用的,這個我們之後會講到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.560" id=04:27.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=267">04:27.560</a></div>
+        <div class="t">好,那我們先來看一下hidden markup model是怎麼回事,但我們不會花太多時間講它,就大概花個十分鐘很快地給你看過去說這個hidden markup model是怎麼回事,然後跟現在這些技術有什麼樣的關聯性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:42.560" id=04:42.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=282">04:42.560</a></div>
+        <div class="t">首先,第一件事情是,我們在之前的課程裡面講了很多各式各樣的token,你可以拿character當作token,你可以拿word當作token,但這些單位對hidden markup model來說都太大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:00.740" id=05:00.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=300">05:00.740</a></div>
+        <div class="t">所以,對hidden markup model來說,它真正考慮的不是token sequence,它要把token sequence轉成一個state sequence,我們把P of X given Y轉成P of X given S,那我們用Y代表token sequence,用S代表state sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:20.100" id=05:20.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=320">05:20.100</a></div>
+        <div class="t">state sequence是什麼東西呢?這邊的state是人定義的,它是一個比phoneme還要小的單位。我們之前有講過說,phoneme因素是發音的基本單位,但是在hidden markup model裡面用的state是比發音的基本單位還要更小的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:40.380" id=05:40.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=340">05:40.380</a></div>
+        <div class="t">一般在hidden markup model裡面,我們所謂的state是這樣的東西,就是你有一個word sequence,你有一個句子,這個就是Y,那你可以把它解成phoneme sequence,那你需要有一個詞典才辦得到,你可以去查表,告訴我們說每一個這邊的詞彙對應的phoneme sequence是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.980" id=05:58.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=358">05:58.980</a></div>
+        <div class="t">接下來,每一個phoneme sequence其實都會受到前後的context的影響,比如說what do you do的do有一個物的音,you也有一個物的音,但這兩個物的音,它們的發音是有點不一樣的,它們會受到前後有出現的phoneme的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:19.620" id=06:19.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=379">06:19.620</a></div>
+        <div class="t">所以我們會用一個東西叫做triphone。一般人聽到triphone這個詞,就從名字上顧名思義,會覺得說triphone就是三個phoneme連在一起。不是,triphone不是三個phoneme連在一起,triphone其實是比原來的phoneme還要更細緻的一個單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.340" id=06:40.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=400">06:40.340</a></div>
+        <div class="t">怎麼說呢?我們會把這邊的每一個phoneme都加上它前面的phoneme跟後面的phoneme,我們會把這邊的物前面加上一個d,後面加上一個y,我們會把這邊的物前面加上一個y,後面加上一個th。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.880" id=06:56.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=416">06:56.880</a></div>
+        <div class="t">這並不是說我們把三個phoneme連在一起的意思,而是說我們把原來的一個phoneme切得更細。雖然語言學家告訴我們說,它們都是發音的基本單位,它們的聲音是一樣的,但是事實上它們受到前後的phoneme的影響,所以它的聲音還是有點不同的,所以我們把它當做不同的單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.700" id=07:21.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=441">07:21.700</a></div>
+        <div class="t">所以,在triphone裡面這兩個物,我們並不會說它有同樣的發音,我們假設它的發音會是不一樣的。所以,我們在這兩個物前面各加了一些其他符號,來告訴你說,雖然語言學家說它都是同樣的phoneme,但實際上它的發音是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:40.920" id=07:40.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=460">07:40.920</a></div>
+        <div class="t">接下來還有一個比triphone更小的單位,就是H&M裡面用的state。我們通常會假設說,每一個triphone它是由三個state或五個state所構成的。至於要用幾個,這個是你自己決定的,看你的運算資源有多少,看你要把這個語音辨識系統做到多好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.940" id=08:02.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=482">08:02.940</a></div>
+        <div class="t">而通常最常見的就是,假設每一個triphone是由三個state所組成的,也就是說,你要發出這個triphone的聲音的時候,你會先發這個state對應的聲音,再發這個state對應的聲音,再發這個state對應的聲音,這三個state發出來的聲音合起來才是一個triphone。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.480" id=08:23.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=503">08:23.480</a></div>
+        <div class="t">所以你可以想象說,這個state是一個非常小的單位,這個phoneme已經是人的聽覺可以感知最小的發音的單位了。它先把phoneme轉成triphone切得更細一點,再把triphone切成state,切得非常非常細。等一下你會知道說,為什麼我們需要切得這麼細。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:43.480" id=08:43.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=523">08:43.480</a></div>
+        <div class="t">接下來,怎麼從state sequence產生一個acoustic feature sequence呢?因為我們今天這邊要算P of X given S,我們要算given一個state sequence的時候產生一串acoustic feature sequence的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.020" id=09:11.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=551">09:11.020</a></div>
+        <div class="t">所以我們必須要先假設出它產生的process,就是這個state,怎麼產生出acoustic feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.300" id=09:19.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=559">09:19.300</a></div>
+        <div class="t">那現在假設我們有一段聲音訊號叫做X,那X裡面有六個vector,那這個state sequence是怎麼產生acoustic feature sequence呢?我們假設這個process是這樣子的,你會先進入第一個state。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.300" id=09:39.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=579">09:39.300</a></div>
+        <div class="t">然後在第一個state裡面你會產生一些vector,等產生夠了你就會跳到下一個state,第二個state再產生一些vector,產生夠了再跳到下一個state再產生一些vector,然後把這三個state依序走完就結束了這整個產生的過程。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:05.760" id=10:05.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=605">10:05.760</a></div>
+        <div class="t">那在這整個產生的過程裡面,我們現在已經知道說從state產生acoustic feature的方式的過程,但這整個過程裡面我們需要有兩個機率,一個是從某一個state跳到另外一個state的機率,就是這個黃色的state它到底可以自己在這裡面待多久,那它有多少的機率會跳到下一個state。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.120" id=10:29.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=629">10:29.120</a></div>
+        <div class="t">還有就是,給一個state它產生出某個樣子的acoustic feature,它的機率有多大。所以有兩個機率我們是需要model它的,那這兩個機率呢,一個就叫做transition probability,一個叫做emission probability。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.300" id=10:47.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=647">10:47.300</a></div>
+        <div class="t">那transition probability它表示的就是從一個state跳到另外一個state的機率,那當然也包括從自己跳到自己的機率。看到前一個vector是由某一個state A產生的時候,下一個vector還是由state A產生的機率有多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:08.240" id=11:08.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=668">11:08.240</a></div>
+        <div class="t">或某一個前一個vector是由state A產生的時候,下一個vector是由state B產生的時候,機率有多少。這個叫做transition的probability。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:20.380" id=11:20.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=680">11:20.380</a></div>
+        <div class="t">另外一個emission的probability,它想要統計的事情是說,給一定一個state,這個state產生某個樣子的acoustic feature的機率有多大。那我們之所以可以用emission probability,是因為我們假設說,每一個state它產生出來的聲音訊號有一個固定的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.700" id=11:48.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=708">11:48.700</a></div>
+        <div class="t">人想發這個state的聲音的時候,它發出來的聲音訊號,如果你都用vector來表示的話,這些vector有一個固定的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.880" id=11:57.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=717">11:57.880</a></div>
+        <div class="t">人想發這個state的聲音訊號的時候,它發出來的聲音訊號,如果你把它轉成vector,這些vector有一個固定的機率分布。那我們會用Gaussian mixture model,用GMM來表示這個機率分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.720" id=12:11.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=731">12:11.720</a></div>
+        <div class="t">講到這邊,你就可以知道說,為什麼我們要用比風鈴還要小的單位來當作state。因為我們必須要假設每一個state,人在發每一個state的聲音的時候,它發出來的聲音就是有一個固定的機率分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:25.280" id=12:25.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=745">12:25.280</a></div>
+        <div class="t">如果它會變來變去,那是不行的,這跟我們假設是不一樣的。所以,像我們之前在講說,今天在做MQM的model、LAS的時候,你做語音辨識的單位都是比如說,你可以用graphic,你可以用character來當作單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.100" id=12:41.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=761">12:41.100</a></div>
+        <div class="t">但在過去用Hidden Mark of Model的時候,很少有人會用character來當作state。為什麼你不會用character來當作state呢?因為同一個character,它的發音不一定是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:51.100" id=12:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=771">12:51.100</a></div>
+        <div class="t">舉例來說,英文的字母C很多時候是發char,後面加H的時候它就發char,所以C這個字母的發音不是固定的,這樣子你就不適合拿來當作H&N的state。因為在H&N裡面,我們假設每一個state,它發出來的聲音就是有一個固定的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.480" id=13:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=792">13:12.480</a></div>
+        <div class="t">所以我們必須要把state用一個非常小的單位來表示,把聲音訊號切得非常碎,把它用非常小的單位來表示一個state。這個就是Hidden Mark of Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:24.760" id=13:24.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=804">13:24.760</a></div>
+        <div class="t">這個Emission Probability會遇到一個問題,就是我們的state實在是太多了。你想想看,風鈴有三十到四十個之間,每一個風鈴我們要轉成tri-fold,所以其實每一個風鈴都會變成三十的平方那麼多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.380" id=13:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=828">13:48.380</a></div>
+        <div class="t">所以你總共會有多少風鈴?你總共會有三十的三次方那麼多的風鈴,然後每一個風鈴你又有三個state。所以照理來說,你要多少的Gaussian的Mixed Model呢?你要三十的三次方再乘以三那麼多的Gaussian來做你的語音辨識系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.880" id=14:07.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=847">14:07.880</a></div>
+        <div class="t">那這樣子你會遇到的問題是,很多state可能在你的訓練資料裡面只出現一兩次,所以你根本就估不準它的Gaussian Mixed Model長什麼樣子。所以過去有一個非常關鍵的技術叫做tie-state的技術,這個過去很多人在研究,甚至一整本博士論文就是在研究怎麼做tie-state這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:29.280" id=14:29.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=869">14:29.280</a></div>
+        <div class="t">tie-state要做的事情是說,我們假設某一些state它的發音就是一樣的,所以我們就讓它共用同樣的Gaussian distribution。也就是說,你實際上在寫程式的時候可能就會寫成,雖然這邊有兩個state,它們的名字不一樣,這個state的名字只是pointer,它們會access到同樣的address,然後那address裡面存了你的一個Gaussian Mixed Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:55.040" id=14:55.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=895">14:55.040</a></div>
+        <div class="t">所以,這兩個state雖然表面上不一樣,它們名字不一樣,但是它們共用同一個Gaussian Mixed Model,這樣子你就可以減少你需要使用的Gaussian Mixed Model的數量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.220" id=15:08.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=908">15:08.220</a></div>
+        <div class="t">有一些state,如果它在整個訓練資料裡面出現非常少,它的Gaussian Mixed Model你估不準,那沒關係,反正它就跟別人共用Gaussian Mixed Model就可以了。像這樣的技術,在經過了很多很多年的研究以後,最後就產生了一個終極的型態,叫做suspects GNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.220" id=15:31.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=931">15:31.220</a></div>
+        <div class="t">什麼是suspects GNN呢?就過去通常研究的時候是在討論說哪些state應該要被共用,有些人會定很多規則,有些人會用統計的方法來決定說哪些state應該共用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:47.660" id=15:47.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=947">15:47.660</a></div>
+        <div class="t">這一系列研究最後產生了終極的型態,suspects GNN。它不再討論共不共用的問題,所有的state都共用同一個Gaussian Mixed Model。你說所有state都共用同一個Gaussian Mixed Model,那不是所有人的distribution都一樣嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.540" id=16:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=963">16:03.540</a></div>
+        <div class="t">suspects GNN神奇的地方是,它有一個Gaussian的pool,就像有一個池子,裡面有很多很多的Gaussian。每一個state,它手上拿著就像是一個網子,然後它去那個pool裡面撈幾個Gaussian出來,當作自己手上的Gaussian。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:22.180" id=16:22.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=982">16:22.180</a></div>
+        <div class="t">然後每個人手上,每個人都可以撈不同的Gaussian出來,所以每一個state它們既有同樣的Gaussian,又有不同的Gaussian。這個東西就叫suspects GNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.760" id=16:33.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=993">16:33.760</a></div>
+        <div class="t">我們要詳細講它的細節,因為今天這個也沒有那麼常用了。它是發表在ICATS 2010,距今正好已經十年了。十年前,這個技術剛被發表的時候,其實在ICATS是非常非常轟動的。這個是Dan Povey propose的,他在同一個conference裡面就發表了三篇suspects GNN的paper,就是說可以用在這個地方,可以這樣用、這樣用、這樣用,三篇。聽的人是滿坑滿谷的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.640" id=17:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1022">17:02.640</a></div>
+        <div class="t">一個有趣的小知識是,其實在同一個conference,ICATS 2010,Hinton他publish了deep learning用在ASR的結果,deep learning用在語音辨識上的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:18.980" id=17:18.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1038">17:18.980</a></div>
+        <div class="t">我不會說這是第一篇deep learning用在語音辨識的結果,因為在過去我們已經有一些其他的方法引入neural network在語音辨識裡面,所以如果你覺得neural network就是deep learning的話,那這可能不是第一篇。不過這是Hinton的paper,他講說怎麼把deep learning用在語音辨識上,跟suspects GNN發表在同一個conference裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.000" id=17:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1062">17:42.000</a></div>
+        <div class="t">ICATS 2010我是有趣的,如果你問我說Hinton這個paper有沒有受到歡迎呢?我完全不知道,我完全沒有印象有這篇paper,所以顯然是沒有受到太多的重視的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:54.000" id=17:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1074">17:54.000</a></div>
+        <div class="t">那時候你跟人家說Hinton,他會說,誰啊?我很熟嗎?那個時候大家還不太清楚deep learning是什麼,所以這篇paper其實並沒有受到什麼特別的重視。當時大家覺得最令人驚艷的新的技術是suspects GNN。所以這篇paper雖然是deep learning用在語音辨識上的一個開端,但是當時並沒有引起太多的重視。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.640" id=18:18.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1098">18:18.640</a></div>
+        <div class="t">那我也可以理解說,為什麼那篇paper沒有引起太多的重視。如果你今天再回去讀那一篇paper的話,會發現說,你知道今天paper你就是要衝state of the art,如果你沒衝state of the art的話,人家就會覺得說,你這個performance做差,你的技術就不好,就不會被accept。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.120" id=18:36.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1116">18:36.120</a></div>
+        <div class="t">其實Hinton在那篇paper裡面用deep learning的技術做語音辨識,他是沒有衝到state of the art的。當時有很多很多的方法都可以比Hinton在那篇paper裡面得到的結果還要好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:50.840" id=18:50.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1130">18:50.840</a></div>
+        <div class="t">那個可能的原因是,Hinton在用deep learning的時候,他其實沒有用到triple。他可能不知道是沒有用,還是說他不知道triple,反正他就是沒有用triple,所以他的結果其實是沒有辦法衝到state of the art的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.720" id=19:07.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1147">19:07.720</a></div>
+        <div class="t">很多其他的paper都可以比Hinton那篇deep learning的paper得到的結果要好。我們假設說,我們已經算好這個emission probability跟transition probability,這個怎麼算?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.820" id=19:21.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1161">19:21.820</a></div>
+        <div class="t">你可以詳盡李林三老師的數位語音處理,我們就假設說,我們已經透過訓練資料,你可以算出transition probability和transition probability。但你有這兩個probability以後,你還是算不出給一個state sequence產生一串聲音訊號的機率,你還是算不出給state sequence產生acoustic vector sequence的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:46.940" id=19:46.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1186">19:46.940</a></div>
+        <div class="t">為什麼?你還少了一個關鍵的東西,這個東西等一下在講cpc跟rnt的時候也都會用到。這個關鍵的東西叫做alignment。什麼意思呢?我們這邊必須要知道說,每一個acoustic feature是由哪一個state產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:08.180" id=20:08.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1208">20:08.180</a></div>
+        <div class="t">我們要知道這一個資訊,我們才有辦法套用emission probability跟transition probability,算出某一個state sequence產生的x的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:17.700" id=20:17.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1217">20:17.700</a></div>
+        <div class="t">所謂的alignment的意思就是,因為通常這個input的state sequence比較短,然後output的vector sequence、acoustic feature sequence比較長,那這個短的跟長的東西怎麼把它對應在一起,這個東西就是alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.360" id=20:35.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1235">20:35.360</a></div>
+        <div class="t">在H&M裡面,我們需要知道,這些acoustic feature分別是由哪一個state所產生的,我們才有辦法用emission probability跟transition probability計算出機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.920" id=20:47.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1247">20:47.920</a></div>
+        <div class="t">講得更具體一點,alignment像是這樣子的東西,我們有三個state,a、b、c。我們把a重複幾次、b重複幾次、c重複幾次,讓它跟我們的acoustic feature的數目一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.220" id=20:59.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1259">20:59.220</a></div>
+        <div class="t">代表說,acoustic feature這邊有六個,前兩個是由a產生的,中間兩個是由b產生的,最後兩個是由c產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.800" id=21:08.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1268">21:08.800</a></div>
+        <div class="t">我們要先知道這個alignment,我們才能算出,給定這個alignment的情況下產生一串acoustic feature的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:17.760" id=21:17.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1277">21:17.760</a></div>
+        <div class="t">我們知道這個alignment以後,我們就知道說,第一個acoustic feature是由state a產生的,第二個也是由a產生的,第三個是由b產生的,第四個是由b產生的,第五個是由c產生的,第六個是由c產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.000" id=21:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1291">21:31.000</a></div>
+        <div class="t">接下來,你就可以計算這件事情出現的機率了,因為我們知道所有的transition probability,你知道a到a的機率、a到b的機率、b到b的機率、b到c的機率、c到c的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.400" id=21:42.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1302">21:42.400</a></div>
+        <div class="t">你也知道,a產生x1的機率,這是一個Gaussian mixture model告訴你的,你知道a產生x2的機率,你知道b產生x3的機率,你知道b產生x4的機率,以此類的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.180" id=21:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1312">21:52.180</a></div>
+        <div class="t">這些機率,你都知道,把這些機率全部都乘起來,你就得到給定一個alignment,產生一個acoustic feature sequence的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:01.820" id=22:01.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1321">22:01.820</a></div>
+        <div class="t">當然,這個alignment不一樣,算出來的機率就不同,有很多各種不同可能的alignment,給定這個例子有很多各種不同可能的alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:10.800" id=22:10.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1330">22:10.800</a></div>
+        <div class="t">你可以說,第一個state只產生了第一個feature,接下來就換第二個state連續產生四個feature,再由c這個state來收尾產生最後一個feature,也有可能是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:23.740" id=22:23.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1343">22:23.740</a></div>
+        <div class="t">只給我們聲音訊號、只給我們state,我們其實不知道它們中間正確的alignment應該長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:31.700" id=22:31.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1351">22:31.700</a></div>
+        <div class="t">而給不同的alignment,算出來產生acoustic feature的機率就不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.440" id=22:37.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1357">22:37.440</a></div>
+        <div class="t">所以怎麽辦呢?在hidden Markov model裏面,我們不知道alignment是什麽,所謂的hidden的意思就是,hidden Markov model到底是什麽東西,什麽東西是hidden,什麽東西是藏起來,什麽東西是隱藏的,其實就是這個alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.180" id=22:52.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1372">22:52.180</a></div>
+        <div class="t">這個alignment是隱藏的,我們是不知道的。這個alignment不知道,那怎麽辦呢?我們怎麽計算給一個state sequence產生acoustic feature的機率呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:00.740" id=23:00.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1380">23:00.740</a></div>
+        <div class="t">就是窮局所有可能的alignment,把每一個alignment產生acoustic feature的機率統統算出來,再加起來,這個就是實際上H&M在計算state sequence產生acoustic feature sequence的時候所用的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:21.940" id=23:21.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1401">23:21.940</a></div>
+        <div class="t">那我這邊用h屬於align of s來代表說,這個h是這個state sequence可能的一個alignment,所以可能的一個alignment是說,有些alignment是不對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:38.360" id=23:38.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1418">23:38.360</a></div>
+        <div class="t">你今天要把這個ABC跟這六個acoustic featurealign在一起,如果你說我今天alignment是ABCCBC,這樣是不對的,就是你從A跳到B再跳到C以後你不能再跳回去了,這個是不對的,這不是一個對的alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:53.580" id=23:53.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1433">23:53.580</a></div>
+        <div class="t">或者說ABBBB沒有產生C,這不是一個正確的alignment。正確的alignment必須要把這邊每一個acoustic feature都有分配到A、都有分配到B、都有分配到C,而且必須要按照順序,這才是一個正確的alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.080" id=24:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1448">24:08.080</a></div>
+        <div class="t">把所有可能的alignment統統加起來,把所有可能的alignment機率都算出來加起來以後,就是H&M算出來的機率。這個是H&M。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.960" id=24:21.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1461">24:21.960</a></div>
+        <div class="t">H&M裡面沒有deep learning,當deep learning開始崛起的時候,人們就開始思考說,我們怎麼把deep learning用到語音辨識裡面去?最早的想法都是基於H&M改的,H&M就在那邊,然後我們對它稍微做一下改造,你的程式不用動太多,就可以把deep learning塞進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.920" id=24:46.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1486">24:46.920</a></div>
+        <div class="t">第一個最常見的方法叫做Tendon。其實像Tendon這種方法流行得非常早,在2010年有Hinton的deep learning for ASR的paper之前,2009年的ICAPS Tendon的paper就已經滿坑滿谷了,大概有五、六十篇那麼多吧,那時候就已經滿街都是用Tendon的paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:09.360" id=25:09.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1509">25:09.360</a></div>
+        <div class="t">Tendon這個方法是怎麼樣呢?Tendon的方法是說,我們不要去動Hidden Mark of Model那一塊,就是你原來語音辨識系統訓練的程式,完全不去動它。唯一動的是什麼?用deep learning來給我們比較好的acoustic feature background。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:27.740" id=25:27.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1527">25:27.740</a></div>
+        <div class="t">就之前的acoustic feature,這些東西是NFCC,我們用deep learning給我們比較好的acoustic feature。那怎麼用deep learning給我們比較好的acoustic feature呢?你訓練一個state的classifier,你訓練一個DNN,這個DNN做的事情就是給它NFCC,然後它去預測說這個NFCC屬於每一個state的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:54.140" id=25:54.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1554">25:54.140</a></div>
+        <div class="t">所以這個DNN是一個state classifier,你把一個NFCC丟進去,它會計算說,given這個NFCC,這個NFCC屬於state A的機率、屬於state B的機率、屬於state C的機率等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:05.840" id=26:05.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1565">26:05.840</a></div>
+        <div class="t">接下來,你把DNN的輸出,它輸出這個可能是一個distribution,當作新的acoustic feature,取代掉NFCC,然後接下來就沒有任何不一樣,你原來的程式該怎麼跑還怎麼跑。NFCC本來是39維,你只是換成一個別的維度的factor,然後還是照樣跑下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.260" id=26:25.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1585">26:25.260</a></div>
+        <div class="t">但你不一定要取這個DNN最終的輸出,你也可以取它最後一個hidden layer或取bottleneck layer,這都是可以的。在至少十年前,這樣的方法就已經滿地都是。所以我會說,deep learning其實很早就已經被引入、已經變成是這樣子的領域,當然這個是tendent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.160" id=26:49.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1609">26:49.160</a></div>
+        <div class="t">第二個方法叫做DNN-HNN的hybrid model,也就是說,這個HNN裡面有一個Gaussian mixture model,我們想把那個Gaussian mixture model用DNN把它取代掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:05.720" id=27:05.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1625">27:05.720</a></div>
+        <div class="t">原來Gaussian mixture model是計算說,給一個state產生一個acoustic feature vector的機率。DNN你可以訓練一個state的classifier,給一個x的情況下,它是某一個state的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.600" id=27:20.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1640">27:20.600</a></div>
+        <div class="t">看起來,這兩件事情好像沒有辦法搭在一起,因為一個是given A產生x的機率,一個是given X產生A的機率有點不一樣。但是古聖先賢就做了一個神奇的轉換,這個神奇的轉換是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.780" id=27:35.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1655">27:35.780</a></div>
+        <div class="t">P of X given A可以寫成P of XA除以P of A,然後接下來上面P of XA可以寫成P of A given X乘以P of X再除以P of A,然後P of A given X就是DNN的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.720" id=27:52.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1672">27:52.720</a></div>
+        <div class="t">然後P of A你就直接從你的訓練資料裡面去統計就好,你就從你的訓練資料裡面去統計一下,每一個state出現的機率就是P of A,那P of X就不要管它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:06.740" id=28:06.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1686">28:06.740</a></div>
+        <div class="t">這個東西湊起來,你就可以把原來要用Gaussian mixture model算的東西改成用DNN算。用這樣的方法,最大好處就是,你程式要更動得很少。因為你想,你原來的語音辨識系統,不管是訓練還是測試的時候,你裡面可能就有一個function,是compute emission probability。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:28.440" id=28:28.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1708">28:28.440</a></div>
+        <div class="t">那個function就是吃一個acoustic feature vector,吃一個state,然後就吐一個機率給你。其實Gaussian mixture model算出來不是機率,它是likelihood,不過沒有關係,我們就把它當作是機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:40.920" id=28:40.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1720">28:40.920</a></div>
+        <div class="t">你就是有一個程式,給X跟A,然後就吐出一個數值給你。現在你那個程式,那個function,你只要更動內部就好,外面的東西都不用動,這個很modulize,很模組化,對外面做training的人來說完全沒有任何的改變,你只要把function內部塞了一個DNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:01.400" id=29:01.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1741">29:01.400</a></div>
+        <div class="t">一樣,那個function還是給X跟A,然後吐一個數值出來給你,對外面的人來說沒有什麼不同,但是現在那個數值是由DNN算出來的。那用DNN來算這個數值有什麼好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:16.580" id=29:16.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1756">29:16.580</a></div>
+        <div class="t">在過去,在早年,很多人還沒有那麼了解deep learning的時候,有人就說,啊,deep learning厲害是因為它discriminative training啦,所謂discriminative training的意思就是說,給定X產生A,這個叫discriminative training,給定A產生X叫做generative training,他覺得discriminative training比較厲害這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:37.340" id=29:37.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1777">29:37.340</a></div>
+        <div class="t">其實我們在Machine Learning那門課也有講過discriminative這個跟generative的差別,可是其實這件事情我並不認為是正確的,為什麼?因為Hidden Markov Model也可以做discriminative training,它是一個generative的model,但是你可以用discriminative的方法來train它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:59.040" id=29:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1799">29:59.040</a></div>
+        <div class="t">所以DNN真正powerful的地方不會是在discriminative,discriminative這件事情早在有DNN之前就已經玩得非常爛了,怎麼把Hidden Markov Model做discriminative training這個已經有非常非常多的研究,所以DNN真正powerful的地方並不在於discriminative這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:16.260" id=30:16.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1816">30:16.260</a></div>
+        <div class="t">有人又認為說,DNN強的地方就是我們參數很多了,參數多所以就比較厲害。但是你其實小看了Gaussian mixture model,在有DNN之前,Google他們在做語音辨識的時候,他們的Gaussian mixture model,一個state裡面都是五百個mixture這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:31.640" id=30:31.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1831">30:31.640</a></div>
+        <div class="t">我知道你自己如果有做過HMM-based的語音辨識的話,你可能一個state有三十二個、六十四個mixture,那Google就是會用比你多,它就是用五百個之類的,所以它的參數量也已經非常非常大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:43.860" id=30:43.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1843">30:43.860</a></div>
+        <div class="t">事實上,如果你比較過去Hidden Markov Model用的參數量跟今天DNN用的參數量,其實可能甚至是差不多的。所以到底DNN強在哪裡呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:53.940" id=30:53.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1853">30:53.940</a></div>
+        <div class="t">DNN強的地方,我認為它其實就是一個終極的state tie-in的做法。之前,每一個state都要有一個自己的Gaussian mixture model,每一個state都有一個Gaussian mixture model,Gaussian mixture model裡面有mean跟variance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.220" id=31:10.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1870">31:10.220</a></div>
+        <div class="t">但是對DNN來說,所有的state都是共用同一個DNN的。每一個state要有一個自己的Gaussian mixture model,但是所有state都共用同一個DNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:22.860" id=31:22.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1882">31:22.860</a></div>
+        <div class="t">所以它是一個非常厲害的state tie-in的方法,它是一個純data-driven的state tie-in的方法。這是我覺得DNN相較於過去的GNN強那麼多的一個很關鍵的理由。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:40.560" id=31:40.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1900">31:40.560</a></div>
+        <div class="t">這樣子的做法厲不厲害呢?這樣子的做法非常強,因為這邊的DNN你不見得要一般簡單的fully connected feed-forward network,這邊你可以換成任何的東西,任何的state-of-the-art的neural network,比如說CNN,比如說LSTM,我們再講一下state classifier是哪裡來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:03.340" id=32:03.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1923">32:03.340</a></div>
+        <div class="t">比如說我們會需要一個state classifier,這個state classifier的input是state,這個state classifier的input是acoustic feature,NMCC output告訴你說它屬於哪一個state。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:13.660" id=32:13.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1933">32:13.660</a></div>
+        <div class="t">但是你知道嗎?訓練這種classifier,你需要acoustic feature跟state之間的對應的關係,對不對?大家都知道說train classifier,你就是要有input跟output對應的關係,不然你怎麼訓練?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:25.520" id=32:25.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1945">32:25.520</a></div>
+        <div class="t">但是你有這種訓練資料嗎?你其實沒有,因為今天給你的label data是你有acoustic feature,然後這個acoustic feature順便給你一段文字,這是工讀生幫你標的文字,你可以把文字轉成state sequence,但是你不知道這邊的每一個state對應到哪一個acoustic feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:43.860" id=32:43.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1963">32:43.860</a></div>
+        <div class="t">所以過去的做法是怎麼樣呢?過去的做法是,你先train一個HNN、GNN,用HNN、GNN可以直接從這樣子的data訓練出來,細節我們就不講了,反正有辦法,你先訓練一個HNN、GNN,有了這個HNN、GNN的model以後,你就可以去做一個alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:02.340" id=33:02.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=1982">33:02.340</a></div>
+        <div class="t">你有HNN、GNN的model以後,你可以去計算說,怎麼樣把這些state分配給這些acoustic feature算出來的機率是最大的,根據這個HNN、GNN的model,算出alignment的state sequence,這個state分配給這些acoustic feature的機率,找出一個機率最大的alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:22.980" id=33:22.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2002">33:22.980</a></div>
+        <div class="t">有了這個alignment以後,你就acoustic feature跟這些state的對應關係,你就可以訓練classifier了。那你就可以訓練DNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.580" id=33:34.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2014">33:34.580</a></div>
+        <div class="t">有人就會覺得說,我們都覺得HNN、GNN的performance不好啊,你用它來算alignment會不會算出來不夠準?好,如果你有這個concern的話,你就把這邊再換成DNN,反正你現在有一個DNN了嘛,你有第一代的DNN了,用這個DNN來再做一次alignment。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:52.740" id=33:52.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2032">33:52.740</a></div>
+        <div class="t">然後你就可以再重新訓練一個新的DNN,這個就是DNN。你就可以這樣反覆地做。你有新的DNN,就拿來做alignment,產生訓練資料,再訓練新的DNN,就這樣反覆做直到你爽為止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:06.580" id=34:06.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2046">34:06.580</a></div>
+        <div class="t">這樣子的方法,它很強嗎?它其實很強,它達到了human parenting。大家可能都聽過說,微軟在2016年年底的時候就說,它們的語音辨識的技術得到了重大的突破,它們的語音辨識的能力已經可以跟人類相齊並論。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:26.480" id=34:26.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2066">34:26.480</a></div>
+        <div class="t">在微軟報告的結果裡面,它們的機器得到的是5.9%的錯誤率,人也得到的是5.9%的錯誤率。這邊用的其實是剛才講的DNN、HNN的hybrid system。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:43.880" id=34:43.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2083">34:43.880</a></div>
+        <div class="t">這些大公司說的所謂已經human parenting的成果,其實用的是hybrid system。其實今天多數的commercial system可能還是以hybrid system為主力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:57.980" id=34:57.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2097">34:57.980</a></div>
+        <div class="t">今天你用到的線上的這些語音辨識系統,它們當然是deep learning base,不過通常都是hybrid system。N2N的system其實還沒有那麽多。我聽到宣稱說是完全N2N的,可能只有Google的Pixel 4宣稱是完全用N2N的RNT訓練出來的結果。不過我相信用N2N的系統會越來越多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.060" id=35:22.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2122">35:22.060</a></div>
+        <div class="t">這個結果是做在一個叫做Switchboard的Corpus上。微軟當時還在國際會議擺了一個攤位,那個攤位過去就秀給你兩句話,給你聽一段聲音,然後秀給你兩個語音辨識的結果,然後叫你猜說哪一個是人辨識出來的,哪一個是機器辨識出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:45.420" id=35:45.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2145">35:45.420</a></div>
+        <div class="t">所以顯然他們覺得說,整個機器辨識出來的結果跟人辨識出來的結果是真假難辨的,因爲他們幾乎有一樣的辨識錯誤率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:55.900" id=35:55.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2155">35:55.900</a></div>
+        <div class="t">這邊要強調一下,微軟找來的人並不是路邊隨便拉來的阿貓阿狗,微軟找來的人是專業的聽寫員,他們找來的人是專門做語音辨識的人,那些人的工作就是有人在臺上演講,在下面做數據的那種人,結果他們的語音辨識錯誤率居然是跟機器差不多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:19.360" id=36:19.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2179">36:19.360</a></div>
+        <div class="t">幾個月以後,IBM也發表了類似的結果。如果你看IBM這個paper的話,它處處都針對微軟這個paper,它說他們的語音辨識系統的錯誤率從5.9降到5.5,但IBM找來的人又更厲害一點,從5.9竟然進步到5.1,所以機器還是沒有人類那麽強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:40.700" id=36:40.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2200">36:40.700</a></div>
+        <div class="t">當然今天如果在Switchboard的Corpus上,你辨識的錯誤率能夠壓到5%左右,其實就差不多了,再低可能就有點難討論了。爲什麽再低會不太有討論的價值呢?因爲想想看,人在這個語音辨識的Corpus上面是有5%左右的錯誤率的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:01.420" id=37:01.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2221">37:01.420</a></div>
+        <div class="t">那你說這些人都有5%的錯誤率,那正確答案是哪裏來的呢?正確答案也是人標的啊,所以那個正確答案其實也有5%的錯誤率啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:10.880" id=37:10.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2230">37:10.880</a></div>
+        <div class="t">所以今天如果你的performance可以壓到5%左右的錯誤率,那其實可能就是極限了,你可能就真的很難再壓到更低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:19.680" id=37:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2239">37:19.680</a></div>
+        <div class="t">如果壓到更低,你只是說你的錯誤要跟當初標這個Corpus的人的錯誤一樣,所以比5%的錯誤率更低可能不是非常有意義。總之顯示說,在這個Corpus上就是被破臺了,這個其實只是在這個Benchmark Corpus的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:38.900" id=37:38.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2258">37:38.900</a></div>
+        <div class="t">今天你說在日常生活中語音辨識系統跟人的辨識能力一樣強,這你是絕對不會相信的,沒有人會相信這件事,這只是在這個Benchmark Corpus上面。因為玩得夠久了,overfit夠了,然後就把這個Benchmark Corpus整個破掉了,整個破臺了,把它玩壞了,那就讓機器跟人的錯誤率可以做到差不多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:02.360" id=38:02.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2282">38:02.360</a></div>
+        <div class="t">但是並不代表說,語音辨識的問題真的已經被解決了,但是確實也達到了非常大程度的進展。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:09.860" id=38:09.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2289">38:09.860</a></div>
+        <div class="t">那個時候,你要達到非常高的正確率,你要怎麼做呢?它們都是DNA、HANA的hybrid system,那你要怎麼改呢?你要做的就是給一個非常深的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:21.760" id=38:21.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2301">38:21.760</a></div>
+        <div class="t">舉例來說,在微軟的paper裡面,它們兜了一個49層的network。當然,今天你說兜個49層的network沒有什麼啦,但是在四、五年前會覺得,哇,好深哦,你有什麼49層,好厲害啊,你有很多層、很多層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:37.120" id=38:37.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2317">38:37.120</a></div>
+        <div class="t">它們這個49層的network就是可以得到跟人類差不多的語音辨識的正確率。這邊output就是有九千個value,它output有九千個class,那這九千個class其實就是九千個state。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:52.160" id=38:52.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=XWTGY_PNABo&t=2332">38:52.160</a></div>
+        <div class="t">好,那這個是歷史的回顧,接下來我們就回到今日的end-to-end的技術。</div>
+    </div>
+    
+</body>
+</html>   

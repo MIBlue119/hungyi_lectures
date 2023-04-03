@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Dialogue State Tracking (as Question Answering)</h2><a href=https://www.youtube.com/watch?v=tRDF_w700Uw><img src=https://i.ytimg.com/vi_webp/tRDF_w700Uw/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=0">00:00.000</a></div>
+        <div class="t">接下來這一堂課,我們要講Dialogue State Tracking,而且特別的地方就是,我們並不是要回顧整個Dialogue State Tracking的歷史,而是要告訴你說,現在Dialogue State Tracking這個問題往往被看成是一個Question Answering的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.680" id=00:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=19">00:19.680</a></div>
+        <div class="t">我們在介紹各種NLP任務的時候,有跟大家提過Task-Oriented Dialogue。Task-Oriented Dialogue本質上它要做的事情,其實也是輸入多個句子,輸入目前對話已經講過的句子,然後你的機器要給出一個回覆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:41.960" id=00:41.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=41">00:41.960</a></div>
+        <div class="t">一般Task-Oriented Dialogue會被分成幾個小的Module,包括你有Natural Language Generation的Module負責生成句子,你有一個State Tracker,這個State Tracker它根據現在在對話裡面已經講過的話,產生現在對話的State,等一下會更清楚的跟大家講說什麼叫做State。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08.320" id=01:08.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=68">01:08.320</a></div>
+        <div class="t">過去State Tracker裡面往往都有一個Natural Language Understanding的Module,有一個NLU,那你的State Tracker是根據NLU的輸出來決定State,但今天State Tracker的研究已經邁向拿掉這個NLU做End-to-End,直接根據文字產生State。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32.640" id=01:32.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=92">01:32.640</a></div>
+        <div class="t">還有Policy,Policy就是根據State決定Action,然後NLU把Action轉成人可以看得懂的文字,就完成了一個Task-Oriented Dialogue。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:44.800" id=01:44.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=104">01:44.800</a></div>
+        <div class="t">那我們今天要講的就是State Tracker怎麼根據現在對話的內容,產生出現在對話的State。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:55.280" id=01:55.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=115">01:55.280</a></div>
+        <div class="t">當然Task-Oriented Dialogue是一個非常廣的問題,有各式各樣的Module,每個Module都可以專門用一堂課來講,那為什麼選擇講State Tracking呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:08.920" id=02:08.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=128">02:08.920</a></div>
+        <div class="t">當然首先Dialogue State Tracking,我們往往用DST來當作它的縮寫,它是Task-Oriented Dialogue的一個關鍵技術,有多麼關鍵呢?這邊講一個小故事,有一個比賽叫做DSTC,它是跟Dialogue有關的每年舉辦一次的比賽。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:30.680" id=02:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=150">02:30.680</a></div>
+        <div class="t">那DSTC它是什麼的縮寫呢?現在DSTC的縮寫是Dialogue System Technology Challenge的縮寫,DSTC,但事實上在2017年以前,它不是這個東西的縮寫啊,在2017年以前,它是Dialogue State Tracking Challenge的縮寫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:57.480" id=02:57.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=177">02:57.480</a></div>
+        <div class="t">只是後來覺得說只有做Dialogue State Tracking會不會太侷限了呢?所以就改成Dialogue System Technology,但過去它其實是Dialogue State Tracking的縮寫,所以可見Dialogue State Tracking在整個Dialogue裡面扮演了什麼樣重要的角色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:16.260" id=03:16.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=196">03:16.260</a></div>
+        <div class="t">那另外一個其實最主要的理由,就是其實今天的DST,它被看作是一個Question Answering的Problem,那既然我們花了很多時間講Question Answering,那我們應該來講一下Dialogue State Tracking。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.940" id=03:31.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=211">03:31.940</a></div>
+        <div class="t">那這一門課呢,其實我並不希望大家在學完這一門課以後,只是學到說Speech有一些任務,NLP有一些任務,那每個任務裡面有什麼樣的技術,而是期待你能夠融會貫通不同的技術,不同的任務,不同的Task,它們往往有著共同的技術,有著共同的問題,有著共同的解法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.020" id=03:58.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=238">03:58.020</a></div>
+        <div class="t">你能夠融會貫通,知道說哪些任務有著相同的問題,有著相同的解法,你才能夠說是真的了解了這個學問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:08.920" id=04:08.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=248">04:08.920</a></div>
+        <div class="t">那我們先來講一下,為什麼需要做Dialogue State Tracking呢?這是一則對話,那對話往往非常多,樂樂等,那如果你給祁鈺看的話,他就會說,請在二十個字之內給我重說,他不想看這麼長的東西。而Dialogue State Tracking,它的工作就是在進行摘要這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:33.960" id=04:33.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=273">04:33.960</a></div>
+        <div class="t">所以Dialogue State Tracking就是把一個很冗長的摘要,寫成類似報表的形式,做成表格,讓你可以一目了然。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:46.120" id=04:46.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=286">04:46.120</a></div>
+        <div class="t">所以Dialogue State Tracking的輸出,往往長得像是這個樣子,這邊有一則很長的對話,我也懶得看,不知道裡面有什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:53.960" id=04:53.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=293">04:53.960</a></div>
+        <div class="t">但是你光看Dialogue State Tracking,就知道它裡面有發生什麼事情,比如說,現在你已經知道說,在這個Dialogue裡面,你的Customer想要訂的Hotel Name是Ashley Hotel,然後他想要吃什麼樣的食物呢?想要吃European的食物,他想要什麼樣價位的餐廳呢?中等價位的餐廳,等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.240" id=05:16.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=316">05:16.240</a></div>
+        <div class="t">這些資訊都已經包含在Dialogue State Tracking裡面,你就算不看這些冗長的對話,你也大概知道這個Dialogue發生什麼事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.200" id=05:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=325">05:25.200</a></div>
+        <div class="t">所以所謂的一個State,Dialogue State Tracking裡面所謂的State,它就是對整個對話到目前為止的摘要,所以State就是整段對話到目前為止的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.040" id=05:41.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=341">05:41.040</a></div>
+        <div class="t">真正好的State就可以讓我們做到說,把這個對話內容都丟掉,直接根據這個State的內容,我們就可以進行決策。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.040" id=05:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=351">05:51.040</a></div>
+        <div class="t">對後端的Policy的那些Module來說,他只要看Dialogue State Tracking的State,他就可以知道他應該要做些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:59.760" id=05:59.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=359">05:59.760</a></div>
+        <div class="t">假設你有一個好的Dialogue State Tracker,甚至在這種比較簡單的Test-Oriented Dialogue的情況下,你後面的Policy就不需要Trend了,直接寫個Rule,根據好的State,根據清楚的State,也許就可以做出非常正確的決策。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:17.440" id=06:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=377">06:17.440</a></div>
+        <div class="t">所以這顯示,DST,Dialogue State Tracking是一個很關鍵的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:22.760" id=06:22.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=382">06:22.760</a></div>
+        <div class="t">那這個Dialogue State Tracking的State裡面有哪些東西呢?State是由一組Key跟Value的Pair所組成的,舉例來說,Hotel Price Range是Moderate,使用者要訂的旅館價位是中等價位,這就是一個Key跟Value的Pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.760" id=06:48.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=408">06:48.760</a></div>
+        <div class="t">Hotel Price Range是一個Key,而Moderate是Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:54.520" id=06:54.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=414">06:54.520</a></div>
+        <div class="t">那Key呢,通常是我們在設計這個對話系統的時候,就已經Predefined好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.440" id=07:04.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=424">07:04.440</a></div>
+        <div class="t">在設計這個對話系統之前,你就已經定義好說,今天我們在做Dialogue State Tracking的時候,我們要Track的Key有哪些呢?就是有Hotel Type,有Hotel Price Range,有Hotel有沒有Internet,有Hotel Name等等,這些東西都是事先設定好的,我們會事先設定好,我們關注的就是這些Key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:25.720" id=07:25.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=445">07:25.720</a></div>
+        <div class="t">而Value呢,我們會事先設定好Value的範圍,然後機器要做的事情就是從我們所提供的Option裡面,根據對話的內容,選出一個正確的Option。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.000" id=07:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=463">07:43.000</a></div>
+        <div class="t">舉例來說,如果是Price Range,那我們提供給機器的Option可能就有中等價位、便宜、昂貴,還有Don't Care,就有可能你的Customer他不在意價錢多少,他太有錢了,他不在意價錢多少,所以就是Don't Care。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:59.000" id=07:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=479">07:59.000</a></div>
+        <div class="t">那還有No,No的意思就是說,這個對話到目前為止都沒有提到Price Range,那就是No。機器要從這些我們設定好的Option裡面,選出一個正確的Option來代表現在對話的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.840" id=08:10.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=490">08:10.840</a></div>
+        <div class="t">所以有哪些Value可以選擇往往都是訂好的,當然有時候Value可以選擇的範圍非常大,舉例來說像這邊,Restaurant Book People,有幾個人要訂餐廳,那可能所有的Integer,所有的正整數都包含在這裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:26.520" id=08:26.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=506">08:26.520</a></div>
+        <div class="t">或者是,計程車要幾點到,那所有可能的時間,所有可能的幾分幾秒,都要包含在你的Value的Option裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:35.800" id=08:35.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=515">08:35.800</a></div>
+        <div class="t">那今天往往我們會把Key再做細分,分成Key裡面,還有代表Domain的部分,還有代表Slot的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:50.280" id=08:50.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=530">08:50.280</a></div>
+        <div class="t">那為什麼要把Key再做這樣的細分呢?為什麼不能直接就說Hotel Price Range合起來就是一個Key呢?你完全可以這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.600" id=09:00.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=540">09:00.600</a></div>
+        <div class="t">但是之所以要分成Domain跟Slot,是因為說現在的對話系統,你的Key越來越多了,早年你可能整個對話才五六個Key,那你可能就不需要把Key再特別分成裡面有Domain的部分跟Slot的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:16.440" id=09:16.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=556">09:16.440</a></div>
+        <div class="t">但是現在比較複雜的對話系統,你可能有四五十個Key,那這個Domain跟Slot就是告訴我們Key和Key之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:26.520" id=09:26.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=566">09:26.520</a></div>
+        <div class="t">舉例來說,Restaurant Price Range它跟Hotel Price Range就是有一樣的Domain,所以你知道這兩個Key不是完全無關的Key,它們是有一些關聯的Key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.040" id=09:38.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=578">09:38.040</a></div>
+        <div class="t">或是Hotel Internet,你知道說這個Hotel Internet這個Key跟Hotel Price Range這個Key,它們有同樣的Domain,但是有不同的Slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:47.800" id=09:47.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=587">09:47.800</a></div>
+        <div class="t">那接下來可能就會問說,那Domain跟Slot要怎麼分呢?那這邊可能沒有一個非常嚴謹的定義告訴你說什麼樣的東西應該算是Domain,什麼樣的東西應該算是Slot,那我覺得其實你高興做就好,反正這就是一種告訴你說Key和Key之間關係的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:10.200" id=10:10.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=610">10:10.200</a></div>
+        <div class="t">但我認為一般而言,所謂的Slot它指的是跟Value的Value有關係的,就是如果有同樣的Slot的名字,那你就會有同樣的Value的Option。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:26.040" id=10:26.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=626">10:26.040</a></div>
+        <div class="t">舉例來說,Hotel Price Range跟Restaurant Price Range算是不同的Key,因為這兩個不同的事情,一個是要問你要訂的旅館的價格,另外一個是要問的是你要訂的餐廳的價格,就是這是一個很好的Travel Agency,它會幫你訂旅館也會訂餐廳。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:40.920" id=10:40.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=640">10:40.920</a></div>
+        <div class="t">但是Price Range這樣的Slot,它可以選擇的Value就是一樣的,就是只要是Price Range,你可以選擇就是貴的、中間的、便宜的跟Don't Care,就是只有這些可以選擇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.920" id=10:52.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=652">10:52.920</a></div>
+        <div class="t">但是它們是不同的Key,所以用Domain的名字來代表說,雖然都是Price Range,但是是不同東西的Price Range。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.280" id=11:00.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=660">11:00.280</a></div>
+        <div class="t">那Hotel Internet跟Hotel Price Range它們的Slot的名字是不一樣的,就代表說這兩個Key你可以選擇的Value是不一樣的,Internet可能就是有或沒有,那如果你要分析一點可能有快跟慢這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:14.280" id=11:14.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=674">11:14.280</a></div>
+        <div class="t">但是它們又是有關係的,它們都是Hotel的某個部分,所以就用Domain Name來代表Hotel Internet跟Hotel Price Range之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:23.400" id=11:23.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=683">11:23.400</a></div>
+        <div class="t">那我們介紹完了什麼叫做一個Dialogue的State以後,Dialogue State Tracking是一個什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:31.880" id=11:31.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=691">11:31.880</a></div>
+        <div class="t">它的問題是這樣,給你一大堆的句子,這個句子就是人跟機器到目前為止所進行的對話,就是S代表機器、U代表人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:45.720" id=11:45.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=705">11:45.720</a></div>
+        <div class="t">我們假設今天是由機器開場,假設你做了一個客服系統,那人打電話進來,機器總是會先說喂嘛,所以機器先開場,機器說一句S1,然後人回一句U1,我想訂個旅館,然後機器再說S2,好的,你想訂什麼樣的旅館呢?然後U2,人再回一個什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:04.600" id=12:04.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=724">12:04.600</a></div>
+        <div class="t">現在假設已經進行了梯輪對話,你的機器講了第大梯句,然後使用者回覆了第大梯句,接下來我們就要做Dialogue State Tracking。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:17.480" id=12:17.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=737">12:17.480</a></div>
+        <div class="t">Dialogue State Tracking是要得到什麼樣的結果呢?你有一組已經事先定義好的Key,他們裡面的Domain包含Slot,那沒關係,有哪些Domain有哪些Slot,這都是你定義好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:29.320" id=12:29.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=749">12:29.320</a></div>
+        <div class="t">有一組Key已經定義好了,那這邊只訂了三個Key,K1,K2,K3,但今天比較好的系統都有四五十個Key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.200" id=12:36.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=756">12:36.200</a></div>
+        <div class="t">然後接下來呢,每一個Key可以選擇一組Value,那每一個Key可以選擇什麼樣的Value,也是事先定義好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.200" id=12:46.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=766">12:46.200</a></div>
+        <div class="t">那Key1你可以選擇的Value就是V1 1到V1 N1,Key2就是V2 1到V2 N2,Key3就是V3 1到V3 N3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.600" id=12:56.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=776">12:56.600</a></div>
+        <div class="t">然後接下來,你要從這些Value裡面,為每一個Key選擇一個正確的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.520" id=13:02.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=782">13:02.520</a></div>
+        <div class="t">那根據什麼選正確的Value呢?根據對話到目前為止講的內容,選一個正確的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.640" id=13:09.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=789">13:09.640</a></div>
+        <div class="t">比如說Key1,我們就選他的第二個Value,Key2就選第一個Value,Key3就選他的最後一個Value,等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:16.680" id=13:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=796">13:16.680</a></div>
+        <div class="t">那這個就是Dialogue State Tracking的Problem,就是長得是這個樣子,根據這些句子,給定一些Key,然後選出正確的Value,這個就是Dialogue State Tracking要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:34.280" id=13:34.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=814">13:34.280</a></div>
+        <div class="t">那接下來呢,簡單介紹一下今天常用的一些Dialogue State Tracking的Corpus,你可以拿來訓練你的Dialogue State Tracker的Corpus。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.720" id=13:43.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=823">13:43.720</a></div>
+        <div class="t">那一個最知名的我想應該就是Multi-WOZ,那其實一般大家指的Multi-WOZ指的都是Multi-WOZ 2.0,那其實也有1.0,不過我們通常講Multi-WOZ指的都是2.0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:58.200" id=13:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=838">13:58.200</a></div>
+        <div class="t">那Multi-WOZ裡面呢,就是有七個不同的Domain,包括Hotel、Train、Attraction、Restaurant、Taxi等等,那這邊只列了五個啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:09.160" id=14:09.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=849">14:09.160</a></div>
+        <div class="t">還有另外兩個,我記得一個是Hospital,一個是Police,然後這個就比較,因為那兩個Domain資料比較少,所以很多人在做的時候都直接把那兩個Domain就拿掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.400" id=14:21.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=861">14:21.400</a></div>
+        <div class="t">那每一個Domain都有它對應的Slot,所以你可以說,我要訂計程車,我要去哪裡,從哪裡出發,然後什麼時候到什麼時候離開等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.120" id=14:34.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=874">14:34.120</a></div>
+        <div class="t">那每一個Domain都有一組它對應的Key,那你把這個Domain跟Key組起來,每一個Domain都有它對應的Slot,那你把這個Domain跟Slot組起來就變成Key,所以你有一大堆的Key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.640" id=14:49.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=889">14:49.640</a></div>
+        <div class="t">你可能會問說,什麼叫做WOZ?其實WOZ呢,它是The Wizard of Oz的縮寫。那什麼是The Wizard of Oz呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:05.580" id=15:05.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=905">15:05.580</a></div>
+        <div class="t">The Wizard of Oz其實就是《綠野仙蹤》這部童話,英文的翻譯應該就是Oz就是Oz國啦,Oz國的巫師就是Wizard of Oz,中文把這個故事翻成綠野仙蹤。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.400" id=15:20.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=920">15:20.400</a></div>
+        <div class="t">綠野仙蹤是一個什麼樣的故事呢?綠野仙蹤就是說,有一個小女孩,她叫做桃樂絲,她不知道怎麼回事,就漂流到了Oz國,然後她想要回家。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:30.480" id=15:30.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=930">15:30.480</a></div>
+        <div class="t">怎麼回家呢?有一個好心女巫告訴她說,你要去一個城堡,城堡在後面,你要去城堡找一個Oz國的巫師,他會告訴你答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.580" id=15:38.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=938">15:38.580</a></div>
+        <div class="t">在一路上,桃樂絲就遇到了一些好朋友,有一個稻草人,稻草人他有點腦殘,他覺得自己沒有腦,所以他想要請Oz國的巫師給他一個腦,所以他就跟桃樂絲結伴同行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:50.120" id=15:50.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=950">15:50.120</a></div>
+        <div class="t">有一個機器人,這個機器人說他沒有心,他想要Oz國的巫師給他一個心,所以他就跟桃樂絲結伴同行。其實我覺得他應該去找達摩祖師,達摩祖師就會告訴他說心了不可得,他就馬上開悟,就變成二祖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:02.860" id=16:02.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=962">16:02.860</a></div>
+        <div class="t">這個是有一個獅子,他想要勇氣。他們到了Oz國的城堡,找到了Oz國的巫師,Wizard of Oz,他長得是這個樣子,一副非常屌的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.240" id=16:15.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=975">16:15.240</a></div>
+        <div class="t">他看起來有點像是摩登大聖,感覺應該就很強,但結果發現他什麼都不會。所以桃樂絲就發現說,原來在這個王座的後面有一個老頭在操控這個巫師,這個巫師只是一個投影,她就把這個老頭揪出來暴打一頓。故事就結束了,可喜可賀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:35.900" id=16:35.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=995">16:35.900</a></div>
+        <div class="t">這個就是Woz,Woz如果是在computer science現在指的,就是它的引申的意思是某一種測試系統的方法,或是某一種收集資料的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.680" id=16:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1012">16:52.680</a></div>
+        <div class="t">什麼叫做測試系統的方法呢?舉例來說,這是來自一篇IBM的paper,是80年代的paper。那個時候IBM想知道,如果我們做一個語音辨識系統,用語音辨識系統來作為電腦輸入的方法,人會不會喜歡?人會不會想用?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:12.900" id=17:12.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1032">17:12.900</a></div>
+        <div class="t">但是那個時候沒有好的語音辨識系統,怎麼辦?他們說,我們就做一個假的語音辨識系統,我們找一個人來,這個人跟他說,你要來測試一個語音辨識系統,你就對著這個機器講話,然後你說講話的內容就會輸入在文字上,就會輸入在螢幕上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:34.000" id=17:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1054">17:34.000</a></div>
+        <div class="t">但是其實並沒有什麼真的語音辨識系統,它背後有一個人,這個聲音就是傳給那個人,然後那個人在打字,然後在螢幕上顯示出來,但是告訴使用者說,這個就是人工智慧,有語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.720" id=17:48.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1068">17:48.720</a></div>
+        <div class="t">其實不是人工智慧,它是人工人工智慧,artificial intelligence,所寫是AI。為什麼要做這樣子的系統測試?為什麼要騙這個人?是為了想要測試說,如果有這個系統,人到底會不會想要用?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.740" id=18:08.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1088">18:08.740</a></div>
+        <div class="t">因為搞不好人根本就不想要語音辨識,我們今天還沒有語音辨識系統,IBM想開發一個,可是如果人根本就不想做又要語音辨識的話,那開發這個做什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:20.120" id=18:20.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1100">18:20.120</a></div>
+        <div class="t">所以用這個叫做WOZ的方法,先做一下市場調查,看看人喜不喜歡用語音辨識系統,喜歡再來真的開發,不喜歡反正也沒真的開發,這邊就是個人就對了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.200" id=18:34.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1114">18:34.200</a></div>
+        <div class="t">當然現在很多AI公司都用類似的手段來做一些詐欺,比如說自動幫你寫APP的AI,據說背後都是印度工程師,不是真的AI就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.180" id=18:47.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1127">18:47.180</a></div>
+        <div class="t">那它也是一種data collection,資料收集的方法,像在MultiWoods的Corpus裡面,就是用WOZ這種方法來收集資料,也就是說,他們找了兩個工讀生,一個工讀生說你扮演人去跟這個系統訂票,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.520" id=19:04.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1144">19:04.520</a></div>
+        <div class="t">然後另外一個工讀生說你扮演機器,有人會跟你訂票,但你要假裝你自己是機器,然後他們兩個就開始對話,這樣你就可以收集到整個和機器對話的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.300" id=19:17.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1157">19:17.300</a></div>
+        <div class="t">還有另外一個知名的Corpus叫做SGD,SGD是比較新的Corpus,比MultiWoods更新,MultiWoods只有7個Domain,24個Slot,SGD有16個Domain,214個Slot,它自豪的地方就是Slot很多,對話很多,是一個非常豐富的Corpus。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.260" id=19:42.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1182">19:42.260</a></div>
+        <div class="t">SGD它是有點用Artificial,但也不完全Artificial的方法生成的,它生成的過程就是先用模擬器寫一些規則來產生最基本的對話,但它不是完整的句子,它是一些Action,然後再把這些Action用Template轉成句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:05.300" id=20:05.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1205">20:05.300</a></div>
+        <div class="t">這兩步其實是不需要人的,你就寫些規則,第三步才找人來把這些句子改寫成比較活潑、比較複雜的Natural Language的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:17.440" id=20:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1217">20:17.440</a></div>
+        <div class="t">至於這樣子的過程,有的人可以接受,有的人就不能接受了,有的人會覺得說,這個就是假的Corpus啊,你這個對話都是假的啊,人和機器之間的對話其實是更複雜的,有很多情況可能是你的Simulator沒辦法模擬到的啊,那怎麼辦呢?所以有的人不能接受了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:36.480" id=20:36.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1236">20:36.480</a></div>
+        <div class="t">不過SGD這個Paper,它在Paper的Conclusion的地方花了很多時間試圖想要告訴你說,嗯,這樣應該是沒問題的,拜託你接受它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.600" id=20:47.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1247">20:47.600</a></div>
+        <div class="t">還有一個知名的Corpus叫CrossWood,CrossWood特別的地方是什麼呢?它特別的地方就是它是中文的,因為多數的這種可以做Dialogue Step Tracking的Training的Data Set都是英文的啊,你要做中文的系統不好弄啊,所以CrossWood是中文的,你可以訓練中文的Dialogue Step Tracker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:09.020" id=21:09.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1269">21:09.020</a></div>
+        <div class="t">那這個Dialogue Step Tracking有什麼樣特別的具有挑戰性的問題呢?第一個具有挑戰性的問題是說,你的Value啊,可以選擇的Value啊,可能會非常多甚至是無窮無盡的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.200" id=21:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1285">21:25.200</a></div>
+        <div class="t">舉例來說,假設有的Slot是離開的時間,離開的時間很多啊,你可以把所有的時間都窮取出來嗎?有的系統確實是窮取出所有的時間的,它每十個時間為一個單位,每十個時間當作一個可能的Value,要求你決定,每十分鐘當作一個可能的Value,窮取出所有的時間,叫你選出一個合理的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.380" id=21:52.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1312">21:52.380</a></div>
+        <div class="t">那也許時間還有辦法窮取,有些東西真的沒辦法窮取,比如說電話號碼,電話號碼那麼多,怎麼可能窮取出所有的電話號碼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:03.180" id=22:03.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1323">22:03.180</a></div>
+        <div class="t">那過去啊,在這個Value的量沒有太多的時候,你可以說,你把這個Dialogue Step Tracking當作一個分類的問題,Machine就是從數個類別中選擇一個正確的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.460" id=22:16.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1336">22:16.460</a></div>
+        <div class="t">但是如果你今天有的Slot是Phone Number,它的Value也就類別幾乎是無窮無盡的,這個時候你就要想一些比較好的方法,不一樣的方法,來處理這個無盡的Value的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.460" id=22:28.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1348">22:28.460</a></div>
+        <div class="t">所以怎麼處理這種無盡Value的問題呢?人們就想到說,把它看作是一個QA的Problem吧,記不記得這是我們在講QA的時候看到的圖,你說有一個Knowledge Source,有一個問題,經過一系列的Attention,你可以找出Answer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:43.980" id=22:43.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1363">22:43.980</a></div>
+        <div class="t">Answer有各種不同的型態,可以是一個詞彙,可以是這個Knowledge Source裡面的一段,可以是Free Phone的Answer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:53.260" id=22:53.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1373">22:53.260</a></div>
+        <div class="t">那怎麼把這個QA的問題對應到Dialogue Step Tracking的問題呢?把你的Knowledge Source換成Dialogue History。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:02.300" id=23:02.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1382">23:02.300</a></div>
+        <div class="t">我們剛才說,一段Dialogue就是系統跟人的一系列的對話,這系列對話集合起來,就是你的Knowledge Source,也就是你的QA Model現在要讀的文章,現在要讀的Context。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:16.780" id=23:16.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1396">23:16.780</a></div>
+        <div class="t">那問題是什麼呢?我們現在想要知道某一個Slot它的Value是什麼,我們就把QA Model Question改成,現在這個Slot應該有什麼樣的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:29.660" id=23:29.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1409">23:29.660</a></div>
+        <div class="t">舉例來說,你想要知道Phone Number這個Slot應該填什麼樣的Value,那你就把問題改成,What is the phone number?就結束了,然後期待這個QA Model很厲害,它可以回答出正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:44.860" id=23:44.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1424">23:44.860</a></div>
+        <div class="t">那QA Model怎麼回答出正確的答案呢?像這種Phone Number這種東西是無法窮舉的,所以你的Answer Model可能會從Dialogue History裡面選擇一段有提到Phone Number的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:57.740" id=23:57.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1437">23:57.740</a></div>
+        <div class="t">因為你要知道Phone Number,那顯然是你的使用者,你的Customer要唸一段他的Phone Number,你的系統問說你電話幾號,然後Customer就唸一段123456789。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.860" id=24:08.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1448">24:08.860</a></div>
+        <div class="t">然後這個Answer要從這段對話裡面,把對應到Phone Number的部分把它擷取出來,把它當作像Squat那種問題,把Phone Number那一段擷取出來,你就得到正確答案,你就得到Phone Number的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:23.500" id=24:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1463">24:23.500</a></div>
+        <div class="t">所以把DST,Dialogue Step Tracking的Problem看作是QA,我們就有機會可以解有無窮的可能的Value這樣的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:34.700" id=24:34.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1474">24:34.700</a></div>
+        <div class="t">那當作QA還有什麼好處呢?當作QA可以讓你在加入新的Key,讓你的系統加新的Service的時候更加的簡便。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.620" id=24:46.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1486">24:46.620</a></div>
+        <div class="t">因為你常常會遇到這樣的一個問題,假設你是一個做Dialogue的公司,然後你們現在已經有訂餐廳的系統,有訂Hotel的系統,有訂火車的系統等等,這些你們都有Training Data,你可以訓練出可以Dictate這些Key的Dialogue Step Tracker。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.860" id=25:08.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1508">25:08.860</a></div>
+        <div class="t">那這個時候你的老闆說,我們接到一個緊急的任務了,限你在明天之內,給我做一個可以訂計程車的系統,我們客戶說明天就是要做一個可以訂計程車的系統了,你們不是有很多AI嗎?這個就是AI好不好,不需要收集資料好不好,AI自己會學好不好,訂計程車跟訂火車、訂飛機都差不多好不好,你馬上就可以,明天就給我生一個,不然你就滾這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:33.500" id=25:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1533">25:33.500</a></div>
+        <div class="t">那怎麼辦呢?如果這個時候你是把它formulate成一個QA的問題,也許就有點機會,因為本來你要問這個Train裡面的Destination這個Key的時候,你的問題是,What is the destination of Train?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.820" id=25:49.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1549">25:49.820</a></div>
+        <div class="t">那現在如果你的老闆說,明天就給我上一個新的Service,他又可以訂計程車的,那直接改書的問題改成,What is the destination of Taxi?搞不好他就可以訂計程車了,你的QA Model很聰明,他也許讀得懂這些文字,他知道Destination不管是訂火車還是訂計程車都是差不多的東西,都是要找一個地名出來,也許這樣他就有機會可以很快的加入新的服務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.580" id=26:17.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1577">26:17.580</a></div>
+        <div class="t">那你的老闆之後就會對你更加予取予求。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:20.140" id=26:20.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1580">26:20.140</a></div>
+        <div class="t">那像這類型的Model,這類型把Dialogue State Tracking看作是一個QA或者是Reading Comprehension的這種Problem的Model,我覺得最早、最知名的就是Train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:36.780" id=26:36.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1596">26:36.780</a></div>
+        <div class="t">Train它名字也是有湊梗的,它是Transferable Dialogue State Generator的縮寫。那Train是怎麼運作的呢?那你就可以類比一下我們剛才看到的QA,左邊這部分就是輸入的文章,右邊這部分你可以看作是問題,但其實在Train裡面並不是輸入一句話當作問題,那等一下會看說Train是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:03.260" id=27:03.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1623">27:03.260</a></div>
+        <div class="t">那左邊是輸入Dialogue的History,你可以有一個Bidirectional LSTM,那個時候BERT還不流行嘛,所以沒有什麼BERT,用Bidirectional LSTM做一下Encoding,然後接下來你就準備輸入你的問題了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.540" id=27:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1640">27:20.540</a></div>
+        <div class="t">但在Train裡面,問題並不是用自然語言的方法來表示的,它是怎麼表示的呢?它是說,現在我們的Key分成Domain和Slot這兩部分,每一個Domain它都是一個詞彙,那這每一個詞彙都有一個Embedding,都有它對應的Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:44.380" id=27:44.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1664">27:44.380</a></div>
+        <div class="t">那這個Embedding可以是在訓練的時候,跟著整個Model訓練出來的,它也可以是Pre-Train的Embedding,比如說Growth的Embedding等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:53.580" id=27:53.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1673">27:53.580</a></div>
+        <div class="t">那Slot,每一個Slot也都是一個詞彙,也都對應到一個Embedding,那你把Domain的Embedding跟Slot的Embedding加起來,就當作是你的問題輸入進你的State Generator,它就是一個RNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:09.100" id=28:09.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1689">28:09.100</a></div>
+        <div class="t">你把這一個問題的Embedding,也就是Domain跟Slot的Embedding相加,輸入到State Generator,然後State Generator接下來決定說它要如何產生Answer,那它就會對Dialogue History的Embedding做一下Attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:29.740" id=28:29.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1709">28:29.740</a></div>
+        <div class="t">那做完Attention以後,它要決定說它要怎麼運用這個Attention的資訊呢?那有幾個不同的可能,它有一個Slot Gate,決定說現在回答的答案是什麼樣的型態。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:41.420" id=28:41.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1721">28:41.420</a></div>
+        <div class="t">如果是PTR,就代表說我們要從這個對話裡面抽取一段當作答案,那如果是Don't Care,就是使用者不在乎,那如果None,就是說現在這段對話裡面還沒有提到這個Key。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:56.620" id=28:56.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1736">28:56.620</a></div>
+        <div class="t">然後你就做一下Attention,然後產生一個Word Distribution,還可以產生一整個Word Sequence,那這個就是要填到這個Key的Value,那這個就是Trade。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:10.700" id=29:10.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1750">29:10.700</a></div>
+        <div class="t">那這邊這個圖是從Trade的Paper裡面擷取出來的Slot的Embedding,在這個圖裡面有一大堆的Slot Names,那這邊的顏色代表Slot與Slot之間的Similarity,每一個Slot都有一個Embedding,都有一個Model學出來的Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.660" id=29:35.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1775">29:35.660</a></div>
+        <div class="t">然後你把這些Embedding互相之間算一下它的相似度,看看說意思比較相近的Slot是不是Model就自動給了它比較相近的Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:47.900" id=29:47.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1787">29:47.900</a></div>
+        <div class="t">那看起來確實有這樣子的傾向,舉例來說,Price Range跟Star就有比較接近的Embedding,因為Price Range就指的是說你要訂的一個比如說餐廳的價錢有高中低三種價位,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.420" id=30:01.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1801">30:01.420</a></div>
+        <div class="t">Star是指你要訂的旅館的等級也是有一星到五星等這些價位,所以Price Range跟Star是比較相近的Slot,所以它們有比較相近的Embedding,或是Day跟Time有比較相近的Embedding等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:16.300" id=30:16.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1816">30:16.300</a></div>
+        <div class="t">那看起來Model確實有了解一些Embedding,看來確實Model透過這些Embedding有了解一些每一個Slot它的意思是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:28.300" id=30:28.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1828">30:28.300</a></div>
+        <div class="t">那Trader他做了一個很神奇的事情就是Zero-Shot的Learning,在這邊的實驗裡面所謂Zero-Shot的Learning的意思是說,我們這邊有五個Domain,但訓練的時候只看得到其中四個Domain,Test在沒有看過的Domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.700" id=30:50.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1850">30:50.700</a></div>
+        <div class="t">但你可以想見說,完全沒有看過的Domain裡面搞不好有全新沒有看過的Slot Name,那Machine可能很難真的正確的做出Dialogue Step Tracking,但是你看Taxi這個Domain就做的還可以,它有60幾%的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.580" id=31:09.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1869">31:09.580</a></div>
+        <div class="t">那其實Evaluate Dialogue Step Tracking有兩種Evaluate的方法,那簡單來講Joint就是說要所有的Key的Value都答對才算對,那Slot就是算平均有部分答對,有部分的Key答對就算對,那細節大家再自己去Check文件。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:27.340" id=31:27.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1887">31:27.340</a></div>
+        <div class="t">總之在Taxi這個Domain上還做的不錯,就算是你只有看過這四個Domain,從來沒有看過Taxi的Domain,Trade這個Dialogue Step Tracker,它也可以在Taxi這個Domain上得到一定程度的正確答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:42.700" id=31:42.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1902">31:42.700</a></div>
+        <div class="t">那為什麼會這樣呢?你想一下就會發現說,確實有機會在Taxi上得到正確答案,因為你看Taxi裡面的Slot Name,有Destination,有Departure,有Arrive By,有Leave By,這些Slot Name都是Trade裡面有出現過的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:59.980" id=31:59.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1919">31:59.980</a></div>
+        <div class="t">所以Machine很有可能在用這些Domain的資料進行學習的時候,它學到了怎麼訂火車票,怎麼抽出使用者要搭的火車的目的地、出發地、出發時間、抵達時間等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:16.620" id=32:16.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1936">32:16.620</a></div>
+        <div class="t">那它等於也同時學會了怎麼幫使用者訂計程車,怎麼從Dialogue裡面抽出使用者要訂的車次、它的Destination、它的Departure等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.780" id=32:28.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1948">32:28.780</a></div>
+        <div class="t">所以今天把Dialogue Step Trackerformulate成一個QA的問題,我們有機會可以做到Zero-Shot的Transfer能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:37.740" id=32:37.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1957">32:37.740</a></div>
+        <div class="t">那今天如果你的那些Slot還有Description的話,如果你的Slot還有一些敘述的話,那你甚至可以把這些Slot的敘述丟到一個Preset,比如說Bert的Model裡面產生它的Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.820" id=32:57.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1977">32:57.820</a></div>
+        <div class="t">因為剛才在講Trader的時候,是把每一個SlotNet、每一個DomainNet直接變成一個Embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.700" id=33:04.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1984">33:04.700</a></div>
+        <div class="t">但是今天有一些Compass,它會不只是告訴你說我們現在這個對話系統裡面有哪些Domain,這邊的Service意思比較接近我剛才講的Domain,有哪些Domain、有哪些Slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:16.860" id=33:16.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=1996">33:16.860</a></div>
+        <div class="t">它會跟你描述,用一句簡短的話描述說這些Slot有什麼特質、這些Service有什麼特質。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:23.260" id=33:23.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2003">33:23.260</a></div>
+        <div class="t">比如說Payment這個Domain就是Digital Wallet to Make and Request Payment,或者是Contact Name就是Name of Contact for Transaction等等,它會用一句話來描述這個Slot或這個Domain的特質。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:40.860" id=33:40.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2020">33:40.860</a></div>
+        <div class="t">那你就可以把這一句話丟到一個Bert之類的Encoder,抽出一個Embedding,那你就可以用這個Embedding再丟到你的Dialogue Step Tracker,讓Dialogue Step Tracker根據這個Embedding來找出正確的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:54.380" id=33:54.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2034">33:54.380</a></div>
+        <div class="t">那如果你的這個Preset Model有辦法理解這一段敘述的話,那也許你就可以把Zero-Shot Learning真的做得更好,你就有機會說機器從來沒有看過的Slot,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:07.260" id=34:07.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2047">34:07.260</a></div>
+        <div class="t">但是這個Slot有一段敘述告訴你說這個Slot在做什麼,透過一個好的Preset Model,我們也有機會把從來沒有看過的Slot找出它正確的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:18.780" id=34:18.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2058">34:18.780</a></div>
+        <div class="t">那還有其他各式各樣的變形,那接下來就很快流水漲勢的帶過這些變形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:27.740" id=34:27.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2067">34:27.740</a></div>
+        <div class="t">那在做Dialogue Step Tracking的時候,我們是對話的每一次使用者講完,你都要做一次Step Tracking,因為Step Tracking的結果就是要給Model去決定接下來要幹嘛嘛,所以每一次使用者講完,輪到系統講之前都要做一次Tracking。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:45.660" id=34:45.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2085">34:45.660</a></div>
+        <div class="t">那你會發現說,其實每一次Tracking的結果會有很大一部分是重複的。舉例來說,如果現在我們在前一個Step已經知道Area就是East,那接下來除非使用者改變心意說他要改定別的地方的旅館,不然Area就還是East。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:03.260" id=35:03.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2103">35:03.260</a></div>
+        <div class="t">那SAR本來是四星,除非使用者改變心意,這機率可能沒有那麼高,那在下一次要做,在同一段對話裡面,在同一個Dialogue裡面,下一次要做Step Tracking的時候,SAR可能也仍然是四星。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:15.820" id=35:15.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2115">35:15.820</a></div>
+        <div class="t">所以我們今天每一次做Dialogue Step Tracking的時候,都把每一個Key當作問題,把每一個Domain Slot Name當作問題去丟給我們的QA Model去產生答案,也許是有點太勞師動眾。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:32.620" id=35:32.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2132">35:32.620</a></div>
+        <div class="t">所以在這個Model裡面,它就加了一個Carry Over的Prediction。也就是說,現在你把你的問題丟進來,它有一個Classifier去決定說是否同上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:45.420" id=35:45.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2145">35:45.420</a></div>
+        <div class="t">你把SAR當作問題丟給你的Model,問說現在使用者要訂的旅館是幾星呢?那你的Model可能不直接回答是四星,它直接回答說是否同上。那你就知道說之前Detect出來是四星,那現在也還是四星。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:05.100" id=36:05.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2165">36:05.100</a></div>
+        <div class="t">只有Detect出來不是同上的時候,我們才動用整個QA Model去決定說應該是哪一個Time Stand,或者應該是Yes、No、Don't Care,還是要從文章裡面選一個Time Stand出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:19.500" id=36:19.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2179">36:19.500</a></div>
+        <div class="t">還有很多Model,像這個Model,它直接叫做DST QA,它就直接告訴你說,我現在就是把它當作QA來做了,就Dialogue Step Tracking QA,直接當作QA來做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:30.620" id=36:30.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2190">36:30.620</a></div>
+        <div class="t">那這篇Paper裡面很多的Module都是前面我們已經有看過的,所以這篇就在贅述。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:37.180" id=36:37.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2197">36:37.180</a></div>
+        <div class="t">那這篇Paper一個比較特別的地方,是它考慮了說這些Domain Slot的Key並不是全部都是完全沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.900" id=36:47.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2207">36:47.900</a></div>
+        <div class="t">在剛才的Model裡面,是分別把每一個Key當作問題,分別去問你的QA Model,但是現在所有的問題間並不是完全沒有關聯的,問題和問題間的答案也許是可以互相使用的,也許一個問題的答案會影響另外一個問題的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:06.860" id=37:06.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2226">37:06.860</a></div>
+        <div class="t">這篇Paper裡面舉了一個例子,它說如果有一個人他訂了旅館,那你的Agent是一個全方面的Travel Agent,所以他除了幫你訂旅館,還可以幫你訂個計程車。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:18.540" id=37:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2238">37:18.540</a></div>
+        <div class="t">但如果你訂的旅館是比如說被其他飯店,那你的計程車的目的地可能也就是被其他飯店。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:28.940" id=37:28.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2248">37:28.940</a></div>
+        <div class="t">所以不同的Key,它們之間的Value可能是有關係的,你可能知道某一個Key的Value,你就知道另外一個Key的Value。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:36.620" id=37:36.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2256">37:36.620</a></div>
+        <div class="t">所以今天DST QA它特別加了一個Module,我們這邊就不細講,它右下角這個Module,就是為了要考慮這個Key與Key之間的關係而存在的,這個是DST QA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:49.500" id=37:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2269">37:49.500</a></div>
+        <div class="t">最後,我們說可以把這個Dialogue State Tracking看作是一個QA的問題,但是其實你可以做得更超,就是End to End,硬Train下去就結束了。舉例來說,你有可能拿一個GPT-2出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:08.060" id=38:08.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2288">38:08.060</a></div>
+        <div class="t">這個GPT-2把Dialogue讀進去,直接產生State Tracking的結果,把State Tracking的結果當作一段文字直接輸出來,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:20.540" id=38:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2300">38:20.540</a></div>
+        <div class="t">其實在這篇Paper,這個Simple TOD,這個TOD是Text-Oriented Dialogue的縮寫,在這個Simple TOD裡面,它做的是更狂的,它說產生這個State以後,根據這個State去Database裡面搜尋一些資料,根據這些資料直接決定Action,然後再把這個Action轉成Response。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:38.460" id=38:38.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2318">38:38.460</a></div>
+        <div class="t">這一切都直接透過Finetune一個GPT-2來完成,這就是一個巨大的Language Model,這個Language Model就是知道說,給Context之後要產生State,給完State之後會看到搜尋的結果,看到搜尋的結果,接下來要產生Action,產生了Action之後要產生Response,End to End,硬Train下去就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:00.940" id=39:00.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2340">39:00.940</a></div>
+        <div class="t">神奇的地方是,在Dialogue State Tracking,在Multi-Woods 2.1上面,Simple TOD它的Performance居然是最好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:10.380" id=39:10.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2350">39:10.380</a></div>
+        <div class="t">Simple TOD其實蠻新的Paper,應該是一兩個月前就放在Archive上面的Paper,它的Accuracy是比我們剛才看到的Trade,還有DSTQA等等都還要再更好,直接End to End Trade,沒想太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:26.540" id=39:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2366">39:26.540</a></div>
+        <div class="t">它的結果是這個樣子,Machine可以讀一段很長的對話,好長好長,根本懶得看,不知道要寫些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:34.540" id=39:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2374">39:34.540</a></div>
+        <div class="t">Machine就可以自己產生State,它就產生Attraction,Area,South,Attraction Area就是Key,Attraction就是Domain,Area就是Lot Name,South就是Value,它知道Attraction Area,這個Value是South,Attraction Name,這個Key的Value就是Junction,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:57.580" id=39:57.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2397">39:57.580</a></div>
+        <div class="t">Attraction Type是Theater,Area是Center,Text,Leaving at是2點45分,它就自動產生State出來了,也不當作QA的問題,End to End Trade下去,用個Language Model就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:15.500" id=40:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2415">40:15.500</a></div>
+        <div class="t">這個是Dialogue State Tracking,那我看現在的時間也12點20了,所以大家如果有事情的話,就可以先離開我們這堂課,其實就上到這邊,這些是一些Reference。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.100" id=40:33.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2433">40:33.100</a></div>
+        <div class="t">這應該是我們最後一次上課,還沒有講的內容,我之後再找時間錄影補給大家。因為這是最後一堂課,所以總是要講一個感性的結語,所以我們來復習一下,很快的復習一下,在這門課裡面我們學到什麼東西吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:51.900" id=40:51.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2451">40:51.900</a></div>
+        <div class="t">在這堂課的第一次,第一堂課開場就告訴你說,你不要把文字跟語音處理想得太複雜,整個文字語音處理,也就是人類語言處理合起來就是六種模型,那每一種模型,我們都帶大家看過幾個應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:08.540" id=41:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2468">41:08.540</a></div>
+        <div class="t">輸入語音輸出文字就是語音辨識,輸入語音輸出語音是Voice Conversion跟Sound Separation,輸入語音輸出類別是Speaker Verification,輸入文字輸出語音是PTF。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:22.940" id=41:22.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2482">41:22.940</a></div>
+        <div class="t">我們也請助教來講Becoder,告訴你說怎麼真的合出高品質的聲音,然後有一些模型輸入是文字,當你輸入是文字的時候,你就會想用Bert或者是他的好朋友們,或者是Multibert來引扣輸入的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:39.740" id=41:39.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2499">41:39.740</a></div>
+        <div class="t">我們也講說語音理論上也可以有同樣的處理方式,我們請助教講了AudioBert。我們也講了輸入文字輸出文字的Case,但是是Unsupervised Trend,我們說這是Text Style Transfer,但它不是真的Style,你可以有更多的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:57.500" id=41:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2517">41:57.500</a></div>
+        <div class="t">在自然語言處理的部分,我們給大家看過這個表說自然語言處理的問題,根據輸入跟輸出是有這樣子八種類別。有一些比較有趣的問題,它似乎不在這些類別裡面,比如說Parsing,比如說Coreference Resolution,我們都已經幫大家提出來,特別講了一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:17.980" id=42:17.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2537">42:17.980</a></div>
+        <div class="t">有關產生Sequence這件事情,我們請助教講了NAT現在最新的產生Sequence的方向。我們也講了QA怎麼做,我們也講了Controllable的Chatbot,我們也講了Dialogue State Tracking。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:37.820" id=42:37.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=tRDF_w700Uw&t=2557">42:37.820</a></div>
+        <div class="t">這是我們到目前為止講的內容,那就感謝大家在已經放暑假的時候,還勉為其難的來聽課,那就謝謝大家,謝謝。</div>
+    </div>
+    
+</body>
+</html>   

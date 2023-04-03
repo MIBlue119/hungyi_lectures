@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】神經網路壓縮 (Network Compression) (一) - 類神經網路剪枝 (Pruning) 與大樂透假說 (Lottery Ticket Hypothesis)</h2><a href=https://www.youtube.com/watch?v=utk3EnAUh-g><img src=https://i.ytimg.com/vi/utk3EnAUh-g/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGH8gYCgTMA8=&rs=AOn4CLADZGqziaxuGhY6hN9Mo7WQ7Jn98w></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=0">00:00.000</a></div>
+        <div class="t">好,那這一堂課呢,要跟大家講的是Network Compression,那在這個課堂上啊,我們已經看過了很多碩大無朋的模型,舉例來說BERT或者是GPT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.200" id=00:15.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=15">00:15.200</a></div>
+        <div class="t">那在這一節課裡面,我們要跟大家分享的事情是,我們能不能夠把這些碩大無朋的模型把它縮小,我們能不能夠簡化這些模型,讓它有比較少量的參數,但是跟原來的效能其實是差不多的呢?這就是Network Compression想要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:36.480" id=00:36.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=36">00:36.480</a></div>
+        <div class="t">那為什麼我們會在意Network Compression這件事呢?因為很多時候我們會需要把這些模型用在resource constraint的環境下,用在資源比較有限的環境下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:50.400" id=00:50.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=50">00:50.400</a></div>
+        <div class="t">什麼樣的環境是資源比較有限的呢?有時候你會需要把這些機器學習的模型,舉例來說,跑在智能手錶上,舉例來說,跑在drone上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02.400" id=01:02.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=62">01:02.400</a></div>
+        <div class="t">那在這些edge device,在這些IoT的device上面,只有比較少的memory,只有比較少的computing power,所以我們的模型如果太過巨大,你的手錶可能會是跑不動的,所以我們會需要比較少的模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.160" id=01:20.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=80">01:20.160</a></div>
+        <div class="t">那講到這邊,有人就會問說,為什麼我們會需要在這些edge device上面跑模型呢?我們為什麼不把資料傳到雲端,直接在雲端上做運算,再把結果傳回到edge device,比如說你的手錶就好了呢?為什麼一定要在手錶上面做運算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.000" id=01:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=98">01:38.000</a></div>
+        <div class="t">一個常見的理由是latency的問題,假設你今天需要把資料傳到雲端,雲端計算完再傳回來,那中間就會有一個時間差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:50.360" id=01:50.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=110">01:50.360</a></div>
+        <div class="t">假設你今天的應用,你今天的edge device上面,你今天的edge device是自駕車的一個sensor,也許自駕車的sensor需要做非常及時的回應,你需要把資料傳到雲端再傳回來,那中間的latency太長了,也許會長到是不能接受的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:06.880" id=02:06.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=126">02:06.880</a></div>
+        <div class="t">那接下來有人又會問說,在未來5G的時代,會不會latency根本就可以忽略不計呢?那這個時候呢,有人會給你另外一個我們需要在edge device上面做computing的理由,這個理由就是privacy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:23.200" id=02:23.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=143">02:23.200</a></div>
+        <div class="t">如果我們今天需要把資料傳到雲端,那這個雲端的這個系統的持有者不就看到我們的資料了嗎?也許我在做什麼事情,我不想讓雲端系統的持有者知道。所以,為了保障隱私,也許在智能手錶上直接進行運算,在智能手錶上直接進行決策,是一個可以保障隱私的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:42.680" id=02:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=162">02:42.680</a></div>
+        <div class="t">那這邊呢,就跟大家講一下network compression的種種理由。那在這份投影片裡面呢,會跟大家介紹5個network compression的技術。那這5個技術啊,都是以軟體為導向的,我們只是在軟體上面對network進行壓縮,那我們都不考慮硬體加速的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.800" id=03:05.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=185">03:05.800</a></div>
+        <div class="t">當然,另外一個支線的研究是,我們想辦法在硬體上加速模型的運算,讓edge device上面跑深度學習的模型更加有效率。不過這是另外一個研究的面向,我們這邊就不討論任何跟硬體有關係的東西,我們只討論跟軟體有關係的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:23.680" id=03:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=203">03:23.680</a></div>
+        <div class="t">那第一個要跟大家分享的是network pruning這個技術。那我們今天講完network pruning呢,我們就下課。network pruning顧名思義就是,我們要把network裡面的一些參數把它剪掉。pruning就是修剪的意思,我們把network裡面的一些參數把它剪掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.720" id=03:42.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=222">03:42.720</a></div>
+        <div class="t">為什麼我們可以把network裡面的一些參數剪掉呢?因為你知道,俗話說得好,樹大必有枯枝。一個這麼大的network,裡面有很多很多的參數,那每一個參數不一定都有在做事啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.940" id=03:55.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=235">03:55.940</a></div>
+        <div class="t">參數這麼多的時候,也許很多參數它就只是在滑水,它是打醬油的,它什麼事也沒有做。那這些沒有做的參數放在那邊,就只是占空間而已,浪費運算資源而已,何不就把它們剪掉呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:10.560" id=04:10.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=250">04:10.560</a></div>
+        <div class="t">所以network pruning的基本概念就是,把一個大的network,其中沒有用的那些參數把它找出來,把它扔掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:19.560" id=04:19.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=259">04:19.560</a></div>
+        <div class="t">我高中的時候在生物學課本上看過這個圖,這個跟network pruning好像也有一點關係。這個圖是告訴我們說,人剛出生的時候,腦袋是空空的,這些圖是腦的神經元,腦袋空空的神經元跟神經元間沒什麼連結。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:41.740" id=04:41.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=281">04:41.740</a></div>
+        <div class="t">在六歲的時候會長出非常多的連結,但是隨著年齡漸長,有一些連結就慢慢消失了。這個跟我們等一下要做的network pruning有異曲同工之妙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:55.360" id=04:55.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=295">04:55.360</a></div>
+        <div class="t">其實network pruning這件事不是太新的概念。早在90年代,央勒克就有一篇文章是講network pruning的,那篇文章的title是optimal brain damage,它把network pruning,把它剪掉一些weight,看成是一種腦損傷,brain damage。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.540" id=05:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=316">05:16.540</a></div>
+        <div class="t">optimal的意思就是,我們要找出最好的pruning的方法,讓一些weight被剪掉之後,但是對這個腦的損傷是最小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:26.280" id=05:26.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=326">05:26.280</a></div>
+        <div class="t">好,那network pruning的概念大概是怎麼樣進行的呢?它的framework大概是這樣子的。首先,你先train一個最大的network,你train一個大的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:37.560" id=05:37.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=337">05:37.560</a></div>
+        <div class="t">接下來,你去量這個大的network裡面每一個參數或者是每一個neuron的重要性,去評估一下有沒有哪些參數它是沒在做事的,或有沒有哪些neuron它是沒在做事的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:53.180" id=05:53.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=353">05:53.180</a></div>
+        <div class="t">怎麼評估某一個參數有沒有在做事呢?怎麼評估某一個參數重要不重要呢?最簡單的方法也許就是看它的絕對值,如果這個參數的絕對值越大,那它可能對整個network的影響越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.460" id=06:09.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=369">06:09.460</a></div>
+        <div class="t">如果它的絕對值越接近零,那也許對整個network的影響越小,也許對我們任務的影響越小。或者是,其實你也可以套用lifelong learning那邊的想法,你記得在lifelong learning裡面,我們不是也要看說哪一些參數比較重要嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:26.060" id=06:26.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=386">06:26.060</a></div>
+        <div class="t">我們不是有一大堆的方法看哪些參數重要,哪些參數不重要,然後決定bi那個所謂的值嗎?也許我們也可以就把每一個參數的bi算出來,那我們就可以知道那個參數重要不重要,然後把不重要的參數剪掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.260" id=06:39.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=399">06:39.260</a></div>
+        <div class="t">也可以評估每一個神經元的重要性,我們也可以把神經元當作修剪的單位,那怎麼看一個神經元重不重要呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.020" id=06:50.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=410">06:50.020</a></div>
+        <div class="t">你就可以比如說計算這個神經元輸出不為零的次數等等,總之有非常多的方法來判斷一個參數或一個神經元是否重要,那我們在這邊就不細講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.380" id=07:02.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=422">07:02.380</a></div>
+        <div class="t">那把不重要的神經元或者不重要的參數就剪掉,就把它從模型裡面移除,那你就得到一個比較小的nevo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.260" id=07:12.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=432">07:12.260</a></div>
+        <div class="t">但是你做完這個修剪以後,通常你的正確率、你的模型的效能就會掉一點,因為有一些參數被拿掉了嘛,所以這個nevo當然是受到一些損傷,所以正確率就掉一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.460" id=07:24.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=444">07:24.460</a></div>
+        <div class="t">但是我們會想辦法讓這個正確率再回升一點,怎麼讓正確率再回升一點呢?就是把這個比較小的nevo,把剩餘沒有被剪掉的參數再重新做微調。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.540" id=07:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=458">07:38.540</a></div>
+        <div class="t">你就把你的訓練資料拿出來,把這個比較小的nevo再重新訓練一下,然後訓練完之後,其實你還可以重新再去評估一次每一個參數的正確性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.860" id=07:51.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=471">07:51.860</a></div>
+        <div class="t">你還可以再remove掉,再剪掉更多的參數,然後再重新進行微調,那這個步驟可以反覆進行多次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.780" id=08:01.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=481">08:01.780</a></div>
+        <div class="t">那為什麼我們不一次剪掉大量的參數呢?因為在實驗上發現說,如果你一次剪掉大量的參數,可能對你的nevo的傷害太大了,可能會大到你用finetune也沒有辦法復原。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:13.380" id=08:13.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=493">08:13.380</a></div>
+        <div class="t">所以一次先剪掉一點參數,比如說只剪掉10%的參數,然後再重新訓練,然後再重新剪掉10%的參數,再重新訓練,反覆這個過程,你可以剪掉比較多的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:26.180" id=08:26.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=506">08:26.180</a></div>
+        <div class="t">當你的nevo夠小以後,那整個過程就完成了,你就得到一個比較小的nevo,而且這個比較小的nevo,也許它的正確率跟大的nevo是沒有太大的差別的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:37.540" id=08:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=517">08:37.540</a></div>
+        <div class="t">我們剛才講到說,修剪的單位可以以參數為單位,也可以以神經元來當作單位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:47.540" id=08:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=527">08:47.540</a></div>
+        <div class="t">那用這兩者當作單位有什麼不同呢?用這兩者當作單位,在實作上會是有蠻顯著的差距的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.820" id=08:56.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=536">08:56.820</a></div>
+        <div class="t">如果我們現在是以參數當作單位,會發生什麼事?假設我們是要評估說某一個參數要不要被去掉,某一個參數對整個任務而言重不重要,能不能夠被去掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:09.620" id=09:09.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=549">09:09.620</a></div>
+        <div class="t">那我們把這個不重要的參數去掉以後,我們得到的nevo,它的形狀可能會是不規則的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:16.980" id=09:16.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=556">09:16.980</a></div>
+        <div class="t">所謂不規則的意思是說,舉例來說,我們來看紅色的這個neuro,它連到接下來三個綠色的neuro。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.140" id=09:25.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=565">09:25.140</a></div>
+        <div class="t">那第二個紅色的neuro,它只連到兩個綠色的neuro,或這個紅色的neuro,它的輸入只有兩個藍色的neuro,而這個紅色的neuro,它的輸入有四個藍色的neuro。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:36.100" id=09:36.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=576">09:36.100</a></div>
+        <div class="t">如果你是把參數當作單位來進行修剪的話,那你修剪完以後的nevo,它的形狀會是不規則的。形狀不規則會造成什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.740" id=09:46.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=586">09:46.740</a></div>
+        <div class="t">最大的問題就是,你不好實作啊。你想想看,你用PyTorch要實作這種形狀不規則的nevo,你好實作嗎?你不好實作啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.700" id=09:57.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=597">09:57.700</a></div>
+        <div class="t">因為在PyTorch裡面,你在定義一個nevo的時候,你的定義方法都是每一層有幾個neuro,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.420" id=10:04.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=604">10:04.420</a></div>
+        <div class="t">你都是定義說,我現在每一層要輸入有幾個neuro,輸出有幾個neuro,或者輸入多長的vector,輸出有多長的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.100" id=10:14.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=614">10:14.100</a></div>
+        <div class="t">這種形狀不固定的nevo,你根本就不好寫啊,你自己實作的時候,你根本就不好實作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.620" id=10:21.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=621">10:21.620</a></div>
+        <div class="t">而且就算你硬是把這種形狀不規則的nevo把它實作出來,你用GPU加速也不好加速啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:29.700" id=10:29.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=629">10:29.700</a></div>
+        <div class="t">GPU在加速的時候,就是把nevo的運算看成一個矩陣的乘法,但是當nevo是不規則的時候,你就不容易用矩陣的乘法來進行加速,你不容易用GPU來進行加速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:42.500" id=10:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=642">10:42.500</a></div>
+        <div class="t">所以實際上,在做weight pruning的時候,在實作上,你可能會把那些prune掉的weight直接補0,就是prune掉的weight不是不存在,它的值只是設為0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.060" id=10:55.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=655">10:55.060</a></div>
+        <div class="t">這樣的好處就是,你的實作就比較容易用GPU加速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:59.860" id=10:59.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=659">10:59.860</a></div>
+        <div class="t">這樣的問題是什麼呢?這樣的問題是,你根本就沒有真的把nevo變小啊,你這邊說這個nevo這個weight它的值是0,你還是存了這個參數啊,你還是存了一個參數在你的memory裡面啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:13.700" id=11:13.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=673">11:13.700</a></div>
+        <div class="t">你並沒有真的把nevo變小,你只是在想像中把它變小,在自嗨,你覺得這個nevo有變小,但實際上這個nevo並沒有真的變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.660" id=11:24.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=684">11:24.660</a></div>
+        <div class="t">所以這個是以參數為單位來做pruning的時候,你在實作上會遇到的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.340" id=11:30.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=690">11:30.340</a></div>
+        <div class="t">這個文獻上的實驗就是想要跟你展示說,以參數為單位做pruning的時候,你會遇到什麼樣的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:37.380" id=11:37.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=697">11:37.380</a></div>
+        <div class="t">我們先來看紫色的這一條線,紫色的這一條線呢,它說是sparsity。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.540" id=11:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=703">11:43.540</a></div>
+        <div class="t">這個sparsity是什麼意思?這個sparsity就是有多少百分比的參數現在被prune掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:50.980" id=11:50.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=710">11:50.980</a></div>
+        <div class="t">那你發現說,這邊啊,這個紫色的這條線它的值都很接近1,什麼意思?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.140" id=11:57.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=717">11:57.140</a></div>
+        <div class="t">代表有接近大概95%以上的參數都被prune掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:02.420" id=12:02.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=722">12:02.420</a></div>
+        <div class="t">這個nevo pruning的方法其實是一個非常有效率的方法,往往你可以prune到95%以上的參數,但是你的accuracy只掉一兩%而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.180" id=12:12.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=732">12:12.180</a></div>
+        <div class="t">所以這邊參數prune的是prune得非常兇的,有95%的參數都被丟掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:17.380" id=12:17.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=737">12:17.380</a></div>
+        <div class="t">照理說丟掉了95%的參數只剩下5%的參數,這個nevo變得很小,它的運算應該很快吧,但實際上你發現根本就沒有加速多少,甚至可以說根本就沒有加速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:29.780" id=12:29.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=749">12:29.780</a></div>
+        <div class="t">如果你看這些長條圖,這些長條圖顯示的是在三種不同的computing的resource上面,你speedup的程度,你加速的程度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.780" id=12:39.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=759">12:39.780</a></div>
+        <div class="t">那加速的程度要大過1才有加速嘛,加速程度小於1其實是變慢的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:44.580" id=12:44.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=764">12:44.580</a></div>
+        <div class="t">結果你發現說,在多數情況下根本就沒有加速,多數情況下其實都是變慢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:51.780" id=12:51.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=771">12:51.780</a></div>
+        <div class="t">也就是你把一些位prune掉,結果你的nevo形狀變得不規則,然後你真的用GPU加速的時候,你反而沒有辦法真的加速它,所以webpruning不見得是一個特別有效的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.940" id=13:03.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=783">13:03.940</a></div>
+        <div class="t">那neuron pruning,以神經元為單位來做pruning,也許是一個比較有效的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:10.420" id=13:10.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=790">13:10.420</a></div>
+        <div class="t">如果我們用神經為做單位來pruning,丟掉一些神經元以後,你nevo的架構仍然是規則的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:18.340" id=13:18.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=798">13:18.340</a></div>
+        <div class="t">簡單來說就是,你用PyTorch比較好實作啦,你實作的時候你只要改每一個layer input output的dimension就好了,所以你比較好實作,也比較好用GPU來加速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.420" id=13:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=810">13:30.420</a></div>
+        <div class="t">這個是在nevo pruning實作上可能會遇到的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:34.420" id=13:34.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=814">13:34.420</a></div>
+        <div class="t">我們來看一下大家有沒有問題要問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.420" id=13:40.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=820">13:40.420</a></div>
+        <div class="t">有同學問說,這個減值應該是減掉的減,還是減少的減?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.420" id=13:52.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=832">13:52.420</a></div>
+        <div class="t">在我的認知裡面是減掉的減啦,但是如果我有說錯,你再糾正我。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.420" id=14:00.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=840">14:00.420</a></div>
+        <div class="t">有同學問說,請問CNN中做完pruning,減掉遮罩中一些參數,它的運算量是不是沒變?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.420" id=14:18.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=858">14:18.420</a></div>
+        <div class="t">不好意思,我沒有非常懂這個問題,遮罩的參數是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:24.420" id=14:24.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=864">14:24.420</a></div>
+        <div class="t">我這邊沒有非常了解,也許你可以重新再formulate一下你的問題,那我等一下再來看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.420" id=14:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=870">14:30.420</a></div>
+        <div class="t">有同學問說,pruning有沒有效率是韓式庫的問題?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.420" id=14:34.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=874">14:34.420</a></div>
+        <div class="t">對啦,是韓式庫的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:36.420" id=14:36.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=876">14:36.420</a></div>
+        <div class="t">那如果你可以想辦法寫一個irregular的nevo也很有效的韓式庫的話,那你就可以用微pruning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.420" id=14:44.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=884">14:44.420</a></div>
+        <div class="t">但是問題是,大家都沒有要自己寫韓式庫啊,你都是用PyTorch嘛,所以你用微pruning就沒有辦法加速。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:50.420" id=14:50.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=890">14:50.420</a></div>
+        <div class="t">如果反過來想,在處理一個任務時把nevo慢慢擴大,可以比直接用大nevo有更好的表現嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:06.420" id=15:06.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=906">15:06.420</a></div>
+        <div class="t">有同學問說,如果我們先train一個小的nevo,再把它慢慢變大,會不會比較好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.420" id=15:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=913">15:13.420</a></div>
+        <div class="t">我們剛才講nevo pruning的時候是把大的nevo慢慢變小,那如果我們先train小的nevo再慢慢變大會不會比較好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.420" id=15:21.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=921">15:21.420</a></div>
+        <div class="t">答案是不會,我們在下一頁投影片就會回答你的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.420" id=15:25.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=925">15:25.420</a></div>
+        <div class="t">然後有同學說,可變nevo本來就比較難做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:28.420" id=15:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=928">15:28.420</a></div>
+        <div class="t">對啊,可變nevo本來就比較難做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.420" id=15:31.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=931">15:31.420</a></div>
+        <div class="t">接下來我們就要問一個問題,你說我們先train一個大的nevo,再把它變小,而且說小的nevo跟大的nevo,他們的正確率沒有差太多,那我們怎麼不直接train一個小的nevo就好了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.420" id=15:51.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=951">15:51.420</a></div>
+        <div class="t">直接train一個小的nevo比較有效率吧,還train大的nevo變小幹嘛,根本是捨本逐末,為什麼不直接train小的nevo?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.420" id=16:00.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=960">16:00.420</a></div>
+        <div class="t">那一個普遍的答案是,大的nevo比較好train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.420" id=16:06.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=966">16:06.420</a></div>
+        <div class="t">你會發現說,如果你直接train一個小的nevo,你往往沒有辦法得到跟大的nevo一樣的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.420" id=16:14.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=974">16:14.420</a></div>
+        <div class="t">你可以先train一個大的nevo,再把它變小,正確率沒有掉太多,但直接去那個小的nevo,你得不到跟pruning大的nevopruning完變成小的nevo一樣的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:28.420" id=16:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=988">16:28.420</a></div>
+        <div class="t">至於大的nevo為什麼比較好train,那你可以參看以下這個影片的連結,我在過去的課程有試圖解釋這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.420" id=16:36.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=996">16:36.420</a></div>
+        <div class="t">但是為什麼大的nevo比較好train呢?那這邊有一個假說叫做大樂透假說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.420" id=16:44.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1004">16:44.420</a></div>
+        <div class="t">不過它既然叫做假說,就代表說它不算是完全被實證的一個理論,如果它是已經被證明出來的,那它就是一個理論嘛,但是它現在只是一個假說而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:57.420" id=16:57.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1017">16:57.420</a></div>
+        <div class="t">那這個大樂透假說是怎麼解釋為什麼大的nevo比較容易train,直接train一個小的nevo沒有辦法得到跟大的nevo一樣的效果,一定要大的nevopruning變小,結果才會好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.420" id=17:11.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1031">17:11.420</a></div>
+        <div class="t">大樂透假說是這樣說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.420" id=17:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1033">17:13.420</a></div>
+        <div class="t">我們知道說訓練nevo是一個看人品的事情,我們現在大家都做過這麼多作業了,我相信你都一定有很多的心酸血淚。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.420" id=17:23.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1043">17:23.420</a></div>
+        <div class="t">你知道訓練nevo就是看人品的,每次訓練的結果不一定會一樣,你抽到一組好的initial的參數,你就會得到好的結果,抽到一組壞的initial參數,就會得到壞的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:35.420" id=17:35.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1055">17:35.420</a></div>
+        <div class="t">那就好像說樂透也是一個看人品的東西,但是怎麼在樂透這個遊戲裡面得到比較高的中獎率呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.420" id=17:46.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1066">17:46.420</a></div>
+        <div class="t">是不是就是包牌買比較多的彩券,就可以增加你的中獎率?所以對一個大的nevo來說也是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:55.420" id=17:55.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1075">17:55.420</a></div>
+        <div class="t">大的nevo可以視為是很多小的subnevo的組合,我們可以想成是一個大的nevo裡面其實包含了很多小的nevo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:06.420" id=18:06.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1086">18:06.420</a></div>
+        <div class="t">當我們去訓練這個大的nevo的時候,我們等於是同時訓練很多小的nevo,每一個小的nevo不一定可以成功地被訓練出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.420" id=18:17.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1097">18:17.420</a></div>
+        <div class="t">所謂成功地訓練出來是說,它不一定可以透過gradient descent找到一個好的solution,我們不一定可以訓練出一個好的結果,我們不一定可以讓它的loss變低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.420" id=18:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1108">18:28.420</a></div>
+        <div class="t">但是在眾多的subnevo裡面,只要其中一個人成功,就可以一人得到雞犬升天。其中一個subnevo成功,大的nevo它就成功了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:41.420" id=18:41.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1121">18:41.420</a></div>
+        <div class="t">而今天一個大的nevo裡面,如果包含的小的nevo越多,那就好像是去買樂透的時候包牌包比較多的彩券一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:52.420" id=18:52.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1132">18:52.420</a></div>
+        <div class="t">彩券越多,中獎的機率就越高,所以一個nevo越大,它就越有可能成功地被訓練起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:59.420" id=18:59.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1139">18:59.420</a></div>
+        <div class="t">那這個大樂透假說,它在實驗上是怎麼被證實的呢?它在實驗上的證實方式跟nevo的pruning非常有關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.420" id=19:09.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1149">19:09.420</a></div>
+        <div class="t">我們就直接看一下,在實驗上是怎麼證實大樂透假說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.420" id=19:15.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1155">19:15.420</a></div>
+        <div class="t">你現在有一個大的nevo,在這個大的nevo上面,一開始的參數是隨機初始化的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:23.420" id=19:23.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1163">19:23.420</a></div>
+        <div class="t">把參數隨機初始化以後,得到一組訓練完的參數,訓練完的參數我們用紫色來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:31.420" id=19:31.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1171">19:31.420</a></div>
+        <div class="t">接下來你用nevo pruning的技術,把一些紫色的參數丟掉,得到一個比較小的nevo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:38.420" id=19:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1178">19:38.420</a></div>
+        <div class="t">如果你現在直接把這個小的nevo裡面的參數再重新隨機的去初始化,也就是你重建一個一樣大小的小的nevo,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.420" id=19:50.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1190">19:50.420</a></div>
+        <div class="t">就是你把這個nevo複製一次,一樣大小,但是參數完全不一樣,重新再訓練一次,你會發現訓練不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:00.420" id=20:00.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1200">20:00.420</a></div>
+        <div class="t">直接訓練這個小的nevo訓練不起來,訓練一個大的,再把它變小,沒問題,但是直接訓練小的,訓練不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:09.420" id=20:09.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1209">20:09.420</a></div>
+        <div class="t">但是假設這個小的nevo,我們在重新初始化參數的時候,我們用的跟這組紅色的參數是一模一樣的,就訓練得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:24.420" id=20:24.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1224">20:24.420</a></div>
+        <div class="t">大家可以了解這兩者的差別嗎?就是這兩組參數雖然都是random initialized,但是這組綠色的參數跟這組紅色的參數是沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:37.420" id=20:37.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1237">20:37.420</a></div>
+        <div class="t">而這邊這些random initialized的參數是直接從這邊的紅色參數裡面選出對應的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.420" id=20:45.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1245">20:45.420</a></div>
+        <div class="t">就是這邊有四個參數,我們就是把這邊對應到的這四個參數直接把它複製過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:54.420" id=20:54.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1254">20:54.420</a></div>
+        <div class="t">這邊有四個參數,我們就把這裡面對應到的四個參數直接複製過來,把這裡面的參數直接複製過來,就訓練得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:03.420" id=21:03.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1263">21:03.420</a></div>
+        <div class="t">如果用大樂透假說來解釋的話,就是這裡面有很多sub-nevo,而這一組initialized的參數就是幸運的那一組可以train得起來的sub-nevo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.420" id=21:16.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1276">21:16.420</a></div>
+        <div class="t">所以當我們今天把這個大的nevo train完再pwn掉的時候,你留下來的就是幸運的那些參數,可以訓練得起來的那些參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:26.420" id=21:26.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1286">21:26.420</a></div>
+        <div class="t">所以這一組初始化的參數,它是可以訓練得起來的一個sub-nevo。但是如果你在重新隨機初始化的話,那你如果運氣比較不好,你就抽不到可以成功訓練起來的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.420" id=21:39.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1299">21:39.420</a></div>
+        <div class="t">所以這個就是大樂透假說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.420" id=21:42.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1302">21:42.420</a></div>
+        <div class="t">那大樂透假說非常的知名啦,它在IKEA 2019,應該是2019沒錯,得到Best Paper Award,所以它是一個非常知名的一個假說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.420" id=21:52.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1312">21:52.420</a></div>
+        <div class="t">那後面也有很多後續的研究,比如說有一篇有趣的研究叫做Deconstructing Lottery Tickets,解構大樂透。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:01.420" id=22:01.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1321">22:01.420</a></div>
+        <div class="t">那這個解構大樂透裡面有什麼有趣的結論呢?我們就直接講它的結論。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:05.420" id=22:05.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1325">22:05.420</a></div>
+        <div class="t">第一個,它試了不同的pwning的strategy,然後發現說某兩個pwning的strategy是最有效的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:13.420" id=22:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1333">22:13.420</a></div>
+        <div class="t">這個細節我們就不講,它做了一個非常完整的實驗告訴你說pwning有哪些可能的strategy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:19.420" id=22:19.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1339">22:19.420</a></div>
+        <div class="t">然後它發現說如果訓練前跟訓練後,它的絕對值差距越大,那pwning掉那些network得到的結果是越有效的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.420" id=22:28.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1348">22:28.420</a></div>
+        <div class="t">那另外一個比較有趣的結果是,到底我們今天這一組好的initialization是好在哪裡呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:38.420" id=22:38.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1358">22:38.420</a></div>
+        <div class="t">它發現說,如果我們只要不改變參數的正負號,就可以訓練起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.420" id=22:46.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1366">22:46.420</a></div>
+        <div class="t">就是小的network只要不改變正負號就可以訓練起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.420" id=22:50.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1370">22:50.420</a></div>
+        <div class="t">什麼意思呢?就是假設你pwning完以後,那你再把原來random initialized的那些參數拿出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.420" id=23:01.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1381">23:01.420</a></div>
+        <div class="t">它的值是這個樣子,0.9、3.1、-9.1、8.5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:05.420" id=23:05.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1385">23:05.420</a></div>
+        <div class="t">你可以完全不管它的數值,直接把正的數值大於0的,通通都用正α來取代,小於0的都用-α來取代。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:15.420" id=23:15.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1395">23:15.420</a></div>
+        <div class="t">用這組參數去initialize你的model,這樣也train得起來,會跟用這組參數去initialize差不多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.420" id=23:23.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1403">23:23.420</a></div>
+        <div class="t">所以這個實驗告訴我們說,正負號是初始化參數能不能夠訓練起來的關鍵。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.420" id=23:31.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1411">23:31.420</a></div>
+        <div class="t">它的絕對值不重要,正負號才重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.420" id=23:35.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1415">23:35.420</a></div>
+        <div class="t">它在文章的章節標題上,你乍看之下會以為它想要講significance of initial weights,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:47.420" id=23:47.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1427">23:47.420</a></div>
+        <div class="t">但它故意在SIGN後面加了一個dash,告訴你說是significance,正負號是很重要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:55.420" id=23:55.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1435">23:55.420</a></div>
+        <div class="t">它想要玩梗一語雙關,不過好像沒什麼人注意到就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:59.420" id=23:59.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1439">23:59.420</a></div>
+        <div class="t">最後一個神奇的發現是,既然我們在想說一個大的network裡面有一些subnetwork,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:11.420" id=24:11.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1451">24:11.420</a></div>
+        <div class="t">它是特別好的初始化的參數,它訓練起來會特別的順利,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.420" id=24:16.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1456">24:16.420</a></div>
+        <div class="t">那會不會一個大的network裡面甚至其實已經有一個subnetwork,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.420" id=24:21.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1461">24:21.420</a></div>
+        <div class="t">它連訓練都不用訓練,直接拿出來就是一個好的network呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.420" id=24:26.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1466">24:26.420</a></div>
+        <div class="t">我們完全不用訓練network,我們直接把大的networkput in put,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:30.420" id=24:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1470">24:30.420</a></div>
+        <div class="t">就得到一個可以拿來做分類的classifier了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:34.420" id=24:34.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1474">24:34.420</a></div>
+        <div class="t">有沒有可能是這個樣子的呢?就好像米開朗基羅說,它是怎麼雕出大衛像的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:39.420" id=24:39.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1479">24:39.420</a></div>
+        <div class="t">它不是雕出大衛像,它是把大衛像從石頭裡面釋放出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.420" id=24:45.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1485">24:45.420</a></div>
+        <div class="t">大衛像原來就是在石頭裡面,它只是把多餘的地方把它去掉而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.420" id=24:54.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1494">24:54.420</a></div>
+        <div class="t">那會不會在整個大的network裡面,雖然參數都是隨機的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:58.420" id=24:58.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1498">24:58.420</a></div>
+        <div class="t">但其中已經有一組參數,它就已經可以做分類了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.420" id=25:01.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1501">25:01.420</a></div>
+        <div class="t">把多餘的東西拿掉,直接就可以得到好的分類結果了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.420" id=25:05.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1505">25:05.420</a></div>
+        <div class="t">答案是是這樣子,你可以自己去讀一下那個文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.420" id=25:08.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1508">25:08.420</a></div>
+        <div class="t">其實可以得到跟supervised其實很接近的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:13.420" id=25:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1513">25:13.420</a></div>
+        <div class="t">其實我看到這篇文章的時候,這個結論已經沒有讓我覺得非常神奇了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:18.420" id=25:18.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1518">25:18.420</a></div>
+        <div class="t">因為在這個解構大樂透這篇文章發表的前幾個月,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:22.420" id=25:22.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1522">25:22.420</a></div>
+        <div class="t">有一篇文章叫做Web Agnostic Neural Network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:25.420" id=25:25.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1525">25:25.420</a></div>
+        <div class="t">它是說它弄了一個神奇的network,這個network裡面所有的數值要嘛是隨機的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:30.420" id=25:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1530">25:30.420</a></div>
+        <div class="t">要嘛通通都設1.5這樣,結果這個network也可以得到一定程度的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.420" id=25:36.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1536">25:36.420</a></div>
+        <div class="t">所以看起來就算你的network裡面參數都是隨機的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:39.420" id=25:39.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1539">25:39.420</a></div>
+        <div class="t">我根本就給它一個constant,也有可能可以得到好的performance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:44.420" id=25:44.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1544">25:44.420</a></div>
+        <div class="t">所以這個結論其實沒有讓人特別訝異,因為在幾個月之前就已經有同樣的文章了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.420" id=25:49.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1549">25:49.420</a></div>
+        <div class="t">這邊放了這兩篇文章的archive連結,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:55.420" id=25:55.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1555">25:55.420</a></div>
+        <div class="t">這邊放的連結是他們最後一個上傳到archive的版本,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.420" id=25:58.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1558">25:58.420</a></div>
+        <div class="t">所以如果你看最後一個版本上傳的月份的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:02.420" id=26:02.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1562">26:02.420</a></div>
+        <div class="t">你會覺得Web Agnostic Network是後出來,然後解構大樂透是先出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:07.420" id=26:07.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1567">26:07.420</a></div>
+        <div class="t">但如果你看第一個上傳的版本的話,是先有Web Agnostic Network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:13.420" id=26:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1573">26:13.420</a></div>
+        <div class="t">然後才有解構大樂透,所以我是先讀到這一篇才讀到解構大樂透的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:19.420" id=26:19.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1579">26:19.420</a></div>
+        <div class="t">但是大樂透假說,它一定是對的嗎?不一定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:25.420" id=26:25.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1585">26:25.420</a></div>
+        <div class="t">有一篇文章是打臉大樂透假說,這篇文章叫做Rethinking the Value of Network Printing。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:32.420" id=26:32.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1592">26:32.420</a></div>
+        <div class="t">而且神奇的是,這篇文章跟大樂透假說是同時出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:37.420" id=26:37.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1597">26:37.420</a></div>
+        <div class="t">他們同時出現在iClear 2019,所以就是在iClear 2019裡面有兩篇文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:44.420" id=26:44.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1604">26:44.420</a></div>
+        <div class="t">他們得到了不太一樣的結論。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.420" id=26:47.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1607">26:47.420</a></div>
+        <div class="t">這篇文章說的是什麼呢?這篇文章說它試了兩個data set,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.420" id=26:52.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1612">26:52.420</a></div>
+        <div class="t">還有好幾種不同的模型,然後它說這個是沒有print過的network的正確率,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:00.420" id=27:00.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1620">27:00.420</a></div>
+        <div class="t">然後它試著去print了一下network,然後再重新去做fine tune,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:04.420" id=27:04.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1624">27:04.420</a></div>
+        <div class="t">小的network可以跟大的network得到差不多的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:09.420" id=27:09.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1629">27:09.420</a></div>
+        <div class="t">然後它說,一般人的想像是,如果我們直接去train這個小的network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:14.420" id=27:14.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1634">27:14.420</a></div>
+        <div class="t">正確率會不如大的networkprint完以後的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.420" id=27:18.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1638">27:18.420</a></div>
+        <div class="t">它試了第一次實驗,叫做Scratch1,Scratch1的意思就是它的參數是隨機初始化的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:25.420" id=27:25.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1645">27:25.420</a></div>
+        <div class="t">大家注意一下,它的隨機初始化跟大樂透假說裡面的隨機初始化是不一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:29.420" id=27:29.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1649">27:29.420</a></div>
+        <div class="t">它的隨機初始化就是真的是隨機初始化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.420" id=27:32.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1652">27:32.420</a></div>
+        <div class="t">大樂透假說裡面的隨機初始化是從原來的那一組隨機的參數裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:37.420" id=27:37.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1657">27:37.420</a></div>
+        <div class="t">去借來那一組隨機的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:39.420" id=27:39.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1659">27:39.420</a></div>
+        <div class="t">我知道這個很拗口,希望你知道我在說什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.420" id=27:42.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1662">27:42.420</a></div>
+        <div class="t">這邊這個Scratch1的意思是說,我們就真的隨機初始化參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.420" id=27:48.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1668">27:48.420</a></div>
+        <div class="t">訓練一個小的network,跟這個有print過的network它的大小是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:53.420" id=27:53.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1673">27:53.420</a></div>
+        <div class="t">發現果然差了一點,跟多數人的想像好像是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.420" id=28:00.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1680">28:00.420</a></div>
+        <div class="t">但是接下來它說,如果我們在update的時候多update幾個APAC會怎樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:07.420" id=28:07.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1687">28:07.420</a></div>
+        <div class="t">之前的人設定的APAC數目,小的network的APAC的訓練數目都跟大的network一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:13.420" id=28:13.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1693">28:13.420</a></div>
+        <div class="t">但是如果小的network的APAC數目多設一點會怎樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:17.420" id=28:17.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1697">28:17.420</a></div>
+        <div class="t">多設一點,就比print過以後的結果就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:20.420" id=28:20.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1700">28:20.420</a></div>
+        <div class="t">所以之前覺得小的network訓練不起來,一定要先訓練大的再做printing,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:26.420" id=28:26.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1706">28:26.420</a></div>
+        <div class="t">會不會就是一個illusion、幻覺、都市傳說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:30.420" id=28:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1710">28:30.420</a></div>
+        <div class="t">直接訓練小的network,APAC多一點,反正就是訓練的起來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:35.420" id=28:35.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1715">28:35.420</a></div>
+        <div class="t">這篇文章放在iClear審查的時候,當然就有reviewer去問說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.420" id=28:44.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1724">28:44.420</a></div>
+        <div class="t">你這個跟大樂透假說正好是相反的,你有沒有什麼comment?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.420" id=28:48.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1728">28:48.420</a></div>
+        <div class="t">其實在這篇文章裡面,他也有對大樂透假說做出一些回應。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.420" id=28:53.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1733">28:53.420</a></div>
+        <div class="t">他覺得大樂透假說觀察到的現象,也許只有在某一些特定的情況下才觀察得到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.420" id=29:02.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1742">29:02.420</a></div>
+        <div class="t">根據這篇文章的實驗是說,只有在learning rate設比較小的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.420" id=29:06.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1746">29:06.420</a></div>
+        <div class="t">還有unstructured的時候,unstructured的時候就是我們print的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:10.420" id=29:10.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1750">29:10.420</a></div>
+        <div class="t">以weight作為單位來做printing的時候,才能觀察到大樂透假說的現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.420" id=29:15.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1755">29:15.420</a></div>
+        <div class="t">他發現說learning rate調大,他就觀察不到大樂透假說的這個現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.420" id=29:21.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=utk3EnAUh-g&t=1761">29:21.420</a></div>
+        <div class="t">所以到底大樂透假說有多正確、是真是假,這個還未來要上代更多的研究來證實。</div>
+    </div>
+    
+</body>
+</html>   

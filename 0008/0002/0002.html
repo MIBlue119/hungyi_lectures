@@ -1,0 +1,3184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>Computational Graph & Backpropagation</h2><a href=https://www.youtube.com/watch?v=-yhm3WdGFok><img src=https://i.ytimg.com/vi_webp/-yhm3WdGFok/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=0">00:00.000</a></div>
+        <div class="t">可以做gradient descent就可以train neural network,那我們今天要講的是怎麼算gradient,那我們當然都知道說算gradient就是用backpropagation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:10.560" id=00:10.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=10">00:10.560</a></div>
+        <div class="t">backpropagation就是一個很有效率的來算這個gradient的方法,那算出gradient以後你就可以做gradient descent,那當然backpropagation過去也講過很多次了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:21.600" id=00:21.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=21">00:21.600</a></div>
+        <div class="t">我把一些過去上課錄影的錄影放在這邊,那其實這邊講的,今天要講的跟傳統的typical的講法比較不一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:32.600" id=00:32.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=32">00:32.600</a></div>
+        <div class="t">這邊要用computational的graph來講算gradient這件事,我們要講說什麼是computational的graph,然後怎麼用computational的graph來算gradient,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:46.120" id=00:46.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=46">00:46.120</a></div>
+        <div class="t">那像tensorflow,fiano,cmtk基本上都是based on computational graph來算這個gradient的,那什麼是computational的graph呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:59.760" id=00:59.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=59">00:59.760</a></div>
+        <div class="t">所謂的computational graph的意思就是說,這個graph它是一種語言,這個語言是拿來描述一個function用的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.280" id=01:11.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=71">01:11.280</a></div>
+        <div class="t">我們知道一個neural network就是一個function嘛,所以我們會需要描述function的語言,那computational graph就是一種語言,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18.800" id=01:18.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=78">01:18.800</a></div>
+        <div class="t">你可以看了它的graph以後,一眼就可以知道說現在我們要描述的這個function長什麼樣子,那在這種graph上面,其實這種graph有不同的定法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.480" id=01:30.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=90">01:30.480</a></div>
+        <div class="t">那你只要統一就行了,那所以在這份投影片裡面,其實我平常在畫那些neural network的時候,其實也沒有用computational graph的畫法來畫,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.720" id=01:42.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=102">01:42.720</a></div>
+        <div class="t">因為有時候那樣畫會不太簡潔,所以其實只有在這一頁投影片裡面,我們才會統一用computational graph的畫法來畫一個neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:53.200" id=01:53.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=113">01:53.200</a></div>
+        <div class="t">好,那這邊呢,每一個node代表一個variable,每一個node它可以是一個scalar,它也可以是一個vector,它也甚至可以是一個metric,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:08.560" id=02:08.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=128">02:08.560</a></div>
+        <div class="t">不只是二維的,它可以是更高維的metric,這邊的每一個edge代表了一個operation,所以operation就是一個simple的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:20.080" id=02:20.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=140">02:20.080</a></div>
+        <div class="t">以下舉一個例子,假設我今天有一個function叫做y等於f of g of h of x,如果用computational graph的話要怎麼畫呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:31.280" id=02:31.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=151">02:31.280</a></div>
+        <div class="t">那我們先把這個function拆解成比較簡單的樣子,u等於h of x,v再把u帶到g裡面得到v,v等於g of u,再把v帶到f裡面得到y,y等於f of v。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.600" id=02:47.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=167">02:47.600</a></div>
+        <div class="t">好,那我們這邊呢,x是一個variable,把x帶到h裡面去就得到u,這一條箭頭就代表了h這個function,那h連著x指向u,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:03.600" id=03:03.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=183">03:03.600</a></div>
+        <div class="t">意思就是說把x丟到h這個function裡面,我們就得到u這個output,既然現在把u丟到g這個function裡面,我們就得到v這個output,把v丟到f這個function裡面,我們就得到y這個output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.240" id=03:18.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=198">03:18.240</a></div>
+        <div class="t">那有時候一個function它可以有不只一個input,如果有一個function不只一個input,我們怎麼表示它呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:24.480" id=03:24.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=204">03:24.480</a></div>
+        <div class="t">那就是這樣,假設有一個function f,它input b跟c,output a,那我們表示它的方法就是,我們有b跟c這兩個變數,這兩個變數我們都只連到a,然後這兩個箭頭合起來就是我們的function f,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.000" id=03:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=222">03:42.000</a></div>
+        <div class="t">然後a是output,跟a相連的這些b跟c就是它的input。那computational graph怎麼畫呢?那我們這邊再舉一個例子,這個1等於a加b乘以b加1,這個是小學生的數學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.920" id=04:03.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=243">04:03.920</a></div>
+        <div class="t">我們就定說c等於a加b,然後d等於b加1,然後e等於c乘以d,然後你就可以把這個computational graph表示出來,我們有a跟b這兩個變數,它們是整個graph的leaf,它們前面沒有其他東西了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.560" id=04:28.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=268">04:28.560</a></div>
+        <div class="t">那a跟b相加,a跟b相加得到c,b加上1得到d,這個箭頭代表的是加1這個function,然後c乘上d就得到了1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:42.200" id=04:42.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=282">04:42.200</a></div>
+        <div class="t">那如果你今天有了這個graph以後,你要實際計算abcde的數值是很容易的,就說a代2,b代1,然後你就把2跟1順著這個graph一路讓它漲上去,你就把a加上b得到c,b加上1得到d,再把c跟d乘起來就得到了1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:06.440" id=05:06.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=306">05:06.440</a></div>
+        <div class="t">那在講下去之前,這個graph有什麼好處呢?這個graph的好處就是,我們在這個graph上面算每一個variable的gradient是容易的,我們等一下可以輕易地用這個graph來算出每一個variable的gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:26.600" id=05:26.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=326">05:26.600</a></div>
+        <div class="t">但是在做這件事情之前,我們需要嵌弱,這邊是秒複習一下嵌弱。有一個function z等於f of x,然後y等於g of x,z等於h of y,然後呢,這邊如果你把它的這個graph,computation graph畫出來,就是x有放到g裡面得到y,y放到h裡面得到c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:54.120" id=05:54.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=354">05:54.120</a></div>
+        <div class="t">那如果按照嵌弱,我要算底x分之底z的話怎麼辦呢?我們知道底x分之底z,因為我們從這個computation graph上面我們可以看到說,x會影響y,y會影響z,所以底x分之底z就是底y分之底z乘以底x分之底y,這樣對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:15.880" id=06:15.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=375">06:15.880</a></div>
+        <div class="t">好,那這邊有一個case 2,那case 2是什麼呢?case 2是說,z等於f of x,然後這個f of x長什麼樣子呢?x等於g of x,y等於h of x,z等於k of x,y,如果把computation graph畫出來,就是s帶到某一個function得到x,s帶到某一個function得到y,x跟y帶到某一個function得到z。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.800" id=06:45.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=405">06:45.800</a></div>
+        <div class="t">如果我們今天要算底x分之底z的話怎麼辦呢?我們可以從computation graph上面看出來說,s影響了x跟y,x跟y又影響了z,所以底x分之底z就是x對,就是s對z的片尾。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:08.680" id=07:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=428">07:08.680</a></div>
+        <div class="t">這邊有寫錯嗎?沒有寫錯,不好意思。這個是s對x的尾分乘上x對z的片尾分,s對y的尾分乘上y對z的片尾分,這個地方就代表了這一條路徑,然後這個地方就代表了這一條路徑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:37.320" id=07:37.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=457">07:37.320</a></div>
+        <div class="t">所以今天給我們看一個computation graph,就等於是告訴我們,我們要怎麼用這個圈若來表示一個尾分,所以這邊就用剛才的example來做個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:52.040" id=07:52.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=472">07:52.040</a></div>
+        <div class="t">假如我們要算partial b分之partial 1,我們要算b對1的尾分的話,怎麼做呢?因為b會透過c再走到1,b也可以透過d再走到1,所以b對1的尾分有兩條路徑,一條是b影響cc影響1,b影響cc影響1,一條是b影響d,d影響1,b影響d,d影響1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.560" id=08:21.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=501">08:21.560</a></div>
+        <div class="t">好,那如果我們今天要真的做這個片尾分的話,首先你第一件事情就是把這邊每一個箭頭,把每一個箭頭的這個片尾分都算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:37.400" id=08:37.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=517">08:37.400</a></div>
+        <div class="t">什麼意思呢?你就算出,比如這個箭頭是連接a跟c的箭頭,你就算出a對c的片尾分,這個箭頭是連接b跟c的箭頭,你就算出b跟c的片尾分,你就把每一個箭頭上的片尾分都算出了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:53.720" id=08:53.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=533">08:53.720</a></div>
+        <div class="t">這個很容易,因為我們其實知道每一個variable之間的關係,所以要算某一個箭頭上面的片尾分是容易的,a對c的片尾分就是1,對不對?然後因為c等於a加b,所以這邊就是1,然後這個也是1,這個也是1,這邊是d,因為1是c乘以d,所以1對c做片尾分會得到d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.800" id=09:19.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=559">09:19.800</a></div>
+        <div class="t">然後我們又知道d等於b加1,所以我們可以直接代說d等於b加1,那d對1的片尾分呢?因為1是c乘以d,所以d對1的片尾分就是c,然後c就是a加b,所以你可以輕易的把這個箭頭上的片尾分都算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.040" id=09:44.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=584">09:44.040</a></div>
+        <div class="t">那這個時候,你要算某一個node上面的variable對另外一個node上面的variable的片尾分就很容易了,舉例來說,如果我們要算b對1的片尾分,我們就是找出所有b到1的path,從b這個node走到1的這個node有哪些走法,所有的路徑都找出來,你可以走這一條路,也可以走這一條路。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:08.520" id=10:08.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=608">10:08.520</a></div>
+        <div class="t">再把一路上所有的,你算出來的這個片尾分的值相乘,你要把一路上所有的這個片尾分都乘起來,走這一條路,你得到1乘以b加1的片尾分,走這一條路,你得到1乘以a加b的片尾分,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:26.280" id=10:26.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=626">10:26.280</a></div>
+        <div class="t">那你就把這一條路上的片尾分跟這一條路上的片尾分加起來,那你就得到Path of b分之Path of e,就結束了。你可以自己check一下,看看這個做法算出來對不對,這個是很簡單的,隨便微分一下就可以得到答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.080" id=10:45.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=645">10:45.080</a></div>
+        <div class="t">好,我們在這邊先休息10分鐘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:15.080" id=11:15.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=675">11:15.080</a></div>
+        <div class="t">好,我們來上課吧,剛才講到這一頁,剛才用的是symbol來描述它,你當然可以用數字來描述它,你就先代,比如說a等於3,b等於2,a等於3,b等於2的時候,c等於5,d等於3,這個也是秒算,那e等於15。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.680" id=11:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=696">11:36.680</a></div>
+        <div class="t">你先要做一次這個fee forward,把所有的variable,這個verb上的variable數字都算出來,然後呢,這個微分的部分,它的這個value其實就是這個verb上面某一個node的value,所以d你就可以把它的值3拿過來,如果是c你就可以把它的值5拿過來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.680" id=12:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=720">12:00.680</a></div>
+        <div class="t">那現在如果叫你算這個b對1的片尾分的數值,如果要你算b對1的片尾分的值在a等於3,b等於2的condition下的時候怎麼算呢?你先把所有的edge上面的值都算出來,然後接下來在b這個地方放1,然後你把你從b這個點往前走,找出所有可以走到1的path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:25.680" id=12:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=745">12:25.680</a></div>
+        <div class="t">比如說他走這條path,1乘上1還是1,然後再把1乘上3得到3,然後這邊1乘上1還是1,1乘上5得到5,然後你把這個3跟5加起來就得到8,所以這個微分的結果就是8。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.680" id=12:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=763">12:43.680</a></div>
+        <div class="t">那如果你今天要換算這個a對1的片尾分在a等於3,b等於2的情況下,那其實也是一樣,找出a到1的所有路徑,然後就從這個a開始走,一路走到1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.680" id=12:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=776">12:56.680</a></div>
+        <div class="t">a走到c要乘上1,所以你就把1這個值放在這邊,然後你就把1這個值放在c的這個點,然後c走到1要乘上3,所以a對1的片尾分就是3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.680" id=13:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=793">13:13.680</a></div>
+        <div class="t">這個應該很容易吧,我想這個應該是沒有什麼問題,然後如果今天要同時算a對1的片尾分還有b對1的片尾分在a等於3,b等於2的情況下,要同時算這兩者的話,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.680" id=13:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=811">13:31.680</a></div>
+        <div class="t">我們需要一個reserve mode,我們需要一個反向的做法,我們剛才看的都是正向的做法,就從b走到1,從a走到1。但是如果要我們要求我們是同時算出a對1的片尾分,b對1的片尾分,這個時候我們就要用反向的做法是比較有效率的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:50.680" id=13:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=830">13:50.680</a></div>
+        <div class="t">當然你可以分兩次做,先算出a對1的片尾分,再算出b對1的片尾分,但比較慢。如果我們今天用反向的做法,我們可以同時算出a對1的片尾分和b對1的片尾分,怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.680" id=14:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=843">14:03.680</a></div>
+        <div class="t">從1開始走,把數字1放在1的這個node,然後從這個node就散播出去,通過這個3的path在這邊你得到3,通過這個5的path在這邊你得到5,再把3乘以1加5乘以1你就得到8,再把3乘以1你就得到3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.680" id=14:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=870">14:30.680</a></div>
+        <div class="t">就把3呢,透過這條路徑再走下來你就得到3,然後把3乘以1加5乘以1你就得到8,那在這個點上你就得到partial a分之partial e,在這個點上你就得到partial b分之partial c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.680" id=14:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=884">14:44.680</a></div>
+        <div class="t">事實上在這個地方你也可以得到這個值對1的片尾分,你也可以得到這個值對1的片尾分。那假設今天這個graph它只有一個root,那你從這個root開始走,你就可以把這個graph上面所有的variable它的片尾分都一次算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.680" id=15:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=910">15:10.680</a></div>
+        <div class="t">那這樣子做的好處是,如果你今天這個computational graph只有一個root,也就是說你的最終的function它的output只有一個value,而你又需要同時算大量的不同的值的片尾分的時候,用reverse mode會比剛才我們看的forward mode還要更有效率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:34.680" id=15:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=934">15:34.680</a></div>
+        <div class="t">而在做neural network的時候,我們需要的就是這個reverse mode,為什麼呢?因為我們在做neural network的時候,我們要計算片尾分的對象其實是那個cost function對不對?我們是要對,又或者是叫loose function,我們要對這個cost function算片尾分,而cost function,這個function它的output就是一個scatter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:56.680" id=15:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=956">15:56.680</a></div>
+        <div class="t">所以如果你把cost function用computational graph來描述的話,它只有一個output。那今天我們又要同時算這個neural裡面所有參數跟cost function的片尾分,所以我們從root開始做reverse mode,在對cost function算片尾分是比較有效率的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:18.680" id=16:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=978">16:18.680</a></div>
+        <div class="t">那另外一個狀況是,有時候我們會有parameter sharing這種狀況,也就是說同樣的variable它出現在這個graph數個地方,這個時候怎麼算它的片尾分呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:32.680" id=16:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=992">16:32.680</a></div>
+        <div class="t">這件事情在neural network裡面常常發生,比如說我們看CNN,它就有shared variable,對不對?我們才剛講過,RNN它其實也是shared variable,它把同一個function在整個time sequence上反覆使用,它也是shared variable。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:48.680" id=16:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1008">16:48.680</a></div>
+        <div class="t">有shared variable的話怎麼做呢?這邊舉個例子,假設一個function y等於x乘上exponential的x平方,這個式子如果我們要把它用computational graph來描述的話,它長什麼樣子呢?把x跟x相乘得到v,把v取exponential得到u,把u再乘上x得到y,那我們就得到這個computational graph。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.680" id=17:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1036">17:16.680</a></div>
+        <div class="t">接下來我們計算partial x分之partial y,如果我們要計算partial x分之partial y的話怎麼做呢?我們先把每一個edge上面的微分都算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.680" id=17:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1051">17:31.680</a></div>
+        <div class="t">如果把這個x對v做微分,我們得到的值是什麼呢?我們得到的值就是v等於x平方。就是說,你說v等於x平方微分,對x微分不是應該是2x嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.680" id=17:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1068">17:48.680</a></div>
+        <div class="t">可是現在這個是比較難理解的地方,我們必須要先把每一個node上面的x當作不同的x來看待。你就假設這些x都是由下表的,這個是x編號1號,這個x編號2號,這個x編號3號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.680" id=18:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1090">18:10.680</a></div>
+        <div class="t">所以這個x編號1號乘x編號2號等於v,所以你把這個x編號1號對v做偏微分,你得到的是x編號2號,但它其實還是x。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:25.680" id=18:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1105">18:25.680</a></div>
+        <div class="t">所以這邊也是x,這邊也是x,然後v對u做偏微分,你得到的還是u,對不對?因為v是exponential u,因為u是exponential v,exponential v對v做偏微分還是exponential v,所以得到的值就是u。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.680" id=18:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1126">18:46.680</a></div>
+        <div class="t">這邊u乘上x得到y,這邊做偏微分就是x,這邊做偏微分就是u。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:56.680" id=18:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1136">18:56.680</a></div>
+        <div class="t">那你看這裡,這邊這個u啊,u是什麼呢?u你可以,因為u的值我們是知道的,u就是exponential的x平方,那這個u就是exponential的x平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.680" id=19:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1156">19:16.680</a></div>
+        <div class="t">偏微分的這個symbol我們都算出來了,那partial x分之partial y它的值應該是什麼呢?我們現在先把這三個x當作視同不同的variable來看,那這個x對y的偏微分就是從y走過來,也就是exponential的x平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:38.680" id=19:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1178">19:38.680</a></div>
+        <div class="t">那y從這條路徑走過來,它會得到另外兩個x的偏微分,那y從這個路徑走過來,你得到的是x乘1的x平方再乘x,然後y從這個路徑走過來,你是得到x乘1的x平方再乘x,得到這個路徑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:04.680" id=20:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1204">20:04.680</a></div>
+        <div class="t">好,那接下來呢,實際上x對y的偏微分是什麼呢?我們現在有三個偏微分,它的值呢不是一樣,那實際上x對y的偏微分其實就是把這三項加起來,就是x對y的偏微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:22.680" id=20:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1222">20:22.680</a></div>
+        <div class="t">所以今天如果你要考慮share variable的配置,那你可以自己check看看,因為這個你要做,自己算偏微分還蠻容易的嘛,這個你要算微分還蠻容易的,你就自己算算看,看看對不對。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:36.680" id=20:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1236">20:36.680</a></div>
+        <div class="t">那今天如果是share variable的情況下呢,我們就要把同樣的參數先當作不一樣的參數來看,然後算完以後再加起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:52.680" id=20:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1252">20:52.680</a></div>
+        <div class="t">這樣大家了解我的意思嗎?你先把這三個x當作x編號1,x編號2,x編號3來看,然後再把他們的偏微分分別算出來,然後再把他們通通加起來,那你就可以得到x對y的微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.680" id=21:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1271">21:11.680</a></div>
+        <div class="t">這樣講出來大家有問題嗎?好,那接下來就進入neural network的部分,剛才講的東西是general,跟neural network沒有直接的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:24.680" id=21:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1284">21:24.680</a></div>
+        <div class="t">那現在呢,我們就要講說,如果有一個fully connected的free-forward network,用computational graph來算它的微分的話,我們要怎麼做?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:37.680" id=21:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1297">21:37.680</a></div>
+        <div class="t">那我們先來很快的複習一下一般的講法,一般我們說要算微分就用back propagation,這個back propagation裡面呢,分成兩個階段,一個是forward path,一個是backward path。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:55.680" id=21:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1315">21:55.680</a></div>
+        <div class="t">那這個,每一個參數啊,比如wijl,wijl是dL over layer的weight,它從dL減一個layer的d這個neural,直到dL over layer的dI。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.680" id=22:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1334">22:14.680</a></div>
+        <div class="t">我們把這個weight對c呢,做偏微分,那這個偏微分呢,等於這個weight對z做偏微分,這個z呢,是i的這一個,也就是這個weight所連到的那個neural的activation function的input,這個z呢,是dI的neural的activation function的input。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.680" id=22:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1357">22:37.680</a></div>
+        <div class="t">把這個z呢,對w做偏微分,乘上把c呢,對z做偏微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:45.680" id=22:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1365">22:45.680</a></div>
+        <div class="t">好,那我們只需要用forward path和backward path,分別把這兩項走出來再相乘,我們就可以計算出w對c的偏微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:54.680" id=22:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1374">22:54.680</a></div>
+        <div class="t">好,那我們先來看forward path,w對z的偏微分怎麼算呢?那這邊我們就不需要推導,我們就直接告訴大家結果,w對z的偏微分就是前面dL減一個layer的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.680" id=23:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1391">23:11.680</a></div>
+        <div class="t">ok,就是w前面是從誰來的,是從d這個neural來的,那d這個neural的output就是w對z的偏微分,那如果d最後這個L減一個neural已經是input的話,那這個偏微分的結果呢,就是input,就是input的d這個dimension的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.680" id=23:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1411">23:31.680</a></div>
+        <div class="t">ok,好,那所以要求到這個值,你只需要一個forward path,就是一般的before and after的運算就可以把這個值求出來,那接下來看一下這個backward path。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:41.680" id=23:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1421">23:41.680</a></div>
+        <div class="t">那backward path呢,我們要求一個值叫做這個error signal,那這個error signal呢,是我們對dL個layer的dI個neural,我們可以求一個error signal。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:54.680" id=23:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1434">23:54.680</a></div>
+        <div class="t">這個值就是partial z分之partial c,怎麼求它呢,我們要做一個backward path,那這個backward path呢,就是我們要把原來的neural逆轉,不是把原來的neural逆轉,把原來的整個network逆轉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:09.680" id=24:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1449">24:09.680</a></div>
+        <div class="t">那這個network的input就是y對c的歸零,這個network的input呢,就是一個vector,這個vector裡面,這個vector呢,就是y對c的歸零,把這個vector呢,丟給一個,丟給一排neural。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:26.680" id=24:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1466">24:26.680</a></div>
+        <div class="t">而這排neural呢,它們的activation function呢,並不是z-mode,它們是一排這個op-amplify這樣子,然後這每一個op-amplify它放大的倍率呢,就是它的微分值,就是它每一個op-amplify其實在正向的network裡面都對到一個neural。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:45.680" id=24:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1485">24:45.680</a></div>
+        <div class="t">那個neural的activation function的微分值呢,就是這個op-amplify的那個放大倍率這樣子。好,那你把這個gradient呢,丟到這排op-amplify裡面得到一排output,這個output呢,再乘上一組weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.680" id=25:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1501">25:01.680</a></div>
+        <div class="t">這組weight是什麼呢?這組weight是原來第L個layer的那個weight matrix的transpose,我們原來在做forward的時候乘上WL,在做backward的時候乘上WL的transpose,然後再丟到下一組op-amplify裡面,然後就可以算出這個值,然後再把紅色框框值和綠色框框值相乘,就得到最後微分的結果,一般是這麼說的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:26.680" id=25:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1526">25:26.680</a></div>
+        <div class="t">而現在我們用computational graph來算一下,那在用computational graph來算微分之前,我們當然要先兜出network的computational graph,它長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:39.680" id=25:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1539">25:39.680</a></div>
+        <div class="t">那我們知道一個network呢,就是一堆矩陣的operation,那如果把這個operation用一個graph來表示它的話,那它長什麼樣子呢?首先input的地方呢,是一個variable x,還有我們需要一個variable w1,你知道這個variable可以是matrix,所以w1是一個matrix,我們需要一個variable b1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:07.680" id=26:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1567">26:07.680</a></div>
+        <div class="t">好,接下來我們先把w1乘x加b1,w1乘x加b1得到z1,所以呢,我們有一個operation,這個operation呢,它是吃x跟w1跟b1,它的這個operation呢,就是把w1乘上x加b,這個operation,這個有三個箭頭的operation,就是把w1乘x加b得到z1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:32.680" id=26:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1592">26:32.680</a></div>
+        <div class="t">然後再把z1呢,通過一個activation function得到a1,所以這個箭頭代表的是activation function,input一個vector z1得到另外一個vector a1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:42.680" id=26:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1602">26:42.680</a></div>
+        <div class="t">然後另外呢,這邊又有兩個weight,w2和b2,又有兩個variable,w2和b2,把w2和b2跟a1一起,再通過這個operation得到z2,把z2通過sigmoid function得到y,這裡不叫sigmoid function,這是一個activation function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.680" id=27:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1622">27:02.680</a></div>
+        <div class="t">最後一個layer的activation function可能是softmax,這個畫法跟一般typical文化neural network畫法不太一樣,對不對,因為一般畫neural network是我們習慣說,w應該被放在a跟z中間,我們比較習慣這樣畫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:22.680" id=27:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1642">27:22.680</a></div>
+        <div class="t">但是如果放畫的是computational graph的話,每一個node都是一個variable,那我們現在我們的參數w跟b也是variable,所以w跟b也是node。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.680" id=27:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1655">27:35.680</a></div>
+        <div class="t">所以他們像是從外面再加到主幹裡面,跟a再一起產生z,如果是computational graph正確的話,你應該畫成這樣,而不是把w插在a跟z中間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:58.680" id=27:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1678">27:58.680</a></div>
+        <div class="t">但是我們其實並不是,我們接下來要做歸根descent,我們要算微分,但我們算微分的對象並不是y,我們算微分的對象其實是cost function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:13.680" id=28:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1693">28:13.680</a></div>
+        <div class="t">怎麼算cost function呢?cost function就是,我們這邊有另外一個variable,y hat,y hat代表的是,它是個vector,它代表的是標準答案,那我們把y hat,y hat帶到一個function l裡面,得到一個值c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:29.680" id=28:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1709">28:29.680</a></div>
+        <div class="t">那這個l就是你的loss function,看你要怎麼去evaluate這個y hat跟y,你如果是一個regression的problem,你或許會選擇square loss,如果你今天是classification的problem,或許你會選擇cross entropy等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.680" id=28:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1728">28:48.680</a></div>
+        <div class="t">這邊就depend on your case,你會選擇一個適當的l,那我們就是用這兩個箭頭代表l這個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:59.680" id=28:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1739">28:59.680</a></div>
+        <div class="t">好,那接下來我們就是要計算w1,w2,b1,b2,對c,對最後這個c的這個片尾分,那注意一下,c是一個scalar,對所有的level來說,最後它的那個cost function的output,那個loss的值,那個value,它都是一個scalar,所以你input很多東西,你input很多東西,那output最後就是只有一個數值而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:28.680" id=29:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1768">29:28.680</a></div>
+        <div class="t">好,那就按照我們剛才學的做法,首先第一步就是我們要把每一個edge上面的這個尾分都算出來,每一個edge上面的片尾分都算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:42.680" id=29:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1782">29:42.680</a></div>
+        <div class="t">然後算出來以後呢,就用reverse mode,從c這個地方一路逆向走回來,你從c這個地方,假設每一個edge上面的尾分都算好了,那我們就可以一路逆向走回來,逆向走回來,逆向走回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:00.680" id=30:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1800">30:00.680</a></div>
+        <div class="t">你就可以把所有的參數,對c的片尾分都算出來了。那等一下的那個投影片呢,它的符號比較多,我相信一定會有錯,大家可以仔細的檢查一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:14.680" id=30:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1814">30:14.680</a></div>
+        <div class="t">好,那我們這邊呢,其實就遇到的第一個問題就是,你看啊,這邊這個什麼br是vector,a是vector,z是vector,w是matrix,我們今天要算每一個edge,我們都要算它的input的variable對output的variable的片尾分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:39.680" id=30:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1839">30:39.680</a></div>
+        <div class="t">可是一個vector,比如說我們這邊舉的是z1跟a1,一個vector z1對另外一個vector a1的片尾分到底是什麼意思呢?我把一個vector對另外一個vector的片尾分到底是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:54.680" id=30:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1854">30:54.680</a></div>
+        <div class="t">那我知道這個呢,在微積分裡面呢,我至少在電機系的微積分是沒有講這個的,所以我們可以用一頁的投影片很快的講一下。我們把vector對vector做片尾分,我們得到的東西其實就是,講後面的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:11.680" id=31:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1871">31:11.680</a></div>
+        <div class="t">什麼意思呢?我們現在有一個function,y等於f of x,x跟y都是vector,x是三維的vector,它有三個component,x1,x2,x3,y是二維的vector,它有兩個component,y1,y2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:24.680" id=31:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1884">31:24.680</a></div>
+        <div class="t">把x對y做片尾分的話,那我們得到的是什麼呢?我們得到的就是一個矩陣,我們得到的就是一個matrix。定義就是這樣,把一個vector對另外一個vector做片尾分,我們得到的就是一個matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:45.680" id=31:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1905">31:45.680</a></div>
+        <div class="t">這個matrix的高啊,也就是它的這個row的數目啊,就是分母的那個vector的dimension,那它的color的數目就是分子的那個vector的dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.680" id=32:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1921">32:01.680</a></div>
+        <div class="t">了解嗎?就是現在y有兩維,所以這個jacobian matrix,這個matrix就叫jacobian matrix,這個matrix它的高呢,就是兩維,它的寬呢,就是三維。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:15.680" id=32:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1935">32:15.680</a></div>
+        <div class="t">好,那這個matrix的value分別是什麼呢?這個matrix裡面的value就是,就x呢,你就把x1,x2,x3放在這邊,y你就把y1,y2放在這邊,然後你把這個x1對y1做片尾分,x1對y2做片尾分,x2對y1做片尾分,x2對y2做片尾分,x3對y1做片尾分,x3對y2做片尾分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:39.680" id=32:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1959">32:39.680</a></div>
+        <div class="t">你拿這三個值,對,這兩個值,都去分別做片尾分,得到六個值,然後把它放到這個matrix裡面,就是jacobian的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:51.680" id=32:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1971">32:51.680</a></div>
+        <div class="t">好,再來我們舉個例子,這邊有一個function,input是x1,x2,x3,output呢,y1,y2就是x1加x2,x3,二兩倍的x3,我覺得應該寫個y啦,y等於這個東西,y等於這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:07.680" id=33:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=1987">33:07.680</a></div>
+        <div class="t">我們來算x對y的jacobian matrix,它應該長什麼樣子呢,y是二維,所以它的高就是二維,x是三維,所以它的寬就是三維,然後接下來呢,第一個value,左上角這個value是什麼,它是x1對y1的片尾分,所以是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:29.680" id=33:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2009">33:29.680</a></div>
+        <div class="t">第二個value,上面中間這個value,它是x2對y1的片尾分,x2對y1的片尾分,所以它是x3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:43.680" id=33:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2023">33:43.680</a></div>
+        <div class="t">右邊這個呢,它是x3對y1的片尾分,所以它是x2。那下面呢,下面都是對y2的片尾分,下面這三個值都是對y2的片尾分,x1對y2的片尾分是0,x2對y2的片尾分也是0,x3對y2的片尾分是2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:07.680" id=34:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2047">34:07.680</a></div>
+        <div class="t">那所以我們就把這個jacobian的matrix算出來。所以我們用computational graph來算這個,我們現在用computational graph,我們需要算所有edge上面的片尾分,如果今天這個edge的兩邊都是vector的話,那我們其實就是得到的,得到的就是一個matrix,就是一個jacobian matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:33.680" id=34:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2073">34:33.680</a></div>
+        <div class="t">好,那所以我們現在就從c這個地方一路往回走,一路把一路上的片尾分通通很麻煩的把它算一算,那我們算一下y對c的片尾分,我們來算一下y對c的片尾分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:55.680" id=34:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2095">34:55.680</a></div>
+        <div class="t">這個c它是只有一維對不對,它只有一維,然後y是一個vector,所以這個東西它算出來就是一個扁的長條狀的東西,了解吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:09.680" id=35:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2109">35:09.680</a></div>
+        <div class="t">就是因為這個c只有一維,所以如果這個東西你用jacobian matrix來表示的話,它的高就是一個dimension,它的寬就是看你output的那個y有幾個dimension,就是做digital classification,那y就是十維,長條狀的東西寬就是十,高就是一。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:28.680" id=35:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2128">35:28.680</a></div>
+        <div class="t">好,那計算一下y對c的片尾分,那就要depend on your loss function怎麼定義了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:41.680" id=35:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2141">35:41.680</a></div>
+        <div class="t">那如果是分類的問題的話,一般你的y hat就是用one-half的那個code來表示對不對,就是只有其中一維是1,其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:52.680" id=35:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2152">35:52.680</a></div>
+        <div class="t">那我們假設是1的那一維叫做第r維,那這個時候我們的loss function會怎麼定義呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:01.680" id=36:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2161">36:01.680</a></div>
+        <div class="t">我們會定義說c就等於負的logyr對不對,cross entropy的定義就是這個樣子,所以c等於負的logyr。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:13.680" id=36:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2173">36:13.680</a></div>
+        <div class="t">這個yr是這個network output的第r維,但是這個r是哪一維取決於它取決於這個target的哪一維之一。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:25.680" id=36:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2185">36:25.680</a></div>
+        <div class="t">所以network的output跟target都有用到,network提供了yr的value,output的target提供了到底這個r是哪一個dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:35.680" id=36:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2195">36:35.680</a></div>
+        <div class="t">好啊,那如果我們算partial y分之partial c的話,我們得到的是什麼東西呢?我們剛才有講過說這是一個長條狀的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:46.680" id=36:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2206">36:46.680</a></div>
+        <div class="t">那這個vector其實大多數的地方應該都是0吧,因為只有在i等於r的時候,如果今天拿yi,y的其中一個element,yi對c做片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:59.680" id=36:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2219">36:59.680</a></div>
+        <div class="t">在i等於r的時候,我們會算出來的片尾分就是負的yr分之1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:07.680" id=37:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2227">37:07.680</a></div>
+        <div class="t">你把yr對這個做片尾分就是負的yr分之1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:11.680" id=37:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2231">37:11.680</a></div>
+        <div class="t">那如果i不等於y的話,那那個y就跟cross function是沒有關係的,所以它就等於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:20.680" id=37:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2240">37:20.680</a></div>
+        <div class="t">所以得到了一個vector,那它只有在某一個dimension是負1除以yr,其他都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:27.680" id=37:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2247">37:27.680</a></div>
+        <div class="t">好啊,那接下來呢,再繼續往回走,我們現在遇到的是z2對y的片尾分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:37.680" id=37:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2257">37:37.680</a></div>
+        <div class="t">而z2跟y的中間就差了一個activation function,z2代入activation function就得到y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:44.680" id=37:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2264">37:44.680</a></div>
+        <div class="t">那z2對y的片尾分就是一個Jacobian matrix,這個matrix的高是y的dimension,寬是z2的dimension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:54.680" id=37:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2274">37:54.680</a></div>
+        <div class="t">那這邊呢,它會是方形的,對不對,因為z2跟y的dimension一定是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:00.680" id=38:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2280">38:00.680</a></div>
+        <div class="t">通過一個activation function並不會改變這個vector的維度,所以這個Jacobian matrix是個方形的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:08.680" id=38:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2288">38:08.680</a></div>
+        <div class="t">好,那這個Jacobian matrix的第i個row,第j個column,它的值應該是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:16.680" id=38:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2296">38:16.680</a></div>
+        <div class="t">第i個row,第j個column就是partialyi除以partialz2的dj位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:25.680" id=38:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2305">38:25.680</a></div>
+        <div class="t">ok,就是row是由分母來決定,column是由分子來決定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:32.680" id=38:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2312">38:32.680</a></div>
+        <div class="t">怎麼算?如果i不等於j,那這個微分值應該是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:38.680" id=38:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2318">38:38.680</a></div>
+        <div class="t">如果i不等於j,這個微分值是不是應該就是0呢?因為zj跟yi,如果i不等於j,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:47.680" id=38:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2327">38:47.680</a></div>
+        <div class="t">zj跟yi是八竿子打不著的東西,如果你的activation function是比如說sigmoid,il,那些,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:54.680" id=38:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2334">38:54.680</a></div>
+        <div class="t">通通都是八竿子打不著的東西,ok,所以就是0,ok,那如果i等於j呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:01.680" id=39:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2341">39:01.680</a></div>
+        <div class="t">如果i等於j的話,那就需要用到activation function,因為yi等於sigmazi,ok,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:11.680" id=39:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2351">39:11.680</a></div>
+        <div class="t">那這個時候呢,你的這個微分的值呢,就是看說我們現在的zi,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:19.680" id=39:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2359">39:19.680</a></div>
+        <div class="t">假設我們activation function是sigmoid function,你就看zi落在哪裡,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:25.680" id=39:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2365">39:25.680</a></div>
+        <div class="t">然後看zi的所在的位置的切線斜率,這個切線斜率呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:31.680" id=39:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2371">39:31.680</a></div>
+        <div class="t">就是i等於j的時候的片微分的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:35.680" id=39:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2375">39:35.680</a></div>
+        <div class="t">好了,所以總體來說呢,總體來說,今天這個partial z to partial y呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:42.680" id=39:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2382">39:42.680</a></div>
+        <div class="t">它是一個diagonal的matrix,因為它只有在i等於j的時候是有值的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:50.680" id=39:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2390">39:50.680</a></div>
+        <div class="t">那其他地方都是0,它是一個diagonal的matrix,那再來就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:55.680" id=39:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2395">39:55.680</a></div>
+        <div class="t">如果今天用的不是sigmoid function,是一個softmax呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.680" id=39:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2399">39:59.680</a></div>
+        <div class="t">我們在output的時候常常會想要用softmax function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:02.680" id=40:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2402">40:02.680</a></div>
+        <div class="t">如果是softmax function,你覺得它還會是diagonal的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:06.680" id=40:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2406">40:06.680</a></div>
+        <div class="t">給大家三秒鐘的時間想一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:10.680" id=40:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2410">40:10.680</a></div>
+        <div class="t">好了,如果今天這個sigma換成softmax的話,它還是diagonal的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:16.680" id=40:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2416">40:16.680</a></div>
+        <div class="t">你覺得它是diagonal的,同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:20.680" id=40:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2420">40:20.680</a></div>
+        <div class="t">你覺得它不是diagonal的,同學舉手一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:25.680" id=40:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2425">40:25.680</a></div>
+        <div class="t">好,謝謝,謝謝,好,大多數同學覺得它不是diagonal,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:28.680" id=40:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2428">40:28.680</a></div>
+        <div class="t">沒錯,如果今天這邊換成softmax的話,它就不是diagonal了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.680" id=40:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2433">40:33.680</a></div>
+        <div class="t">為什麼,因為今天在做softmax的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:36.680" id=40:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2436">40:36.680</a></div>
+        <div class="t">z的每一個dimension都會影響到y的每一個dimension,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:41.680" id=40:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2441">40:41.680</a></div>
+        <div class="t">所以就不會有這種i不等於j,微分就是0的狀況,沒有這種狀況,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:46.680" id=40:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2446">40:46.680</a></div>
+        <div class="t">所以如果今天換成softmax,它就不是diagonal了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:50.680" id=40:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2450">40:50.680</a></div>
+        <div class="t">好,那接下來就是繼續一路算下去,一路算下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:57.680" id=40:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2457">40:57.680</a></div>
+        <div class="t">我這邊把那個bias都拿掉了,讓它比較簡單一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:01.680" id=41:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2461">41:01.680</a></div>
+        <div class="t">所以z2等於a1乘w2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:04.680" id=41:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2464">41:04.680</a></div>
+        <div class="t">這個z2跟a1和w2的關係是這樣子一個相乘的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:09.680" id=41:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2469">41:09.680</a></div>
+        <div class="t">我們先算partial a1分之partial z2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:14.680" id=41:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2474">41:14.680</a></div>
+        <div class="t">這個可能是比,也許這個比較好算一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:18.680" id=41:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2478">41:18.680</a></div>
+        <div class="t">好,那我們得到,這個東西是一個Jacobian的matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:24.680" id=41:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2484">41:24.680</a></div>
+        <div class="t">它的寬是a的寬,它的高是z的寬,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:31.680" id=41:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2491">41:31.680</a></div>
+        <div class="t">它z有多少dimension,它高的就是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:34.680" id=41:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2494">41:34.680</a></div>
+        <div class="t">現在要問的問題就是,di的row,dj的column,它的值應該是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:41.680" id=41:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2501">41:41.680</a></div>
+        <div class="t">di的row,dj的column,也就是partial a這一分之partial zi,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:45.680" id=41:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2505">41:45.680</a></div>
+        <div class="t">它的值應該是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:48.680" id=41:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2508">41:48.680</a></div>
+        <div class="t">那這個很容易,你就把這個z跟a的關係寫出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:56.680" id=41:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2516">41:56.680</a></div>
+        <div class="t">這我們在第一堂課的時候講過,把它寫出來,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:00.680" id=42:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2520">42:00.680</a></div>
+        <div class="t">那寫出來你就會發現說,zi等於a1乘上wi1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:11.680" id=42:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2531">42:11.680</a></div>
+        <div class="t">我們說wi1就是1指向i的意思,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:15.680" id=42:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2535">42:15.680</a></div>
+        <div class="t">加上a2乘上wi2,一直加到an乘上wi,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:20.680" id=42:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2540">42:20.680</a></div>
+        <div class="t">把它們統統加起來,就得到了zi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:23.680" id=42:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2543">42:23.680</a></div>
+        <div class="t">所以如果把zi對aj做偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:27.680" id=42:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2547">42:27.680</a></div>
+        <div class="t">那這邊裡面會有一項是wij乘上aj,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:38.680" id=42:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2558">42:38.680</a></div>
+        <div class="t">所以如果你把它對aj做偏為分的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:43.680" id=42:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2563">42:43.680</a></div>
+        <div class="t">那你得到的就是wij,所以我們得到的就是wij。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:50.680" id=42:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2570">42:50.680</a></div>
+        <div class="t">所以di的row,dj的column,我們得到的就是w的di的row,dj的column的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:02.680" id=43:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2582">43:02.680</a></div>
+        <div class="t">那所以這一個matrix不正好就是w2嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:08.680" id=43:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2588">43:08.680</a></div>
+        <div class="t">對不對,因為它的di的row,dj的column就是w2的di的row,dj的column,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:14.680" id=43:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2594">43:14.680</a></div>
+        <div class="t">這一個講後面的matrix正好就是w2,我就把它換掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:20.680" id=43:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2600">43:20.680</a></div>
+        <div class="t">接下來我們遇到一個麻煩的問題了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:23.680" id=43:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2603">43:23.680</a></div>
+        <div class="t">我們要把w2對z2做偏為分,算它講後面的matrix。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:30.680" id=43:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2610">43:30.680</a></div>
+        <div class="t">那這個w2它是個matrix,我們可以假設它是一個n乘以n為的matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:36.680" id=43:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2616">43:36.680</a></div>
+        <div class="t">如果它是一個n乘以n為的matrix的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:39.680" id=43:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2619">43:39.680</a></div>
+        <div class="t">如果它是n乘以n為的matrix,那顯然,z2就是n為,a1就是n為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:45.680" id=43:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2625">43:45.680</a></div>
+        <div class="t">我們這邊可以把w2當作一個vector來看,其實是這樣子的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:54.680" id=43:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2634">43:54.680</a></div>
+        <div class="t">這邊我們可以把w2對z2的偏為分看作是一個tensor,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:01.680" id=44:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2641">44:01.680</a></div>
+        <div class="t">看作它是一個有三為的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:04.680" id=44:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2644">44:04.680</a></div>
+        <div class="t">但是我知道說,因為在我們線性代數裡面沒有講過超過二為的tensor的運算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:12.680" id=44:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2652">44:12.680</a></div>
+        <div class="t">所以也許你沒有辦法接受這樣的運算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:15.680" id=44:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2655">44:15.680</a></div>
+        <div class="t">所以我們就把它當作說這個w2它是一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:22.680" id=44:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2662">44:22.680</a></div>
+        <div class="t">它的dimension就是n乘以n為,它是一個n乘以n為的vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:26.680" id=44:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2666">44:26.680</a></div>
+        <div class="t">這樣做會讓算出來的結果有點不elegant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:29.680" id=44:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2669">44:29.680</a></div>
+        <div class="t">如果你用tensor來考慮它的話,用三為的matrix來描述這個偏為分的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:36.680" id=44:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2676">44:36.680</a></div>
+        <div class="t">結果會比較elegant,如果是二為的話,硬把它弄成二為感覺沒有那麼elegant,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:41.680" id=44:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2681">44:41.680</a></div>
+        <div class="t">不過也就只好這樣子了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:45.680" id=44:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2685">44:45.680</a></div>
+        <div class="t">好,那這個w2對z2的偏為分它長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:51.680" id=44:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2691">44:51.680</a></div>
+        <div class="t">這個寬是w2的寬,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:55.680" id=44:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2695">44:55.680</a></div>
+        <div class="t">w2本來是一個matrix把它硬拉成一個vector,所以它是n乘以n為,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:59.680" id=44:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2699">44:59.680</a></div>
+        <div class="t">那高是n為。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:01.680" id=45:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2701">45:01.680</a></div>
+        <div class="t">那現在呢,wij對zi的偏為分是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:11.680" id=45:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2711">45:11.680</a></div>
+        <div class="t">其實我們只要算出wij對zi的偏為分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:20.680" id=45:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2720">45:20.680</a></div>
+        <div class="t">那wij對zi的偏為分放在這個Jacobian matrix的哪一個位置呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:29.680" id=45:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2729">45:29.680</a></div>
+        <div class="t">它的高是di的row,分母的地方是有下標i,di的row。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:36.680" id=45:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2736">45:36.680</a></div>
+        <div class="t">分值的地方是,因為我們把這個ij硬拉成值了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:42.680" id=45:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2742">45:42.680</a></div>
+        <div class="t">所以這個column的index就是j乘以1乘以n加上k。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:48.680" id=45:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2748">45:48.680</a></div>
+        <div class="t">因為這個w它的寬是n,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:52.680" id=45:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2752">45:52.680</a></div>
+        <div class="t">所以這邊就是j減1乘以n加上k。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:56.680" id=45:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2756">45:56.680</a></div>
+        <div class="t">好,如果今天i不等於j的時候,會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:04.680" id=46:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2764">46:04.680</a></div>
+        <div class="t">如果今天i不等於j的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:09.680" id=46:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2769">46:09.680</a></div>
+        <div class="t">你看這邊,這個zi只跟wi有相關的位則是有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:16.680" id=46:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2776">46:16.680</a></div>
+        <div class="t">如果今天i不等於j的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:21.680" id=46:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2781">46:21.680</a></div>
+        <div class="t">那這個wij跟zi就是沒半毛錢的關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:25.680" id=46:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2785">46:25.680</a></div>
+        <div class="t">所以它的偏為分就是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:27.680" id=46:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2787">46:27.680</a></div>
+        <div class="t">如果i等於j的話,它們就變得有關係了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:31.680" id=46:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2791">46:31.680</a></div>
+        <div class="t">如果i等於j的話,下面這個j換成i的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:38.680" id=46:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2798">46:38.680</a></div>
+        <div class="t">下面這個j換成i的話,它們就有關係了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:45.680" id=46:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2805">46:45.680</a></div>
+        <div class="t">所以為分算出來的值會是a的dk位,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:51.680" id=46:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2811">46:51.680</a></div>
+        <div class="t">會是這個a1的d,會是這個a1的dk位。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:56.680" id=46:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2816">46:56.680</a></div>
+        <div class="t">接下來我們就要把,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:02.680" id=47:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2822">47:02.680</a></div>
+        <div class="t">這邊只想講一下說沒有用tensor講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:06.680" id=47:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2826">47:06.680</a></div>
+        <div class="t">接下來這個東西應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:14.680" id=47:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2834">47:14.680</a></div>
+        <div class="t">這個東西大部分的地方都是0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:17.680" id=47:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2837">47:17.680</a></div>
+        <div class="t">只有少部分的地方是有值的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:20.680" id=47:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2840">47:20.680</a></div>
+        <div class="t">少部分的地方是有值的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:21.680" id=47:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2841">47:21.680</a></div>
+        <div class="t">這個值跟a1的值是有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:26.680" id=47:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2846">47:26.680</a></div>
+        <div class="t">那這個a1的值到底會出現在哪裡呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:30.680" id=47:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2850">47:30.680</a></div>
+        <div class="t">這個有點難解釋,你自己回家想想看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:32.680" id=47:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2852">47:32.680</a></div>
+        <div class="t">這個a1的值會出現在這樣子的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:37.680" id=47:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2857">47:37.680</a></div>
+        <div class="t">這邊是a1,然後這邊是a1,這邊是a1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:42.680" id=47:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2862">47:42.680</a></div>
+        <div class="t">有了這些以後,其實接下來做的事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:45.680" id=47:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2865">47:45.680</a></div>
+        <div class="t">你就都知道了,我們把這一下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:49.680" id=47:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2869">47:49.680</a></div>
+        <div class="t">z1對a1的片尾分也算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:52.680" id=47:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2872">47:52.680</a></div>
+        <div class="t">我們也可以順便算一下x對z1的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:57.680" id=47:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2877">47:57.680</a></div>
+        <div class="t">雖然這個東西用不上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:59.680" id=47:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2879">47:59.680</a></div>
+        <div class="t">然後算一下w1對z1的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:03.680" id=48:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2883">48:03.680</a></div>
+        <div class="t">它是長得是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:05.680" id=48:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2885">48:05.680</a></div>
+        <div class="t">接下來,假如我們要算比如說w1對c的片尾分的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:15.680" id=48:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2895">48:15.680</a></div>
+        <div class="t">怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:16.680" id=48:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2896">48:16.680</a></div>
+        <div class="t">我們就一路乘過來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:20.680" id=48:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2900">48:20.680</a></div>
+        <div class="t">我們把partial y分之partial c乘上partial z2分之partial y,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:26.680" id=48:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2906">48:26.680</a></div>
+        <div class="t">這個是一個matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:27.680" id=48:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2907">48:27.680</a></div>
+        <div class="t">這個是一個平躺的vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:29.680" id=48:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2909">48:29.680</a></div>
+        <div class="t">它是一個平躺的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:31.680" id=48:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2911">48:31.680</a></div>
+        <div class="t">它是一個長條狀的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:33.680" id=48:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2913">48:33.680</a></div>
+        <div class="t">這是一個matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:35.680" id=48:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2915">48:35.680</a></div>
+        <div class="t">再乘上w2,再乘上w2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:38.680" id=48:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2918">48:38.680</a></div>
+        <div class="t">再乘上z1對a1的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:41.680" id=48:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2921">48:41.680</a></div>
+        <div class="t">再乘上w1對z1的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:43.680" id=48:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2923">48:43.680</a></div>
+        <div class="t">把這一路上的東西都乘下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:47.680" id=48:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2927">48:47.680</a></div>
+        <div class="t">會得到什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:48.680" id=48:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2928">48:48.680</a></div>
+        <div class="t">你知道把這一路上的東西乘下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:50.680" id=48:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2930">48:50.680</a></div>
+        <div class="t">它的高就會是最左邊的這個matrix的高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:54.680" id=48:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2934">48:54.680</a></div>
+        <div class="t">最左邊這個matrix是長條狀的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:56.680" id=48:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2936">48:56.680</a></div>
+        <div class="t">它是高是1,我們得到的結果高是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:59.680" id=48:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2939">48:59.680</a></div>
+        <div class="t">那這個最後一個matrix的寬是w1的element的數目,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:05.680" id=49:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2945">49:05.680</a></div>
+        <div class="t">w1裡面有幾個element,它的寬就有多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:08.680" id=49:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2948">49:08.680</a></div>
+        <div class="t">所以它的寬就是w1的element的數目,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:12.680" id=49:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2952">49:12.680</a></div>
+        <div class="t">那這裡面你乘完以後這裡面的每一個值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:15.680" id=49:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2955">49:15.680</a></div>
+        <div class="t">就對應到w裡面的某一個element對c的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:21.680" id=49:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2961">49:21.680</a></div>
+        <div class="t">所以我們等於這樣子的矩陣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:23.680" id=49:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2963">49:23.680</a></div>
+        <div class="t">經過一般矩陣運算以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:25.680" id=49:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2965">49:25.680</a></div>
+        <div class="t">就算出w某一個值對c的片尾分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:29.680" id=49:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2969">49:29.680</a></div>
+        <div class="t">那再來你可以做的一件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:31.680" id=49:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2971">49:31.680</a></div>
+        <div class="t">就我們就不要在這邊做了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:33.680" id=49:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2973">49:33.680</a></div>
+        <div class="t">這你可以自己回去做做看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:35.680" id=49:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2975">49:35.680</a></div>
+        <div class="t">你就一路把它乘下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:38.680" id=49:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2978">49:38.680</a></div>
+        <div class="t">然後看看說你算出來的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:41.680" id=49:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2981">49:41.680</a></div>
+        <div class="t">跟這個用forward pass和backward pass算出來的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:48.680" id=49:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2988">49:48.680</a></div>
+        <div class="t">有沒有一模一樣,有沒有一模一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:52.680" id=49:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2992">49:52.680</a></div>
+        <div class="t">好,那有一個問題是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:55.680" id=49:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2995">49:55.680</a></div>
+        <div class="t">那這邊有一些問題,第一個問題是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:57.680" id=49:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=2997">49:57.680</a></div>
+        <div class="t">感覺起來好像我們今天在用computational graph的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:02.680" id=50:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3002">50:02.680</a></div>
+        <div class="t">我們是用reverse mode算所有參數的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:05.680" id=50:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3005">50:05.680</a></div>
+        <div class="t">感覺好像只有backward pass,沒有forward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:09.680" id=50:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3009">50:09.680</a></div>
+        <div class="t">但這邊傳統的講法有forward pass也有backward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:14.680" id=50:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3014">50:14.680</a></div>
+        <div class="t">這邊好像只有backward pass,forward pass在哪裡,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:18.680" id=50:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3018">50:18.680</a></div>
+        <div class="t">forward pass還是有的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:19.680" id=50:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3019">50:19.680</a></div>
+        <div class="t">你還是需要forward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:23.680" id=50:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3023">50:23.680</a></div>
+        <div class="t">因為你想想看,我們要得到這些metric的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:26.680" id=50:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3026">50:26.680</a></div>
+        <div class="t">我們要得到這些metric真正的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:28.680" id=50:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3028">50:28.680</a></div>
+        <div class="t">我們需要知道a是多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:31.680" id=50:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3031">50:31.680</a></div>
+        <div class="t">我們需要知道這個節點的value是多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:35.680" id=50:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3035">50:35.680</a></div>
+        <div class="t">我們需要知道這個節點的value是多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:37.680" id=50:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3037">50:37.680</a></div>
+        <div class="t">所以你還是需要先算一個forward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:39.680" id=50:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3039">50:39.680</a></div>
+        <div class="t">把所有節點的值都算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:41.680" id=50:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3041">50:41.680</a></div>
+        <div class="t">接下來你才能夠用,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:43.680" id=50:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3043">50:43.680</a></div>
+        <div class="t">你才能夠算出所有的edge上面的片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:46.680" id=50:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3046">50:46.680</a></div>
+        <div class="t">你才能夠把這一路上的東西都算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:51.680" id=50:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3051">50:51.680</a></div>
+        <div class="t">所以我們還是先需要一個forward pass,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:53.680" id=50:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3053">50:53.680</a></div>
+        <div class="t">才能夠跑reverse mode,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:56.680" id=50:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3056">50:56.680</a></div>
+        <div class="t">所以跟右邊這邊是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:58.680" id=50:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3058">50:58.680</a></div>
+        <div class="t">第二個問題就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:00.680" id=51:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3060">51:00.680</a></div>
+        <div class="t">假設你自己回去想要check一下說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:02.680" id=51:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3062">51:02.680</a></div>
+        <div class="t">他們是不是一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:05.680" id=51:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3065">51:05.680</a></div>
+        <div class="t">左邊右邊是不是一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:07.680" id=51:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3067">51:07.680</a></div>
+        <div class="t">那你可能會直覺覺得說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:09.680" id=51:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3069">51:09.680</a></div>
+        <div class="t">是一樣的嗎,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:11.680" id=51:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3071">51:11.680</a></div>
+        <div class="t">右邊這裡有transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:14.680" id=51:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3074">51:14.680</a></div>
+        <div class="t">你有沒有發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:16.680" id=51:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3076">51:16.680</a></div>
+        <div class="t">這裡有transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:18.680" id=51:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3078">51:18.680</a></div>
+        <div class="t">這邊都有一堆transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:20.680" id=51:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3080">51:20.680</a></div>
+        <div class="t">有的有WL的transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:23.680" id=51:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3083">51:23.680</a></div>
+        <div class="t">這邊沒有transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:27.680" id=51:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3087">51:27.680</a></div>
+        <div class="t">你一路,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:29.680" id=51:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3089">51:29.680</a></div>
+        <div class="t">比如說你要算這個片尾分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:31.680" id=51:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3091">51:31.680</a></div>
+        <div class="t">你一路存下來的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:33.680" id=51:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3093">51:33.680</a></div>
+        <div class="t">你會存W2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:34.680" id=51:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3094">51:34.680</a></div>
+        <div class="t">但這個W2沒有transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:36.680" id=51:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3096">51:36.680</a></div>
+        <div class="t">怎麼會這樣呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:38.680" id=51:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3098">51:38.680</a></div>
+        <div class="t">怎麼會這樣呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:40.680" id=51:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3100">51:40.680</a></div>
+        <div class="t">也有可能是算錯了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:42.680" id=51:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3102">51:42.680</a></div>
+        <div class="t">其實沒有算錯,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:44.680" id=51:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3104">51:44.680</a></div>
+        <div class="t">這個是這樣子的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:46.680" id=51:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3106">51:46.680</a></div>
+        <div class="t">因為我們算出,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:48.680" id=51:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3108">51:48.680</a></div>
+        <div class="t">你自己回去check一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:50.680" id=51:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3110">51:50.680</a></div>
+        <div class="t">我們算出這個值以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:52.680" id=51:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3112">51:52.680</a></div>
+        <div class="t">我們還要跟它相乘,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:54.680" id=51:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3114">51:54.680</a></div>
+        <div class="t">這邊的delta是一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:56.680" id=51:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3116">51:56.680</a></div>
+        <div class="t">這邊的A也是一個vector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:58.680" id=51:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3118">51:58.680</a></div>
+        <div class="t">你把這兩個vector相乘以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:01.680" id=52:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3121">52:01.680</a></div>
+        <div class="t">要得到一個matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:03.680" id=52:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3123">52:03.680</a></div>
+        <div class="t">這個matrix的size跟weight matrix,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:07.680" id=52:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3127">52:07.680</a></div>
+        <div class="t">那個W的size是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:09.680" id=52:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3129">52:09.680</a></div>
+        <div class="t">這個時候你需要對被wordpress得到的delta,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:12.680" id=52:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3132">52:12.680</a></div>
+        <div class="t">先做transpose,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:14.680" id=52:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3134">52:14.680</a></div>
+        <div class="t">才能跟左邊的A乘在一起,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:16.680" id=52:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3136">52:16.680</a></div>
+        <div class="t">所以做完transpose以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:18.680" id=52:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3138">52:18.680</a></div>
+        <div class="t">這邊這個式子裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:21.680" id=52:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3141">52:21.680</a></div>
+        <div class="t">它的transpose就不見了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:23.680" id=52:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3143">52:23.680</a></div>
+        <div class="t">所以左邊跟右邊算出來的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:25.680" id=52:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3145">52:25.680</a></div>
+        <div class="t">會是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:29.680" id=52:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3149">52:29.680</a></div>
+        <div class="t">那我們在這邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:31.680" id=52:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3151">52:31.680</a></div>
+        <div class="t">再休息十分鐘好了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:33.680" id=52:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3153">52:33.680</a></div>
+        <div class="t">好,我們來上課吧,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:39.680" id=52:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3159">52:39.680</a></div>
+        <div class="t">我們剛才講了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:41.680" id=52:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3161">52:41.680</a></div>
+        <div class="t">V-forward neural,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:43.680" id=52:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3163">52:43.680</a></div>
+        <div class="t">現在來講一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:45.680" id=52:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3165">52:45.680</a></div>
+        <div class="t">這個recurrent neural,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:47.680" id=52:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3167">52:47.680</a></div>
+        <div class="t">其實原理都是一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:49.680" id=52:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3169">52:49.680</a></div>
+        <div class="t">你就把computational graph畫出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:51.680" id=52:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3171">52:51.680</a></div>
+        <div class="t">然後把偏微分都算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:55.680" id=52:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3175">52:55.680</a></div>
+        <div class="t">然後在reverse mode跑一發,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:58.680" id=52:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3178">52:58.680</a></div>
+        <div class="t">就結束了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:00.680" id=53:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3180">53:00.680</a></div>
+        <div class="t">我們來看一下recurrent neural network的function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:04.680" id=53:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3184">53:04.680</a></div>
+        <div class="t">我想這個應該不需要再複習了吧,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:10.680" id=53:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3190">53:10.680</a></div>
+        <div class="t">我想這個大家應該都已經很清楚了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:13.680" id=53:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3193">53:13.680</a></div>
+        <div class="t">我們來看一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:15.680" id=53:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3195">53:15.680</a></div>
+        <div class="t">如果我們要把一個recurrent neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:17.680" id=53:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3197">53:17.680</a></div>
+        <div class="t">表示成一個computational graph的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:19.680" id=53:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3199">53:19.680</a></div>
+        <div class="t">它應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:21.680" id=53:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3201">53:21.680</a></div>
+        <div class="t">那首先呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:23.680" id=53:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3203">53:23.680</a></div>
+        <div class="t">我們有一個input x,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:25.680" id=53:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3205">53:25.680</a></div>
+        <div class="t">x會乘上一個input位wi,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:30.680" id=53:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3210">53:30.680</a></div>
+        <div class="t">這邊bias我們就都省略掉了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:33.680" id=53:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3213">53:33.680</a></div>
+        <div class="t">得到一個vector n1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:35.680" id=53:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3215">53:35.680</a></div>
+        <div class="t">這兩個相乘得到一個vector n1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:37.680" id=53:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3217">53:37.680</a></div>
+        <div class="t">這個n1沒有出現在這個式子裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:41.680" id=53:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3221">53:41.680</a></div>
+        <div class="t">它就是一個暫時的variable,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:44.680" id=53:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3224">53:44.680</a></div>
+        <div class="t">我們把a0乘上wh,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:50.680" id=53:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3230">53:50.680</a></div>
+        <div class="t">得到n1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:52.680" id=53:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3232">53:52.680</a></div>
+        <div class="t">然後我們再把n1跟n1加起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:56.680" id=53:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3236">53:56.680</a></div>
+        <div class="t">得到z1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:58.680" id=53:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3238">53:58.680</a></div>
+        <div class="t">然後我們再把,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:00.680" id=54:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3240">54:00.680</a></div>
+        <div class="t">這邊我應該要寫h0比較對啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:03.680" id=54:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3243">54:03.680</a></div>
+        <div class="t">這邊應該要寫h0比較對,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:05.680" id=54:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3245">54:05.680</a></div>
+        <div class="t">就是上一個時間點的hidden layer的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:09.680" id=54:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3249">54:09.680</a></div>
+        <div class="t">所以應該寫h0比較對,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:11.680" id=54:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3251">54:11.680</a></div>
+        <div class="t">把h0乘上wh,得到n1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:13.680" id=54:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3253">54:13.680</a></div>
+        <div class="t">把n1加n1,得到z1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:15.680" id=54:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3255">54:15.680</a></div>
+        <div class="t">z1透過activation function,得到h1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:18.680" id=54:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3258">54:18.680</a></div>
+        <div class="t">把h1乘上output位wo,得到o1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:22.680" id=54:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3262">54:22.680</a></div>
+        <div class="t">最後再通過softmax,得到y1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:26.680" id=54:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3266">54:26.680</a></div>
+        <div class="t">這個就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:27.680" id=54:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3267">54:27.680</a></div>
+        <div class="t">整個recurrent neural network的computational graph,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:30.680" id=54:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3270">54:30.680</a></div>
+        <div class="t">這個只是一部分而已,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:32.680" id=54:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3272">54:32.680</a></div>
+        <div class="t">因為你要把這個recurrent neural network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:34.680" id=54:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3274">54:34.680</a></div>
+        <div class="t">一再反覆的使用,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:36.680" id=54:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3276">54:36.680</a></div>
+        <div class="t">所以這個只是一部分而已,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:38.680" id=54:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3278">54:38.680</a></div>
+        <div class="t">好,那如果我們要把,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:40.680" id=54:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3280">54:40.680</a></div>
+        <div class="t">這個recurrent neural network的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:43.680" id=54:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3283">54:43.680</a></div>
+        <div class="t">完整的架構畫出來的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:45.680" id=54:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3285">54:45.680</a></div>
+        <div class="t">我們假設現在input有三個element,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:48.680" id=54:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3288">54:48.680</a></div>
+        <div class="t">input sequence長度是3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:50.680" id=54:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3290">54:50.680</a></div>
+        <div class="t">我們要把input sequence長度是3的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:52.680" id=54:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3292">54:52.680</a></div>
+        <div class="t">ion的完整computational graph畫出來的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:54.680" id=54:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3294">54:54.680</a></div>
+        <div class="t">有點複雜,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:55.680" id=54:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3295">54:55.680</a></div>
+        <div class="t">所以我們這邊呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:56.680" id=54:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3296">54:56.680</a></div>
+        <div class="t">需要做一下簡化,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:58.680" id=54:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3298">54:58.680</a></div>
+        <div class="t">事實上在computational graph裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:00.680" id=55:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3300">55:00.680</a></div>
+        <div class="t">什麼叫做一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:02.680" id=55:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3302">55:02.680</a></div>
+        <div class="t">那個是你自己定的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:04.680" id=55:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3304">55:04.680</a></div>
+        <div class="t">所以我可以說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:05.680" id=55:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3305">55:05.680</a></div>
+        <div class="t">我定義一個很複雜的function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:07.680" id=55:07.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3307">55:07.680</a></div>
+        <div class="t">這個很複雜的function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:09.680" id=55:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3309">55:09.680</a></div>
+        <div class="t">它有四個input,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:10.680" id=55:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3310">55:10.680</a></div>
+        <div class="t">w,i,x,t,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:12.680" id=55:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3312">55:12.680</a></div>
+        <div class="t">w,h,t-1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:14.680" id=55:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3314">55:14.680</a></div>
+        <div class="t">它有一個output h,t,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:16.680" id=55:16.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3316">55:16.680</a></div>
+        <div class="t">所以我們把w,i,x,t,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:18.680" id=55:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3318">55:18.680</a></div>
+        <div class="t">加上w,h,x,t-1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:20.680" id=55:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3320">55:20.680</a></div>
+        <div class="t">再去sigmoid function得到h,t,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:22.680" id=55:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3322">55:22.680</a></div>
+        <div class="t">這是一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:23.680" id=55:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3323">55:23.680</a></div>
+        <div class="t">所以我們可以定義一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:25.680" id=55:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3325">55:25.680</a></div>
+        <div class="t">它有四個input,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:26.680" id=55:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3326">55:26.680</a></div>
+        <div class="t">然後做過這一番運算以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:28.680" id=55:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3328">55:28.680</a></div>
+        <div class="t">它就得到h,1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:30.680" id=55:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3330">55:30.680</a></div>
+        <div class="t">然後呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:31.680" id=55:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3331">55:31.680</a></div>
+        <div class="t">把h,1乘上w,o得到y,1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:33.680" id=55:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3333">55:33.680</a></div>
+        <div class="t">這個中間呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:36.680" id=55:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3336">55:36.680</a></div>
+        <div class="t">包括了把h乘上w,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:38.680" id=55:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3338">55:38.680</a></div>
+        <div class="t">再去solve math得到y,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:41.680" id=55:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3341">55:41.680</a></div>
+        <div class="t">所以我們就把這個r,n簡化一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:44.680" id=55:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3344">55:44.680</a></div>
+        <div class="t">變成這個樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:46.680" id=55:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3346">55:46.680</a></div>
+        <div class="t">那r,n呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:47.680" id=55:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3347">55:47.680</a></div>
+        <div class="t">這是第一個時間點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:48.680" id=55:48.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3348">55:48.680</a></div>
+        <div class="t">input x,1的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:50.680" id=55:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3350">55:50.680</a></div>
+        <div class="t">r,n做這樣的運算得到y,1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:52.680" id=55:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3352">55:52.680</a></div>
+        <div class="t">在下一個時間點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:53.680" id=55:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3353">55:53.680</a></div>
+        <div class="t">input x,2的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:55.680" id=55:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3355">55:55.680</a></div>
+        <div class="t">我們的下面這個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:58.680" id=55:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3358">55:58.680</a></div>
+        <div class="t">它的input是x,2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:59.680" id=55:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3359">55:59.680</a></div>
+        <div class="t">w,i,w,h跟h,1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:01.680" id=56:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3361">56:01.680</a></div>
+        <div class="t">得到h,2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:02.680" id=56:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3362">56:02.680</a></div>
+        <div class="t">然後呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:03.680" id=56:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3363">56:03.680</a></div>
+        <div class="t">把h,2加上w,o得到y,2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:05.680" id=56:05.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3365">56:05.680</a></div>
+        <div class="t">在第三個時間點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:06.680" id=56:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3366">56:06.680</a></div>
+        <div class="t">input w,i,x,3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:08.680" id=56:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3368">56:08.680</a></div>
+        <div class="t">w,h跟h,2得到h,3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:10.680" id=56:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3370">56:10.680</a></div>
+        <div class="t">再把h,3跟w,o一起得到y,3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:13.680" id=56:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3373">56:13.680</a></div>
+        <div class="t">這個是r,n的computational way,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:15.680" id=56:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3375">56:15.680</a></div>
+        <div class="t">我們還沒有算它的cost function的computational way,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:20.680" id=56:20.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3380">56:20.680</a></div>
+        <div class="t">那它的cost function的computational way,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:22.680" id=56:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3382">56:22.680</a></div>
+        <div class="t">應該長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:24.680" id=56:24.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3384">56:24.680</a></div>
+        <div class="t">我們把y,1跟y,1 hat一起得到c,1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:28.680" id=56:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3388">56:28.680</a></div>
+        <div class="t">把y,2跟y,2 hat一起得到c,2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:30.680" id=56:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3390">56:30.680</a></div>
+        <div class="t">把y,3跟y,3 hat一起得到c,3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:33.680" id=56:33.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3393">56:33.680</a></div>
+        <div class="t">我們在每一個時間點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:34.680" id=56:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3394">56:34.680</a></div>
+        <div class="t">分別算出每一個時間點的cost,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:37.680" id=56:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3397">56:37.680</a></div>
+        <div class="t">但是r,n真正考慮的是total的cost,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:42.680" id=56:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3402">56:42.680</a></div>
+        <div class="t">它考慮的是整個sequence的cost,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:45.680" id=56:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3405">56:45.680</a></div>
+        <div class="t">所以你要把c1,c2,c3通通加起來得到c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:49.680" id=56:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3409">56:49.680</a></div>
+        <div class="t">你要把c1,c2,c3加起來得到c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:51.680" id=56:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3411">56:51.680</a></div>
+        <div class="t">這個才是total的cost,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:54.680" id=56:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3414">56:54.680</a></div>
+        <div class="t">接下來我們要做這個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:57.680" id=56:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3417">56:57.680</a></div>
+        <div class="t">接下來我們就需要把每一個edge上面的偏微分都算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:03.680" id=57:03.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3423">57:03.680</a></div>
+        <div class="t">那這邊我們就不要再算了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:06.680" id=57:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3426">57:06.680</a></div>
+        <div class="t">假設我們現在要求partial w,h,partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:13.680" id=57:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3433">57:13.680</a></div>
+        <div class="t">我們要求w,h這個matrix對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:18.680" id=57:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3438">57:18.680</a></div>
+        <div class="t">怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:19.680" id=57:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3439">57:19.680</a></div>
+        <div class="t">我們從c開始做reverse law,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:23.680" id=57:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3443">57:23.680</a></div>
+        <div class="t">這三個edge的微分是比較容易算的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:26.680" id=57:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3446">57:26.680</a></div>
+        <div class="t">因為c1對c的微分就是1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:28.680" id=57:28.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3448">57:28.680</a></div>
+        <div class="t">c2對c的微分是1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:30.680" id=57:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3450">57:30.680</a></div>
+        <div class="t">c3對c的微分是1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:32.680" id=57:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3452">57:32.680</a></div>
+        <div class="t">所以這三個是好算的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:34.680" id=57:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3454">57:34.680</a></div>
+        <div class="t">而接下來其他這些就是你需要花一點時間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:38.680" id=57:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3458">57:38.680</a></div>
+        <div class="t">你覺得算起來比較麻煩,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:40.680" id=57:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3460">57:40.680</a></div>
+        <div class="t">我就把它算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:41.680" id=57:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3461">57:41.680</a></div>
+        <div class="t">我們要算y3對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:43.680" id=57:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3463">57:43.680</a></div>
+        <div class="t">算h3對y3的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:45.680" id=57:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3465">57:45.680</a></div>
+        <div class="t">算w,h對h3的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:49.680" id=57:49.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3469">57:49.680</a></div>
+        <div class="t">那你從這邊一路走下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:52.680" id=57:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3472">57:52.680</a></div>
+        <div class="t">你就可以算出這邊這個w,h對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:56.680" id=57:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3476">57:56.680</a></div>
+        <div class="t">但是w,h它是出現在很多地方的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:58.680" id=57:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3478">57:58.680</a></div>
+        <div class="t">所以我們要繼續算下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:00.680" id=58:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3480">58:00.680</a></div>
+        <div class="t">我們要把這個edge的偏微分算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:02.680" id=58:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3482">58:02.680</a></div>
+        <div class="t">我們要把這個edge的偏微分算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:04.680" id=58:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3484">58:04.680</a></div>
+        <div class="t">我們要把這個edge的偏微分算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:06.680" id=58:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3486">58:06.680</a></div>
+        <div class="t">然後再把這兩條路徑算出來的值加起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:11.680" id=58:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3491">58:11.680</a></div>
+        <div class="t">再乘上這個路徑的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:14.680" id=58:14.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3494">58:14.680</a></div>
+        <div class="t">就得到這一個第二個w,h的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:18.680" id=58:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3498">58:18.680</a></div>
+        <div class="t">那我們要算最開頭的地方w,h的偏微分怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:22.680" id=58:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3502">58:22.680</a></div>
+        <div class="t">一樣要走過來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:25.680" id=58:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3505">58:25.680</a></div>
+        <div class="t">然後從這上面走過來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:27.680" id=58:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3507">58:27.680</a></div>
+        <div class="t">再把它加起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:29.680" id=58:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3509">58:29.680</a></div>
+        <div class="t">再乘上這個,就得到初始的第一個w,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:34.680" id=58:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3514">58:34.680</a></div>
+        <div class="t">第一個位置的w,h的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:37.680" id=58:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3517">58:37.680</a></div>
+        <div class="t">好啊,這個就這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:40.680" id=58:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3520">58:40.680</a></div>
+        <div class="t">接下來就只需要把它算出來而已,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:43.680" id=58:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3523">58:43.680</a></div>
+        <div class="t">那我們這邊就只是簡單地列一下式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:47.680" id=58:47.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3527">58:47.680</a></div>
+        <div class="t">這邊這三個partial w,h分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:50.680" id=58:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3530">58:50.680</a></div>
+        <div class="t">因為這邊這三個w,h它們其實是共用參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:54.680" id=58:54.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3534">58:54.680</a></div>
+        <div class="t">所以你要把這三個partial w,h分之partial c</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:57.680" id=58:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3537">58:57.680</a></div>
+        <div class="t">分別算出來以後,再全部加起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:00.680" id=59:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3540">59:00.680</a></div>
+        <div class="t">才是真正的w,h對c的偏微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:04.680" id=59:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3544">59:04.680</a></div>
+        <div class="t">那我們先算這一個第一個partial w,h分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:09.680" id=59:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3549">59:09.680</a></div>
+        <div class="t">這個第一個partial w,h分之partial c是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:12.680" id=59:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3552">59:12.680</a></div>
+        <div class="t">我們這邊總共有三條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:15.680" id=59:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3555">59:15.680</a></div>
+        <div class="t">就我們在w,h跟c中間總共有三條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:18.680" id=59:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3558">59:18.680</a></div>
+        <div class="t">這是第一條path,這是第二條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:21.680" id=59:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3561">59:21.680</a></div>
+        <div class="t">這是第三條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:25.680" id=59:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3565">59:25.680</a></div>
+        <div class="t">這三條path,這三條path,這三條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:30.680" id=59:30.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3570">59:30.680</a></div>
+        <div class="t">它們最後收尾的地方都有一個partial w,h分之partial h1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:35.680" id=59:35.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3575">59:35.680</a></div>
+        <div class="t">所以把這個部分可以提出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:37.680" id=59:37.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3577">59:37.680</a></div>
+        <div class="t">剩下第一條path就是這個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:42.680" id=59:42.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3582">59:42.680</a></div>
+        <div class="t">然後第二條path就是這個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:45.680" id=59:45.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3585">59:45.680</a></div>
+        <div class="t">第三條path就是這個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:50.680" id=59:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3590">59:50.680</a></div>
+        <div class="t">但這個只是一部分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:53.680" id=59:53.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3593">59:53.680</a></div>
+        <div class="t">所以這個你也不用太高興,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:55.680" id=59:55.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3595">59:55.680</a></div>
+        <div class="t">只算了一個partial w,h分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:58.680" id=59:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3598">59:58.680</a></div>
+        <div class="t">第二個你要算一發,然後我就懶得把它打出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:01.680" id=01:00:01.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3601">01:00:01.680</a></div>
+        <div class="t">第三個你要算一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:04.680" id=01:00:04.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3604">01:00:04.680</a></div>
+        <div class="t">你把這個2跟3也都算出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:06.680" id=01:00:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3606">01:00:06.680</a></div>
+        <div class="t">2比較簡單,因為它只有兩條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:09.680" id=01:00:09.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3609">01:00:09.680</a></div>
+        <div class="t">3更簡單,它只有一條path,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:11.680" id=01:00:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3611">01:00:11.680</a></div>
+        <div class="t">把它全部加起來,你才得到真正的partial w,h分之partial c,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:15.680" id=01:00:15.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3615">01:00:15.680</a></div>
+        <div class="t">我們之後會講到說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:17.680" id=01:00:17.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3617">01:00:17.680</a></div>
+        <div class="t">連成好多次partial h,c-1分之partial h,t,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:23.680" id=01:00:23.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3623">01:00:23.680</a></div>
+        <div class="t">所以這個會造成Chain R認證有一些問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:26.680" id=01:00:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3626">01:00:26.680</a></div>
+        <div class="t">所以我們需要LSTM,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:29.680" id=01:00:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3629">01:00:29.680</a></div>
+        <div class="t">如果LSTM你把computation都會有畫出來的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:31.680" id=01:00:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3631">01:00:31.680</a></div>
+        <div class="t">應該就是更加崩潰了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:34.680" id=01:00:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3634">01:00:34.680</a></div>
+        <div class="t">好,這個是reference,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:38.680" id=01:00:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3638">01:00:38.680</a></div>
+        <div class="t">然後這個教科書的chapter6.5有講computation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:46.680" id=01:00:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=-yhm3WdGFok&t=3646">01:00:46.680</a></div>
+        <div class="t">另外還放了兩個比較清楚的blog給大家參考。</div>
+    </div>
+    
+</body>
+</html>   

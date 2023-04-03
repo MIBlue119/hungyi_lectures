@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】機器終身學習 (Life Long Learning, LL) (二) - 災難性遺忘(Catastrophic Forgetting)的克服之道</h2><a href=https://www.youtube.com/watch?v=Y9Jay_vxOsM><img src=https://i.ytimg.com/vi/Y9Jay_vxOsM/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGCEgVyh_MA8=&rs=AOn4CLCIjMsIOGSzWEJUeBWX-cPFNCR4rQ></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=0">00:00.000</a></div>
+        <div class="t">好,那我們就繼續講吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:10.000" id=00:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=10">00:10.000</a></div>
+        <div class="t">好,那我們接下來呢,就是要講三個Lifelong Learning的可能解法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:17.000" id=00:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=17">00:17.000</a></div>
+        <div class="t">第一個解法叫做Selective Synaptic Plasticity。從字面上,你可能一下子沒有辦法get到說這個方法到底想要做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.000" id=00:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=31">00:31.000</a></div>
+        <div class="t">這個Synaptic是突觸的意思,就是我們腦神經中神經跟神經之間的連結,這個叫做突觸。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:41.000" id=00:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=41">00:41.000</a></div>
+        <div class="t">Plasticity是可塑性的意思,所以簡單來說這個方法想要做的事情就是,我們只讓我們的類神經網路中某一些神經元或某一些神經元間的連結具有可塑性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00.000" id=01:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=60">01:00.000</a></div>
+        <div class="t">Selective的意思就是說,只有部分的連結是有可塑性的,有一些連結必須被固化,它必須不能夠再移動,不能夠再改變它的數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12.000" id=01:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=72">01:12.000</a></div>
+        <div class="t">像這樣的方法又叫做Regularization-based的方法。這個研究的面向在Lifelong Learning的領域裡面,我覺得是發展得最完整的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=85">01:25.000</a></div>
+        <div class="t">所以等一下我們會花比較多的時間來講Selective Synaptic Plasticity。另外兩個面向我們都只用一兩頁投影片,很快地帶過。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:35.000" id=01:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=95">01:35.000</a></div>
+        <div class="t">你會發現作業裡面主要的問題也都集中在跟Regularization-based有關的方法上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.000" id=01:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=103">01:43.000</a></div>
+        <div class="t">我們先來想一下,為什麼Catatrophy Forgetting這件事情會發生呢?我們假設有任務1跟任務2這兩個任務。而這兩個任務,我們假設我們的模型只有兩個參數,θ1跟θ2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:00.000" id=02:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=120">02:00.000</a></div>
+        <div class="t">當然一個模型通常有上百萬、上億的參數,我們假設只有兩個參數。投影片上這兩張圖,代表的是任務1跟任務2的Loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.000" id=02:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=135">02:15.000</a></div>
+        <div class="t">也就是在任務1上面,如果你的θ1跟θ2設不一樣的值,你就會有不一樣的Loss。我們用顏色來代表Loss的大小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:28.000" id=02:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=148">02:28.000</a></div>
+        <div class="t">如果顏色越偏藍色,代表Loss越大。顏色越偏藍色,代表Loss越小。顏色越偏白色,代表Loss越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.000" id=02:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=164">02:44.000</a></div>
+        <div class="t">所以左右兩張圖分別就是任務1跟任務2的Loss function,也就是他們的error surface。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:52.000" id=02:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=172">02:52.000</a></div>
+        <div class="t">那我們現在先讓模型訓練任務1。那模型怎麼訓練任務1呢?你要有一個隨機初始化的參數,我們這邊叫他θ0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:03.000" id=03:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=183">03:03.000</a></div>
+        <div class="t">然後我們會用Gradient Descent的方法去調整θ0的參數。那你就按照Gradient的方向去updateθ0的參數,得到θb。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:16.000" id=03:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=196">03:16.000</a></div>
+        <div class="t">那假設update夠多次數,你覺得Loss降的夠低了,那你就等於是把任務1學完了。那假設任務1學完後,我們得到的參數是θb。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:28.000" id=03:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=208">03:28.000</a></div>
+        <div class="t">接下來,我們得繼續解任務2。你就把θb同樣的參數拷貝過來,拷貝到任務2的這個error surface上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:39.000" id=03:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=219">03:39.000</a></div>
+        <div class="t">那注意一下,雖然左右兩邊error surface是不一樣的,但是θb我們這邊指的是同一組參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.000" id=03:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=227">03:47.000</a></div>
+        <div class="t">θb是用任務1訓練出來的參數,我們現在把它用在任務2上。我們現在把θb放在任務2上,繼續去做訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:59.000" id=03:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=239">03:59.000</a></div>
+        <div class="t">那在任務2上,我們有另外一個不一樣的error surface。根據這個任務2的error surface去再update參數,那我們可能會把θb往右上角移。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:13.000" id=04:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=253">04:13.000</a></div>
+        <div class="t">那得到θstart。θstart是訓練完任務1,接下來又訓練完任務2,依序訓練兩個任務以後所得到的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=264">04:24.000</a></div>
+        <div class="t">現在用θstart來代表依序訓練完兩個任務以後所得到的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:29.000" id=04:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=269">04:29.000</a></div>
+        <div class="t">這個θstart,它在任務2上是在一個error surface比較低的位置,所以它在任務2上會得到好的表現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.000" id=04:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=280">04:40.000</a></div>
+        <div class="t">但如果你回頭再把θstart拿回到任務1上去做使用,你會發現你並沒有辦法得到好的結果。而因為θstart只是在任務2上好,它在任務1上不見得會有低的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:55.000" id=04:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=295">04:55.000</a></div>
+        <div class="t">這個就是forget這件事情產生的原因。那要怎麼解決forget這個問題呢?對一個任務而言,也許有很多不同的地方,也許有很多組不同的參數都可以給某一個任務低的loss。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:12.000" id=05:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=312">05:12.000</a></div>
+        <div class="t">對任務2而言,也許在這個藍色橢圓形的範圍內,結果都算是夠好的,也許在這個藍色橢圓形範圍內,loss都算是夠低的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.000" id=05:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=325">05:25.000</a></div>
+        <div class="t">如果我們θB移動的方向不要往右上移,而是只往左邊移,那會不會把新的參數放到任務1上就不會有forget的情形呢?這個就是我們等一下要跟大家分享的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.000" id=05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=344">05:44.000</a></div>
+        <div class="t">那怎麼做呢?這邊的基本想法是說,每一個參數對我們過去學過的任務的重要性是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=356">05:56.000</a></div>
+        <div class="t">有一些參數也許對我們過去看過的任務特別重要,我們就希望在學新的參數的時候,那些舊的參數,那些重要的參數,它的值儘量不要變。新的任務只去改那些對過去的任務不重要的參數就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.000" id=06:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=374">06:14.000</a></div>
+        <div class="t">我們現在假設θB是在前一個任務所學出來的參數,所以θB在前一個任務上是好的,那我們會讓θB在第二個任務上繼續做學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.000" id=06:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=388">06:28.000</a></div>
+        <div class="t">那在這個Selective Synaptic Plasticity這樣的做法裡面,我們會給每一個參數一個保鏢,一個守衛,我們這邊用Bi來表示那個守衛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=404">06:44.000</a></div>
+        <div class="t">Bi,我們都有一個守衛,這邊所謂的每一個參數就是neuron裡面的每一個weight跟它的bias,如果你的network有100萬個參數的話,那就有100萬個Bi的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=418">06:58.000</a></div>
+        <div class="t">那他們每一個參數的Bi都是不一樣的,每一個參數都有一個各自的守衛。這個守衛代表什麼?這個守衛代表說這個參數對過去的任務而言到底重要不重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.000" id=07:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=432">07:12.000</a></div>
+        <div class="t">所以我們今天在新的任務上,我們在update我們的參數的時候,我們會改寫loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:21.000" id=07:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=441">07:21.000</a></div>
+        <div class="t">原來的loss function假設寫成L0θ,但我們不會直接去minimize L0θ,如果我們直接minimize L0θ,就會發生catatrophic forgetting的情形,就會發生災難性的遺忘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:36.000" id=07:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=456">07:36.000</a></div>
+        <div class="t">所以我們要做的事情是更改我們的loss function,我們有一個新的loss function叫做lπ,這lπ才是我們真正要去minimize的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:47.000" id=07:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=467">07:47.000</a></div>
+        <div class="t">那這個lπ是原來的loss L後面再多加了一項,這一項是什麼東西啊?這一項是我們先submission over,這邊有個submission,這邊有個submission over所有的i,submission over所有的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.000" id=08:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=482">08:02.000</a></div>
+        <div class="t">那我們把我們要認的那個參數,那個θi代表我們要optimize,我們unknown的那個參數,要找出來的那個參數,去減掉從過去的任務認出來的參數θb。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:17.000" id=08:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=497">08:17.000</a></div>
+        <div class="t">θb i,θ上標b下標i,是θb就是過去的任務認出來的那個模型,下標i就是第i的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=507">08:27.000</a></div>
+        <div class="t">那我們要讓θi跟θ上標b下標i越接近越好,所以我們把θi跟θ上標b下標i相減,然後取他們的平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:40.000" id=08:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=520">08:40.000</a></div>
+        <div class="t">那我們在前面會乘上一個數值叫做bi,這個bi就是要告訴我們說到底我們有多強烈的希望θi跟θ上標b下標i越靠近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=534">08:54.000</a></div>
+        <div class="t">如果bi的值很大,就代表說我們希望θi跟θbi非常靠近,如果bi的值很小,代表我們覺得θi沒有跟θbi很靠近,也無所謂。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.000" id=09:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=546">09:06.000</a></div>
+        <div class="t">好,那這個就是我們要optimize,這個Lπ就是我們真正要optimize的對象,它裡面有兩項,一個是原來的新的任務的loss,另外一項就是要讓θi跟θbi越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.000" id=09:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=562">09:22.000</a></div>
+        <div class="t">但是要注意一下,我們並不是平等地去看待所有的參數要不要接近這件事,我們其實只要求θ跟θbi在某些參數上接近就好,並不需要所有參數都接近,只要某些參數接近就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:42.000" id=09:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=582">09:42.000</a></div>
+        <div class="t">那哪些參數要接近就由bi來控制,如果某一個參數i,第i一個參數它的bi很大,就代表我們希望第i一個參數它跟舊的參數,之前的任務認出來的那個參數要非常接近,反之bi等於0就代表我們根本不care新的參數跟舊的參數到底要不要接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.000" id=10:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=601">10:01.000</a></div>
+        <div class="t">所以如果今天bi設為0,所有的參數它的bi我們都設為0,那意味著什麼?那意味著就是我們沒有給我們的θi任何限制,我們完全沒有要求新的認出來的參數跟過去學出來的參數有什麼樣的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:23.000" id=10:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=623">10:23.000</a></div>
+        <div class="t">這個時候,就是一般的training,就會有catatrophic forgetting的問題。但是你可能會想說,既然bi設為0是不好的,那我們就把bi給它設一個非常大的值,所有的參數都給它一個非常大的bi,那這樣就不會有forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:41.000" id=10:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=641">10:41.000</a></div>
+        <div class="t">但是你會進入另外一個極端,這個極端叫做intransigent,intransigent的意思就是不肯妥協、不肯讓步、頑固的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.000" id=10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=653">10:53.000</a></div>
+        <div class="t">所以intransigent的意思是說,假設你現在bi非常的大,那你最後認出來的結果θi跟θb就會非常的接近,你的新的參數跟舊的參數會非常接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=667">11:07.000</a></div>
+        <div class="t">那你的模型可能在舊的任務上不會遺忘,但新的任務它學不好,它沒有能力去把新的任務學好,這種狀況就叫做intransigent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.000" id=11:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=698">11:38.000</a></div>
+        <div class="t">有同學問說,bi是要人為設定,還是可以作為參數的一部分給機器訓練?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.000" id=11:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=709">11:49.000</a></div>
+        <div class="t">再等一下,在文獻上,bi都是人為設定的。在Lifelong Learning的研究裡面,關鍵的技術就在於我們怎麼設定bi。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.000" id=12:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=723">12:03.000</a></div>
+        <div class="t">那如果bi用learn的到底行不行呢?你可以想見說,在這個任務裡面,你恐怕不能讓bi用learn。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.000" id=12:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=731">12:11.000</a></div>
+        <div class="t">如果你讓bi自己學,它會學出什麼?對它來說,它要讓loss越小越好嘛,那怎麼讓loss最小?直接bi等於你loss就最小了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.000" id=12:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=741">12:21.000</a></div>
+        <div class="t">所以如果你讓bi直接用learn的,你並沒有辦法達到Lifelong Learning的效果,所以bi是人為設的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.000" id=12:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=748">12:28.000</a></div>
+        <div class="t">但是接下來最關鍵的研究問題就是,bi到底要怎麼找到呢?我們怎麼知道哪些參數對舊的任務是重要的,哪些參數對舊的任務是不重要的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=762">12:42.000</a></div>
+        <div class="t">這個就是研究的重點。我們這邊只跟大家用提示的方式,簡單地跟大家說bi設計的大概念是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.000" id=12:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=772">12:52.000</a></div>
+        <div class="t">那怎麼知道某一個參數對某一個任務到底重要不重要呢?你可以在訓練完一個模型之後,我們得到seta b之後,看看seta b裡面每一個參數對這個任務的影響。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.000" id=13:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=787">13:07.000</a></div>
+        <div class="t">舉例來說,你把seta b在seta 1這個方向做一下移動,發現說在seta 1這個方向上做移動,好像對loss沒有什麼影響。那我們就知道說,seta 1對任務1沒有很重要,可以隨便給它一個值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.000" id=13:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=807">13:27.000</a></div>
+        <div class="t">既然seta 1對任務1沒有很重要,在新的任務上seta 1就可以任意改變,所以我們就可以給seta 1比較小的bi的值,也就是b1的值就會比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.000" id=13:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=821">13:41.000</a></div>
+        <div class="t">反過來說,如果我們觀察seta 2這個方向,你會發現說,當我們改變seta 2的值的時候,對loss的影響是大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.000" id=13:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=834">13:54.000</a></div>
+        <div class="t">代表說,seta 2是一個很重要的參數,seta 2對任務1是重要的參數,所以你就不要去動它,所以你要把seta 2的b設得大一點,你要把b2設得大一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.000" id=14:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=847">14:07.000</a></div>
+        <div class="t">好,這個就是selective-synaptic plasticity的基本概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.000" id=14:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=853">14:13.000</a></div>
+        <div class="t">而如果我們今天把b1設小一點,b2設大一點,那如果在test what to 訓練的時候會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:24.000" id=14:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=864">14:24.000</a></div>
+        <div class="t">因為b1比較小,代表說我們可以把模型在這個方向上自由的移動,而b2比較大,代表說在這個方向上自由的移動是沒有辦法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:38.000" id=14:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=878">14:38.000</a></div>
+        <div class="t">所以如果我們把b1設小一點,b2設大一點,那你把seta b做update的時候,它就不會往這個方向走,它就會傾向於往這個方向走。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.000" id=14:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=889">14:49.000</a></div>
+        <div class="t">因為我們只希望模型去更新這個seta 1就好,盡量不要動到seta 2,那你就可能把你的這個gradient的方向本來是這樣update的,那就變成這樣子update,得到seta star。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:02.000" id=15:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=902">15:02.000</a></div>
+        <div class="t">你再把seta star拿回來原來的任務1,那因為任務1在這個方向上移動,對loss的影響是小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.000" id=15:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=910">15:10.000</a></div>
+        <div class="t">所以你在任務2上假設只有在這個方向上移動,那對任務1的loss的影響就小了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:16.000" id=15:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=916">15:16.000</a></div>
+        <div class="t">所以新的seta star用在這個地方,它的對test1的傷害就不大,也許你就可以藉此做到避免catatrophy forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.000" id=15:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=927">15:27.000</a></div>
+        <div class="t">接下來這個是一個文獻上真正的實驗結果,這個結果是來自於EWC這篇paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:37.000" id=15:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=937">15:37.000</a></div>
+        <div class="t">EWC paper的連結也有放在下一頁投影片裡面,如果你有興趣的話,再自己參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=942">15:42.000</a></div>
+        <div class="t">這個圖怎麼看呢?你在看Life on Linear文獻的時候,這種類似的圖是非常常出現的,常常我paper幾乎都會放類似這樣子的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:53.000" id=15:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=953">15:53.000</a></div>
+        <div class="t">這個橫軸是什麼?橫軸代表依序訓練的過程。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.000" id=15:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=957">15:57.000</a></div>
+        <div class="t">在第一個虛線左邊,這個指的是訓練任務A,就我們A、B、C三個任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.000" id=16:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=963">16:03.000</a></div>
+        <div class="t">我們先訓練任務A,然後再訓練任務B,再訓練任務C,這三個任務依序訓練的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.000" id=16:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=971">16:11.000</a></div>
+        <div class="t">那縱軸呢,這邊有三個縱軸,第一個縱軸代表任務A的正確率,第二個縱軸是任務B的正確率,第三個縱軸是任務C的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:23.000" id=16:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=983">16:23.000</a></div>
+        <div class="t">那畫這樣一個圖,你就可以看出說,當我們依序學A、B、C三個任務的時候,任務A、B、C這三個任務,它的正確率會怎麼樣變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:35.000" id=16:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=995">16:35.000</a></div>
+        <div class="t">我們先看任務A吧,我們先看任務A的變化情形。好,我們先看藍色這一條線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.000" id=16:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1003">16:43.000</a></div>
+        <div class="t">藍色這一條線是什麼呢?藍色這一條線就是我們完全不管catatrophy forgetting的問題,就做一般的training,也就是BI永遠都設為0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.000" id=16:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1013">16:53.000</a></div>
+        <div class="t">如果BI永遠都設為0會發生什麼狀況呢?你會發現說,我們看任務A的正確率,一開始剛學任務A的時候沒有問題,正確率很高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:03.000" id=17:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1023">17:03.000</a></div>
+        <div class="t">接下來開始學任務B了,任務A的正確率就掉下來,接下來開始學任務C了,任務A的正確率又再更掉下來。這個就是catatrophy forgetting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.000" id=17:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1033">17:13.000</a></div>
+        <div class="t">那L2呢?L2這個實驗是BI不管哪個參數,通通設1。如果BI不管哪個參數,通通設1,你看Task A確實有達到防止catatrophy forgetting的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:28.000" id=17:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1048">17:28.000</a></div>
+        <div class="t">舉例來說,你看綠色這一條線,在任務B的時候沒有下降很多,在任務C的時候也沒有下降很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:36.000" id=17:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1056">17:36.000</a></div>
+        <div class="t">就在訓練任務B的時候,任務A的正確率沒有掉很多,在訓練任務C的時候,任務A的正確率也沒有掉很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:44.000" id=17:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1064">17:44.000</a></div>
+        <div class="t">但是BI永遠都設1,你得到一個新的問題,這個問題就是我們剛才提過的intransient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1072">17:52.000</a></div>
+        <div class="t">我們來看一下任務B跟任務C學習的狀況。綠色這一條線,當BI永遠等於1的時候,我們在學任務B的時候,任務B的正確率卻沒有升得足夠高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.000" id=18:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1088">18:08.000</a></div>
+        <div class="t">這邊第二個縱軸代表是任務B的正確率,這邊代表是學任務B的時候。我們在學任務B的時候,照理說任務B的正確率就應該飆升,但是綠色這一條線沒有飆升,任務B學不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:24.000" id=18:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1104">18:24.000</a></div>
+        <div class="t">任務C更慘,更學不起來。橫軸這邊是訓練任務C的時候,縱軸是任務C的正確率,你發現任務C的正確率沒有其他方法高,代表任務C學不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.000" id=18:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1116">18:36.000</a></div>
+        <div class="t">這個就是intransient。如果你給所有的參數一樣的限制,這個對你的模型來說限制太大了,會導致它新的任務學不起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.000" id=18:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1128">18:48.000</a></div>
+        <div class="t">如果我們給不同的參數不同的BI,就是有的參數BI大,有的參數BI小,只固定某些參數,某些參數可以任意更動,那你就得到紅色這一條線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:00.000" id=19:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1140">19:00.000</a></div>
+        <div class="t">紅色這一條線在每一個任務上表現都是最好的,看任務A的話,一去學三個任務,正確率沒有掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:08.000" id=19:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1148">19:08.000</a></div>
+        <div class="t">看任務B的話,在學任務B的時候,正確率跟藍色這條線比起來只掉了一點點,然後任務C也不會再掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.000" id=19:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1156">19:16.000</a></div>
+        <div class="t">如果看任務C的話,任務C的正確率其實相較藍色這條線還是比較低一點,所以你有設BI的時候就是會有一些影響,新的任務就是比較難學,但是沒有BI都設E的時候結果那麼慘,還是學得比BI都設E的時候結果還要更好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:34.000" id=19:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1174">19:34.000</a></div>
+        <div class="t">其實在課堂上,我們就沒有真的告訴你BI怎麼算,我們只講了概念。在助教的程式裡面,助教實作了各種不同的方法,實作了各種不同算BI的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:51.000" id=19:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1191">19:51.000</a></div>
+        <div class="t">在選擇題裡面,你要回答的就是每一種方法它的BI是怎麼求出來的。你可以選擇看文獻來知道BI是怎麼設的,你也可以選擇直接讀助教的程式看看BI是怎麼被設出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:07.000" id=20:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1207">20:07.000</a></div>
+        <div class="t">我們這邊就列了一大堆方法,有EWC、有SI、有NAS、有RWK、有SCP。這邊是按照年代設的,這邊是按照年代放的,由最舊的方法到最新的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:23.000" id=20:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1223">20:23.000</a></div>
+        <div class="t">每一個方法都有它自己的特色還有它想要解決的問題、它想要考量的點。這個就是留在作業裡面讓大家自己去發掘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.000" id=20:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1235">20:35.000</a></div>
+        <div class="t">這個部分我們就不在課堂上講,因為假設你對Life Learning沒有特別有興趣的話,每一個方法都講一遍你會覺得特別冗。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:43.000" id=20:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1243">20:43.000</a></div>
+        <div class="t">但是假設你對Life Learning有興趣的話,那你把作業的選擇題都好好看一下,那你其實可以學到很多東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:50.000" id=20:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1250">20:50.000</a></div>
+        <div class="t">看來BI可以直接用算的算出來。對,BI是直接用算的算出來的。但是BI怎麼算?每一個方法都不一樣,而且每一個方法用的資料不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:14.000" id=21:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1274">21:14.000</a></div>
+        <div class="t">有的方法只需要model的input就好,有的方法要input加output,也就是假設是影像分類的問題的話,有的方法只要過去任務的image就可以算出BI。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:28.000" id=21:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1288">21:28.000</a></div>
+        <div class="t">有的方法是需要過去任務的image加label才能算出BI。那助教每一個方法都會問你說,這個方法有沒有用到label?你再自己看一下助教的code,看看有沒有用到label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.000" id=21:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1299">21:39.000</a></div>
+        <div class="t">有同學問說,改變訓練task的順序,訓練出來的結果會不會差很多?這個問題太棒了。簡單的回答就是,會,然後等一下會舉一個例子告訴你說,改變任務的順序,結果就會差很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.000" id=21:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1316">21:56.000</a></div>
+        <div class="t">所以你會發現說,在這些paper裡面,他們在做實驗的時候都不是只做一種任務的順序,他們會窮取所有任務的順序出來做實驗,然後再取它的平均值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:09.000" id=22:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1329">22:09.000</a></div>
+        <div class="t">也就是,假設你有三個任務,你不能說你只把任務A、B、C跑完得到平均,就說你的方法得到平均是這個樣子。在這些paper裡面,常見的做法就是,你會窮取所有的順序,A、B、C、C、B、A、B、C、A,通通都跑過一遍,得到一個平均值,才能夠代表說你的lifelong learning的方法做得好不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.000" id=22:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1352">22:32.000</a></div>
+        <div class="t">這個是有關regularization-based的方法。其實在regularization-based的方法還有一個早年的做法,叫做GED,Gradient Episodic Memory。這個方法也是一個挺有效的方法,但它不是在參數上做限制,而是在gradient update的方向上所限制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.000" id=23:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1381">23:01.000</a></div>
+        <div class="t">這個GED是怎麼做的呢?這個GED的做法是這個樣子。在任務二上,我們會計算任務二的gradient,但是我們要小心一下,我們到底要不要按照這個任務二算出來的gradient的方向去update我們的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:20.000" id=23:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1400">23:20.000</a></div>
+        <div class="t">在update參數之前,我們會先回去任務一上面,算一下說這個參數如果在任務一上做update的時候,它的方向到底是哪一個方向。我們用藍色的箭頭代表θB這個參數在任務一上面的時候,它update的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:43.000" id=23:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1423">23:43.000</a></div>
+        <div class="t">如果θB跟G它們的方向不一致,那這邊所謂方向不一致就是它們的inner product小於0,那這個時候怎麼辦呢?就修改一下你的G,把它變成G'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:57.000" id=23:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1437">23:57.000</a></div>
+        <div class="t">那這邊修改的條件,修改的criteria,是你希望找到一個新的G',這個G'跟Gb它們做inner product以後要大於等於0,而且G'跟G不能夠差太多。所以本來你往這個方向update,可能會產生catatrophy forgetting的情形,但是我們刻意去修改update的方向,從G變成G',這樣就可以減輕catatrophy forgetting所造成的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:25.000" id=24:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1465">24:25.000</a></div>
+        <div class="t">但講到這邊,你有沒有發現這個方法有一點貓膩呢?有沒有一點什麼奇怪的地方呢?你仔細想想,Gb是怎麼算出來的。我們要算Gb,我們要算task1的gradient,意味著我們存有task1的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:47.000" id=24:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1487">24:47.000</a></div>
+        <div class="t">如果我們沒有存task1的資料,那我們根本就沒有辦法把Gb算出來。所以Gem這個方法的一個劣勢就是,它需要把過去方法的資料存下來。那這個跟lifelong learning想要追求的是有點不一致的,因為我們一開始就有說,lifelong learning就是不希望把過去的資料都存下來啊,如果過去的資料都存下來的話,資料累積的越來越多,那你最終會沒有辦法把過去的資料都存下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:15.000" id=25:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1515">25:15.000</a></div>
+        <div class="t">所以Gem有點違反lifelong learning的最初的精神,它是有偷偷存過去的資料的。但是也許這個問題並沒有特別嚴重,為什麼?因為Gem這個方法只需要存非常少量的資料就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:31.000" id=25:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1531">25:31.000</a></div>
+        <div class="t">因為這個Gb,它最重要的工作只是去修改一下G的方向,所以也許算Gb的時候,我們不需要非常大量的資料,只要存一點點的資料就好。所以Gem想要做的事情是,希望透過只存一點點資料來達到避免catatrophy forgetting的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.000" id=25:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1552">25:52.000</a></div>
+        <div class="t">所以Gem比較於其他方法,比如說我們剛才看到的EWC等等,有點不公平,因為它有偷存額外的資料。但是其實你再更仔細想一下,EWC這些方法,這些regularization-based的方法,它們需要佔用額外的空間來儲存舊的模型跟儲存BI。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:17.000" id=26:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1577">26:17.000</a></div>
+        <div class="t">所以剛才講的那些regularization-based的方法,它也需要佔用到額外的空間,這些額外的空間包括一個舊的模型還有BI這個守衛的數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:29.000" id=26:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1589">26:29.000</a></div>
+        <div class="t">所以如果Gem它今天雖然存了一些舊的資料,只要它存的舊的資料所佔用的記憶體的量沒有比多存BI還有舊的模型多的話,也許也是可以接受的。所以如果Gem沒有存太多資料的話,其實也是一個可以被接受的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.000" id=26:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1608">26:48.000</a></div>
+        <div class="t">接下來,另外兩個做法我們就是非常快的帶過去。第一個做法是Additional Neural Resource Allocation,也就是我們改變一下使用在每一個任務裡面的neural resource。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:03.000" id=27:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1623">27:03.000</a></div>
+        <div class="t">什麼意思呢?一個最早的做法叫做Progressive Neural Network,它的想法是這個樣子的。我們訓練任務1的時候有一個模型,訓練任務2的時候,你就不要再去動任務1學到的那個模型了,你另外再多開一個Network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:21.000" id=27:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1641">27:21.000</a></div>
+        <div class="t">這個Network它會吃任務1的Hidden Layer Output作為輸入,所以如果任務1有學到什麼有用的資訊,任務2也是可以利用它的。但是任務1這邊的參數,任務1學出來的參數,不要再去動它了,我們只多新增一些額外的參數,我們只Train額外的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.000" id=27:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1662">27:42.000</a></div>
+        <div class="t">任務3也是一樣,我們有一組專門給任務3的參數,當訓練任務3的時候,任務1、任務2訓練出來的參數,就不要再動它了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.000" id=27:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1672">27:52.000</a></div>
+        <div class="t">對於解決Catatrophy Forgetting而言,這當然是一個有效的做法,你完全不會有Catatrophy Forgetting的問題,因為舊的參數你根本完全沒有動到它嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:01.000" id=28:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1681">28:01.000</a></div>
+        <div class="t">但是Progressive Neural Network它會造成的問題是,你每一次訓練一個新的任務的時候,你會需要額外的空間去產生額外的Neural。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:14.000" id=28:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1694">28:14.000</a></div>
+        <div class="t">你每一次加一個新的任務,你的模型就會長大一點。如果今天你的模型長大的速率跟新增任務是成正比的話,當你的任務不斷的新增增下去的時候,最終你的Memory還是會耗盡的,你的模型終究會太大,大到你沒有辦法把它存下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:36.000" id=28:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1716">28:36.000</a></div>
+        <div class="t">所以Progressive Neural Network看起來並沒有完全解決Catatrophy Forgetting的問題。但是在任務量沒有很多的時候,Progressive Neural Network仍然是可以派得上用場的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.000" id=28:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1728">28:48.000</a></div>
+        <div class="t">然後有另外一個方法叫做PackNet,它是Progressive Network的反過來。Progressive Network是說,每一次有新的任務進來,我們就多加一些Neural。那PackNet正好是用另外一個想法,它說我們先開一個比較大的Neural。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:08.000" id=29:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1748">29:08.000</a></div>
+        <div class="t">然後接下來,每一次有新的任務進來的時候,我們只用這個大Neural的其中一部分。任務一的資料進來,在這個圖示裡面,我們就把每一個圈圈想成是Neural裡面的一個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:25.000" id=29:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1765">29:25.000</a></div>
+        <div class="t">然後任務一的資料進來,只准使用這邊有黑色框框的這些圈圈的參數。然後任務二的資料再進來,只准用這邊橙色的參數。任務三的資料再進來,只准用這邊綠色的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.000" id=29:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1780">29:40.000</a></div>
+        <div class="t">這樣的好處就是,你的參數量不會隨著任務增多而不斷增加。但是如果相較於Progressive Network的方法相向,這個方法其實也只是朝三暮四而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:52.000" id=29:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1792">29:52.000</a></div>
+        <div class="t">它是一開始開一個比較大的Neural,然後說每一個任務不要把所有的參數都用盡,只用部分的參數,然後這樣子你就不會有Catastrophic Forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:03.000" id=30:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1803">30:03.000</a></div>
+        <div class="t">但是相較於不斷增加新的參數,你只是提早把更多的記憶體用完而已,這個有點朝三暮四的感覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:12.000" id=30:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1812">30:12.000</a></div>
+        <div class="t">然後PackNet跟Progressive Network是可以結合在一起的,這個結合的方法也是一個很知名的做法,叫做Compacting, Picking, and Growing的CPG。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.000" id=30:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1823">30:23.000</a></div>
+        <div class="t">它就是我們的Model既可以增加新的參數,每一次又都只保留部分的參數可以拿來做訓練。至於這些方法的細節我們就不細講,就留給大家慢慢研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:36.000" id=30:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1836">30:36.000</a></div>
+        <div class="t">第三個做法叫做Memory Replay,第三個做法非常直覺。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.000" id=30:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1859">30:59.000</a></div>
+        <div class="t">我們之前有講說,只要把所有的資料統統倒在一起,就不會有Catastrophic Forgetting的問題,但我們又說不能夠存過去的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.000" id=31:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1870">31:10.000</a></div>
+        <div class="t">我們乾脆就訓練一個Generative Model,這個Generative Model就是會產生Pseudodata,我們不能夠存過去的資料,但是我們訓練一個Generative Model,把過去的資料在訓練的時候即時的產生出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.000" id=31:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1888">31:28.000</a></div>
+        <div class="t">也就是說,我們現在有第一個任務的訓練資料,我們不只訓練一個Classifier來解任務1,我們同時訓練一個Generator,它會產生任務1的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:39.000" id=31:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1899">31:39.000</a></div>
+        <div class="t">接下來,你在訓練任務2的時候,如果你只把任務2的資料倒給Machine,那它可能會有Catastrophic Forgetting的問題,但是你又不能把任務1的資料拿出來,那怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:52.000" id=31:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1912">31:52.000</a></div>
+        <div class="t">用Generator產生任務1的資料,給第二個任務的Classifier做訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.000" id=32:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1921">32:01.000</a></div>
+        <div class="t">所以這個Classifier,它在訓練的時候不是只看到任務2的資料,它還看到Generator產生出來的任務1的資料,所以用這個方法就可以避免Catastrophic Forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:15.000" id=32:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1935">32:15.000</a></div>
+        <div class="t">接下來,你又有任務2的資料,那也許你就會把任務2的資料跟任務1產生出來的Pseudo的資料再倒在一起,再訓練一個Generator,這個Generator可以同時產生任務1跟任務2的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:29.000" id=32:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1949">32:29.000</a></div>
+        <div class="t">這個過程就反覆繼續下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:33.000" id=32:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1953">32:33.000</a></div>
+        <div class="t">那這個方法到底合不合理呢?就是見仁見智啦,因為你需要另外產生一個Generator嘛,那這個Generator當然也是會佔用一些空間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:45.000" id=32:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1965">32:45.000</a></div>
+        <div class="t">但是如果這個Generator佔用的空間比你儲存資料來講還要更小的話,那也許這就是一個有效的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.000" id=32:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1974">32:54.000</a></div>
+        <div class="t">事實上,我們實驗室也有做過一些Lifelong Learning的study,在我們的經驗上,這種Generating Data的方法其實是非常有效的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.000" id=33:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1984">33:04.000</a></div>
+        <div class="t">用這種Generating Data的方法,往往你都可以逼近Lifelong Learning的Upper Bound了,往往你都可以做到跟Multitask Learning差不多的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:13.000" id=33:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=1993">33:13.000</a></div>
+        <div class="t">接下來,如果你想想看我們剛才講的Lifelong Learning的Scenario,我們都假設說每一個任務需要的模型就是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:29.000" id=33:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2009">33:29.000</a></div>
+        <div class="t">我們甚至強迫限制說,每一個任務我們要訓練的Classifier,他們需要的Class量都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:37.000" id=33:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2017">33:37.000</a></div>
+        <div class="t">但假設不同的任務,他們的Class數目不一樣,有沒有辦法解呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:43.000" id=33:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2023">33:43.000</a></div>
+        <div class="t">第一個任務有10個Class,第二個任務有20個Class,第三個任務有100個Class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:50.000" id=33:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2030">33:50.000</a></div>
+        <div class="t">你訓練新的任務的時候,你同時要增加新的Class,有沒有辦法解呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:55.000" id=33:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2035">33:55.000</a></div>
+        <div class="t">是有辦法解的,這邊就列一些文獻,比如說Learning Without Forgetting,LWF,還有ICRL,Incremental Classifier and Representation Learning,給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:08.000" id=34:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2048">34:08.000</a></div>
+        <div class="t">助教在Lifelong Learning的作業的選擇題裡面,我們也問大家一些有關這些做法的問題,如果你有興趣,你再自己去讀一下這些文獻。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:20.000" id=34:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2060">34:20.000</a></div>
+        <div class="t">其實我們今天講的Lifelong Learning,也就是Continuous Learning,只是整個Lifelong Learning領域研究裡面的其中一小塊,其中某一個情境而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:34.000" id=34:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2074">34:34.000</a></div>
+        <div class="t">其實Lifelong Learning,也就是Continuous Learning,還有很多不同的情境。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:39.000" id=34:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2079">34:39.000</a></div>
+        <div class="t">你可以閱讀一下下面這邊統整的文獻,它會告訴你說Lifelong Learning有三個情境。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:46.000" id=34:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2086">34:46.000</a></div>
+        <div class="t">我們今天講的只是那三個情境裡面最簡單的一種而已,最容易的一種。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:53.000" id=34:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2093">34:53.000</a></div>
+        <div class="t">剩下另外兩種更有挑戰性的情境是什麼,我們留在選擇題裡面,讓大家自己去看看另外兩種情境是什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:09.000" id=35:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2109">35:09.000</a></div>
+        <div class="t">這個就是有關Lifelong Learning的三個研究方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:15.000" id=35:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2115">35:15.000</a></div>
+        <div class="t">剛才有同學問到說,如果我們調換學任務學習的順序,會不會有非常不一樣的結果呢?確實是會有的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:25.000" id=35:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2125">35:25.000</a></div>
+        <div class="t">這邊就舉一個具體的例子來跟大家說明。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:29.000" id=35:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2129">35:29.000</a></div>
+        <div class="t">在剛才我們一開頭講的Lifelong Learning的例子裡面,我們說先讓機器先學這一種有雜訊的圖片,接下來再學沒有雜訊的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:41.000" id=35:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2141">35:41.000</a></div>
+        <div class="t">但是反過來,如果先學沒有雜訊的圖片,再學有雜訊的圖片,會發生什麼樣的狀況呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:49.000" id=35:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2149">35:49.000</a></div>
+        <div class="t">如果讓機器先學沒有雜訊的圖片的話,在任務2上正確率97,在任務1上正確率62。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:58.000" id=35:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2158">35:58.000</a></div>
+        <div class="t">看起來能夠解沒有雜訊圖片的分類,看到有雜訊的圖片還是handle不了的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:05.000" id=36:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2165">36:05.000</a></div>
+        <div class="t">但是如果說我們更進一步讓機器學任務1的話,這個時候你發現它任務1、任務2都可以做好,這個時候沒有catatrophic forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:18.000" id=36:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2178">36:18.000</a></div>
+        <div class="t">所以看起來任務的順序是重要的,有一些順序會有forgetting的問題,有一些順序其實也沒有forgetting的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:28.000" id=36:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Y9Jay_vxOsM&t=2188">36:28.000</a></div>
+        <div class="t">而研究什麼樣的順序才是好的、什麼樣的順序才對學習是有效的這個問題,叫做curriculum learning。</div>
+    </div>
+    
+</body>
+</html>   

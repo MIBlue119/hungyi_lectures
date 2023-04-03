@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>ELMO, BERT, GPT</h2><a href=https://www.youtube.com/watch?v=UYPa347-DdE><img src=https://i.ytimg.com/vi_webp/UYPa347-DdE/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=0">00:00.000</a></div>
+        <div class="t">接下來這堂課,我們要講機器怎麼看懂人類的文字,或者是換句話說,我們怎麼把文字輸入到電腦裡面去,讓電腦可以看懂人類的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.440" id=00:16.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=16">00:16.440</a></div>
+        <div class="t">今天要講的是在這個方向上最新的技術,包括BERT,還有跟BERT很相似的其他也非常知名的模型,包括ELMO還有GPT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:28.760" id=00:28.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=28">00:28.760</a></div>
+        <div class="t">那這個第一頁投影片呢,是先跟大家非常概略的複習一下,過去在有BERT在有ELMO之前,是怎麼讓電腦去讀人類的文字的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:40.160" id=00:40.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=40">00:40.160</a></div>
+        <div class="t">最早最早的做法是說,每一個人類的詞彙就當作是一個不同的符號,每一個符號都用一個它獨特的編碼來表示這個符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:55.600" id=00:55.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=55">00:55.600</a></div>
+        <div class="t">那最常見的做法叫做one-of-n encoding,假設說現在世界上就只有五個詞彙,這五個詞彙就是apple, bag, cat, dog, elephant,那我們把每一個詞彙都用一個項量來描述它,在這個項量裡面都只有一維是1,其他維度是0,每一個詞彙都有不同的項量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.440" id=01:20.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=80">01:20.440</a></div>
+        <div class="t">那用這個方法顯然是非常不足的,因為假設對機器來說,每一個文字都有一個獨一無二的編碼的話,對它來說,詞彙和詞彙之間是完全沒有任何關聯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:35.760" id=01:35.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=95">01:35.760</a></div>
+        <div class="t">它不知道說cat跟dog都是動物,也許它們相較於這個cat跟bag的關係,cat跟dog是比較近的,而cat跟bag是比較遠的,這個是我們從這個符號上面,從one-of-n encoding這種編碼上是沒有辦法看出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.000" id=01:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=116">01:56.000</a></div>
+        <div class="t">所以後來,因為如果把每一個詞彙都當作是一個完全獨立的東西來看的話,顯然是不夠的,所以後來就有了word class的概念,也就是我們必須要對這些詞彙做分類,我們要說,有些詞彙它們應該算是同一類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:15.040" id=02:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=135">02:15.040</a></div>
+        <div class="t">舉例來說,dog、cat跟bird它們都是動物,所以它們應該算是同一類的,或者flower、tree跟apple它們都是植物,所以它們應該算是同一類的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:26.160" id=02:26.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=146">02:26.160</a></div>
+        <div class="t">但這種用word class的方法顯然太粗糙了,因為雖然dog跟cat都是動物,但是相較於鳥類,它們都是哺乳類動物,所以它跟鳥類又是有點不同的,但是如果我們把dog、cat跟bird同樣歸類成同一類的話,這樣顯然太粗了,你沒有辦法看出哺乳類動物和鳥類之間的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.360" id=02:49.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=169">02:49.360</a></div>
+        <div class="t">所以怎麼辦呢?後來有了更進階的想法,叫做word embedding。word embedding這個技術,我們過去上課的時候已經講過了,上課錄影裡面是有這一段的,所以我們就不重複過去已經講過的內容,就把上課錄影放在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:07.920" id=03:07.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=187">03:07.920</a></div>
+        <div class="t">word embedding可以想成是一個soft的word class。word embedding的意思是說,每一個詞彙我們現在都用一個向量來表示它,每一個詞彙都用一個向量來表示它,這個向量的每一個維度可能就表示了這個詞彙的某種意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:28.720" id=03:28.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=208">03:28.720</a></div>
+        <div class="t">語意比較相近的詞彙,它們的向量會比較接近,比如說dog跟cat跟rabbit,它們都哺乳類動物,它們的向量會比較接近,相較於bird或者是tree和flower,這個哺乳類動物的向量跟bird就比較有距離,跟flower跟tree就比較有距離等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:50.640" id=03:50.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=230">03:50.640</a></div>
+        <div class="t">所以從一個詞彙的向量,從一個詞彙的word embedding,我們就可以知道這個詞彙有什麼樣的語意。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:58.880" id=03:58.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=238">03:58.880</a></div>
+        <div class="t">至於word embedding是怎麼訓練出來的,我們之前在上課錄影也講過,是根據每一個詞彙的上下文所找到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.400" id=04:06.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=246">04:06.400</a></div>
+        <div class="t">這個都只是簡短的複習而已,在RM的作業裡面,我們要做一個sentiment analysis的classifier,讓我們知道在表示每一個詞彙的時候,也許你不是用one-time coding來描述每一個詞彙的,你會把每一個詞彙用它的word embedding來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.200" id=04:27.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=267">04:27.200</a></div>
+        <div class="t">可以想成說word embedding就是某種從feature的方法,我們用word embedding來當作某一個詞彙的feature。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:36.960" id=04:36.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=276">04:36.960</a></div>
+        <div class="t">word embedding已經被廣泛的應用在NLP自然語言處理各式各樣的任務上,而且很多自然語言處理的任務都不是用one-time coding來表示一個詞彙,而是用embedding來表示一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:51.520" id=04:51.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=291">04:51.520</a></div>
+        <div class="t">接下來就進入我們過去沒有講過的主題。一個詞彙是可能有不同的意思的,同一個詞彙可能有不同的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:04.320" id=05:04.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=304">05:04.320</a></div>
+        <div class="t">舉例來說,今天在這張抽影片上面,我們有四個句子,每個句子裡面都有出現bank這個詞彙。這邊要跟大家先定義一下,這邊這四個bank,這四個bank這個詞彙,它們是不同的token,但同樣的type。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.280" id=05:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=327">05:27.280</a></div>
+        <div class="t">大家聽得懂嗎?這邊有四個bank,這四個bank,它們是不同的token,但是它們是同樣的type,它們的type就是bank。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:39.600" id=05:39.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=339">05:39.600</a></div>
+        <div class="t">過去在做過embedding的時候,我們是每一個word的type有一個embedding,所以如果不同的token它屬於同樣的type,它的embedding,它所對應的那個vector就會是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:57.920" id=05:57.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=357">05:57.920</a></div>
+        <div class="t">換句話說,過去我們假設所有不同的token,只要它們的type是一樣的,它們的語意就是一樣的。事實上並不是如此,不同的token,就算它們是同樣的type,比如說這邊的銀行,它們是同樣的type,不同的token,它們也有可能有不同的語意。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.280" id=06:21.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=381">06:21.280</a></div>
+        <div class="t">舉例來說,在這個例子裡面,前兩個句子的bank,它們的意思指的是銀行。從它的上下,我們可以看出來說,前兩個句子的bank附近都有money這個詞彙,它們指的是銀行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.040" id=06:37.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=397">06:37.040</a></div>
+        <div class="t">後面這兩個bank,第三跟第四個bank,它們指的是合體的意思,它們前面都有river這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.040" id=06:45.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=405">06:45.040</a></div>
+        <div class="t">過去一般傳統的embedding是每一個type都有一個embedding,這四個bank它們會有一模一樣的embedding,我們假設這四個bank有一模一樣的語意,但事實上並不是如此。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:59.040" id=06:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=419">06:59.040</a></div>
+        <div class="t">我們希望機器可以給不同意思的token,就算它們是同樣的type,也要給它們不同的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:07.040" id=07:07.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=427">07:07.040</a></div>
+        <div class="t">那過去是怎麼做的呢?過去的做法可能是說,你去查個詞典,查個詞典告訴你說,bank這個type有兩種不同的意思,有兩種不同的sense。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:20.560" id=07:20.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=440">07:20.560</a></div>
+        <div class="t">那你就說,所以bank這個type應該要有兩種不同的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.280" id=07:27.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=447">07:27.280</a></div>
+        <div class="t">我們在training的時候,我們會給bank這個type兩種不同的embedding,我們最後訓練出來,希望可以做到說,第一個token跟第二個token,第一個跟第二個type是bank的token,它們有一種embedding,而第三個跟第四個token,它們有另外一種embedding,這是過去的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:46.720" id=07:46.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=466">07:46.720</a></div>
+        <div class="t">那這麼做顯然是不夠的,為什麼是不夠的呢?因為人類的語言是非常微妙的。如果你查bank這個詞彙,有些字典會告訴你說就是兩個意思,有些字典會告訴你說,bank可以說是有三個意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.360" id=08:01.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=481">08:01.360</a></div>
+        <div class="t">舉例來說,bank會被用在血庫裡面,就是說醫院會有blood bank,那blood bank這個bank,它跟銀行的意思有點像,因為它也有儲存的意思,但有些詞典會告訴你說,這算是bank的第三個意思,它被用在血庫的時候,你會用blood bank這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.040" id=08:23.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=503">08:23.040</a></div>
+        <div class="t">所以今天人質語意這個東西是很微妙的,到底blood bank的bank,我們應該說它就是銀行的意思,還是應該說是第三種意思,每個人都會有不同的講法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.280" id=08:39.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=519">08:39.280</a></div>
+        <div class="t">所以這樣的東西其實是非常常發生的。舉例來說,這個人是尼祿,這個人其實他也是尼祿。但是我們會說他是羅馬帝國的第五任皇帝,他也是羅馬帝國的第五任皇帝,他是一個暴君,他其實也是一個暴君。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:59.680" id=08:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=539">08:59.680</a></div>
+        <div class="t">所以他們好像是同一個人,你也可以說他們是同一個人,但是其實他們又不是同一個人,我也不知道該怎麼解釋比較好。或者是說,這個是加賀號護衛艦,這個也是加賀號護衛艦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:14.920" id=09:14.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=554">09:14.920</a></div>
+        <div class="t">他們是一樣的嗎?他們是一樣的,但是他們又是不一樣的。你可能說,這個是人,這個不是人,但他真的是加賀號護衛艦,我也不知道該怎麼跟你解釋比較好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.560" id=09:29.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=569">09:29.560</a></div>
+        <div class="t">所以就是這麼神奇,人類語言就是這麼神奇。很多詞彙,你可以說它是一樣的東西,也可以說它是不一樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.800" id=09:37.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=577">09:37.800</a></div>
+        <div class="t">所以我們期待的,今天機器可以更進一步做到說,每一個word的token都有一個embedding。我們之前是每一個type有一個embedding,或者是一個type有固定多個embedding,現在是每一個token都有一個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.000" id=09:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=597">09:57.000</a></div>
+        <div class="t">那怎麼知道一個token應該要有什麼樣的embedding呢?它的精神跟過去的word embedding的意思是差不多的。怎麼跟每一個token有一個embedding呢?你看這個token的上下文,上下文越相近的token,它們就會有越相近的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:14.600" id=10:14.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=614">10:14.600</a></div>
+        <div class="t">那我剛才說,這邊有三個不同的句子,裡面都有bank這個word type,但這三個bank是不同的token,今後這些不同的token都會有不同的embedding,就像這個type是一樣的。這個技術叫做contextualized word embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.120" id=10:32.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=632">10:32.120</a></div>
+        <div class="t">但是這個flat bank跟money in the bank這兩個bank,它們的語意可能還是比較接近的。所以到時候你認出contextualized word embedding的時候,這兩個vector,每一個word type都有一個vector,但是每一個word的token都有一個vector,但這兩個token、這兩個bank、這兩個token,它們的vector可能是比較近的,這兩個bank、這兩個token,它們的vector可能是距離比較遠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:02.440" id=11:02.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=662">11:02.440</a></div>
+        <div class="t">我們現在要給每一個word的token都給它不同的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:08.440" id=11:08.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=668">11:08.440</a></div>
+        <div class="t">怎麼做到這件事呢?有一個技術可以做到這件事,這個技術叫做Elmo,它是embedding from language model的縮寫。Elmo就是右上角這隻紅色的怪物,它是一個芝麻街的角色。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.600" id=11:24.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=684">11:24.600</a></div>
+        <div class="t">Elmo它是一個RNN-based的language model,什麼是RNN-based的language model呢?你要訓練一個RNN-based的language model,你其實不需要做什麼labeling,你只要收集一大堆一大堆的句子,那些句子不需要做任何的標註,你就去ppt上排一大堆句子下來,然後你就可以訓練一個RNN-based的language model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.520" id=11:48.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=708">11:48.520</a></div>
+        <div class="t">舉例來說,現在ppt上有一個句子,就是潮水退了就知道誰沒穿褲子,那你就教你的RNN-based的language model說,如果看到一個叫做begin of sentence的符號,那你就要輸出潮水。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:01.800" id=12:01.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=721">12:01.800</a></div>
+        <div class="t">接下來再給你潮水這個符號,你就要輸出退了,然後給你潮水跟退了這兩個符號,你就要輸出舊的,就這樣子訓練下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.920" id=12:12.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=732">12:12.920</a></div>
+        <div class="t">RNN-based language model它訓練的過程,訓練的時候它做的事情,它所學習到的技能就是去預測下一個token會是什麼,那就給它很多句子,讓它去學怎麼預測下一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.760" id=12:28.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=748">12:28.760</a></div>
+        <div class="t">學完以後,你就有contextualized word embedding,因為我們可以把RNN的hidden layer拿出來,說它就是現在輸入的那個詞彙的contextualized word embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:43.960" id=12:43.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=763">12:43.960</a></div>
+        <div class="t">假設你把退了輸進去,然後RNN會凸一個embedding出來給你,那這個embedding就是我們現在退了這個詞彙的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:54.360" id=12:54.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=774">12:54.360</a></div>
+        <div class="t">那為什麼它是contextualized呢?你可以想像說,同樣的詞彙,同樣都是退了這個詞彙,它的上下文如果不同的話,現在RNN凸出來的embedding就會不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.600" id=13:07.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=787">13:07.600</a></div>
+        <div class="t">你輸入高燒退了給RNN,或者是沉退了給RNN,這個同樣的詞彙輸進去,它的embedding都會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.080" id=13:17.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=797">13:17.080</a></div>
+        <div class="t">就假設說大家對RNN都已經很熟了,這個對你來說都不難理解,我們知道說,RNN在輸出這個vector的時候,在輸出這個embedding的時候,它會參考這整個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:29.320" id=13:29.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=809">13:29.320</a></div>
+        <div class="t">所以輸出這個embedding的時候,它是讀了高燒退了才輸出這個embedding,讀了沉退了輸出這個embedding,讀了潮水退了輸出這個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.600" id=13:37.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=817">13:37.600</a></div>
+        <div class="t">雖然現在讀進來的詞彙都是退了,但是之前讀過不同的詞彙,所以它output的東西會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.280" id=13:43.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=823">13:43.280</a></div>
+        <div class="t">這個是AOMO的基本概念,就是你怎麼用一個RNN的language model,就抽出contextualized的文語embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.680" id=13:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=832">13:52.680</a></div>
+        <div class="t">有人可能會問說,那這樣子好像只有考慮到每一個詞彙的前文,沒有考慮到後半段。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.760" id=14:03.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=843">14:03.760</a></div>
+        <div class="t">那怎麼辦呢?你再train一個反向的RNN,它從句子的尾巴讀過來。這個反向RNN它做的事情是,你給它吃知道,它就要預測舊,給它吃舊,就要預測退了,給它退了,就要預測潮水。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.960" id=14:18.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=858">14:18.960</a></div>
+        <div class="t">所以你現在就不只考慮每一個詞彙的前文,你也會考慮它的下文。我們今天如果要得到退了這個詞彙的contextualized文語embedding,我們就把退了這個詞彙,在正向的RNN的embedding跟逆向的RNN的embedding都拿出來接起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:38.960" id=14:38.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=878">14:38.960</a></div>
+        <div class="t">同一個詞彙,它的上下文不一樣,你得到的embedding就會不同。這個概念是非常直覺的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:45.360" id=14:45.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=885">14:45.360</a></div>
+        <div class="t">那我們今天知道說,我們train什麼network都是要deep,所以這個RNN它可以是deep。當我們train deep的時候,我們就會遇到問題了。我們會遇到什麼樣的問題呢?因為它有很多層,每一層都有embedding,那到底應該要用哪一層呢?同一個詞彙,到底應該要用哪一個embedding呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.720" id=15:08.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=908">15:08.720</a></div>
+        <div class="t">Elmo這篇paper,它的solution就是我全都要。它是怎麼做的呢?Elmo的做法是說,現在每一層都會給我們一個contextualized的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:24.160" id=15:24.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=924">15:24.160</a></div>
+        <div class="t">今天如果你在講這個contextualized的embedding的model的時候,你就想,你要知道說,每一個詞彙丟進去都會有一個embedding吐出來。Elmo它每一個詞彙丟進去都會吐出不止一個embedding,每一層的RNN都會給你一個embedding。怎麼辦呢?把這些embedding通通都加起來,一起用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.600" id=15:44.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=944">15:44.600</a></div>
+        <div class="t">但是怎麼把它加起來呢?最簡單的方法是把它平均起來之類的。但是Elmo是會做weighted sum的。假設現在我們的RNN有兩層,它會吐出兩個embedding,一個叫做H1,一個叫做H2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.360" id=16:00.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=960">16:00.360</a></div>
+        <div class="t">Elmo做的事情是,它會把第一層吐出來的embedding乘上Alpha1,第二層吐出來的embedding乘上Alpha2,通通加起來得到藍色的embedding,然後再把藍色的embedding做接下來你要做的downstream的test,做你接下來你要拿這個embedding做的各種不同的application。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:21.400" id=16:21.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=981">16:21.400</a></div>
+        <div class="t">但是這個Alpha1跟Alpha2是怎麼來的呢?這個Alpha1跟Alpha2它們是認出來的。怎麼認出來呢?在你還沒有接downstream的test之前,在你還沒有使用Elmo抽出來的embedding之前,你是不知道這些Alpha的值應該是多少的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.400" id=16:41.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1001">16:41.400</a></div>
+        <div class="t">你要先設定好你接下來要做什麼application,比如說你接下來要做QA,你接下來要做POS tagging,你接下來要做syntactic parsing等等,你要先決定你要做什麼test,然後再把這些參數Alpha1跟Alpha2跟接下來的test一起去認出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.120" id=17:02.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1022">17:02.120</a></div>
+        <div class="t">舉例來說,你等一下要做QA,QA的model裡面也有一些參數,那你會把Alpha1跟Alpha2視為QA model要學的參數的一部分,跟著network的其他部分一起被學出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:15.960" id=17:15.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1035">17:15.960</a></div>
+        <div class="t">所以今天不同的任務,它們要用的這個Alpha1跟Alpha2就不一樣。在原始的Elmo那個paper裡面,它有給出以下這個實驗的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:28.280" id=17:28.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1048">17:28.280</a></div>
+        <div class="t">這個實驗的結果是什麼呢?這個實驗的結果是說,它現在用在接下來的downstream的test,用在接下來downstream的application的embedding,其實有三個來源。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:39.000" id=17:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1059">17:39.000</a></div>
+        <div class="t">第一個是原來沒有contextualized的embedding,這個是這邊所謂的token,接下來每一個token通過Elmo的第一層以後會抽出一個embedding,通過第二層以後會抽出第二個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.680" id=17:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1072">17:52.680</a></div>
+        <div class="t">現在這三種embedding,我們要從VT上得到藍色的這個embedding,那所以位核是多少?根據不同的任務學出不同的位核。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.400" id=18:01.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1081">18:01.400</a></div>
+        <div class="t">舉例來說,在Semantic Row Labeling的時候學出來的位核是這個樣子,這邊是用顏色的深淺來代表位核的元素。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.040" id=18:10.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1090">18:10.040</a></div>
+        <div class="t">這邊有Semantic Row Labeling,有correctance,correctance的這個text就是說要把那個代名詞所指涉的那個名詞把它找出來,比如說它指涉哪一個人物要把它所指涉的人物找出來,或者是squat,squat是QA的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.280" id=18:30.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1110">18:30.280</a></div>
+        <div class="t">這個SST就是Semantic Translocation,就是大家作業裡面有做的問題。學完以後,我們這邊就會發現說correctance這個text跟squat,就QA這個text,它們特別需要第一層的contextualized way embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.280" id=18:48.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1128">18:48.280</a></div>
+        <div class="t">而其他的任務好像就沒有那麼需要,其他任務看起來每一種不同的embedding的位核是比較平均的,所以不同的text,你要抽ELMO裡面,也就是RNN裡面不同層的contextualized embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.760" id=19:04.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1144">19:04.760</a></div>
+        <div class="t">那這個是ELMO的部分,BERT是Bidirectional Encoder Representation for Transformer的縮寫,因為這沒有BERT縮寫,BERT就是右上角這個黃色的動物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.760" id=19:20.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1160">19:20.760</a></div>
+        <div class="t">而且BERT也是芝麻街的角色,跟ELMO一樣,我就想問說這些人是有多喜歡芝麻街就是了。BERT是Transformer的encoder,所以我們必須要講過Transformer以後才能講BERT,我們上週已經講過Transformer了,右邊這個就是Transformer的圖,大家應該都已經非常熟悉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:41.400" id=19:41.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1181">19:41.400</a></div>
+        <div class="t">好,那這個Transformer的encoder其實就是BERT的Navigator,那在BERT裡面,你只需要收集一大堆的句子,這些句子不需要有annotation,就可以把這個encoder把它train出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:57.720" id=19:57.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1197">19:57.720</a></div>
+        <div class="t">原來如果你要train一個Transformer的時候,你需要有一些task,比如說summarization,比如說translation,給Transformer input,然後告訴它正確的output是什麼,你才能夠train這個Transformer。那BERT它只要trainTransformer裡面的encoder就好了,所以它在train這個encoder的時候,它是不需要有label的資料的,你只要收集一大堆的句子,你就可以訓練一個BERT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:21.680" id=20:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1221">20:21.680</a></div>
+        <div class="t">好,那如果等一下講的東西你聽不太懂的話,你就記得說BERT是一個什麼樣的東西呢?因為BERT很潮,今天隨便路邊拉一個人,我覺得不知道怎麼回事,都知道BERT,我就說真的,路邊不知道誰,隨便每一個人都知道BERT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:37.280" id=20:37.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1237">20:37.280</a></div>
+        <div class="t">但是假設有人問你說,那BERT實際上在做什麼的呢?那等一下講的東西如果你聽不懂的話,你就記得說BERT做的事情就是給一個句子進去,把一個句子丟進去給BERT,然後每一個句子都會吐一個embedding出來給你,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.140" id=20:59.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1259">20:59.140</a></div>
+        <div class="t">好,那至於BERT裡面的network架構長什麼樣子呢?它裡面的network架構就跟transformer的encoder是一樣的,那transformer的encoder裡面有什麼東西呢?transformer的encoder裡面有這個self-attention的layer,那我們之前有講過說self-attention的layer就是input一個sequence,那也會output一個sequence給你。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:18.240" id=21:18.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1278">21:18.240</a></div>
+        <div class="t">那今天整個BERT的network架構就是,input一個word sequence,然後它給你一串embedding,那每一個embedding就對應到某一個word,就對應到某一個input的word,那BERT就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:32.000" id=21:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1292">21:32.000</a></div>
+        <div class="t">那這邊呢,我想提醒大家說,雖然在投影片上的例子,我們是用中文的詞來當作單位,但實際上,假如你今天要處理的是中文,也許在訓練BERT的時候,用字來當作單位是更為恰當的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:50.340" id=21:50.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1310">21:50.340</a></div>
+        <div class="t">我不知道大家知不知道中文的詞跟字有什麼樣的差別,舉例來說,這邊的潮水是一個中文的詞,而潮跟水分別是中文的字,分別是中文的character。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.480" id=22:06.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1326">22:06.480</a></div>
+        <div class="t">好,那這個如果使用中文的詞,用中文的word來當作單位的話,因為我們現在input給BERT的這些詞彙啊,input給BERT的這些token啊,你也要把它表示成,舉例來說,one hard的encoding,才能夠輸給BERT的這個network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:26.320" id=22:26.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1346">22:26.320</a></div>
+        <div class="t">那如果你今天用的unit,你今天你的token的這個unit是詞的話,那中文的詞是很多的,中文的詞是幾乎無法窮舉的,那你input的那個one hard的vector,它的維度會太大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:41.360" id=22:41.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1361">22:41.360</a></div>
+        <div class="t">那如果用字的話,中文的character的數目是有限的,常用的character不過四千多個而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:49.360" id=22:49.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1369">22:49.360</a></div>
+        <div class="t">所以因為常用的character是有限的,中文的character可以說是可以窮舉的,所以如果你用中文的character來當作輸入的單位的話,那你在描述一個中文的character,你用一個one hard encoding的vector來描述中文的character的時候,那個one hard encoding的vector就不會太長,那這樣子在實作上會方便許多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.920" id=23:11.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1391">23:11.920</a></div>
+        <div class="t">所以這邊就提醒大家一下,雖然在投影片上是用中文的word當作例子,但是在實作上,如果你要處理的是中文,也許這邊用character,用中文的字是更為合適的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:24.400" id=23:24.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1404">23:24.400</a></div>
+        <div class="t">好,那接下來要講的事情就是,那怎麼訓練這個BERT呢?假設我們沒有label data,只有收集一大堆沒有做任何annotation的句子,那這個BERT這個network是怎麼被訓練出來的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:39.120" id=23:39.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1419">23:39.120</a></div>
+        <div class="t">好,那在文件上呢,BERT這個network它有兩個訓練的方法,那第一個訓練的方法是mask LN,mask LN的意思是說,我們現在要交給BERT的任務是,我們把所有的句子隨機有15%的詞彙會被置換成一個特殊的token,這個token叫做mask,也就是說你會蓋掉一個句子裡面15%的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:09.040" id=24:09.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1449">24:09.040</a></div>
+        <div class="t">然後BERT要做的事情就是,去猜測這些有蓋住的地方到底應該是哪一個詞彙,所以BERT在訓練的時候,你是叫它去做一個刻漏字的問題,你把input的句子裡面15%的地方挖空,要BERT把它填回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:27.520" id=24:27.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1467">24:27.520</a></div>
+        <div class="t">那BERT是怎麼填回來的呢?BERT填回來的方法是,假設現在在所有的句子裡面的第2個詞彙是挖空的,接下來我們把這些東西都通過BERT,每一個input的token都會得到一個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:43.680" id=24:43.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1483">24:43.680</a></div>
+        <div class="t">接下來,把挖空的地方的那個embedding丟到一個linear的multi-class的classifier裡面,反正就是把現在input是mask的部分,BERT抽出來的這個vector丟進去一個linear的classifier裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.000" id=25:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1505">25:05.000</a></div>
+        <div class="t">要求這個classifier預測說,現在被mask掉的那個詞彙是哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:14.200" id=25:14.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1514">25:14.200</a></div>
+        <div class="t">因為這個classifier是一個linear的classifier,所以它能力非常非常弱,所以今天如果要能夠成功預測出被mask掉的那個詞彙是哪一個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:26.760" id=25:26.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1526">25:26.760</a></div>
+        <div class="t">BERT這個model它可能很深,比如說有24層、有48層,BERT這個model它這邊一定要抽出一個非常好的representation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.480" id=25:37.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1537">25:37.480</a></div>
+        <div class="t">可以從這個representation輕易地知道說,現在被mask掉的這個詞彙是哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:44.520" id=25:44.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1544">25:44.520</a></div>
+        <div class="t">所以我們把這個representation丟到一個簡單的classifier裡面,就可以預測出被mask掉的詞彙是哪一個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.760" id=25:52.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1552">25:52.760</a></div>
+        <div class="t">好,那因為我們現在要BERT做的事情是預測被mask掉的詞彙,那你可以想見BERT到時候抽出來的representation會是什麼樣的representation呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:04.040" id=26:04.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1564">26:04.040</a></div>
+        <div class="t">BERT抽出來的embedding會是什麼樣的embedding呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:07.320" id=26:07.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1567">26:07.320</a></div>
+        <div class="t">因為如果兩個詞彙填在同一個地方沒有違和感,那它們就會有類似的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:14.840" id=26:14.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1574">26:14.840</a></div>
+        <div class="t">舉例來說,如果說潮水退了就知道誰沒穿褲子,跟潮水落了就知道誰沒穿褲子,那退了跟落了填在這個同樣的位置都沒有違和感的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:26.680" id=26:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1586">26:26.680</a></div>
+        <div class="t">那它們就會有比較類似的embedding,到時候BERT就會學會抽出來這樣的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:32.680" id=26:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1592">26:32.680</a></div>
+        <div class="t">同樣填在同一個地方沒有違和感,代表它們的語意可能是很類似的,BERT就會知道說它們應該要有類似的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:42.760" id=26:42.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1602">26:42.760</a></div>
+        <div class="t">那這個是勸BERT的第一種方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.000" id=26:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1607">26:47.000</a></div>
+        <div class="t">那第二種方法呢,是要BERT去做next sentence prediction,就給它兩個句子,然後BERT預測說這兩個句子是接在一起的還是不是接在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:01.720" id=27:01.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1621">27:01.720</a></div>
+        <div class="t">舉例來說,給BERT兩個句子,一個是醒醒吧,一個是你沒有妹妹,你都知道說這兩個句子應該是要被接在一起的,你希望BERT也可以準確的預測說這兩個句子應該要被接在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:15.800" id=27:15.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1635">27:15.800</a></div>
+        <div class="t">那這邊需要引入一個特別的token,特別的符號,這個符號代表兩個句子之間的boundary。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:23.880" id=27:23.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1643">27:23.880</a></div>
+        <div class="t">你在輸入給BERT兩個句子的時候,你會在中間加這個特別的符號,告訴BERT說兩個句子中間的交界在哪裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.920" id=27:32.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1652">27:32.920</a></div>
+        <div class="t">但是BERT怎麼預測這兩個句子是不是相接的呢?你還要再給它輸入一個特殊的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.920" id=27:42.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1662">27:42.920</a></div>
+        <div class="t">這個特殊的token,我們在文件上通常是放在句子的開頭,這個特殊的token代表說我們在這個位置要做classification,要做分類這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:55.000" id=27:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1675">27:55.000</a></div>
+        <div class="t">你用一個特殊的token代表要做分類這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:59.000" id=27:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1679">27:59.000</a></div>
+        <div class="t">然後從這個特殊的token輸入的位置,輸出來的這個embedded,你把它丟到一個linear的binary classifier裡面,要這個linear的binary classifier去output說現在輸的這兩個句子,它們是應該被接在一起的還是不應該被接在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:18.520" id=28:18.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1698">28:18.520</a></div>
+        <div class="t">那講到這邊可能有人會問說,為什麼是放在句子的開頭呢?為什麼不放在句子的結尾呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:27.560" id=28:27.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1707">28:27.560</a></div>
+        <div class="t">放在句子的結尾,讓Bird讀過整個句子,然後才決定說這兩個句子應不應該是被接在一起的,不是比較合理的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:39.160" id=28:39.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1719">28:39.160</a></div>
+        <div class="t">但是如果你仔細想想Bird的架構,如果今天Bird裡面放的是RN,那classify這個token放在句子的尾端比較合理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.440" id=28:48.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1728">28:48.440</a></div>
+        <div class="t">假設你是一個正向的RN,由左讀到右的RN,那它應該要把這兩個句子讀完以後,才有能力做分類這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:58.520" id=28:58.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1738">28:58.520</a></div>
+        <div class="t">但不要忘了,Bird的內部並不是RN,Bird的內部是一個transformer,是一個transformer的encoder,也就是它的內部是self-attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:11.160" id=29:11.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1751">29:11.160</a></div>
+        <div class="t">我們上週有講過self-attention有什麼特色,self-attention它的特色就是天涯若必離,兩個相鄰的word跟兩個距離很遠的word對它來說是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.880" id=29:21.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1761">29:21.880</a></div>
+        <div class="t">對self-attention來說,假設不考慮positional encoding所造成的影響的話,一個token放在句子的開頭、放在句子的結尾,對它來說是沒有差別的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.400" id=29:35.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1775">29:35.400</a></div>
+        <div class="t">所以今天我們把一個transformer的token,不管是放在句子的開頭還是放在句子的結尾,對Bird,也就是對self-attention來說,其實是沒有差別的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:45.080" id=29:45.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1785">29:45.080</a></div>
+        <div class="t">那我覺得放在其他的位置,放在句子的中間、放在句子的結尾,可能影響也是不大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.640" id=29:51.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1791">29:51.640</a></div>
+        <div class="t">好,那現在Bird要做的事情就是,給它兩個句子,然後它要output說這兩個句子到底應不應該被接在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:00.040" id=30:00.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1800">30:00.040</a></div>
+        <div class="t">那你在訓練的時候,你就是要訓練它說,因為你在訓練資料裡面有非常非常多的句子,那你在爬把那些句子爬下來的時候,你會知道說這兩個句子是不是相接的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:11.240" id=30:11.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1811">30:11.240</a></div>
+        <div class="t">所以你就可以訓練Bird,你就可以告訴它說,看到這兩個句子,你就要output yes,看到另外兩個句子,比如說醒醒把眼睛貼上的時候,它們是不該被接在一起的,那你就要被output no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.560" id=30:23.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1823">30:23.560</a></div>
+        <div class="t">然後今天這個linear classifier跟整個Bird的neural架構是一起被訓練的,那你希望說透過解這個預測另外一個sentence的這個任務,我們就可以把Bird的部分的參數把它學出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:39.000" id=30:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1839">30:39.000</a></div>
+        <div class="t">好,那現在有兩個方法,approach1跟approach2,那這兩個方法在文獻上是要同時使用的,當你同時使用mask跟predict下一個sentence,叫你叫Bird同時去解這兩個任務的時候,它會學得最好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:55.800" id=30:55.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1855">30:55.800</a></div>
+        <div class="t">接下來問題就是,好,怎麼用這個Bird呢?現在可以input一串character,我投影片上的例子是用word,實際上是character,那你知道我的意思就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:06.360" id=31:06.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1866">31:06.360</a></div>
+        <div class="t">現在可以input一串word sequence,每一個word都有一個contextualized word embedding,那怎麼用它呢?最簡單的做法是,把Bird當作一個抽feature的工具,就像Elmo一樣,它就拖一種新的embedding出來給你,你要這種新的embedding,可以去做你想做的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.280" id=31:28.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1888">31:28.280</a></div>
+        <div class="t">但是在Bird那篇paper裡面,它不是只有做這樣子的事情,它說它是把Bird的model跟接下來你要解的任務一起做訓練,那它裡面舉了四種不同的例子,說怎麼把它的Bird跟接下來的downstream的任務把它結合在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:49.720" id=31:49.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1909">31:49.720</a></div>
+        <div class="t">第一個例子是,假設你現在要解的任務是input一個sentence,output一個class,要怎麼做?好,什麼樣的任務?input一個sentence,output一個class呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.240" id=32:01.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1921">32:01.240</a></div>
+        <div class="t">舉例來說,在我們的作業裡面,在RM的那個作業裡面,不是要input一個句子,然後告訴我們說這個句子是正面的還是負面的,這就是一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:12.200" id=32:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1932">32:12.200</a></div>
+        <div class="t">或者是文章的分類,你想要把文章分成這是體育新聞、這是政治新聞、這是財經新聞等等,對,文章做分類,那也是input一個句子,output一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:23.560" id=32:23.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1943">32:23.560</a></div>
+        <div class="t">如果是這種input一個句子,output一個class的任務,怎麼使用Bird呢?你就把你現在要做分類的這個句子丟給Bird,但開頭的地方再加一個代表分類的符號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:37.960" id=32:37.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1957">32:37.960</a></div>
+        <div class="t">接下來,你把代表分類的符號這個位置所output的這個embedding丟給一個linear classifier,去預測說,去predict說,現在input的這個sentence,它的class是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:52.040" id=32:52.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1972">32:52.040</a></div>
+        <div class="t">如果用在你的作業裡面,那我想作業裡面大概沒有人用Bird吧?有人用Bird嗎?沒有,有人用Bird可以舉手一下嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:01.240" id=33:01.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1981">33:01.240</a></div>
+        <div class="t">Bird是有中文版的,所以要用你其實是可以用的。有用嗎?你有用是嗎?沒有用,好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:09.160" id=33:09.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=1989">33:09.160</a></div>
+        <div class="t">Final讓Bird這樣是不是,好啊。Bird是有中文版的,還是Bird是有中文版的?而且人家已經幫你訓練好,你其實只是把它載下來用而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:21.800" id=33:21.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2001">33:21.800</a></div>
+        <div class="t">好,所以如果在你的作業裡面就是input一個句子,把這個句子丟給那個Bird,然後它就算算算,裡面有很多層,裡面小的Bird有24層,大的Bird有48層這樣,算算算,很多層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:35.880" id=33:35.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2015">33:35.880</a></div>
+        <div class="t">然後在開頭的地方給它一個代表分類的符號,然後在同樣的位置output這個embedding,把它丟進一個linear classifier,然後output說這個句子是正面的還是負面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:47.560" id=33:47.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2027">33:47.560</a></div>
+        <div class="t">好,那今天實際上在train的時候,linear classifier的參數是隨機初始化的,所以linear classifier它是train from scratch,它是從頭開始訓練的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:58.200" id=33:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2038">33:58.200</a></div>
+        <div class="t">那Bird的部分你也可以跟著fine-tune,也就是說你把Bird的參數跟這個linear classifier的參數是一起學的,你告訴Bird加這個linear classifier說,input這個句子你要output正面,input另外一個句子你要output負面,然後讓linear classifier跟Bird一起去做學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.600" id=34:16.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2056">34:16.600</a></div>
+        <div class="t">linear classifier從頭學,Bird它只要微調就好,它只要微調它裡面的參數就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:23.360" id=34:23.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2063">34:23.360</a></div>
+        <div class="t">好,所以你可以想像說實際上就要從頭學的參數是非常少的,因為多數的參數在Bird裡面可能都已經學得很好了,這是第一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:31.960" id=34:31.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2071">34:31.960</a></div>
+        <div class="t">好,第二個例子是,假設我們今天要解的任務是input一個句子,然後這個input的句子裡面的每一個詞彙我們都要決定它屬於哪一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:42.120" id=34:42.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2082">34:42.120</a></div>
+        <div class="t">舉例來說,我們在講RNN的時候,我們有舉slot feeling這個test,slot feeling這個test就是我們case 2要解的任務之一。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:52.840" id=34:52.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2092">34:52.840</a></div>
+        <div class="t">好,那在slot feeling裡面呢,你就要input一個句子,那你的machine要決定說input的句子裡面的每一個詞彙它是屬於哪一個slot。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:03.240" id=35:03.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2103">35:03.240</a></div>
+        <div class="t">那每一個slot如果是一個class的話,那就是input的句子裡面每一個詞彙屬於哪一個class。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:10.680" id=35:10.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2110">35:10.680</a></div>
+        <div class="t">好,那如果是第二個case的話,用Bird要怎麼解呢?如果第二個case的話,就是你現在input一個句子,每個句子現在都會output一個embedding出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.840" id=35:22.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2122">35:22.840</a></div>
+        <div class="t">你input一個句子,現在每個詞彙都會output一個embedding出來,把每一個embedding都丟到linear classifier裡面,讓這個linear classifier去決定說這個embedding應該屬於哪一個class,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:40.040" id=35:40.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2140">35:40.040</a></div>
+        <div class="t">train的時候,也是end-to-end的train,你告訴Bird說你的input要什麼,比如說你的input要是arrived Taipei on November 2nd,那你的output要什麼,你的output是第一個word要分類成other,第二個word要分類成destination,第三個也是other,第四個是time等等,然後把linear classifier跟Bird end-to-end一起去做學習,Bird只要find two,linear classifier要從頭開始學,這是Bird的第二個應用的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:07.560" id=36:07.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2167">36:07.560</a></div>
+        <div class="t">好,第三個case是說,假設我們現在要解的任務是input兩個句子,output是一個class,那什麼時候我們要input兩個句子,output一個class呢?比如說有一種任務叫做natural language inference,natural language inference要機器學會推論這句話,你給機器一個前提,再給它一個假設,然後問它說,根據這個前提,這個假設到底是對還是錯?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:36.680" id=36:36.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2196">36:36.680</a></div>
+        <div class="t">還是不知道?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:38.680" id=36:38.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2198">36:38.680</a></div>
+        <div class="t">好,那怎麼解這種natural language inference的問題呢?那你就是給你的model兩個句子,那你的model的output就是,現在這兩個句子是根據這個前提,這個假設它是對的還是錯的還是無法判斷,那它其實是一個只有三個類別的分類問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:00.680" id=37:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2220">37:00.680</a></div>
+        <div class="t">那如果你要用Bird來解這種natural language inference的問題的話,你就把第一個句子丟給Bird,然後再給它一個句子之間的這個分格的符號,再把第二個句子也丟給Bird。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:14.920" id=37:14.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2234">37:14.920</a></div>
+        <div class="t">然後接下來在開頭的地方,你放一個代表分類的符號,然後在開頭的地方所輸出的這個embedding,那就拿它去做分類,把這個embedding丟到linear classifier裡面,然後讓它決定說,現在應該是true或false或者是unknown。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:30.920" id=37:30.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2250">37:30.920</a></div>
+        <div class="t">第四個例子是要拿Bird解question answering的問題,而且是某一種叫做extraction based question answering的問題。extraction based question answering是什麼呢?extraction based question answering就是說,給你的model讀一篇文章,然後問他一個問題,希望他可以正確的得到答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:54.920" id=37:54.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2274">37:54.920</a></div>
+        <div class="t">但是我們這邊放了一個水,就是說今天這個答案一定有出現在文章裡面。比如說第一題的答案是privacy,那你一定在文章裡面找得到privacy這個詞彙。最後一題的答案是within the cloud,那你一定在文章裡面可以找得到within the cloud這個詞彙。這種QA的任務叫做extraction based的QA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:21.160" id=38:21.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2301">38:21.160</a></div>
+        <div class="t">怎麼解這種extraction based QA的問題呢?你給他文章,你給他問題,文章跟問題都是用一個token的sequence來表示,假設現在這個文章D有n個token,文章Q有n個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:39.160" id=38:39.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2319">38:39.160</a></div>
+        <div class="t">那你有一個QA的model,這個QA的model就是吃一篇文章,吃一個問題,接下來他output兩個整數。那這邊用S1來分別代表這兩個整數。這兩個整數是什麼意思呢?這兩個整數的意思是說,現在你的答案落在文章裡面的第S個token到第E個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:04.920" id=39:04.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2344">39:04.920</a></div>
+        <div class="t">也就是說,你的答案就是文章裡面的第S一直到第E這一串token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:12.200" id=39:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2352">39:12.200</a></div>
+        <div class="t">好,如果這邊你沒有聽得很懂的話,我們來舉一個具體的例子。在這篇文章裡面,gravity這個詞彙是p17個word,所以今天假設你問machine這個問題,他要怎麼輸出gravity這個答案呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:28.280" id=39:28.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2368">39:28.280</a></div>
+        <div class="t">如果他輸出S等於17,E等於17,那他輸出的答案就是gravity。或者再舉一個例子,這邊within the cloud是,假設是第77到第79個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:41.560" id=39:41.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2381">39:41.560</a></div>
+        <div class="t">好,那問這個問題,機器要怎麼輸出within the cloud呢?如果他今天輸出S等於77,E等於79,他就會輸出正確答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:54.280" id=39:54.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2394">39:54.280</a></div>
+        <div class="t">好,那怎麼用press來解剛才的問題呢?怎麼用press來input問題跟文章,然後output兩個integer代表你的答案在文章裡面出現的位置呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:07.320" id=40:07.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2407">40:07.320</a></div>
+        <div class="t">好,你就把問題輸進去,然後給一個分隔的符號,然後再把文章輸進去。那現在文章裡面的每一個詞彙都會有一個integer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:19.640" id=40:19.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2419">40:19.640</a></div>
+        <div class="t">接下來,你讓machine去learn另外兩個vector,一個紅色的vector,一個藍色的vector。這兩個vector的dimension跟這些黃色的vector的dimension是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:32.840" id=40:32.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2432">40:32.840</a></div>
+        <div class="t">好,那這個紅色的vector拿去跟這邊文章裡面的每一個詞彙的黃色的vector做搭發打,就是做類似attention這樣的動作,做搭發打。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:44.600" id=40:44.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2444">40:44.600</a></div>
+        <div class="t">所以文章裡面的每一個詞彙都跟紅色的vector搭發打以後,都會算出一個scalar,把這個scalar通過softmax,有點像是分類的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:56.360" id=40:56.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2456">40:56.360</a></div>
+        <div class="t">現在每一個文章裡面的詞彙都會得到一個分數,接下來看哪一個詞彙得到的分數最高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:05.080" id=41:05.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2465">41:05.080</a></div>
+        <div class="t">舉例來說,在這個例子裡面,文章裡面第二個詞彙得到的分數是最高的,那我們就說s等於2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:14.760" id=41:14.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2474">41:14.760</a></div>
+        <div class="t">所以紅色的這個vector決定了s等於多少,接下來想必藍色的vector就是決定1等於多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:23.640" id=41:23.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2483">41:23.640</a></div>
+        <div class="t">你把藍色的vector去跟每一個文章裡面的黃色的vector做搭發打,算出一個分數,再通過softmax,然後看看誰算出來的分數最高。現在第三個詞彙算出來的分數最高,那1就等於3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:39.080" id=41:39.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2499">41:39.080</a></div>
+        <div class="t">s等於2,1等於3,那答案就是文章的第二個word跟第三個word,也就是d2d3,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:45.880" id=41:45.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2505">41:45.880</a></div>
+        <div class="t">那這邊有幾個問題,第一個問題是有人會問說,假設現在s跟1矛盾了怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:55.480" id=41:55.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2515">41:55.480</a></div>
+        <div class="t">就如果現在s等於2,1等於3,所以輸出第二個跟第三個詞彙當作答案,如果s等於3,1等於2,這不是沒有答案了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:05.320" id=42:05.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2525">42:05.320</a></div>
+        <div class="t">對,就是沒有答案,這個時候你的model就output此題無解。在SQUAD 2.0裡面,有一些問題是沒有答案的,你要回答此題無解才是對的,給一個答案反而是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:17.560" id=42:17.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2537">42:17.560</a></div>
+        <div class="t">所以如果今天output的是矛盾的case,就是1落在s的前面,你的model答案就是此題無解,而且搞不好是對的,因為那一題搞不好根本就是沒有答案,而你的model知道這件事,所以他output一個自相矛盾的結果,告訴你說他無法回答這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:35.240" id=42:35.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2555">42:35.240</a></div>
+        <div class="t">那在這邊呢,這個紅色的vector跟藍色的vector是學出來的,在訓練的時候,你就是要給機器很多訓練資料,你要給他很多問題、文章跟答案是落在文章的第幾個詞彙到第幾個詞彙,然後給機器去學,然後希望他看到新的文章、新的問題,就可以告訴你說答案落在文章裡面的第幾個詞彙到第幾個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:58.280" id=42:58.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2578">42:58.280</a></div>
+        <div class="t">實際上訓練的時候,bird只要find you就好,然後這兩個vector是從render從頭開始學出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:05.560" id=43:05.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2585">43:05.560</a></div>
+        <div class="t">好,那這個就是bird的四種用法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:09.560" id=43:09.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2589">43:09.560</a></div>
+        <div class="t">那在bird就是到處圖榜,你會發現說每一個NLP的任務都有人用bird幫你洗過了這樣子,如果現在網路上有一個leaderboard的話,比如網路上有排行榜,像咖啡那種排行榜的話,前幾名大概都是用bird做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:28.120" id=43:28.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2608">43:28.120</a></div>
+        <div class="t">好,這個是SQUAD2.0,就我們剛才講的QA的任務,SQUAD2.0,你會發現說第一名是用bird做的,第二名也是用bird做的,第三名也是用bird做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:39.880" id=43:39.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2619">43:39.880</a></div>
+        <div class="t">好,那後來還有一個東西叫做Ernie,Ernie是enhanced representation through knowledge integration,然後他根本就不應該被縮寫成Ernie,縮寫成Ernie真的是非常的牽強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:51.800" id=43:51.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2631">43:51.800</a></div>
+        <div class="t">因為Ernie也是一個芝麻街的人物,為了硬湊可能所以把他,Ernie是bird的好朋友這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:00.600" id=44:00.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2640">44:00.600</a></div>
+        <div class="t">好,反正就是這樣,Ernie是bird的朋友,所以這邊有一個model就硬湊說他的名字就叫做Ernie,那他是特別為了中文而設計的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:12.280" id=44:12.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2652">44:12.280</a></div>
+        <div class="t">那簡單來講,他的概念就是說,現在做bird的時候不是要做mask lm嗎?那實際上bird的input是用中文的字為單位,那如果你隨機蓋掉一些字,那這些被蓋掉的地方其實非常容易被拆出來啊,所以怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:29.240" id=44:29.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2669">44:29.240</a></div>
+        <div class="t">一次要蓋一個詞彙比較合理吧?所以就有了Ernie這個想法,那細節大家再看一下文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:36.440" id=44:36.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2676">44:36.440</a></div>
+        <div class="t">好,那也可以分析一下說,bird究竟他每一層學到了什麼呢?舉例來說,bird有24層,那每一層做了什麼樣的事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:50.040" id=44:50.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2690">44:50.040</a></div>
+        <div class="t">那你可以在文件上找到一些跟bird有關的分析,那我這邊就列了兩個reference給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:58.040" id=44:58.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2698">44:58.040</a></div>
+        <div class="t">就是bird的這麼多layer的每一層,他做的事情就像是一個NLP的pipeline,就是一般在做這個NLP的任務的時候,你可以想像說我們最初階的任務是決定每一個詞彙的詞性,接下來我們會決定這整個句子的文法剖析術是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:17.480" id=45:17.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2717">45:17.480</a></div>
+        <div class="t">然後再接下來,你知道這整個句子的文法長什麼樣子以後,你可以做co-reference,也就是找出每一個代名詞它實際上指涉的名詞是什麼,或做semantic role labeling,或者是做relation detection,知道詞彙跟詞彙之間有什麼關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:35.000" id=45:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2735">45:35.000</a></div>
+        <div class="t">所以這中間,NLP的任務中間是一個階層式的關係,從比較簡單的,只跟文法有關的,到比較複雜的,跟語意有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:43.720" id=45:43.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2743">45:43.720</a></div>
+        <div class="t">BERT的每一層比較接近input的層,它可能就是做比較跟文法有關的任務,而比較接近輸出的層就是做比較困難的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:55.120" id=45:55.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2755">45:55.120</a></div>
+        <div class="t">這件事情在實驗上可以得到一些佐證。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:58.640" id=45:58.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2758">45:58.640</a></div>
+        <div class="t">舉例來說,這篇paper裡面做的事情是說,它把BERT每一個layer抽出來的contextualized feature,抽出來把它加起來,就跟Elmo做的事情一樣。我剛才不是講說Elmo會把每一層的embedding抽出來,然後做weighted sum,然後weight是跟著任務一起學出來的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:17.720" id=46:17.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2777">46:17.720</a></div>
+        <div class="t">這邊做的事情是一樣的,BERT有24層,所以每一個實惠可以抽出24個vector,把這24個vector做weighted sum,然後那個weight是根據任務認出來的,那看那個任務認出來的weight怎麼樣,我們就可以知道那個任務特別需要BERT的哪些層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:34.520" id=46:34.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2794">46:34.520</a></div>
+        <div class="t">那些weight就是這個圖上的深藍色的方塊,方塊越長就代表說那一層的embedding,它層上的weight越大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:46.600" id=46:46.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2806">46:46.600</a></div>
+        <div class="t">那每一個row代表了一個NLP裡面的任務,那如果那個NLP的任務的某一層的值越大,就代表說現在在解那個NLP的任務的時候,越需要BERT的某一層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:01.320" id=47:01.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2821">47:01.320</a></div>
+        <div class="t">舉例來說,今天如果你要解POS tagging這個任務,POS tagging任務是什麼?它是磁性標記,就是你機器要告訴你說每一個實惠,它是什麼磁性,比如某個實惠是名詞,某個實惠是動詞等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:13.720" id=47:13.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2833">47:13.720</a></div>
+        <div class="t">如果是磁性標記這個任務裡面,大概你最需要的是BERT的第十一層到第十三層這個地方,你把第十一層到第十三層這個地方的weight embedding抽出來,做weighty sum,那解POS tagging這個任務是特別合適的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:32.920" id=47:32.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2852">47:32.920</a></div>
+        <div class="t">如果你要解的是更複雜的任務,比如說coreference這個任務的話,那你會發現說你最需要的是BERT的,舉例來說,第十七層到第十九層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:43.880" id=47:43.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2863">47:43.880</a></div>
+        <div class="t">所以這邊就可以發現說,如果你要解的是比如說POS tagging,或者是這邊的第二個任務跟第三個任務都是跟文法剖析有關的,你要叫機器標詞性,你要叫它幫你做文法剖析,那也許BERT的前面幾層是比較適合的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:59.080" id=47:59.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2879">47:59.080</a></div>
+        <div class="t">如果你要解的任務是更困難的,比如說coreference,比如說semantic role labeling,比如說relation extraction,那你通常會需要的是比較後面的、比較深的、比較多層的BERT所抽出來的latent representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:16.360" id=48:16.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2896">48:16.360</a></div>
+        <div class="t">BERT也有multilingual的版本。有一個BERT,它用一百零四種語言去進行了訓練,就是Google從維基百科上爬了一百零四種語言的維基百科,然後統統丟給同一個BERT去訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:34.160" id=48:34.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2914">48:34.160</a></div>
+        <div class="t">它在看過了多種語言以後,雖然它沒有看過這些語言之間的翻譯,但它在讀過一百零四種語言的文章以後,它似乎自動學到了不同語言間的對應關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:49.100" id=48:49.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2929">48:49.100</a></div>
+        <div class="t">你可以看一下右上角這篇文章,所以這個神奇的BERT它可以做到說,如果你今天要叫這個BERT去做文章的分類,你只需要給它英文的文章,讓它去學做文章的分類,它自動可以學會做中文文章的分類,就是這麼神奇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:09.000" id=49:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2949">49:09.000</a></div>
+        <div class="t">它可以做到zero-shot的能力,它看過中文,但從來沒有人教它中文文章要怎麼分類,但它只有人教它英文文章要怎麼分類,不知道怎麼回事,它自動就學會中文文章的分類。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:23.380" id=49:23.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2963">49:23.380</a></div>
+        <div class="t">好,那接下來我們要講另外一個model,這個model叫做Generative Retraining,叫做GPT。GPT是什麼呢?它其實就是一個塑打不同的language model,它有多巨大呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:39.460" id=49:39.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2979">49:39.460</a></div>
+        <div class="t">這是ELMO,ELMO有94M的參數,但是它只有這麼小而已。這個是BERT,它有340M的參數,BERT大概是ELMO的三倍到四倍高,所以我把BERT畫高一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:59.280" id=49:59.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=2999">49:59.280</a></div>
+        <div class="t">這個是GPT,它有1542M的參數,可能是至今有史以來最大的language model。它的賣點是什麼?它的賣點就是巨大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:10.660" id=50:10.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3010">50:10.660</a></div>
+        <div class="t">然後GPT它其實有兩個版本,一個是本來的GPT,那就沒有很引人注目,因為它沒有很大,然後GPTQ就非常非常大。但是這邊的問題就是,它不是芝麻街的人物,所以它就沒有形象。那等一下會跟你解釋說為什麼它是一隻獨角獸。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:32.900" id=50:32.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3032">50:32.900</a></div>
+        <div class="t">那GPT是什麼呢?GPT其實就是transformer的decoder,我們剛剛講說BERT是transformer的encoder,GPT其實是transformer的decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:46.960" id=50:46.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3046">50:46.960</a></div>
+        <div class="t">那這個transformer的decoder它是怎麼運作的呢?我們就再跟大家很簡要的解釋一下這個transformer的decoder,這個GPT是怎麼運作的。那GPT要做的事情跟一般的language model一樣,你給它一些詞彙,它要解的任務是預測接下來應該要放哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:08.980" id=51:08.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3068">51:08.980</a></div>
+        <div class="t">舉例來說,你給它begin of sentence這個token,再跟它輸入潮水這個詞彙,希望它可以output退了這個詞彙。那它怎麼output退了這個詞彙呢?它一樣會做self-attention,就把潮水input進去,一樣產生query,key跟value,你把潮水的key拿出來做self-attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:32.960" id=51:32.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3092">51:32.960</a></div>
+        <div class="t">要跟之前已經輸入過的詞彙begin of sentence這個token的key算一個attention,也要跟自己算一個attention。然後接下來把算出來的attention跟v1還有v2做weighted sum得到v2,然後這個self-attention有很多層,這個有很多層,然後通過很多層以後最後要預測退了這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:56.900" id=51:56.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3116">51:56.900</a></div>
+        <div class="t">預測出退了這個詞彙以後,就把退了拿下來,然後再問說在退了之後應該要接哪一個詞彙。那把退了這個詞彙一樣讓它輸出q跟k跟b,而你把退了的q去跟已經產生出來的詞彙,包括自己去做self-attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:17.860" id=52:17.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3137">52:17.860</a></div>
+        <div class="t">所以你把q3跟begin of sentence的k1去算attention,你把q3跟潮水的k2去算attention,你把q3跟k3自己跟自己去做attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:31.720" id=52:31.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3151">52:31.720</a></div>
+        <div class="t">然後算出attention以後,再跟每一個已經產生出來的詞彙的v去做weighted sum,去做weighted sum,去做weighted sum,然後就得到一個embedded,然後把這個embedded再通過很多層,最後你要預測舊這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:48.620" id=52:48.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3168">52:48.620</a></div>
+        <div class="t">那這個process就反覆繼續下去,你有了舊這個詞彙以後,你要輸出舊的query跟key跟value,一樣跟之前已經輸出的東西要算做self-attention,然後再預測舊後面應該要接哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:03.040" id=53:03.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3183">53:03.040</a></div>
+        <div class="t">這個就是GPT跟GPT-2,它們做的事情一樣就是訓練一個language model,只是這個language model非常的巨大,然後它的neural架構是conformer的decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:19.520" id=53:19.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3199">53:19.520</a></div>
+        <div class="t">因為GPT-2它非常的巨大,所以它就展現了種種的神蹟,在我看來,GPT-2它做到了很多神奇的事情。舉例來說,它可以在完全沒有訓練資料的情況下,就自動做到reading comprehension, summarization跟translation,它可以做到zero-shot learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:45.740" id=53:45.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3225">53:45.740</a></div>
+        <div class="t">一般我們要叫機器做這些任務,你需要有一些訓練資料。像我們剛才在講BERT的時候,我們說BERT也可以做reading comprehension,這邊reading comprehension就是指的,就是我們剛才講的QA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:58.380" id=53:58.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3238">53:58.380</a></div>
+        <div class="t">BERT也可以做reading comprehension,但是你需要給它一些訓練資料。而GPT-2嘗試在完全沒有跟QA有關的訓練資料的情況下,就嘗試去硬做reading comprehension。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:13.760" id=54:13.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3253">54:13.760</a></div>
+        <div class="t">怎麼做呢?你直接給GPT-2一篇文章,再給它一個問題,接下來你輸入A冒號,它就會自己吐出答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:27.460" id=54:27.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3267">54:27.460</a></div>
+        <div class="t">摘要也是,給GPT-2一篇文章,接下來你輸入一個特殊的符號,你輸入TLDR,就too long don't read的縮寫,接下來GPT-2自動就寫出前面這篇文章的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:46.840" id=54:46.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3286">54:46.840</a></div>
+        <div class="t">或者是有一個讓我覺得最匪夷所思的是,它居然還可以做翻譯,你就輸入給它很多英文的句子,然後跟它說,你輸入給它一個英文的句子,然後再給它一個等號,後面接法文的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:01.300" id=55:01.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3301">55:01.300</a></div>
+        <div class="t">再輸入另外一個英文的句子,再給它一個等號,後面接法文的句子,再給它一個英文的句子,再後面再輸入等號,接下來它就會輸出這個第三個英文句子的法文翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:14.240" id=55:14.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3314">55:14.240</a></div>
+        <div class="t">好,那GPT-2它做得怎麼樣呢?那GPT-2它做得怎麼樣呢?在Reading Comprehension的結果,我覺得是蠻驚人的,在QA上,這個是GPT-2可以達成的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:30.200" id=55:30.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3330">55:30.200</a></div>
+        <div class="t">縱軸是F1 score,這個分數越高代表這個正確率越高,橫軸是GPT-2所使用的參數,那最大的那個model有1500個million,最大的那個model它的performance居然跟Dr.QA可以相提並論。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:49.600" id=55:49.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3349">55:49.600</a></div>
+        <div class="t">不要忘了,GPT-2是zero-shot learning,從來沒有人教它任何跟Reading Comprehension有關的事,它自動在看到A冒號以後就可以輸出答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:01.100" id=56:01.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3361">56:01.100</a></div>
+        <div class="t">那可能在訓練資料裡面,這個GPT-2是用40Giga的文章所訓練出來的,那可能在這些文章裡面,常常出現A冒號,後面就接問題的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:15.180" id=56:15.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3375">56:15.180</a></div>
+        <div class="t">那GPT-2它自動學到說讀一篇文章讀一個問題看到A冒號,接下來就輸出問題的答案,這是Reading Comprehension的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:24.700" id=56:24.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3384">56:24.700</a></div>
+        <div class="t">不過GPT-2在summarization跟translation上的結果很差,在summarization上的結果大概跟random差不多,所以還好它其實還沒有那麼神奇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:37.380" id=56:37.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3397">56:37.380</a></div>
+        <div class="t">有人分析了一下GPT-2的attention做的事情是什麼,那你可以看一下相關的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:44.840" id=56:44.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3404">56:44.840</a></div>
+        <div class="t">舉例來說,在GPT-2裡面,左邊是下一層的結果,這個是前一層要被attention的對象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:53.160" id=56:53.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3413">56:53.160</a></div>
+        <div class="t">比如說他要輸出,他在she這個位置,他會attent到nurse,在he這個位置,他會attent到the doctor,所以性別的bias讓他覺得說某些職位就跟某些性別是有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:08.300" id=57:08.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3428">57:08.300</a></div>
+        <div class="t">那這個是,如果你做visualization的話,你就可以對你的model做一些分析。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:13.920" id=57:13.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3433">57:13.920</a></div>
+        <div class="t">左邊是對不同層的不同的head做一下分析,這邊是從第0層到第5層,這邊是從第1個head到第6個head。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:27.300" id=57:27.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3447">57:27.300</a></div>
+        <div class="t">那你分析以後就會發現一個非常神奇的現象,就是很多詞彙他不知道怎麼回事,他都要attent到第一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:37.560" id=57:37.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3457">57:37.560</a></div>
+        <div class="t">你有沒有發現說,這邊很多不同的詞彙,他們都要看第1個詞彙,很多不同的詞彙都要看第1個詞彙,很多不同的詞彙都要看第1個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:45.300" id=57:45.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3465">57:45.300</a></div>
+        <div class="t">第1個詞彙有什麼特別的地方呢?可能沒有什麼特別的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:49.920" id=57:49.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3469">57:49.920</a></div>
+        <div class="t">所以一個可能就是,當今天不知道要attent到什麼地方的時候,就今天我們不需要做attention這件事情的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:58.200" id=57:58.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3478">57:58.200</a></div>
+        <div class="t">因為我自己學到說不知道要attent在哪裡,我不需要做attention的時候,就attent在第1個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:05.040" id=58:05.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3485">58:05.040</a></div>
+        <div class="t">所以這告訴我們說,也許未來在做這種model的時候,我們可以在句子裡面再加一個特別的token,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:11.500" id=58:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3491">58:11.500</a></div>
+        <div class="t">這個特別的token叫做,你不知道attent在哪裡,就attent到這裡的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:16.280" id=58:16.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3496">58:16.280</a></div>
+        <div class="t">然後Machine就會知道說,今天不知道attent在哪裡的時候,就attent到那個特別的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:21.400" id=58:21.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3501">58:21.400</a></div>
+        <div class="t">那這個是Visualization可以告訴我們的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:26.200" id=58:26.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3506">58:26.200</a></div>
+        <div class="t">那這個GPT-2它真正展現龐大力量的是,它可以自己做寫作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:32.680" id=58:32.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3512">58:32.680</a></div>
+        <div class="t">我剛才說它是一個language model,它可以predict下一個詞彙,所以你可以給它幾個詞彙以後,它就自己幫你把整篇文章完成。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:41.480" id=58:41.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3521">58:41.480</a></div>
+        <div class="t">那以下這一則的例子是來自於,這個GPT-2是OpenAI做的,以下這個例子是來自於OpenAI的Blog。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:50.160" id=58:50.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3530">58:50.160</a></div>
+        <div class="t">它們就給GPT-2一篇文章的前半段,這篇文章是跟獨角獸有關係的,它就是說,"In a shocking finding, scientists discovered a herd of unicorns living in a remote, previously unexplored valley in the Andes Mountains."</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:14.400" id=59:14.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3554">59:14.400</a></div>
+        <div class="t">然後接下來,Machine就自己把這篇新聞完成,它就開始幻想,"The scientists named the population after their distinctive horn, Obelisk Unicorn."</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:28.240" id=59:28.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3568">59:28.240</a></div>
+        <div class="t">它們是有名字的,叫做Obelisk Unicorn。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:30.920" id=59:30.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3570">59:30.920</a></div>
+        <div class="t">This four-horned, silver-white unicorn were previously unknown to science,然後就自己寫完整篇文章。所以為什麼講到GPT-2的時候,它的形象就是一堆獨角獸在遙遠的Andes山上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:45.000" id=59:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3585">59:45.000</a></div>
+        <div class="t">其實後來OpenAI它們沒有release最大的GPT-2的model,它們沒有release有1500個million參數的那個GPT-2 model,它們的理由是因為它們覺得這個model的力量太過強大,它沒有辦法控制,它會拿來產生很多假新聞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:03.400" id=01:00:03.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3603">01:00:03.400</a></div>
+        <div class="t">所以它們居然沒有release那個model,它們只release了一個比較小的版本,而那個比較小的版本是有人拿那個比較小的版本做了一個demo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:17.920" id=01:00:17.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3617">01:00:17.920</a></div>
+        <div class="t">這邊有一個Transformer的demo網頁,那這個demo網頁是一個叫Adam King的人做的,那他應該不是OpenAI的成員,所以他用的並不是最大的那個GPT-2,他用的是public available的GPT-2,那這個GPT-2的大小大概跟Bert差不多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:38.320" id=01:00:38.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3638">01:00:38.320</a></div>
+        <div class="t">好,那你就輸入一個句子,它就會把那個句子完成,我們剛才不是說GPT-2可以做到zero-shot的reading comprehension嗎?那我們現在就來試試它的能力,舉例來說,我們問它What is machine learning?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:56.040" id=01:00:56.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3656">01:00:56.040</a></div>
+        <div class="t">好,那加個A貌號,它就會告訴我們什麼是machine learning。好,什麼是machine learning呢?Machine learning refers to a technique aimed at detecting patterns in data where a person does not actually have any information needed to make those inferences.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:12.440" id=01:01:12.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3672">01:01:12.440</a></div>
+        <div class="t">A computer learns how to learn by performing this technique. Examples of machine learning techniques are classification and signal-to-noise ratio analysis, 等等。雖然講得很奇怪,怎麼突然講到SNR,但至少它是還是蠻像個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:29.080" id=01:01:29.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3689">01:01:29.080</a></div>
+        <div class="t">不過我們這個machine learning,應該是在這個GPT-2看過的data裡面,我們故意問它一些奇奇怪怪的東西,看它會怎麼回答。舉例來說,我們問它什麼是lualu learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:42.520" id=01:01:42.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3702">01:01:42.520</a></div>
+        <div class="t">它說,What is lualu learning? Lualu is simply a name of the most popular means on the internet, based on the name of the site it originated from. 不知道在說些什麼,不過看起來還蠻像個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:03.000" id=01:02:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3723">01:02:03.000</a></div>
+        <div class="t">那這個GPT-2它甚至可以寫個劇本。舉例來說,今天June碰到Mary,June說Hello,然後Mary說Good morning,然後June就告白這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:28.840" id=01:02:28.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3748">01:02:28.840</a></div>
+        <div class="t">然後Mary就說你是個好人。好,那我們就讓GPT-2幫我們把這個故事完成。接下來June會說什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:45.960" id=01:02:45.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3765">01:02:45.960</a></div>
+        <div class="t">Oh,她就說Goodbye這樣子。好,我這個故事太短了,重新再產生一個。Oh, Mary, you are wonderful, even though they are both crazy about each other. I'm really sorry. Mary, I'm sorry you love her so much, but she's always doing something.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:08.680" id=01:03:08.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3788">01:03:08.680</a></div>
+        <div class="t">它就可以自動幫你寫一個劇本。好,那如果你想要有比較多人的對話的話,你就把這邊的句子弄少一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:24.760" id=01:03:24.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3804">01:03:24.760</a></div>
+        <div class="t">那這邊就會出現Johnny。其實它也會寫程式啦,所以我們可以這樣子import numpy snp import tensorflowstf。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:47.960" id=01:03:47.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3827">01:03:47.960</a></div>
+        <div class="t">好,來寫個程式。它現在是在寫Python的程式。其實它也會寫C語言啦,我們就include stdio.h。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:11.480" id=01:04:11.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3851">01:04:11.480</a></div>
+        <div class="t">好,然後我們要intmat。好,那會不會幫我們把argc argv寫出來呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:23.480" id=01:04:23.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=UYPa347-DdE&t=3863">01:04:23.480</a></div>
+        <div class="t">argc argv,你看它就寫了另外一種程式語言。</div>
+    </div>
+    
+</body>
+</html>   

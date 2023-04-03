@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>GAN Lecture 9 (2018): Sequence Generation</h2><a href=https://www.youtube.com/watch?v=Xb1x4ZgV6iM><img src=https://i.ytimg.com/vi_webp/Xb1x4ZgV6iM/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=0">00:00.000</a></div>
+        <div class="t">整理&字幕由Amara.org社區提供</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=30">00:30.000</a></div>
+        <div class="t">這個投影片,我是今天中午的時候放到課程網頁上,所以如果你還沒有載的話,你可以趕快找一下。我們今天要講的是用GEN來improve sequence generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:43.000" id=00:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=43">00:43.000</a></div>
+        <div class="t">那sequence generation的task,它有非常多的應用。那我們先講一下怎麼用GEN來improve conditional sequence generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:56.000" id=00:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=56">00:56.000</a></div>
+        <div class="t">接下來我們會講說,今天假設有了GEN的技術以後,其實我們可以做到unsupervised conditional generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05.000" id=01:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=65">01:05.000</a></div>
+        <div class="t">我們上次有講過,如果有unsupervised conditional generation的話,你可以做比如說image的style transfer,把image在不同風格間做轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14.000" id=01:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=74">01:14.000</a></div>
+        <div class="t">或者是做voice的style transfer,也就是speaker的conversion,把A的聲音轉成B的聲音等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21.000" id=01:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=81">01:21.000</a></div>
+        <div class="t">今天我們要講說有了GEN的技術以後,我們不只可以用GEN來improve conditional sequence generation,我們還可以做到unsupervised conditional generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.000" id=01:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=94">01:34.000</a></div>
+        <div class="t">那我們先講一下conditional sequence generation指的是什麼?其實只要是要產生一個sequence的task,都是conditional sequence generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:45.000" id=01:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=105">01:45.000</a></div>
+        <div class="t">舉例來說,語音辨識可以看作是一個conditional sequence generation的task,你需要的是一個generator,input是聲音訊號,output就是語音辨識的結果,就是這段聲音訊號所對應到的文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.000" id=01:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=119">01:59.000</a></div>
+        <div class="t">或者說假設你要做翻譯,你要做translation的話,那你的input假設你要中翻音,你的input是中文,那你的output就是翻譯過的結果,是一串word sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.000" id=02:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=131">02:11.000</a></div>
+        <div class="t">或者是說我們在作業2裡面有做一個checkbox,那其實checkbox也是一個conditional sequence generation的task,它的input是一個句子,它的output是另外一個sequence,是另外一個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:24.000" id=02:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=144">02:24.000</a></div>
+        <div class="t">其實你可以用今天我們在這一堂課學到的技術來improve你在作業2的時候所學出來的checkbox。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.000" id=02:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=152">02:32.000</a></div>
+        <div class="t">我們之前有講過說,其實這些task,語音辨識、翻譯或checkbox,你是怎麼解它的呢?你都是用sequence-to-sequence的model來解它的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:43.000" id=02:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=163">02:43.000</a></div>
+        <div class="t">所以實際上,這邊這個圖上所畫的這些generator,它們都是sequence-to-sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:50.000" id=02:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=170">02:50.000</a></div>
+        <div class="t">只是我們原來在train sequence-to-sequence model的時候,我沒有講過說怎麼train的,大家在作業2都train了sequence-to-sequence model,所以你都知道怎麼train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=179">02:59.000</a></div>
+        <div class="t">今天要講的是用一個不一樣的方法,用Gantt的技術來train一個sequence-to-sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:07.000" id=03:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=187">03:07.000</a></div>
+        <div class="t">為什麼我們會要用到Gantt的技術或其他的技術來train sequence-to-sequence model呢?我們先來看看在作業2裡面,我們train sequence-to-sequence model的方法有什麼不足的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.000" id=03:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=200">03:20.000</a></div>
+        <div class="t">我們都知道在作業2之二裡面,我們就train了一個checkbox,一個checkbox是一個sequence-to-sequence的model,它裡面有一個encoder,有一個decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.000" id=03:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=210">03:30.000</a></div>
+        <div class="t">在這邊,這個sequence-to-sequence的model就是我們的generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:35.000" id=03:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=215">03:35.000</a></div>
+        <div class="t">這個encoder會吃一個input的句子,這邊用C來表示,讓它會output另外一個句子,encoder吃一個句子C,decoder會output一個句子X。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.000" id=03:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=227">03:47.000</a></div>
+        <div class="t">要train這樣子的checkbox,你需要收集一些training data,所謂的training data就是人的對話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:54.000" id=03:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=234">03:54.000</a></div>
+        <div class="t">所以你今天告訴checkbox說,在這個training data裡面,A說how are you的時候,B的回應是ungood。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.000" id=04:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=241">04:01.000</a></div>
+        <div class="t">所以checkbox必須學到說,當input的句子是how are you的時候,它output這個ungood的likelihood應該越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:11.000" id=04:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=251">04:11.000</a></div>
+        <div class="t">假設你不知道maximum likelihood是什麼的話,這邊的意思就是說,今天假設正確答案是ungood,那你在用decoder產生句子的時候,第一個time set產生un,假設un算是一個word,產生un的機率要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:25.000" id=04:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=265">04:25.000</a></div>
+        <div class="t">那在第二個time set產生good的機率要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:29.000" id=04:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=269">04:29.000</a></div>
+        <div class="t">那這麼做顯然有一個非常大的問題,就是我們看兩個可能的output,假設今天有一個checkbox,它input how are you的時候,它的output是not bad,有另外一個checkbox,input how are you的時候,它的output是ungood。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:45.000" id=04:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=285">04:45.000</a></div>
+        <div class="t">如果從人的觀點來看,not bad是一個比較合理的answer,ungood是一個比較奇怪的answer。但是如果從我們的training的criterion來看,從我們在train這個checkbox的時候,希望checkbox要maximize the object,希望checkbox學到的結果來看,事實上ungood是一個比較好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.000" id=05:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=305">05:05.000</a></div>
+        <div class="t">為什麼呢?因為ungood跟unbad比起來,你至少第一個word還是對的,如果是not bad的話,你兩個word都是錯的。所以從這個training的criterion來看,假設你train的時候是maximum likelihood,其實maximum likelihood就是minimize每一個time set的cross entropy,不管這兩個其實是equivalent的東西,其實maximum likelihood就是minimize cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:29.000" id=05:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=329">05:29.000</a></div>
+        <div class="t">所以假設有一天,這個是一個真實的問題,就有人去某個大公司面試,然後人家問他說,train這個classifier的時候,有時候我們會說我們是maximize likelihood,有時候我們會說我們是在minimize cross entropy,這兩者有什麼不同呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:48.200" id=05:48.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=348">05:48.200</a></div>
+        <div class="t">如果你答一些說,這兩個東西有點像,但是中間有微妙的不同,你就錯了。這個時候你就要說,它們兩個就是一模一樣的東西。所以maximum likelihood跟minimize cross entropy是一模一樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:03.720" id=06:03.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=363">06:03.720</a></div>
+        <div class="t">我剛才講的是真正的例子,某人去面試某一個大家都知道的全球性的科技公司的時候,是真的被問了這個問題。那我們現在來看一下我們今天要講的東西,我們先講一下怎麼去improve這個sequence to sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.000" id=06:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=387">06:27.000</a></div>
+        <div class="t">那我這邊會講兩個improve的方法,我們其實會先講說怎麼用reinforcement learning來improve conditional generation這件事情,然後接下來我們才會講說怎麼用gain來improve conditional generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.200" id=06:41.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=401">06:41.200</a></div>
+        <div class="t">之所以要講RL,是因為等一下你會發現說用gain來improve conditional generation這件事情,其實跟RL是非常像的。甚至可以說使用RL來improve sequence to sequence的chain bar,可以看作是gain的一個special case。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:01.240" id=07:01.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=421">07:01.240</a></div>
+        <div class="t">等一下我們繼續看下去,你就會比較清楚。假設我們今天要train一個sequence to sequence的model,你不想要用trainmaximum likelihood的方法來train sequence to sequence的model,我們剛才講說用maximum likelihood的方法有很明顯的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.680" id=07:18.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=438">07:18.680</a></div>
+        <div class="t">那我們現在如果想引入RL來train sequence to sequence的model的話,我們等一下都用chain bar來做例子,但是其實我們等一下討論到的技術不是只限於chain bar而已,其實任何sequence to sequence的model,舉例來說作業二之一座的conditional generation也可以用到等一下討論的技術,不過我們等一下舉例的時候,我們都假設我們是要做chain bar就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.480" id=07:41.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=461">07:41.480</a></div>
+        <div class="t">那今天假設你要train一個chain bar,你不要maximum likelihood的方法,你想要reinforcement learning的方法,那你會怎麽做呢?那你的做法可能是這樣,你就讓這個chain bar去胡亂在線上跟人講話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:54.320" id=07:54.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=474">07:54.320</a></div>
+        <div class="t">就一個人說,How are you?chain bar就回答,Bye bye。然後人就會給chain bar一個很糟的評價,chain bar就知道說這樣做是不好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.080" id=08:02.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=482">08:02.080</a></div>
+        <div class="t">而在下一次他跟人對話的時候,人說Hello,chain bar說Hi,人就覺得說他的回答是對的,就給他一個positive的評價,chain bar就知道說他做的事情是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.760" id=08:12.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=492">08:12.760</a></div>
+        <div class="t">而chain bar在跟人互動的過程中,他會得到reward。那我們今天把這個問題想得單純一點,就是人說一個句子,chain bar就做一個回應,然後人就會給chain bar一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.320" id=08:23.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=503">08:23.320</a></div>
+        <div class="t">那今天chain bar要做的事情,就是希望透過互動的過程,他去學習怎麽maximize他可以得到的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:33.520" id=08:33.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=513">08:33.520</a></div>
+        <div class="t">或者是我們用這一頁投影片來說明一下我們現在的問題是什麽樣子,我們有一個chain bar,他input一個sentence c,他要output一個response x,那他就是一個sequence to sequence的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:45.560" id=08:45.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=525">08:45.560</a></div>
+        <div class="t">接下來有一個人,人其實也可以看作是一個function,人這個function做的事情是什麽呢?人這個function做的事情就是input一個sentence c,還有input一個response x,然後給予一個評價,給予一個reward,這個reward我們就寫成out of cx。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:05.560" id=09:05.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=545">09:05.560</a></div>
+        <div class="t">那如果你熟悉conditional generation的話,就記得我們在講我們作業32,就是要做conditional generation,對不對,要input文字,然後output對應的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.440" id=09:18.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=558">09:18.440</a></div>
+        <div class="t">那你會發現說這個圖跟用電作conditional generation其實是非常像的,唯一的不同只是說,在原來的conditional generation裡面,如果用電作conditional generation的話,這個綠色的方塊它是一個discriminator,我們說discriminator切記它不要只吃generator的output,它要同時吃generator的input跟output才能給予評價。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.560" id=09:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=584">09:44.560</a></div>
+        <div class="t">那今天人也是一樣,我們用人來取代discriminator,人它就不用change,或者是說你可以說人已經change好了,人有一個now,然後在數十年的成長歷程中你已經change好,所以不用再change,然後給你一個input sentence c,給你一個response x,你可以給予一個評價。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:03.960" id=10:03.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=603">10:03.960</a></div>
+        <div class="t">那我們接下來要做的事情,Chepa要做的事情就是,他希望去調整這個sequence-to-sequence model裡面內部的參數,希望去maximize人會給他的評價,這邊寫成model.cs。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.080" id=10:17.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=617">10:17.080</a></div>
+        <div class="t">這件事情怎麼做呢?我們要用的技術其實就是policy gradient,policy gradient我們其實在這個machine learning的最後幾堂課其實是有說過的,也許你記得,也許你忘了,我們這邊以Chepa作為例子來很快地複習一下,policy gradient是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.080" id=10:34.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=634">10:34.080</a></div>
+        <div class="t">從下週開始我們會講,下週的計劃是這樣,下週會請中研院的曹育博士來講一下game在語音上的應用,然後接下來我們就會進入reinforcement learning,但是假設大家都說過,m流那堂課所以在reinforcement learning裡面我們是不會講policy gradient的,因為在m流裡面其實已經提過了,不過今天我們還是很快地講一下policy gradient,你就當作是複習或者是為下週的課程做一下預期。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.040" id=11:00.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=660">11:00.040</a></div>
+        <div class="t">好,那我們有一個sequence to sequence model,它的input是c,output是x,接下來我們有另外一個function,這個function是人,人呢是c跟x,然後output是一個r。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:10.480" id=11:10.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=670">11:10.480</a></div>
+        <div class="t">那我們現在要做的事情是什麼呢?我們要去調encoder跟generator的參數,這個encoder跟generator合起來是一個sequence to sequence的model,它們合起來的參數我們叫做theta,我們就要調這個theta去maximize human這個function的output,那怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.520" id=11:28.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=688">11:28.520</a></div>
+        <div class="t">我們先來計算一個東西,這個東西是給定某一組參數theta的時候,假設固定theta,把theta固定起來的時候,這個sequence to sequence model這個checkbox會得到的期望的reward有多大?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:47.840" id=11:47.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=707">11:47.840</a></div>
+        <div class="t">我現在想到一件事情忘了講,今天其實是沒有助教來講作業的,今天是沒有助教來講作業的,所以我們等一下就下課休息兩次好了,我們就休息兩次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.880" id=11:58.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=718">11:58.880</a></div>
+        <div class="t">好,那我們要講什麼呢?假設這個theta是固定的,然後要計算一下這個sequence to sequence model它會得到的期望的reward是有多大?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.200" id=12:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=732">12:12.200</a></div>
+        <div class="t">那這個東西怎麼算呢?首先我們先submission over所有可能的input c,然後乘上每一個c出現的機率,因為c可能有各種不同的output,比如人可能說how are you,人可能說good morning,人可能說good evening,你有各種各樣的input,你有各種各樣的c,但是每一個input出現的機率可能是不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.280" id=12:36.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=756">12:36.280</a></div>
+        <div class="t">比如說how are you相較於其他的句子,也許它出現的機率是特別大的,因為人特別常對checkbox說這個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:44.080" id=12:44.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=764">12:44.080</a></div>
+        <div class="t">接下來submission over所有可能的回應x,當你有一個c的時候,當你有一個input c的時候,再加上假設這個checkbox的參數theta我們已經知道的時候,接下來你就可以算出一個機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:58.920" id=12:58.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=778">12:58.920</a></div>
+        <div class="t">這個機率是在given c,given這組參數的情況下,checkbox會回答某一個答覆x的機率有多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.880" id=13:07.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=787">13:07.880</a></div>
+        <div class="t">那你說這邊為什麼會是一個機率呢?給一個input c,為什麼output會是一個機率呢?你想想看,我們今天在train sequence to sequence model的時候,每一個time step我們不是其實要做一個sampling嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:20.360" id=13:20.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=800">13:20.360</a></div>
+        <div class="t">所以其實今天你train一個c,不過這個大家在作業二週的週末你應該是知道的,我們train一個sequence to sequence model的時候,每一次給同樣的input,它的output不見得是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.440" id=13:32.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=812">13:32.440</a></div>
+        <div class="t">假設你在做sampling的時候,就是我們的decoder的output是一個distribution,你要把distribution變成一個token的時候,如果你是採取sampling的方式,那你checkbox每一次的output都會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:46.720" id=13:46.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=826">13:46.720</a></div>
+        <div class="t">所以今天給一個c,每一次output的x其實是不一樣的,所以給一個c,我們其實得到的是一個x的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.640" id=13:54.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=834">13:54.640</a></div>
+        <div class="t">那你說假設你不是用sampling的方式,你是用argmax的方式呢?其實這樣也可以,如果是用argmax的方式給一個c,那你一定會得到一模一樣的x。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:04.760" id=14:04.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=844">14:04.760</a></div>
+        <div class="t">但我們可以說,那個x出現的機率就是1,其他的response出現的機率都是0,其他的x出現的機率都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:12.760" id=14:12.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=852">14:12.760</a></div>
+        <div class="t">總之呢,給你一個c,再參數你sc的setup,你知道情況下,你可以把checkbox可能的output看作是一個distribution,這邊寫成psetup of x,d,c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:23.440" id=14:23.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=863">14:23.440</a></div>
+        <div class="t">當checkbox回答一個x的時候,當給一個c,checkbox產生一個x的時候,接下來呢,人就會給一個reward out of cx。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.640" id=14:32.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=872">14:32.640</a></div>
+        <div class="t">那這一整項啊,summation over all的c,summation over all的x,這邊乘上c的機率,這邊乘上x出現的機率,再乘上這個waited by這個reward,其實就是reward的期望值,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:47.080" id=14:47.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=887">14:47.080</a></div>
+        <div class="t">這個項就是某一個checkbox,它的參數是setup,它可以得到的reward的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:53.440" id=14:53.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=893">14:53.440</a></div>
+        <div class="t">那接下來我們要做的事情是什麼呢?接下來我們要做的事情就是,我們要調這個checkbox的參數setup,讓reward的期望值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:04.400" id=15:04.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=904">15:04.400</a></div>
+        <div class="t">那這件事情怎麼做呢?我們先把這個reward的期望值稍微做一下整理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.600" id=15:13.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=913">15:13.600</a></div>
+        <div class="t">這邊是summation over c,所以我們可以看作是根據P of c這個distribution取期望值。這邊是summation over x,然後乘上psetup of x,d,c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:27.680" id=15:27.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=927">15:27.680</a></div>
+        <div class="t">所以這邊可以看作是呢,對這一個distribution,這個x呢,是從這個distribution sample出來的,然後取期望值,然後取期望值的對象呢,是out of cx。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:41.200" id=15:41.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=941">15:41.200</a></div>
+        <div class="t">那接下來呢,這邊這項沒什麼了不起的,就把這兩個sample放在一起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:49.520" id=15:49.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=949">15:49.520</a></div>
+        <div class="t">然後這邊呢,我發現了一個錯,你有發現嗎?這邊這個應該是c,其實是這樣子的,我在做投影片的時候呢,本來都是h,做到某個地方我突然想把它改成c,然後前面就有地方沒有改到這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:04.400" id=16:04.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=964">16:04.400</a></div>
+        <div class="t">這個是一個c,這個是一個c,抱歉嘛,這是一個c,這是一個c。好,那這邊的意思就是說,我們從P of c裡面sample一個c出來,我們從這個機率裡面呢,sample一個x出來,然後取out of cx的期望值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:19.840" id=16:19.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=979">16:19.840</a></div>
+        <div class="t">等一下可以注意找一下,我相信有很多地方的c呢,都沒有改到這樣子,我等一下可以看看誰先找到這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:26.160" id=16:26.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=986">16:26.160</a></div>
+        <div class="t">好,然後呢,但是接下來你的問題就是,這個期望值要怎麼算啊?這個期望值要怎麼算?你要算這個期望值,你實際上的做法,這個theoretical的做法,你要summation over all的c,summation over all的x。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:42.560" id=16:42.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1002">16:42.560</a></div>
+        <div class="t">但是在實作上,你根本無法窮取所有可能的input,你根本無法窮取所有可能的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:48.240" id=16:48.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1008">16:48.240</a></div>
+        <div class="t">所以實作上是怎麼做的?實作上就是做sampling,假設這個distribution你知道,假設這個distribution你知道,那這兩個distribution我們知道嗎?這兩個distribution我們知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.680" id=16:59.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1019">16:59.680</a></div>
+        <div class="t">P of c,人會說什麼句子,你就從你的database裡面sample看看,你就從你database的句子裡面sample,你就知道說人常輸入什麼句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.200" id=17:09.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1029">17:09.200</a></div>
+        <div class="t">那這個機率,你只要知道參數,它就是給定的。所以我們根據這兩個機率,我們去做一些sample,我們去sample大n比的c跟x的pair,比如說上百比的c跟x的pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.480" id=17:22.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1042">17:22.480</a></div>
+        <div class="t">所以本來這邊應該是要取一個期望值,但實際上我們並沒有辦法真的去取期望值,我們真正的做法是做一下sample,sample出大n比data,這大n比data,每一筆都去算它的reward,把這大n比data的reward全部平均起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:39.120" id=17:39.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1059">17:39.120</a></div>
+        <div class="t">我們用這個東西來approximate期望值,而這一項就是期望的reward的approximation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:50.320" id=17:50.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1070">17:50.320</a></div>
+        <div class="t">再來你會遇到的問題是說,我們現在要對theta做optimization,我們要找一個theta讓Rbar這一項越大越好,那意味著說我們要拿theta去對Rbar算它的gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:09.360" id=18:09.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1089">18:09.360</a></div>
+        <div class="t">但是問題是,在這個項裡面,我們說Rbar就等於這個項,等於這個項裡面沒有theta,你根本沒有辦法對theta算gradient,因為theta不見了,不知不覺間,本來這邊好像都還有theta,這邊有theta,這邊有theta,不知不覺間它就不見了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.880" id=18:28.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1108">18:28.880</a></div>
+        <div class="t">它到哪裡去了呢?它被藏到sampling的這個process裡面去了。當你改變theta的時候,你會改變sample到的東西,但在這個式子裡面,theta就不見了,你根本就不知道要怎麼對這個式子算theta的gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:45.360" id=18:45.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1125">18:45.360</a></div>
+        <div class="t">所以怎麼辦呢?實作上的方法是這個樣子的。這一項,如果把它optimize成這一項的話,就會沒有辦法算gradient了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.200" id=19:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1141">19:01.200</a></div>
+        <div class="t">所以怎麼辦?先把對這一項算gradient,再做optimization,先對這一項算gradient。而這一項算gradient是怎麼樣呢?只有這一個ptheta的xgiven c跟theta是有關的。所以你對Rbar取gradient的時候,你只需要把gradient放到ptheta的前面就好,因為只有這一項和theta是有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.440" id=19:25.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1165">19:25.440</a></div>
+        <div class="t">接下來呢,唯一的trick是對這一個式子啊,它的分母的地方都同層ptheta的xgiven c,那分子分母同層一樣的東西,當然對結果是沒有任何影響的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:39.680" id=19:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1179">19:39.680</a></div>
+        <div class="t">那我們知道說,假設你有一個function f of x,抵x分之抵log f of x,會等於f of x分之抵x分之抵f of x,反正違犯的式子就告訴我說反正就是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:52.240" id=19:52.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1192">19:52.240</a></div>
+        <div class="t">所以今天啊,這個式子,ptheta xgiven c乘上gradient ptheta xgiven c除以ptheta xgiven c,其實就是,其實這一項啊,這一項就是gradient ptheta xgiven c除以ptheta xgiven c,其實就是gradient log ptheta xgiven c,這兩項呢是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.880" id=20:20.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1220">20:20.880</a></div>
+        <div class="t">好,那接下來呢,接下來我們知道說,前面這邊是summation over c乘上p of c,可以看作是在取expectation的時候,從p of c這個distribution裡面去sample c出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:34.000" id=20:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1234">20:34.000</a></div>
+        <div class="t">這邊,summation over x,可以看作是從ptheta xgiven c這個distribution裡面去sample x出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:43.520" id=20:43.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1243">20:43.520</a></div>
+        <div class="t">那你要取其他樣子的對象是什麼呢?你要取其他樣子的對象是r of cx,r of cx,乘上gradient log ptheta xgiven c,乘上gradient log ptheta xgiven c。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:54.480" id=20:54.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1254">20:54.480</a></div>
+        <div class="t">所以呢,這一項,當你要對r bar做gradient的時候,你要去approximate這一項的話,你是怎麼算的呢?實際上你的做法是這樣子的,我想想看哦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.480" id=21:08.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1268">21:08.480</a></div>
+        <div class="t">我發現一個錯,我發現一個錯。啊,哪裡?啊,對啦,對啦,謝謝,謝謝,謝謝,這邊有一個錯這樣子,我發現一個錯,還是我先發現,這個是xgiven c,好,這個是xgiven c,等一下一定要記得改,等一下要記得改。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:35.760" id=21:35.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1295">21:35.760</a></div>
+        <div class="t">好,這個是,所以其實是這樣,所以這個怎麼算呢?所以這一項怎麼算?這一項就是,這個summation把它換作sampling,你就sample大N項,每一項都去算r of ci xi,再乘上gradient log ptheta xi given ci,把它們平均起來,就是這一項expectation的approximation,是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:01.200" id=22:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1321">22:01.200</a></div>
+        <div class="t">好,那假設前面那些東西你沒有聽懂的話呢,就算了,所以我們實際上是怎麼做的呢?實際上的做法是,我們今天怎麼update我們的參數theta,你update的方法是,原來你的參數叫做theta all,然後你用gradient of sam去update它,加上某一個gradient的項,你得到新的model,theta new,得到新的model呢,theta new。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:24.880" id=22:24.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1344">22:24.880</a></div>
+        <div class="t">好,接下來呢,這個gradient這一項怎麼算呢?gradient這一項算法就是,去sampleN個pair的ci跟xi出來,去sampleN個pair的ci跟xi出來,然後接下來呢,你把r of ci xi,去乘上gradient log ptheta xi given ci,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:44.800" id=22:44.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1364">22:44.800</a></div>
+        <div class="t">那這一項,假設前面的推導你聽不懂的話,其實這一項它是非常的直覺的。怎麼說它非常的直覺呢?它的直覺的解釋是這樣,這個gradient到底代表什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:59.040" id=22:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1379">22:59.040</a></div>
+        <div class="t">這個gradient所代表的意思是說,假設今天given ci xi,也就是說,有人對machine說了ci這個句子,machine回答xi這個句子,然後人給的reward是positive的,人說,如果輸入ci回答xi,它是好的,給你一個positive的reward,那我們就要增加given ci的時候xi出現的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:21.920" id=23:21.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1401">23:21.920</a></div>
+        <div class="t">那這個非常直覺,如果given ci產生xi,你的reward是positive的,given ci產生xi是好的,那你就要增加given ci產生xi的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.200" id=23:31.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1411">23:31.200</a></div>
+        <div class="t">反之,如果p out of ci xi是negative的,當人對checkbox說ci,checkbox回答xi,然後得到負面的評價的時候,這個時候我們就應該調整參數theta,讓這一項機率,也就是given ci回答xi的這個機率越小越好。就這樣。它的精神就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:52.080" id=23:52.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1432">23:52.080</a></div>
+        <div class="t">所以實作上的時候,實際上如果你要用policy gradient這個技術來implement一個checkbox,讓它在reinforcement learning的情境中可以去學習怎麼和人對話的話,實際上你是怎麼做的呢?實際上你的做法是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:06.320" id=24:06.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1446">24:06.320</a></div>
+        <div class="t">你用一個checkbox,它的參數叫做theta t,然後你把你的checkbox拿去跟人對話,然後他們就講了很多,這個是一個sampling的process,你先讓checkbox跟人對話,做一個sampling的process。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:18.480" id=24:18.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1458">24:18.480</a></div>
+        <div class="t">在這個sampling的process裡面,當人說c1,checkbox回答x1的時候,會得到reward out of c1 x1,當輸入c2,回答x2的時候,會得到reward out of c2 x2,那你會sample出n比data,每一筆data都會得到一個reward,n比data,n個reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:38.160" id=24:38.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1478">24:38.160</a></div>
+        <div class="t">接下來你做的事情是這樣,你有一個參數theta t,你要update這個參數,讓它變成theta t加1,那怎麼update呢?你要把它加上對這個r bar的gradient,那這個r bar的gradient這一項到底怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:56.120" id=24:56.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1496">24:56.120</a></div>
+        <div class="t">這一項式子就列在這邊,這一項式子就列在這邊,那這個式子的直觀解釋我們剛才講過說,如果out of c1 x1是正的,那就增加這一項的機率,如果out of c1 x1是負的,就減少這一項的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.480" id=25:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1512">25:12.480</a></div>
+        <div class="t">但是你這邊要注意,每次你update完參數以後,你要從頭回去再去sample data,因為這個r bar它是在given參數是theta的情況下所算出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:29.360" id=25:29.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1529">25:29.360</a></div>
+        <div class="t">那你今天一旦update你的參數,從theta t變成theta t加1,這一項就不對了,所以每次你擺的參數theta t,一旦你update變成theta t加1以後,你就要回過頭去再重新蒐集參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:45.800" id=25:45.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1545">25:45.800</a></div>
+        <div class="t">所以這跟一般的gradient descent非常不同,因為一般的gradient descent,你就算gradient,然後就可以update參數,然後我們馬上就可以再算下一次gradient再update參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.400" id=25:58.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1558">25:58.400</a></div>
+        <div class="t">但是如果你apply reinforcement learning的時候,你的實際要做法是,每次你update完參數以後,你就要去跟使用者再互動,然後才能再次update參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:08.200" id=26:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1568">26:08.200</a></div>
+        <div class="t">所以每次update參數的時間需要的effort是非常大的,每update一次參數,你就要跟使用者互動n次才能update下一次參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:18.080" id=26:18.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1578">26:18.080</a></div>
+        <div class="t">所以在policy gradient裡面,update參數這件事情是非常寶貴的,就這一步是非常寶貴的,就絕對不能夠走錯這樣子,你一走錯,你要重新再去跟人互動才能夠走回來,你有可能甚至就永遠走不回來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:34.600" id=26:34.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1594">26:34.600</a></div>
+        <div class="t">所以下一週會講到一些新的技術,來讓這一步做得更好,不過這個是我們下週才要再講的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:48.240" id=26:48.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1608">26:48.240</a></div>
+        <div class="t">是把reinforcement learning跟maximum likelihood做一下比較,在做maximum likelihood的時候,你有一堆training data,這些training data告訴我們說,今天假設人說C1,trainer最正確的回答是X1 hat,對不對,我們就會有label的data嘛,大家都做過作業2之2,你應該知道怎麼回事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:07.920" id=27:07.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1627">27:07.920</a></div>
+        <div class="t">你有input C1,output就是X1 hat,input Cn,正確的答案就是Xn hat,這是training data告訴我們的。在training的時候,你就是maximize你的likelihood,怎麼叫maximize你的likelihood呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.640" id=27:20.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1640">27:20.640</a></div>
+        <div class="t">你希望input Ci的時候,output Si hat的機率越大越好,input某個condition,input某個input的時候,input某個輸入的句子的時候,你希望正確的答案出現的機率越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.320" id=27:35.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1655">27:35.320</a></div>
+        <div class="t">要算歸零的時候很單純,你就把這個log pset前面加上一個歸零,你就算歸零了,這個是maximum likelihood。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:44.080" id=27:44.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1664">27:44.080</a></div>
+        <div class="t">那我們來看一下reinforcement learning,在做reinforcement learning的時候,你也會得到一堆C跟X的pair,但這些C跟X的pair並不是正確的答案,這些X並不是人去標的答案,這些X是機器自己產生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.800" id=28:00.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1680">28:00.800</a></div>
+        <div class="t">就人輸入C1到Cn,機器自己產生了X1到Xn,所以有些答案是對的,有些答案有可能是錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:10.840" id=28:10.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1690">28:10.840</a></div>
+        <div class="t">接下來我們說,我們在做reinforcement learning的時候,我們是怎麼計算gradient的呢?我們是怎麼計算gradient呢?我們使用這樣子的式子來計算gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:22.920" id=28:22.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1702">28:22.920</a></div>
+        <div class="t">所以我們實際上的做法是說,我們這個式子的意思就是把這個gradient log pset前面乘上R of Cs。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:33.840" id=28:33.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1713">28:33.840</a></div>
+        <div class="t">所以如果你比較這兩個式子的話,你會發現說他們唯一的差別是,在做reinforcement learning的時候,你在算gradient的時候,每一個X跟C的pair前面都乘上R of Cs。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:48.520" id=28:48.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1728">28:48.520</a></div>
+        <div class="t">而如果你覺得這個gradient算起來不太直觀,那沒關係,我們根據這個gradient反推objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.800" id=28:55.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1735">28:55.800</a></div>
+        <div class="t">我們反推說,什麼樣的objective function在取gradient的時候會變成下面這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:03.080" id=29:03.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1743">29:03.080</a></div>
+        <div class="t">那如果你反推了以後,你就會知道說,什麼樣的objective function取gradient以後會變成下面這個式子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.560" id=29:09.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1749">29:09.560</a></div>
+        <div class="t">你的objective function就是submission over你sample到的data,每一筆sample到的data你都乘上R of Cs,然後你去計算每一筆sample到的data的log的likelihood,你去計算每一筆sample到的data的log pset再把它乘上R of Cs,就是你的objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:30.600" id=29:30.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1770">29:30.600</a></div>
+        <div class="t">那這個objective function做gradient以後,你就會得到這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.000" id=29:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1775">29:35.000</a></div>
+        <div class="t">所以我們在做reinforcement learning的時候,我們每一個iteration其實是在maximize這樣一個objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:41.800" id=29:41.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1781">29:41.800</a></div>
+        <div class="t">那如果你把這兩個式子做比較的話,那就非常清楚了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:47.640" id=29:47.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1787">29:47.640</a></div>
+        <div class="t">今天右邊這個reinforcement learning的case,可以想成是每一筆training data都是有weight的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:54.200" id=29:54.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1794">29:54.200</a></div>
+        <div class="t">而在maximum likelihood的case裡面,每一筆training data的weight都是一樣的,每一筆training data的weight都是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.400" id=30:01.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1801">30:01.400</a></div>
+        <div class="t">但在reinforcement learning裡面,每一筆training data都有不同的weight,這個weight就是那一筆training data得到的reward。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:09.080" id=30:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1809">30:09.080</a></div>
+        <div class="t">也就是說,今天輸入一個Ci,機器回答一個Xi,如果今天機器的回答正好是好的,這個Xi是一個正確的回答,那我們在training的時候就給那筆data比較大的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.560" id=30:21.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1821">30:21.560</a></div>
+        <div class="t">如果今天Xi是一個不好的回答,代表這筆training data是錯的,我們even會在前面,我們even會給它一個negative的weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:29.640" id=30:29.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1829">30:29.640</a></div>
+        <div class="t">這個就是maximum likelihood和reinforcement learning的比較。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:33.840" id=30:33.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1833">30:33.840</a></div>
+        <div class="t">所以會發現,其實這樣在做這個理論上並沒有特別的限制,就看你今天R想要定怎樣,你用parsing gradient都可以去maximize R,但是在實作上會有限制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:52.960" id=30:52.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1852">30:52.960</a></div>
+        <div class="t">我們剛才不是講到說,如果R是正的,你就要讓機率越大越好,那你今天會不會遇到一個問題就是,假設R永遠都是正的,今天這個test的R就是正的,你做的最差也只是得到的分數比較小而已,它永遠都是正的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:06.640" id=31:06.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1866">31:06.640</a></div>
+        <div class="t">那今天不管你採取什麼樣的行為,machine都會說我要讓機率上升,聽起來有點怪怪的,但是在理論上這樣未必會有問題,為什麼說理論上這樣未必會有問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:18.080" id=31:18.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1878">31:18.080</a></div>
+        <div class="t">你想想看,你要maximize的這一項是一個機率,它的核是1,所以今天就算是所有不同的xi,它前面乘的R是正的,它終究是有大有小的,你不可能讓所有的機率都上升。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:35.440" id=31:35.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1895">31:35.440</a></div>
+        <div class="t">因為機率的核是1,你不可能讓所有的機率都上升,所以變成說,如果weight比較大的,就比較positive的,就上升比較多,如果weight比較小,比較negative的,它就可能反而是會減少的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:48.060" id=31:48.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1908">31:48.060</a></div>
+        <div class="t">就算它是正的,但如果它值比較小,它可能也是會減少,因為constraint就是它的核要是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:53.820" id=31:53.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1913">31:53.820</a></div>
+        <div class="t">但是你今天在實作上,也沒有那麼容易,因為在實作上會遇到的問題是,你不可能sample到所有的x,所以到時候就會變成說,假設一筆data你沒sample到,其他人只要有sample到都是positive的reward,沒sample到的,反而就會機率下降,有sample到的機率都會上升,這個反而不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:12.200" id=32:12.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1932">32:12.200</a></div>
+        <div class="t">所以其實今天在設計那個reward的時候,你其實會希望那個reward是有正有負的,你勸起來會比較容易。假設你的task和reward都是正的,實際上你會做的一件事情是,把那個reward通通都減掉一個threshold,讓它變成是有正有負的,這樣你勸起來會容易很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:42.340" id=32:42.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1962">32:42.340</a></div>
+        <div class="t">這個是講了Maximum likelihood和reinforcement learning的比較,但是你知道實作上要做什麼reinforcement learning根本就是不太可能的,你有沒有看過一篇文章就是講說,當有一個人寫了一篇網絡文章,當有人問他說做某一個task用reinforcement learning好不好的時候,他的回答都是不好的,多數的時候他都是對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.560" id=33:06.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1986">33:06.560</a></div>
+        <div class="t">你要做reinforcement learning,一個最大的問題就是,機器必須要跟人真的互動很多次才能夠學得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.960" id=33:14.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=1994">33:14.960</a></div>
+        <div class="t">你不要看今天那些什麼Google或者是DeepMind或者是OpenAI,他們在玩那些什麼3D遊戲的時候都玩得嚇嚇叫,那個機器跟環境互動的次數都可能是上千萬次或者是上億次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:33.120" id=33:33.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2013">33:33.120</a></div>
+        <div class="t">那麼多互動的次數,除了在這種電玩這種simulated的task以外,在真實的情境幾乎是不可能發生的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:41.120" id=33:41.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2021">33:41.120</a></div>
+        <div class="t">所以如果你要用reinforcement learning去train一個chatbot,幾乎是不可能的,因為在現實的情境中,人沒有辦法花那麼多力氣去跟chatbot做互動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:50.640" id=33:50.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2030">33:50.640</a></div>
+        <div class="t">所以後來有人就想了一個AlphaGo style的training,也就是說我們認兩個chatbot,讓他們去互講,就有一個bot說How are you,另外一個說See you,然後他再說See you,他就See you,然後就陷入一個無窮迴圈,永遠都跳不出來這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:07.520" id=34:07.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2047">34:07.520</a></div>
+        <div class="t">但是他們有時候可能也會說出比較正確的句子,因為我們知道說機器在回應的時候其實是有隨機性的,所以問他同一個句子每次的回答不見得是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.120" id=34:16.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2056">34:16.120</a></div>
+        <div class="t">接下來你再去定一個evaluation function,因為你還是不可能說讓兩個chatbot互相對話,然後產生一百萬則對話以後,人再去一百萬則對話,每一個去給他feedback說講得好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:28.760" id=34:28.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2068">34:28.760</a></div>
+        <div class="t">你可能會設計一個evaluation function,這個就是人自己定好,這邊我其實應該換成C,不過我覺得其實也沒差就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:38.040" id=34:38.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2078">34:38.040</a></div>
+        <div class="t">你就定一個evaluation function,給一則對話,然後看說這則對話好不好,這則對話好不好。但是這種evaluation function是人定的,你其實沒有辦法真的定出太複雜的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.560" id=34:49.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2089">34:49.560</a></div>
+        <div class="t">通常人定一些很簡單的,比如說陷入無窮迴圈就是得到負的reward,說出I don't know就是得到負的reward,你根本沒有辦法真的定出太複雜的evaluation function,使用這種方法還是有極限的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:05.480" id=35:05.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2105">35:05.480</a></div>
+        <div class="t">所以接下來要解這個問題,你可以引入Gan的概念。Gan和Rio有什麼不同呢?在Rio裡面,你是人給feedback,在Gan裡面,你變成是discriminator來給feedback。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:21.160" id=35:21.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2121">35:21.160</a></div>
+        <div class="t">我們一樣有一個chatbot,一樣吃一個句子,output另外一個句子。現在有一個discriminator,這個discriminator其實就是取代了人的角色,他吃chatbot的input跟output,然後吐出一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:35.240" id=35:35.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2135">35:35.240</a></div>
+        <div class="t">這個跟typical的conditional game就是一樣的,我們知道說就算是別的task,什麼image的生成,你做的事情也是一樣的,就是有一個discriminator,他吃你的generator的input跟output,接下來給予一個評價。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:47.800" id=35:47.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2147">35:47.800</a></div>
+        <div class="t">這個discriminator,你要給他大量人類的對話,讓他知道說真正的人類的對話,當這個chatbot換成一個人的時候,他的C跟X長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:08.040" id=36:08.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2168">36:08.040</a></div>
+        <div class="t">這個discriminator就會學著鑑別說,這個C跟X的pair是來自於人類還是來自於chatbot,然後discriminator會把他學到的東西feedback給chatbot,或者說chatbot要想辦法去騙過這個discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:22.920" id=36:22.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2182">36:22.920</a></div>
+        <div class="t">這跟我們之前上週講的conditional game,還是上上週講的conditional game,反正就是一模一樣的事情就是了。其實這個algorithm是什麼樣子呢?其實這個discriminator的output就可以想成是人在給reward,可以把這個discriminator想成其實就是一個人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:43.560" id=36:43.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2203">36:43.560</a></div>
+        <div class="t">只是這個discriminator和人不一樣的地方是,他不是完美的,所以他也是要去更新他自己的參數的。整個algorithm其實就跟傳統的game是一樣的,傳統conditional game是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:55.160" id=36:55.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2215">36:55.160</a></div>
+        <div class="t">你有training data,這些training data就是一大堆的正確的C跟X的pair,然後你一開始你就initialize一個G,其實你的G就是你的generator,就是你的chatbot,然後initialize你的discriminatorD。在每個training的iteration裡面,你從你的training data裡面sample出正確的C跟X的pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:13.720" id=37:13.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2233">37:13.720</a></div>
+        <div class="t">你從你的training data裡面sample出一個Cπ,然後把這個Cπ丟到你的generator的chatbot裡面,讓他回一個句子X tilde。那這個Cπ X tilde就是一個native的example。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:24.840" id=37:24.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2244">37:24.840</a></div>
+        <div class="t">接下來discriminator要學著說,看到正確的C跟X,給他比較高的分數,看到錯誤的Cπ X tilde,給他比較低的分數。至於怎麼train這個discriminator,你可以用傳統的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:36.760" id=37:36.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2256">37:36.760</a></div>
+        <div class="t">你完全也可以套用WGAN,都可以,你這邊可以用WGAN,都是沒有問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:47.080" id=37:47.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2267">37:47.080</a></div>
+        <div class="t">接下來的問題是說,我們知道在GAN裡面,你train完discriminator以後,接下來你就要train你的chatbot,也就是generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:55.000" id=37:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2275">37:55.000</a></div>
+        <div class="t">那train generator的時候,他的目標是什麼呢?你要train你的generator,這個generator的目標就是要去update參數,然後使得這個generator所產生出來的C跟X的pair,能讓discriminator的output越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:15.640" id=38:15.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2295">38:15.640</a></div>
+        <div class="t">那這個就是generator要做的事情。這邊要做的事情,跟我們之前看到的chatbot,跟我們之前看到的conditional GAN,其實是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:25.200" id=38:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2305">38:25.200</a></div>
+        <div class="t">我們說generator要做的事情,其實就是要去騙過discriminator。但是這邊我們會遇到一個問題,什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:37.960" id=38:37.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2317">38:37.960</a></div>
+        <div class="t">如果你仔細想一想你的chatbot的network架構的話,我們的chatbot的network架構,它是一個sequence-to-sequence的model,它是一個RNN的generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:52.240" id=38:52.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2332">38:52.240</a></div>
+        <div class="t">我們看chatbot在generate一個sequence的時候,它generate sequence的process是這個樣子的,這個我們在講sequence-to-sequence的model的時候,我們已經講過了,它是怎麼generate的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:02.800" id=39:02.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2342">39:02.800</a></div>
+        <div class="t">一開始你給它一個condition,這個condition可能是從那個attention-based model來的,給它一個condition,然後它output一個distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:12.800" id=39:12.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2352">39:12.800</a></div>
+        <div class="t">那根據這個distribution,它要去做一個sample,就sample出一個token,sample出一個word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:18.480" id=39:18.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2358">39:18.480</a></div>
+        <div class="t">然後接下來你會把這個sample出來的word當作下一個typeset的input,再產生新的distribution,再做sample,再當作下一個typeset的input,再產生distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:27.920" id=39:27.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2367">39:27.920</a></div>
+        <div class="t">大家在作業2已經implement過這種model,所以我相信這個對你來說並不陌生。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:32.880" id=39:32.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2372">39:32.880</a></div>
+        <div class="t">然後我們說我們要把generator的output丟給discriminator,那這個discriminator的架構你也是自己設計,反正只要可以吃兩個sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:41.960" id=39:41.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2381">39:41.960</a></div>
+        <div class="t">注意一下這個discriminator,剛才前一頁的圖,我只有劃說它吃這個chatbot的output,但其實不能夠只吃chatbot的output,它是同時吃chatbot的input和output,我想大家應該了解這個意思吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:56.680" id=39:56.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2396">39:56.680</a></div>
+        <div class="t">在做conditional gain的時候,你的discriminator要同時吃你的generator的input和output,所以其實這個discriminator是同時吃了這個chatbot的input和output,就是兩個word sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:09.280" id=40:09.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2409">40:09.280</a></div>
+        <div class="t">那至於這個discriminator的network架構長什麼樣子,這個就是看你高興,你可以說你就那一個RNN,然後你把chatbot的input和output把它接起來,變成一個很長的sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:22.240" id=40:22.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2422">40:22.240</a></div>
+        <div class="t">然後discriminator把這個很長的sequence就讀過,然後就吐出一個數值,這樣也是可以的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:27.400" id=40:27.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2427">40:27.400</a></div>
+        <div class="t">有人說我可以用CNN,反正只要吃兩個sequence,可以吐出一個分數,怎麼樣呢?都是可以的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:35.040" id=40:35.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2435">40:35.040</a></div>
+        <div class="t">那反正discriminator就吃一個word sequence,接下來它吐出一個分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:40.120" id=40:40.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2440">40:40.120</a></div>
+        <div class="t">那我們知道說,假設我們今天要train generator去騙過discriminator,我們要做的事情是update generator的參數,update這個chatbot,sequence to sequence model參數,讓discriminator output的scalar越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:53.960" id=40:53.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2453">40:53.960</a></div>
+        <div class="t">這件事情你仔細想一下,你有辦法做嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:59.400" id=40:59.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2459">40:59.400</a></div>
+        <div class="t">你可以想,這個很簡單啊,就是把generator跟discriminator串起來就變成一個巨大的network,然後我們要做的事情就是調這個巨大network的前面幾個layer,讓這個network最後的output越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:12.040" id=41:12.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2472">41:12.040</a></div>
+        <div class="t">但是你會遇到的問題是,你發現這個network其實是沒有辦法微分的,為什麼它沒有辦法微分?你想想看,這整個network裡面有一個sampling的process,有一個sampling的process。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:26.680" id=41:26.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2486">41:26.680</a></div>
+        <div class="t">這跟我們之前在講image的時候是不一樣的,我覺得這個其實是當你用文字,你要用git來做natural language processing,跟你用git來做image processing的時候一個非常不一樣的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:40.360" id=41:40.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2500">41:40.360</a></div>
+        <div class="t">在image裡面,當你用git來產生一張影像的時候,你可以直接把產生的影像丟到discriminator裡面,所以你可以把generator跟discriminator合起來,看作是一個巨大的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:53.720" id=41:53.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2513">41:53.720</a></div>
+        <div class="t">但是今天在做文字的生成的時候,你生成出一個sentence,這個sentence是一串token,你把這串token丟到discriminator裡面,你要得到這個token的時候,這中間有一個sampling的process,當一整個network裡面有一個sampling的process的時候,它是沒有辦法微分的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:19.960" id=42:19.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2539">42:19.960</a></div>
+        <div class="t">為什麼呢?一個簡單的解釋是,你想想看所謂的微分的意思是什麼,微分的意思是你把某一個參數小小的變化一下,看它對最後output的影響有多大,這兩個相除就是微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:34.840" id=42:34.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2554">42:34.840</a></div>
+        <div class="t">今天假設一個network裡面有sample的process,你把裡面的參數做一下小小的變化,對output的影響是不確定的,因為中間有一個sampling的process,所以你說你每次得到的output是不一樣的,你今天對你整個network做一個小小的變化的時候,它對output的影響是不確定的,所以你根本就沒有辦法算微分出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:59.480" id=42:59.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2579">42:59.480</a></div>
+        <div class="t">或者是另外一個更簡單的解釋就是,你回去用Tensorflow或PyTorch去implement一下,看看如果network裡面有一個sampling的process,你跑不跑得動,你應該是會得到一個error,但是你應該是跑不動的,結果就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:15.080" id=43:15.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2595">43:15.080</a></div>
+        <div class="t">反正無論如何,今天你把這個sequence-to-sequence model跟你的discriminator接起來的時候,你是沒有辦法微分的,所以接下來真正的難點就是怎麼解這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:30.080" id=43:30.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2610">43:30.080</a></div>
+        <div class="t">我在文獻上看到大概有三類的解法,一個是Campbell Softmax,一個就是給discriminator continuous的input,另外一個方法就是做reinforcement learning,Campbell Softmax我們就不解釋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:48.240" id=43:48.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2628">43:48.240</a></div>
+        <div class="t">它其實implement也是蠻簡單的,但是我發現用在GAME上目前沒有那麼多,所以我們就不解釋。總之Campbell Softmax就是想了一個trick,讓本來不能微分的東西,3號變成可以微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:05.340" id=44:05.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2645">44:05.340</a></div>
+        <div class="t">如果你有興趣的話,你再自己研究Campbell Softmax是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:09.980" id=44:09.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2649">44:09.980</a></div>
+        <div class="t">另外一個很簡單的方法就是給discriminator continuous的input,你說今天如果問題是在這一個sampling的process,那我們何不就避開sampling的process呢,我們今天給discriminator這個distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:26.620" id=44:26.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2666">44:26.620</a></div>
+        <div class="t">discriminator不是吃這些word sequence,不是吃discrete的token來得到分數,而是吃這些word distribution來得到分數。今天如果我們把這個sequence-to-sequence model跟discriminator串在一起,你就會發現說它變成一個是可以微分的network了,因為現在沒有sampling的process了,問題就解決了,就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:53.020" id=44:53.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2693">44:53.020</a></div>
+        <div class="t">講到這邊,大家有沒有什麼問題要問的呢?沒有嗎?但是實際上問題並沒有這麼簡單,因為你仔細想想看,當你今天給你的discriminator一個continuous的input的時候,你會發生什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:12.540" id=45:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2712">45:12.540</a></div>
+        <div class="t">你會發生的問題是這樣,discriminator不是會看real的data跟fake的data,去決定說,今天給他一筆data,他看real的data跟fake的data,然後去給他一筆新的data之後,他會決定它是real的還是fake的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:28.220" id=45:28.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2728">45:28.220</a></div>
+        <div class="t">當你今天給discriminator word distribution的時候,你會發現說real的data跟fake的data,它在本質上就是不一樣的,因為對real的data來說,它是discrete token,或者說每一個discrete token,我們其實是用一個one-half的vector來表示它,我想這個大家應該都知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:47.900" id=45:47.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2747">45:47.900</a></div>
+        <div class="t">所以對一個discrete token,我們是用one-half的vector來表示它,所以一個真正的sentence,一個real的sentence,對discriminator來說,他看到的real的sentence就長這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:58.460" id=45:58.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2758">45:58.460</a></div>
+        <div class="t">而對generator來說,他每次只會offer一個word distribution,他每次offer的都是一個distribution,當他把他的offer丟給discriminator的時候,discriminator看到的結果是這樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:12.940" id=46:12.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2772">46:12.940</a></div>
+        <div class="t">所以對discriminator來說,要分辨今天的input是real的還是fake的,太容易了,他完全不需要管這個句子的意義,他只要一看說是不是one-half,就知道說它是real的還是fake的,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:29.500" id=46:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2789">46:29.500</a></div>
+        <div class="t">所以你如果直接用這個方法來train game的話,你會發現會遇到什麼問題呢?你會發現說generator很快就會發現說discriminator判斷一筆data是real還是fake的準則,是看說今天你的每一個output是不是one-half。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:48.620" id=46:48.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2808">46:48.620</a></div>
+        <div class="t">所以generator唯一會學到的事情就是迅速地變成one-half,他會想辦法趕快把隨便選一個element誰都好,也不要在意語意了,因為就算你考慮語意,也很快會被discriminator發現,discriminator就是要看說是不是one-half。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:03.980" id=47:03.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2823">47:03.980</a></div>
+        <div class="t">所以今天隨便選一個element,想辦法趕快把它的值變到1,其他都趕快壓成0,然後產生的句子完全不make sense,然後就結束了。你會發現,所以今天直接讓discriminator是continuous的input是不夠的,是沒有辦法真的解決這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:19.900" id=47:19.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2839">47:19.900</a></div>
+        <div class="t">那其實還有一個解法是說,也許用一般的gametrain不起來,但是你可以試試看用Wgame。為什麼在這個case用Wgame是有希望的呢?因為今天呢,Wgame我們不是說在train的時候,你會給你的model一個constraint,你要去constraint說你的discriminator一定要是one distance function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:41.500" id=47:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2861">47:41.500</a></div>
+        <div class="t">因為你有這個constraint,所以你的discriminator它的手腳會被綁住,所以它就沒有辦法馬上分別出real的sentence跟generator sentence的差別,它的視線是比較模糊的,它是比較看不清楚的,因為它有一個one distance function的constraint,所以它是比較fuzzy的,所以它就沒有辦法馬上分別這兩者的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:03.020" id=48:03.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2883">48:03.020</a></div>
+        <div class="t">所以今天假設你要做conditional generation的時候,如果你是要做這種sequence generation,然後你要用的方法是讓discriminator是continuous的input,Wgame是一個可以的選擇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:14.860" id=48:14.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2894">48:14.860</a></div>
+        <div class="t">如果你沒有用Wgame的話,應該是很難把它做起來的,因為network就學generator,其實學不到語意相關的東西,它只學到說output必須要像是one half,才能夠騙過discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:26.140" id=48:26.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2906">48:26.140</a></div>
+        <div class="t">所以這個是第二個solution,給它continuous的input。第三個solution就是套用reinforcement learning,我們剛才已經講過說,假設discriminator換成一個人的話,你知道怎麼去調你缺乏的參數,去maximize人會給予缺乏的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:47.260" id=48:47.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2927">48:47.260</a></div>
+        <div class="t">那今天把人換成discriminator,solution其實是一模一樣的。怎麼解這個問題呢?你就說現在discriminator就是一個human,我們說人其實就是一個function嘛,然後看缺乏的input output給予分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:04.940" id=49:04.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2944">49:04.940</a></div>
+        <div class="t">所以discriminator就是我們的人,它的output,它的output的scalar,discriminator的output的數值就是reward,然後今天你的缺乏要去調它的參數,去maximizediscriminator的output,要去maximizediscriminator的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:23.260" id=49:23.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2963">49:23.260</a></div>
+        <div class="t">也就是說,本來人的output是out of cs,我們只是把它換成discriminator的output,d of cs,就結束了。接下來怎麼maximized of cs?你在reinforcement learning怎麼做?在這邊就怎麼做,結束就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:41.820" id=49:41.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2981">49:41.820</a></div>
+        <div class="t">所以我們說在reinforcement learning裡面怎麼做的呢?你讓θ去跟人互動,得到很多reward,接下來套右邊這個式子,你就可以去train你的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:53.340" id=49:53.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=2993">49:53.340</a></div>
+        <div class="t">現在我們唯一做的事情是把人換成另外一個機器,換成discriminator,本來是人給reward,現在換成discriminator給reward,我們唯一做的事情就是把r換成d,所以右邊也是一樣,把r換成d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:12.540" id=50:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3012">50:12.540</a></div>
+        <div class="t">當然這樣子跟人互動還是不一樣,因為人跟機器互動很花時間,但如果是discriminator,他要跟generator互動多少次,反正都是機器,你就可以讓他們真的互動非常多次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:23.500" id=50:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3023">50:23.500</a></div>
+        <div class="t">但是這邊只完成了game的其中一個step而已,我們知道說在game的每一個iteration裡面,你要traindiscriminator,再traingenerator,再traindiscriminator,再traingenerator,今天這一個reinforcement learning的step只是train了generator而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:42.540" id=50:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3042">50:42.540</a></div>
+        <div class="t">接下來你還要traindiscriminator,怎麼traindiscriminator呢?你就給discriminator很多人的真正的對話,你給discriminator很多現在你的generator產生出來的對話,你給discriminator很多generator產生出來的對話給很多人的對話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:02.300" id=51:02.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3062">51:02.300</a></div>
+        <div class="t">然後discriminator就會去學著分辨說這個對話是real的,是真正人講的,還是generator產生的,那你就可以學出一個discriminator。那你學完discriminator以後,再從頭去train,因為你的discriminator不一樣了,這邊給的分數當然也不一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:18.060" id=51:18.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3078">51:18.060</a></div>
+        <div class="t">你train到discriminator以後,再回頭去traingenerator,再回頭去traindiscriminator,這兩個step就反覆的進行,這個就是用game來trainsequence to sequence model的方法,用game來traintrainbar的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:33.260" id=51:33.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3093">51:33.260</a></div>
+        <div class="t">那其實還有很多的tips,那這邊也稍微跟大家講一下,如果我們看這個式子的話,你會發現有一個問題,什麼樣的問題呢?這個式子跟剛才那個reinforcement learning看到的式子是一樣的,我們只是把r換成了d,我們只是把r換成了d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:55.020" id=51:55.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3115">51:55.020</a></div>
+        <div class="t">那你問這邊這個式子有什麼樣的問題呢?今天假設ci是why is your name,然後si是I don't know,這可能不是一個很好的回答,所以你得到的discriminator給他的分數是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:09.100" id=52:09.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3129">52:09.100</a></div>
+        <div class="t">當discriminator給他的分數是負的的時候,我們希望調整我們的參數theta,讓log ptheta si given ci的值越小越好,讓log ptheta si given ci的值變小。那我們再想想看,ptheta si given ci到底是什麼樣的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:28.780" id=52:28.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3148">52:28.780</a></div>
+        <div class="t">它其實是一大堆term的連程,也就是說我們今天實際上在做generation的時候,我們每次只會generate一個word而已,對不對?我們假設I don't know這邊有三個word,第一個word是x1,第二個word是x2,第三個word是x3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:50.700" id=52:50.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3170">52:50.700</a></div>
+        <div class="t">這個ptheta of si given ci實際上是p of在given condition ci的前提下產生si的機率,乘上given condition跟si產生x2的機率,再乘上given condition x1 x2,我用x1冒號2代表x1 x2,given condition x1 x2產生x3的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:15.500" id=53:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3195">53:15.500</a></div>
+        <div class="t">你把這三項機率相乘,就會得到ptheta of si given ci,但是因為今天取log,取log,取log,取log,所以變成相加,變成相加。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:24.620" id=53:24.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3204">53:24.620</a></div>
+        <div class="t">這個大家OK吧?實際上這個機率的算法是這個樣子的,那你說讓這個機率下降,意思就是你希望這一項也下降,你希望這一項也下降,你希望這一項也下降,你希望他們每一項都下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:40.060" id=53:40.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3220">53:40.060</a></div>
+        <div class="t">但是我們看看p of ci given x1是什麼?p of ci given x1是given condition what is your name的時候產生i的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:50.540" id=53:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3230">53:50.540</a></div>
+        <div class="t">那如果輸入what is your name,一個好的答案其實可能是比如I am John或I am Mary,所以今天問你what is your name的時候,給你condition what is your name的時候,你其實回答i當作句子的開頭是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:02.940" id=54:02.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3242">54:02.940</a></div>
+        <div class="t">但是你在training的時候,你卻告訴checkmark說,看到what is your name的時候回答i,這個機率應該是下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:11.340" id=54:11.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3251">54:11.340</a></div>
+        <div class="t">看到what is your name,你已經產生i,產生動的機率要下降,這項是合理的。產生i動,再產生no的機率要下降是合理的。但是given what is your name,產生i的機率其實是不合理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:22.940" id=54:22.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3262">54:22.940</a></div>
+        <div class="t">你可能會這樣覺得說,那這個training不是有問題嗎?理論上這個training不會有問題,為什麼?因為今天你的output其實是一個sampling的process,所以今天在另外一個case,當你輸入what is your name的時候,機器的回答可能是I am John,這個時候機器就會得到一個positive的reward,也就是discriminator會給機器一個positive的評價。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:48.380" id=54:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3288">54:48.380</a></div>
+        <div class="t">這個時候model要做的事情就是update他的參數,去increase log p set of s i given c i,他要去increase p set of s i given c i,那p set of s i given c i是這三個項的相乘,而第一項是p of i given c i,是p of i given c i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:11.260" id=55:11.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3311">55:11.260</a></div>
+        <div class="t">那今天我們會希望p of i given c i的值越大越好,當你輸入what is your name,sample到I don't know的時候,p of given c i產生i的機率要先降,當你sample到I am John的時候,你希望這個機率上升。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:26.620" id=55:26.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3326">55:26.620</a></div>
+        <div class="t">那如果你今天sample的次數夠多,這兩項就會抵銷,那就沒事了,但問題就是在實作上,你永遠sample不到夠多的次數,所以在實作上,這個方法是會造成一些問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:41.820" id=55:41.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3341">55:41.820</a></div>
+        <div class="t">所以怎麼辦呢?今天的solution是這個樣子,我們今天希望當輸入what is your name,sample到I don't know的時候,machine可以自動知道說,在這三個機率裡面,雖然I don't know整體而言是不好的,但是造成I don't know不好的原因,並不是因為在開頭sample到了i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:05.420" id=56:05.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3365">56:05.420</a></div>
+        <div class="t">在開頭sample到i是沒有問題的,是因為之後你產生了don't跟know,所以才做得不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:12.620" id=56:12.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3372">56:12.620</a></div>
+        <div class="t">所以希望機器可以自動學到說,今天這個句子不好,到底是哪裡不好,是因為產生這兩個位不好,而不是產生第一個位不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:20.940" id=56:20.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3380">56:20.940</a></div>
+        <div class="t">所以你今天會改寫你的式子,本來你的式子是這樣,對一整個句子,given一個ci產生一個完整的句子xi,它會有一個分數d of ci xi,現在你給每一個generation的step都不同的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:35.980" id=56:35.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3395">56:35.980</a></div>
+        <div class="t">今天在給定condition ci已經產生x1到t-1,已經產生前t-1個word的情況下,產生了word x1,它到底有多好或多不好,我們換另外一個measure叫做q來取代d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:49.820" id=56:49.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3409">56:49.820</a></div>
+        <div class="t">這個q它是對每一個time state去做evaluation,它對這邊每一次generation的time state去做evaluation,而不是對整個句子去做evaluation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:01.580" id=57:01.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3421">57:01.580</a></div>
+        <div class="t">接下來問題就是,這件事情要怎麼做呢?我們就沒有打算要細講,那你可以自己去查一下文獻,因為反正我們作業裡面沒這個東西,所以大概你也沒興趣知道就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:14.300" id=57:14.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3434">57:14.300</a></div>
+        <div class="t">你就看一下這個文獻,你如果想知道的話,你就自己查一下文獻,有不同的做法,這其實是一個還是可以尚待研究中的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:23.980" id=57:23.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3443">57:23.980</a></div>
+        <div class="t">一個做法就是做multicolor,跟alphago的方法非常的像,你就想成是在做alphago,你去sample接下來會發生到的狀況,然後去估測每一個generation,每一個generation就像是在棋盤上下一個子一樣,就估測每一個generation在棋盤上落一個子的勝率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:42.460" id=57:42.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3462">57:42.460</a></div>
+        <div class="t">但這個方法最大的問題就是,它需要的運算量太大,所以在實作上你會很難做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:50.460" id=57:50.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3470">57:50.460</a></div>
+        <div class="t">有另外一個運算量比較小的方法,這個方法的縮寫叫做regs,不過反正這個方法在文獻上看到的結果就是它不如multicolor,那我們自己也有實作過覺得它確實不如multicolor,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:04.940" id=58:04.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3484">58:04.940</a></div>
+        <div class="t">但multicolor的問題就是它的運算量太大了,所以這個仍然是一個目前可以研究的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:12.940" id=58:12.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3492">58:12.940</a></div>
+        <div class="t">還有另外一個技術可以improve你的training,這個方法叫做ranked,我們今天就不打算講ranked,那你可能說,不打算講,為什麼要放在這邊呢?之後你就知道了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:27.140" id=58:27.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3507">58:27.140</a></div>
+        <div class="t">那這邊是講一些我們自己的觀察,今天到底當你把makes和likelihood換到game的時候,有什麼樣的不同呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:39.700" id=58:39.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3519">58:39.700</a></div>
+        <div class="t">因為大家都已經做過作業二之二,所以你已經用end-to-end的技術勸過Chet Bar,事實上如果你有勸過Chet Bar的話,你會知道說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:48.380" id=58:48.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3528">58:48.380</a></div>
+        <div class="t">今天勸完以後,Chet Bar非常喜歡回答一些沒有很長,然後非常general的句子,通常他的回答要嘛就是I'm sorry,要嘛就是I don't know,講來講去都是那幾句。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:01.700" id=59:01.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3541">59:01.700</a></div>
+        <div class="t">那我們實際統計一下,我們用一個Benchmark of叫做open subtitle來勸一個end-to-end的Chet Bar的時候,其實有十分之一的句子他都會回答I don't know或者是I'm sorry,那聽起來其實是沒有非常的make sense。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:14.540" id=59:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3554">59:14.540</a></div>
+        <div class="t">那如果你要解這個問題,我覺得game就可以派上用場。為什麼今天會回答I'm sorry或I don't know呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:21.740" id=59:21.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3561">59:21.740</a></div>
+        <div class="t">我的猜測是,這些I'm sorry或I don't know這些句子對應到影像上,就是那些模糊的影像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:28.800" id=59:28.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3568">59:28.800</a></div>
+        <div class="t">我們有講過說,為什麼我們今天在做影像生成的時候要用game而不是傳統的supervised learning的方法,是因為今天在做影像的生成的時候,你可能同樣的condition,你有好多不同的對應的image,比如火車有很多不同的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:44.540" id=59:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3584">59:44.540</a></div>
+        <div class="t">那機器學習的時候,它會產生所有火車的平均,然後看起來是一個模糊的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:52.740" id=59:52.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3592">59:52.740</a></div>
+        <div class="t">那今天對一般的training來說,假設你沒有用game去train一個Chet Bar來說,也是一樣的,因為輸入同一個句子,在你的training data裡面有好多個不同的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:02.720" id=01:00:02.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3602">01:00:02.720</a></div>
+        <div class="t">對機器來說,它學習的結果就是希望去同時maximize所有不同答案的likelihood,但是同時maximize所有答案likelihood的結果,就是產生一些奇怪的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:12.840" id=01:00:12.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3612">01:00:12.840</a></div>
+        <div class="t">那我認為這就是導致為什麼機器今天用MQA的方法,用maximum likelihood的方法,證明玩一個Chet Bar的話特別喜歡說I'm sorry或者是I don't know。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:22.640" id=01:00:22.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3622">01:00:22.640</a></div>
+        <div class="t">那用game的話,一個非常明顯可以得到的結果是,用game來train你的Chet Bar以後,它比較喜歡講長的句子,它講的句子會比較有內容,這件事情算是蠻明顯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:36.200" id=01:00:36.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3636">01:00:36.200</a></div>
+        <div class="t">那一個比較不明顯的地方是,我們其實不確定說產生比較長的句子以後是不是一定就是比較好的對話,但是蠻明顯可以觀察到說,當你把原來的MQA換成game的時候,它會產生比較長的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:49.500" id=01:00:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3649">01:00:49.500</a></div>
+        <div class="t">這邊就是sample兩個例子給大家看,比如說input是we've got to look for another rope,那如果你是用maximum likelihood,它就說I'm sorry,用game就說you're not going to be here for a while。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:01.220" id=01:01:01.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3661">01:01:01.220</a></div>
+        <div class="t">那這樣到底game的回答有沒有比較好,其實這個也是一個見仁見智的問題,因為說I'm sorry其實也是一個不錯的答案,因為可能你害這個說話的人迷路了,所以你要說I'm sorry。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:13.660" id=01:01:13.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3673">01:01:13.660</a></div>
+        <div class="t">這邊另外一個例子,you can save him by talking,那maximum likelihood說I don't know,那game是說you know what's going on in here, you know what I mean。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:22.740" id=01:01:22.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3682">01:01:22.740</a></div>
+        <div class="t">有時候有點難說產生比較長的句子是不是比較好,但很明顯的是說game是可以產生比較長的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:30.700" id=01:01:30.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3690">01:01:30.700</a></div>
+        <div class="t">其實各種不同的sequence to sequence的model,包括在作業21做的video caption generation,其實你都可以用上game的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:40.420" id=01:01:40.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3700">01:01:40.420</a></div>
+        <div class="t">所以這邊的tech home message,前面的東西假設你都沒有聽到的話,那今天這堂課要講的東西就是,如果你今天在churn sequence to sequence的model的時候,你其實可以考慮加上game,看看churn的會不會比較好就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:53.820" id=01:01:53.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3713">01:01:53.820</a></div>
+        <div class="t">那我們今天在這邊就休息十分鐘,十分鐘後再回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:58.820" id=01:01:58.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3718">01:01:58.820</a></div>
+        <div class="t">好,那剛才講了conditional的sequence generation,那還是supervised的,你要有sequence to sequence的model的input跟output,接下來要講unsupervised的conditional sequence generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:15.180" id=01:02:15.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3735">01:02:15.180</a></div>
+        <div class="t">那這邊會舉三個例子,第一個是text style transfer,第二個例子是unsupervised transitive summarization,第三個例子是unsupervised translation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:27.420" id=01:02:27.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3747">01:02:27.420</a></div>
+        <div class="t">好,那我們先講text style transformation,那我們今天已經看過滿坑滿谷的例子是做image style transformation,把風景照轉成梵谷的畫風,轉成浮世繪的畫風等等,就是作業三之三大家要做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:43.740" id=01:02:43.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3763">01:02:43.740</a></div>
+        <div class="t">那其實在文字上,你也可以做style的transformation,什麼叫做文字的style呢?這邊舉一個簡單的例子是說,我們可以把正面的句子算作是一種style,負面的句子算作是另一種style。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:59.100" id=01:02:59.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3779">01:02:59.100</a></div>
+        <div class="t">接下來你只要applycycle game的技術,把兩種不同style的句子當作兩個domain,你就可以用unsupervised的方法,你並不需要兩個domain的文字句子的pair,你並不需要知道說這個positive的句子應該對應到哪一個negative的句子,你不需要這個資訊,你只需要兩堆句子,一堆positive一堆negative,就可以直接train一個style的transformation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:21.580" id=01:03:21.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3801">01:03:21.580</a></div>
+        <div class="t">而我們知道說,你要知道一個句子是不是positive的,其實還蠻容易的,因為我們在ML的作業服裡面,你就會train一個RNN,就把你train過的那個RNN拿出來,然後給他一堆句子,然後如果很positive就換一堆,很negative就換一堆,你就自動有positive跟negative的句子了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:38.700" id=01:03:38.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3818">01:03:38.700</a></div>
+        <div class="t">那這個技術怎麼做呢?我們就完全不需要多講,這個是我們上週就看過的cycle game的圖,那你今天要把image的style transformation換成text的style transfer,唯一做的事情就是把影像換成文字,所以我們就把positive的影像算是一個domain,positive的句子算是一個domain,negative的句子算是另外一個domain,用cycle game的方法train下去就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:06.260" id=01:04:06.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3846">01:04:06.260</a></div>
+        <div class="t">那你這邊可能會遇到一個問題是,我們剛才有講到說,如果今天你的generator的output是discrete的,你沒有辦法直接做training,假設你今天你的generator output是一個句子,句子是一個discrete的東西,你要一個sampling的process你才能夠產生那個句子,當你把這兩個generator跟這個discriminator全部串在一起的時候,你沒辦法一起train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:32.460" id=01:04:32.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3872">01:04:32.460</a></div>
+        <div class="t">那怎麼辦呢?有很多不同的解法,我們剛才就講說有三個解法,一個是用Compile softmax,一個是給discriminator continuous的東西,第三個是用reinforce,那就看你愛用哪一種。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:47.940" id=01:04:47.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3887">01:04:47.940</a></div>
+        <div class="t">在我們的實驗裡面,我們是用continuous的東西,怎麼做呢?其實就是把每一個word用它的word embedding來取代,你把每一個word用它的word embedding來取代以後,每一個句子就是一個vector的sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:04.180" id=01:05:04.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3904">01:05:04.180</a></div>
+        <div class="t">word embedding它並不是one part,它是continuous的東西,所以現在你的generator是output continuous的東西,這個discriminator跟這個generator就可以吃這個continuous的東西當作平衡。所以只要把word換成word embedding,你就可以解這個discrete的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:20.460" id=01:05:20.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3920">01:05:20.460</a></div>
+        <div class="t">這是我們先前的同學實作的結果,就把負面的句子都轉成正面的句子,這是王耀賢同學做的。這邊是一個例子,比如說你說I miss you,他就改成I love you,你說I don't love you,他就改成I love you,你說I cannot do that,他就變成I can do that。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:38.980" id=01:05:38.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3938">01:05:38.980</a></div>
+        <div class="t">他就一個牆內說Sorry for doing such a horrible thing,他就變成Thanks for doing a great thing。當然有一些失敗的,比如說他沒有學到seeker的相反,就是helping,你說my dog is sick,他就說my dog is,my dog也不知道在做什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:53.860" id=01:05:53.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3953">01:05:53.860</a></div>
+        <div class="t">你可能會問說,這個東西有什麼用?這個東西具體而言就是沒有什麼用。假設你覺得你的老師說話特別雞的話,你就在你的耳機裡面裝一個這個東西,跟他說Sorry for doing such a horrible thing,你就變成Thanks for doing a great thing,這樣你的人生就會比較開心一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:10.140" id=01:06:10.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3970">01:06:10.140</a></div>
+        <div class="t">正向會轉負向,就是會認兩個內握,就在說psycho game的時候你不會認兩個內握,一個就是正向轉負向,那我們只拿負向轉正向這個出來demo,就沒有拿正向轉負向出來這個demo,我們不希望讓你的人生變得更黑暗這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:29.820" id=01:06:29.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=3989">01:06:29.820</a></div>
+        <div class="t">好,那我們上次講到說這種unsupervised的transformation有兩個做法,一個就是psycho game系列的做法,那我們剛才看到test style transfer是用psycho game系列的做法做的,那也可以有另外一個系列的做法,就是你把不同domain的東西都project到同一個space,然後再用不同domain的decoder把它解回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:54.380" id=01:06:54.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4014">01:06:54.380</a></div>
+        <div class="t">那test style transfer也可以用這樣子的做法,你唯一做的事情就只是把本來你的X domain跟Y domain可能是真人的頭像,跟二次元人物的頭像,把它們換成正面的句子跟負面的句子,就結束了,就結束了,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:12.460" id=01:07:12.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4032">01:07:12.460</a></div>
+        <div class="t">好,當然我們有說,今天如果是產生文字的時候,你會遇到一些特別的問題,就是因為文字是discrete的,所以今天這個discriminator沒有辦法吃discrete的input,如果它吃discrete的input的話,它會沒有辦法跟decoderjoin的detract,所以怎麼解呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:30.220" id=01:07:30.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4050">01:07:30.220</a></div>
+        <div class="t">在文獻上我們看過的一個做法是,當然你可以用比如說Rimforce、Gamble Softmax等等不同的解法,但我在文獻上看到一個有趣的解法是,有人說這個discriminator,這個是NITC Cell Lab做的,如果我沒記錯的話,這個discriminator不要吃decoder output的word,它吃decoder的hidden state。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:53.260" id=01:07:53.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4073">01:07:53.260</a></div>
+        <div class="t">就decoder也是一個RNN嘛,那RNN每一個time state就會有一個hidden的vector,這個decoder不吃最終的output,它吃hidden的vector,那hidden vector是continuous的,所以就沒有那個discrete的問題,這是一個解法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:09.740" id=01:08:09.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4089">01:08:09.740</a></div>
+        <div class="t">然後我們說,今天你要讓這兩個不同的encoder可以把不同domain的東西project到同樣的space,你需要下一些constraint,那在上週我們講了很多各式各樣的不同的constraint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:22.700" id=01:08:22.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4102">01:08:22.700</a></div>
+        <div class="t">但我發現說那些各式各樣的不同的constraint還沒有被apply到文字的領域,所以這是一個未來可以做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:31.660" id=01:08:31.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4111">01:08:31.660</a></div>
+        <div class="t">我現在看到唯一做的技術只有說,有人train了一個classifier,那這個classifier就吃這兩個encoder的output,那這兩個encoder要盡量去騙過這個classifier,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:42.940" id=01:08:42.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4122">01:08:42.940</a></div>
+        <div class="t">這個classifier要從這個vector判斷說這個vector是來自於哪一個domain,我把文獻放在這邊給大家參考。好,那接下來我要講的是說,用Gantt的技術來做unsupervised的attractive summarization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:00.140" id=01:09:00.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4140">01:09:00.140</a></div>
+        <div class="t">那這個怎麼做呢?怎麼train一個summarizer,怎麼train一個network,它可以幫你做摘要呢?所謂做摘要的意思是說,假設你收集到一些文章,你又沒有時間看,你就把那個文章直接丟給network,希望它讀完這個文章以後自動地幫你生成做摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:20.700" id=01:09:20.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4160">01:09:20.700</a></div>
+        <div class="t">那做摘要這件事從來不是一個新的問題,因為這個顯然是一個非常有應用價值的東西,所以它從來不是一個新的問題,五、六十年前就開始有人在做了。只是在過去的時候,機器類的技術還沒有那麼強,所以過去你要讓機器學習做摘要的時候,通常機器學做的事情是attractive的summarization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:41.940" id=01:09:41.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4181">01:09:41.940</a></div>
+        <div class="t">這邊title寫的是attractive summarization,還有另外一種SUMMER做摘要的方法叫做attractive summarization。attractive summarization的意思就是說,給機器一篇文章,那每篇文章機器做的事情就是判斷說,這篇文章的句子是重要的還是不重要的,接下來它把所有判斷為重要的句子接起來,就變成一則摘要,結束,就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:04.140" id=01:10:04.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4204">01:10:04.140</a></div>
+        <div class="t">那你可能會說,用這樣的方法可以產生好的摘要嗎?那這種方法雖然很簡單,你就是認一個binary的classify,決定一個句子是重要的還是不重要的,但是你沒有辦法用這個方法產生真的非常好的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:18.020" id=01:10:18.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4218">01:10:18.020</a></div>
+        <div class="t">為什麼呢?因為就像我們國小老師都有告訴我們說,你今天在寫課文摘要的時候,你要用自己的話來寫摘要,你不能夠把課文裡面的句子就直接抄出來當作摘要,你要自己understand這個課文以後,看懂這個課文以後,用自己的話來寫出摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:36.100" id=01:10:36.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4236">01:10:36.100</a></div>
+        <div class="t">那過去attracted summarization做不到這件事,但是今天多數我們都可以做attracted summarization了,怎麼做?認一個sequence-to-sequence的model,收集一大堆的文章,每一篇文章都有人標的摘要,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:51.220" id=01:10:51.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4251">01:10:51.220</a></div>
+        <div class="t">然後sequence-to-sequence的model硬train下去,就像你train一個chatbot或train一個video caption的generator一樣,就train下去,就結束了,給他一個新的文章,他就會產生一個摘要,而且這個摘要是機器用自己的話說出來的,不見得是文章裡面現有的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:10.220" id=01:11:10.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4270">01:11:10.220</a></div>
+        <div class="t">但是這整套技術最大的問題就是,你要train這個sequence-to-sequence的model,你顯然需要非常大量的資料,到底要多少資料才夠呢?很多同學會想要自己train一個summarizer,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:22.220" id=01:11:22.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4282">01:11:22.220</a></div>
+        <div class="t">然後他去網路上收集了比如說十萬篇文章,十萬篇文章他通通有標注摘要,他覺得已經很多了,train下去結果怎麼壞掉,為什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:30.860" id=01:11:30.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4290">01:11:30.860</a></div>
+        <div class="t">這時候我就會告訴你說,你要train一個abstracted summarization系統,通常至少要一百萬個example才做得起來,沒有一百萬個example,機器可能連產生符合文法的句子都做不到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:43.220" id=01:11:43.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4303">01:11:43.220</a></div>
+        <div class="t">但是如果有上百萬個example,對機器來說,要產生合文法的句子其實不是一個問題,但是這個abstracted summarization最大的問題就是,要收集大量的資料才有辦法去訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:57.420" id=01:11:57.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4317">01:11:57.420</a></div>
+        <div class="t">所以怎麼辦呢?我們就想要提出一些新的方法,我們其實可以把文章視為是一種domain,把摘要視為是另外一種domain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:08.620" id=01:12:08.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4328">01:12:08.620</a></div>
+        <div class="t">現在如果我們有了GEM的技術,我們可以在兩個domain間直接用unsupervised的方法互轉,我們並不需要兩個domain間的東西的pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:17.820" id=01:12:17.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4337">01:12:17.820</a></div>
+        <div class="t">所以今天假設我們把文章視為一個domain,摘要視為另外一個domain,我們不需要文章和摘要的pair,只要收集一大堆文章,收集一大堆摘要當作範例,告訴機器說摘要到底長什麼樣子,這些摘要不需要是這些文章的摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:33.500" id=01:12:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4353">01:12:33.500</a></div>
+        <div class="t">只要收集兩堆data,機器就可以自動在兩個domain間互轉,也就可以自動地學會怎麼做摘要這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:40.820" id=01:12:40.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4360">01:12:40.820</a></div>
+        <div class="t">而這個process是unsupervised,你並不需要標註這些文章的摘要,你只需要提供給機器一些摘要作為範例就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12:49.820" id=01:12:49.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4369">01:12:49.820</a></div>
+        <div class="t">那這個技術怎麼做的呢?這個技術就跟cycle gate是非常像的,我們認一個generator,這個generator是一個sequence to sequence model,這個sequence to sequence model是一篇文章,然後output一個word sequence,然後output一個比較短的word sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:08.340" id=01:13:08.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4388">01:13:08.340</a></div>
+        <div class="t">但是假設只有這個generator,你沒辦法train,因為generator根本不知道output什麼樣的word sequence才能當作input文章的摘要,所以接下來你就要認一個discriminator,這個discriminator的工作是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:23.660" id=01:13:23.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4403">01:13:23.660</a></div>
+        <div class="t">這個discriminator的工作就是,他看過很多人寫的摘要,但是這些摘要不需要是這些文章的摘要,discriminator看過很多人寫的摘要,他知道人寫的摘要是什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:34.660" id=01:13:34.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4414">01:13:34.660</a></div>
+        <div class="t">接下來他就可以給這個generator feedback,讓generator output出來的word sequence看起來像是摘要一樣,就跟我們之前講說什麼風景畫轉梵谷的畫一樣,你需要一個discriminator,看說一張圖是不是梵谷的圖,把這個資訊feedback給generator,generator就可以產生看起來像是梵谷的畫作的,是梵谷style的畫作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13:55.940" id=01:13:55.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4435">01:13:55.940</a></div>
+        <div class="t">跟今天儀式一樣,你只需要一個generator,一個discriminator,discriminator給這個generator feedback,就可以希望他output出來的句子看起來像是梵谷。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:06.740" id=01:14:06.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4446">01:14:06.740</a></div>
+        <div class="t">但是在講psycho game的時候,我們有講過說,光是這樣的架構是不夠的,因為generator可能會學到產生看起來像是梵谷的句子,人寫的梵谷可能有某些特徵,比如說它都是比較簡短的,也許generator可以學到產生一個簡短的句子,但是跟輸入是完全沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:25.140" id=01:14:25.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4465">01:14:25.140</a></div>
+        <div class="t">那怎麼解這個問題呢?就跟psycho game一樣,你要加一個reconstructor,在做psycho game的時候,我們把x domain的東西轉到y domain,接下來要任一個generator把y domain的東西轉回來,這樣我們就可以迫使x domain跟y domain的東西是長得比較像的,我們希望generator的output跟input是有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:14:44.900" id=01:14:44.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4484">01:14:44.900</a></div>
+        <div class="t">所以在做unsupervised attractive summarization的時候,我們這邊用的概念跟psycho game其實是一模一樣的,你任另外一個generator,我們這邊稱為reconstructor,它的工作是,吃第一個generator output的word sequence,把這個word sequence轉回原來的document。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:01.620" id=01:15:01.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4501">01:15:01.620</a></div>
+        <div class="t">那在change的時候,你就希望原來輸入的文章被縮短,以後要能夠擴寫回原來的document,這個跟psycho game用的概念是一模一樣的。那你其實可以用另外一個方法來理解這個model,你說我有一個generator,這個generator能把文章變成簡短的句子,那你有另外一個reconstructor,它把簡短的句子變回原來的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:25.540" id=01:15:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4525">01:15:25.540</a></div>
+        <div class="t">如果這個reconstructor可以把簡短的句子變回原來的文章,代表說這個句子有原來的文章裡面重要的資訊,因為這個句子有原來的文章裡面重要的資訊,所以你就可以把它當作一個摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:38.020" id=01:15:38.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4538">01:15:38.020</a></div>
+        <div class="t">在training的時候,這個training的process是unsupervised,因為你只需要文章就好,你只需要這個輸入和輸出的文章越接近越好,所以並不需要給機器摘要,你只需要提供給機器文章就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15:51.140" id=01:15:51.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4551">01:15:51.140</a></div>
+        <div class="t">那這個整個model,這個generator跟reconstructor合起來,可以看都是一個sequence to sequence to sequence的autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:00.500" id=01:16:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4560">01:16:00.500</a></div>
+        <div class="t">一般你都會train一個sequence to,一般你train一個autoencoder的時候,就input一個東西,把它變成一個vector,再把這個vector變回原來的object,比如說是一個image等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:10.100" id=01:16:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4570">01:16:10.100</a></div>
+        <div class="t">那現在是input一個sequence,把它變成一個短的sequence,再把它解回原來長的sequence,像是一個sequence to sequence to sequence的autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:18.420" id=01:16:18.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4578">01:16:18.420</a></div>
+        <div class="t">那一般的autoencoder都是用一個latent的vector來表示你的資訊,那我們現在不是用一個人看不懂的vector來表示資訊,我們是用一個句子來表示資訊,這個東西希望是人可以讀的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:34.260" id=01:16:34.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4594">01:16:34.260</a></div>
+        <div class="t">但是這邊會遇到的問題是,假設你只train這個generator跟這個reconstructor,你產生出來的word sequence可能是人沒有辦法讀的,它可能是人根本就沒有辦法看懂的,因為機器可能會自己發明奇怪的暗語。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16:47.460" id=01:16:47.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4607">01:16:47.460</a></div>
+        <div class="t">因為generator跟reconstructor它們都是machine,所以它們可以發明奇怪的暗語,反正只要它們彼此之間看得懂就好,那人看不懂沒有關係,比如說臺灣大學,它可能就縮寫成灣學而不是臺大,反正只要reconstructor可以把灣學解回臺灣大學,其實就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:04.020" id=01:17:04.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4624">01:17:04.020</a></div>
+        <div class="t">所以為了希望generator產生出來的句子是人看得懂的,所以我們要加一個discriminator,這個discriminator就會強迫說,generator產生出來的句子一方面要是一個summary可以被reconstructor解回原來的文章,同時,generator output的這個句子也要是discriminator可以看得懂的,覺得像是人類寫的summary的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:27.060" id=01:17:27.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4647">01:17:27.060</a></div>
+        <div class="t">好,那這個就是unsupervised practice summarization的架構,那可以做到什麼樣的程度呢?這邊可以跟大家講一下,在training的時候說因為這邊output是discrete的嘛,所以你當然是需要有一些方法來處理這種discrete的output,那我們用的就是reinforced algorithm就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17:46.580" id=01:17:46.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4666">01:17:46.580</a></div>
+        <div class="t">我們來看一下可以做到什麼樣的程度,這是一些真正的例子。一個比較typical的例子是,像今天人寫的摘要是澳大利亞與十三國簽署款興奮期協議,機器寫的摘要是unsupervised training,機器寫的摘要是澳大利亞加強體育競賽之外的藥品檢查,這個句子也是通順的,也是符合文法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:08.580" id=01:18:08.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4688">01:18:08.580</a></div>
+        <div class="t">但多數的時候我發現說,在論unsupervised摘要的時候,機器其實是比較保守的,因為你會發現說這些句子其實在文章裡面有出現,比如說加強體育競賽之外的藥品檢查,其實就出現在這個地方,加強體育競賽之外的藥品檢查。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:24.580" id=01:18:24.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4704">01:18:24.580</a></div>
+        <div class="t">所以今天機器為了要希望它產生出來的摘要discriminator覺得像是人寫的,它通常比較常採取的solution是直接從input的document裡面copy句子出來,因為這樣看起來就會非常像是人寫的。這是一個typical的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:40.020" id=01:18:40.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4720">01:18:40.020</a></div>
+        <div class="t">一個比較強的例子是,今天這則人寫的摘要是1992年冬季奧運會邀我參加,機器自動產生的摘要是奧委會接獲冬季奧運會邀請函,所以機器自己學到說奧林匹克委員會可以縮寫成奧委會。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:18:57.340" id=01:18:57.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4737">01:18:57.340</a></div>
+        <div class="t">可能是因為在training data裡面,摘要裡面要看到很多A委會、B委會、C委會,所以它覺得奧林匹克委員會應該是可以縮寫成奧委會的,這是一個特別強的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:09.180" id=01:19:09.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4749">01:19:09.180</a></div>
+        <div class="t">也可以找到一些失敗的例子,舉例來說,這個例子是印度尼西亞書門達拉島洪水氾濫,人寫的是印尼水災造成60人死亡,機器寫的是印尼門洪水氾濫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:22.700" id=01:19:22.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4762">01:19:22.700</a></div>
+        <div class="t">那你可能會問說印尼門是什麼呢?印尼門就是印度尼西亞書門的縮寫,因為機器可能看過很多羅生門、通俄門,所以它覺得印度尼西亞書門應該可以縮寫成印尼門。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:35.540" id=01:19:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4775">01:19:35.540</a></div>
+        <div class="t">但其實還有更失敗的例子,像這個機器寫的三要四,合肥領導幹部下基層作稿迎來送往,規定一律減。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:42.980" id=01:19:42.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4782">01:19:42.980</a></div>
+        <div class="t">所以你就不知道在寫什麼這樣子,一律減就是一律清車重檢的縮寫,就是一律減。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19:54.260" id=01:19:54.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4794">01:19:54.260</a></div>
+        <div class="t">有人可能會想說用unsupervised learning有什麼好處,因為你用unsupervised learning永遠贏不過supervised learning,supervised learning就是unsupervised learning的upper bound,那unsupervised learning的意義何在?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:05.460" id=01:20:05.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4805">01:20:05.460</a></div>
+        <div class="t">所以下面有這個實驗來說明一下unsupervised learning的意義。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:10.100" id=01:20:10.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4810">01:20:10.100</a></div>
+        <div class="t">那這邊這個縱軸式肉集的分數總之就是用來衡量災藥的一個方法,值越大代表我們產生的災藥越好就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:20.740" id=01:20:20.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4820">01:20:20.740</a></div>
+        <div class="t">那黑色的線是什麼?黑色的線是supervised learning的方法,那今天在做supervised learning的時候需要三百八十萬筆圈你的example,三百八十萬篇文章跟他們的災藥,你才能夠圈出一個好的summarization的系統。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:36.740" id=01:20:36.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4836">01:20:36.740</a></div>
+        <div class="t">那用三百八十萬篇文章圈出來的結果是黑色的這一條線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:41.540" id=01:20:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4841">01:20:41.540</a></div>
+        <div class="t">那這邊我們用了不同的方法來train這個game,我們有用Wgame的方法,有用reinforcement learning的方法,分別是藍線跟橙線得到的結果其實是差不多的,看起來Wgame是差一點,那橙色的結果用reinforcement learning的結果是比較好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20:59.140" id=01:20:59.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4859">01:20:59.140</a></div>
+        <div class="t">那今天如果在完全沒有任何label的情況下得到的結果是這個樣子,那當然跟supervised learning的方法還是差了一點,但是今天你可以用少量的summary再去fine tune unsupervised learning的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:14.340" id=01:21:14.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4874">01:21:14.340</a></div>
+        <div class="t">就是你先用unsupervised learning的方法把你的model練得很強,再用少量的label data去fine tune,那它的進步就會很快。舉例來說,我們這邊只用五十萬筆的data,得到的結果就已經跟supervised learning的結果一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:29.380" id=01:21:29.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4889">01:21:29.380</a></div>
+        <div class="t">所以這邊你只需要原來的六分之一或者更少的data,其實就可以跟用全部的data得到一樣好的結果。所以unsupervised learning帶給我們的好處就是,你只需要比較少的data,比較少的label data,就可以跟過去大量label data的時候得到的結果也許是一樣好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:21:48.260" id=01:21:48.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4908">01:21:48.260</a></div>
+        <div class="t">這就是unsupervised learning的妙用。我這邊舉最後一個例子,是unsupervised machine translation。至於怎麼做,我們今天就不細講。我們今天可以把不同的語言視為不同的domain,假設你要英文轉法文,你要把英文視為一個domain,法文視為另外一個domain,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:08.600" id=01:22:08.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4928">01:22:08.600</a></div>
+        <div class="t">然後就可以用unsupervised learning的方法,把英文轉成法文,法文轉成英文,那就做到摘要了,就結束了。不摘要,做到翻譯就結束了,所以你就可以做unsupervised的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:20.920" id=01:22:20.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4940">01:22:20.920</a></div>
+        <div class="t">這個方法聽起來其實還蠻匪夷所思的,真的能夠做得到嗎?其實Facebook在今年的iClear就發了兩篇這種page,看起來還真的是可以的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:32.920" id=01:22:32.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4952">01:22:32.920</a></div>
+        <div class="t">因為細節我們就不講了,細節可以想像就很像psycho game,我們前面講過的方法,只是前面我們有說,拿兩種不同的image當作兩個不同的domain,兩種不同的語音當作兩個不同的domain,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:45.880" id=01:22:45.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4965">01:22:45.880</a></div>
+        <div class="t">現在只是把兩種語言當作兩個不同的domain,然後讓機器去學兩種語言間的對應,然後運作看看做不做得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22:53.320" id=01:22:53.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4973">01:22:53.320</a></div>
+        <div class="t">這個是文件上的結果,這個曲線代表supervised learning的方法,縱軸是blue score,是拿來衡量摘要好壞的方法,總之blue score越高代表摘要做得越好,橫軸是訓練資料的量,從十的四次方一直到十的七次方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:12.360" id=01:23:12.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=4992">01:23:12.360</a></div>
+        <div class="t">而你發現說,如果supervised learning的方法,這邊是不同語言的翻譯,英文轉法文,法文轉英文,德文轉英文,英文轉德文,四條線代表四種不同語言的pair,語言的組合間的翻譯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:26.200" id=01:23:26.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5006">01:23:26.200</a></div>
+        <div class="t">你會發現說,訓練資料越多,當然結果就越好,這個沒有什麼特別稀奇的。橫線是什麼?這個橫線是unsupervised learning的方法,用十的七次方的data去train的unsupervised learning的方法,但是你並不需要兩個語言間的pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:23:43.880" id=01:23:43.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5023">01:23:43.880</a></div>
+        <div class="t">做supervised learning的時候,你需要兩個語言間的pair,但是做unsupervised learning的時候,就是兩堆句子,不需要他們之間的pair,硬做。然後得到的結果就是,你今天只要unsupervised learning的方法有ten million的sentence,你的performance就可以跟supervised learning的方法只用十萬筆data是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:05.560" id=01:24:05.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5045">01:24:05.560</a></div>
+        <div class="t">所以假設你手上沒有十萬筆data的pair,unsupervised learning的方法其實還可以贏過supervised learning的方法,而這個結果呢,是我覺得還頗驚人的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:15.560" id=01:24:15.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5055">01:24:15.560</a></div>
+        <div class="t">接下來我們就想說,既然兩種不同的語言可以做,那語音跟文字間可不可以做呢?把語音視為是一個domain,把文字視為是另外一個domain,然後你就可以apply類似game的技術在這兩個domain間互轉,硬做硬做,讓看看機器能不能夠學得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:24:38.920" id=01:24:38.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5078">01:24:38.920</a></div>
+        <div class="t">如果假設機器今天可以學會說,給它一堆語音,給它一堆文字,它就可以自動學會怎麼把聲音轉成文字的話,你就可以做unsupervised語音辨識了,未來機器可能在日常生活中聽人講話,然後它自己再去網絡上看一下人寫的文章,就自動學會語音辨識了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:00.960" id=01:25:00.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5100">01:25:00.960</a></div>
+        <div class="t">有人可能會想說,這個聽起來也是還蠻匪夷所思的,這個東西到底能不能夠做到呢?我其實覺得是有可能的,如果翻譯可以做到,這件事情也是有機會的,unsupervised語音辨識也是有機會的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:13.680" id=01:25:13.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5113">01:25:13.680</a></div>
+        <div class="t">這邊舉一個非常簡單的例子,假如說所有的聲音訊號的開頭都是某個樣子,比如說都有p1這個pattern,我們用p代表一個pattern,p1這個pattern,那機器在自己去讀文章以後發現說,哦,所有的文章都是the開頭,它就可以自動mapping到說,p1這種聲音訊號的pattern就是the。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:34.160" id=01:25:34.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5134">01:25:34.160</a></div>
+        <div class="t">這是一個過度簡化的例子,實際上做不做得起來呢?這個是實際上得到的結果。我們用的聲音訊號來自於timi這個corpus,用的文字來自於wmt這個corpus,這兩個corpus是沒有對應關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25:49.160" id=01:25:49.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5149">01:25:49.160</a></div>
+        <div class="t">就並不是說這些文字就是這些語音的辨識的結果,不是,就是兩堆不相關的東西,一堆語音講自己的,文字講自己的,兩堆不相關的東西,然後接下來就用類似CycleGAN的技術硬轉,看能不能夠把聲音訊號硬式轉成文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:05.700" id=01:26:05.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5165">01:26:05.700</a></div>
+        <div class="t">這是一個實驗的結果,縱軸是辨識的正確率,其實是phonic recognition,所以其實不是辨識出文字,是辨識出音標而已,辨識出文字還是比較難,直接辨識出音標而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:18.320" id=01:26:18.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5178">01:26:18.320</a></div>
+        <div class="t">這個橫軸代表說訓練資料的量,如果是supervised類的方法,當然訓練資料量越多,performance越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:24.880" id=01:26:24.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5184">01:26:24.880</a></div>
+        <div class="t">這兩個橫線是什麼呢?這兩個橫線就是用unsupervised的方法運作得到的結果,運作其實有得到36%的正確率。36%的正確率這麼低,這個output結果應該是人看不懂吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:39.160" id=01:26:39.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5199">01:26:39.160</a></div>
+        <div class="t">是人看不懂,但是它是遠比random好的,所以就算是在完全unsupervised的情況下,只給機器一堆文字、一堆語音,它還是有學到東西的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26:54.140" id=01:26:54.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5214">01:26:54.140</a></div>
+        <div class="t">這讓我想到說,在《星際大戰》裡面,機器人叫CGPO,CGPO會說六個million不同的銀河系裡面的語言,但是有一次它被伊沃克人圍住了,雖然它會說各種不同的語言,但它不會說伊沃克語。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27:10.200" id=01:27:10.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Xb1x4ZgV6iM&t=5230">01:27:10.200</a></div>
+        <div class="t">但是它聽了伊沃克人的對話以後,它想了一想就說,我突然會說伊沃克語了。這是為什麼呢?就是因為它裡面有用了Gan的技術。</div>
+    </div>
+    
+</body>
+</html>   

@@ -1,0 +1,3094 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] Deep Learning for Dependency Parsing</h2><a href=https://www.youtube.com/watch?v=9erBrs-VIqc><img src=https://i.ytimg.com/vi_webp/9erBrs-VIqc/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=0">00:00.000</a></div>
+        <div class="t">Dependency的Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:05.720" id=00:05.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=5">00:05.720</a></div>
+        <div class="t">我們為什麼把Parsing特別拿出來講呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:09.220" id=00:09.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=9">00:09.220</a></div>
+        <div class="t">這頁投影片,我相信大家已經看過很多次了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.220" id=00:12.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=12">00:12.220</a></div>
+        <div class="t">我們說NLP的任務,就可以歸類成幾大類</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.220" id=00:16.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=16">00:16.220</a></div>
+        <div class="t">但有一些任務看起來比較複雜</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.600" id=00:19.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=19">00:19.600</a></div>
+        <div class="t">我們沒有辦法把它放到這八大類的NLP任務上</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.300" id=00:24.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=24">00:24.300</a></div>
+        <div class="t">所以我們特別拿出來講,其中一個就是Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:29.500" id=00:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=29">00:29.500</a></div>
+        <div class="t">那之前呢,我們已經講過Constituency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:34.500" id=00:34.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=34">00:34.500</a></div>
+        <div class="t">那Constituency Parsing在意的是說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:37.000" id=00:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=37">00:37.000</a></div>
+        <div class="t">某兩個相鄰的詞彙,它們能不能夠拼在一起變成一個Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:44.500" id=00:44.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=44">00:44.500</a></div>
+        <div class="t">這些Constituent還可以再拼成更大的Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:49.000" id=00:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=49">00:49.000</a></div>
+        <div class="t">然後組成一個樹狀的結構</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.500" id=00:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=51">00:51.500</a></div>
+        <div class="t">那我們已經講過Constituency Parsing是怎麼運作的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:56.000" id=00:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=56">00:56.000</a></div>
+        <div class="t">那Dependency Parsing它關注的點跟Constituency Parsing不太一樣</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01.500" id=01:01.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=61">01:01.500</a></div>
+        <div class="t">Constituency Parsing在意的是兩個相鄰的Token能不能夠組成一個Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07.500" id=01:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=67">01:07.500</a></div>
+        <div class="t">那Dependency Parsing在意的是兩個詞彙之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13.500" id=01:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=73">01:13.500</a></div>
+        <div class="t">而這兩個詞彙不一定要相鄰</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.000" id=01:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=77">01:17.000</a></div>
+        <div class="t">所以Dependency Parsing相較於Constituency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:20.500" id=01:20.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=80">01:20.500</a></div>
+        <div class="t">它又有更大的Flexibility</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.500" id=01:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=82">01:22.500</a></div>
+        <div class="t">Constituency Parsing只在意相鄰詞彙之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.500" id=01:25.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=85">01:25.500</a></div>
+        <div class="t">但Dependency Parsing它在意的是一個句子裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.000" id=01:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=89">01:29.000</a></div>
+        <div class="t">詞彙兩兩之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:32.000" id=01:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=92">01:32.000</a></div>
+        <div class="t">它們不需要是相鄰的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:34.500" id=01:34.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=94">01:34.500</a></div>
+        <div class="t">不是相鄰的詞彙,它們可能也會有非常緊密的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.000" id=01:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=98">01:38.000</a></div>
+        <div class="t">所以Dependency Parsing它考慮的是詞彙和詞彙之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:42.500" id=01:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=102">01:42.500</a></div>
+        <div class="t">而不局限於兩個詞彙是否是相鄰</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:46.000" id=01:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=106">01:46.000</a></div>
+        <div class="t">舉例來說,在今天這個例子裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:49.500" id=01:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=109">01:49.500</a></div>
+        <div class="t">今天在這個例子裡面有說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:51.500" id=01:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=111">01:51.500</a></div>
+        <div class="t">We book her the flight to Taipei</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.500" id=01:54.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=114">01:54.500</a></div>
+        <div class="t">那book是book什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:57.500" id=01:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=117">01:57.500</a></div>
+        <div class="t">訂了一個什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.000" id=01:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=119">01:59.000</a></div>
+        <div class="t">是訂了一個飛機票</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:01.000" id=02:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=121">02:01.000</a></div>
+        <div class="t">那雖然book跟flight它們沒有直接相連</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:05.000" id=02:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=125">02:05.000</a></div>
+        <div class="t">但是flight是book所訂的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.000" id=02:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=129">02:09.000</a></div>
+        <div class="t">所以flight跟book它們有非常緊密的關聯性</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:13.500" id=02:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=133">02:13.500</a></div>
+        <div class="t">那這個就是Dependency Parsing想要找出來的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.000" id=02:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=139">02:19.000</a></div>
+        <div class="t">當我們說兩個詞彙間有關聯的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:24.000" id=02:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=144">02:24.000</a></div>
+        <div class="t">這種關聯有各式各樣的關聯</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:29.000" id=02:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=149">02:29.000</a></div>
+        <div class="t">那我們會用一個箭頭來表示這種關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:33.000" id=02:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=153">02:33.000</a></div>
+        <div class="t">在這個箭頭的起始我們叫做head</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:37.000" id=02:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=157">02:37.000</a></div>
+        <div class="t">起始的詞彙叫做head</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:39.000" id=02:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=159">02:39.000</a></div>
+        <div class="t">箭頭指向的那一個詞彙我們叫dependent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:44.000" id=02:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=164">02:44.000</a></div>
+        <div class="t">那詞彙和詞彙之間有什麼樣的關係呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:48.000" id=02:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=168">02:48.000</a></div>
+        <div class="t">有非常多種關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:50.000" id=02:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=170">02:50.000</a></div>
+        <div class="t">那這邊我們就不細講</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:52.000" id=02:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=172">02:52.000</a></div>
+        <div class="t">我這邊就直接剪了一個教科書裡面的圖</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.000" id=02:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=176">02:56.000</a></div>
+        <div class="t">給大家看說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:57.000" id=02:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=177">02:57.000</a></div>
+        <div class="t">詞彙和詞彙之間有很多各式各樣的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:01.000" id=03:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=181">03:01.000</a></div>
+        <div class="t">那這個我們是想要憑藉著Machine Learning的力量</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.000" id=03:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=185">03:05.000</a></div>
+        <div class="t">幫我們找出來的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:07.000" id=03:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=187">03:07.000</a></div>
+        <div class="t">那Dependency Parsing要做的事</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:10.000" id=03:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=190">03:10.000</a></div>
+        <div class="t">就是找出詞彙和詞彙之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.000" id=03:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=193">03:13.000</a></div>
+        <div class="t">而講得更具體而言</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:15.000" id=03:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=195">03:15.000</a></div>
+        <div class="t">Dependency Parsing要做的事</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:17.000" id=03:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=197">03:17.000</a></div>
+        <div class="t">就是把一個句子變成一個graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:21.000" id=03:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=201">03:21.000</a></div>
+        <div class="t">變成一個directed graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:24.000" id=03:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=204">03:24.000</a></div>
+        <div class="t">directed graph的意思就是說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:26.000" id=03:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=206">03:26.000</a></div>
+        <div class="t">node和node之間是由箭頭連起來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:28.000" id=03:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=208">03:28.000</a></div>
+        <div class="t">而這些箭頭是有方向性的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.000" id=03:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=210">03:30.000</a></div>
+        <div class="t">這個叫directed graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:32.000" id=03:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=212">03:32.000</a></div>
+        <div class="t">那這個graph裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.000" id=03:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=214">03:34.000</a></div>
+        <div class="t">每一個節點每一個node</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:36.000" id=03:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=216">03:36.000</a></div>
+        <div class="t">就是一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:38.000" id=03:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=218">03:38.000</a></div>
+        <div class="t">詞彙和詞彙節點和節點之間的edge</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.000" id=03:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=222">03:42.000</a></div>
+        <div class="t">就代表了這兩個詞彙之間的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:46.000" id=03:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=226">03:46.000</a></div>
+        <div class="t">那舉一個具體的例子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:48.000" id=03:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=228">03:48.000</a></div>
+        <div class="t">假設一個句子是說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:49.000" id=03:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=229">03:49.000</a></div>
+        <div class="t">I want to study a PhD</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=231">03:51.000</a></div>
+        <div class="t">我想念個博班</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:53.000" id=03:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=233">03:53.000</a></div>
+        <div class="t">你會對你指導教授說的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.000" id=03:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=235">03:55.000</a></div>
+        <div class="t">你想要念個博班</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:57.000" id=03:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=237">03:57.000</a></div>
+        <div class="t">想要簽下去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:59.000" id=03:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=239">03:59.000</a></div>
+        <div class="t">那這句話的Dependency Parsing的結果</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.000" id=04:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=241">04:01.000</a></div>
+        <div class="t">長什麼樣子呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.000" id=04:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=243">04:03.000</a></div>
+        <div class="t">Dependency Parsing就是要把一個句子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:05.000" id=04:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=245">04:05.000</a></div>
+        <div class="t">變成一個圖</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:07.000" id=04:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=247">04:07.000</a></div>
+        <div class="t">這個圖上每一個節點就是一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:11.000" id=04:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=251">04:11.000</a></div>
+        <div class="t">然後接下來節點和節點間</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.000" id=04:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=254">04:14.000</a></div>
+        <div class="t">詞彙和詞彙之間</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:16.000" id=04:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=256">04:16.000</a></div>
+        <div class="t">有關係的詞彙會被連在一起</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:19.000" id=04:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=259">04:19.000</a></div>
+        <div class="t">比如說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.000" id=04:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=260">04:20.000</a></div>
+        <div class="t">Want的主詞是什麼呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:22.000" id=04:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=262">04:22.000</a></div>
+        <div class="t">誰想呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.000" id=04:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=263">04:23.000</a></div>
+        <div class="t">我想</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=264">04:24.000</a></div>
+        <div class="t">我想要做什麼呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:26.000" id=04:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=266">04:26.000</a></div>
+        <div class="t">想要念一個東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.000" id=04:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=268">04:28.000</a></div>
+        <div class="t">想要念什麼呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:29.000" id=04:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=269">04:29.000</a></div>
+        <div class="t">想要念博班</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:32.000" id=04:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=272">04:32.000</a></div>
+        <div class="t">那這些詞彙和詞彙間有關係的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:35.000" id=04:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=275">04:35.000</a></div>
+        <div class="t">就被箭頭把它連起來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:37.000" id=04:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=277">04:37.000</a></div>
+        <div class="t">而箭頭上面其實會有一個標記</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:41.000" id=04:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=281">04:41.000</a></div>
+        <div class="t">每一個箭頭是有不同的型態的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.000" id=04:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=284">04:44.000</a></div>
+        <div class="t">這邊我們用一個英文的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:47.000" id=04:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=287">04:47.000</a></div>
+        <div class="t">用一串英文來代表這個型態</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:50.000" id=04:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=290">04:50.000</a></div>
+        <div class="t">每一個箭頭都是有不同的型態</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:54.000" id=04:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=294">04:54.000</a></div>
+        <div class="t">代表這兩個用箭頭連在一起的詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.000" id=04:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=297">04:57.000</a></div>
+        <div class="t">它們之間有什麼樣的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:01.000" id=05:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=301">05:01.000</a></div>
+        <div class="t">那找出這個Graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.000" id=05:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=303">05:03.000</a></div>
+        <div class="t">就是Dependency Parsing的任務</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.000" id=05:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=307">05:07.000</a></div>
+        <div class="t">那你會發現說在這個圖上</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:10.000" id=05:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=310">05:10.000</a></div>
+        <div class="t">一般每一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:12.000" id=05:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=312">05:12.000</a></div>
+        <div class="t">它都只有一個Parent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:15.000" id=05:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=315">05:15.000</a></div>
+        <div class="t">比如說Study就是被Want指到</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:18.000" id=05:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=318">05:18.000</a></div>
+        <div class="t">然後PhD就是被Study指到</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.000" id=05:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=321">05:21.000</a></div>
+        <div class="t">然後會有某一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:23.000" id=05:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=323">05:23.000</a></div>
+        <div class="t">它沒有被任何其他人指到</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:26.000" id=05:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=326">05:26.000</a></div>
+        <div class="t">所以這個時候一般而言呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.000" id=05:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=328">05:28.000</a></div>
+        <div class="t">在做Dependency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.000" id=05:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=330">05:30.000</a></div>
+        <div class="t">你就會加上一個額外的Node</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:33.000" id=05:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=333">05:33.000</a></div>
+        <div class="t">這個Root會去指向那個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:36.000" id=05:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=336">05:36.000</a></div>
+        <div class="t">沒有任何人指到的詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:39.000" id=05:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=339">05:39.000</a></div>
+        <div class="t">這個詞彙指的是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.000" id=05:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=341">05:41.000</a></div>
+        <div class="t">這整個句子裡面最關鍵的那個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:43.000" id=05:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=343">05:43.000</a></div>
+        <div class="t">它指向所有人</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.000" id=05:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=345">05:45.000</a></div>
+        <div class="t">沒有人被它指到</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:46.000" id=05:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=346">05:46.000</a></div>
+        <div class="t">那這一個沒有被指到的詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:48.000" id=05:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=348">05:48.000</a></div>
+        <div class="t">就用Root來指它</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.000" id=05:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=351">05:51.000</a></div>
+        <div class="t">所以這整個Graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:53.000" id=05:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=353">05:53.000</a></div>
+        <div class="t">其實它不是一個General的Graph</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=356">05:56.000</a></div>
+        <div class="t">它是一個樹狀的結構</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.000" id=05:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=358">05:58.000</a></div>
+        <div class="t">在這個樹狀的結構裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.000" id=06:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=360">06:00.000</a></div>
+        <div class="t">每一個Node也就是每一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.000" id=06:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=362">06:02.000</a></div>
+        <div class="t">只會有一個箭頭指進來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:06.000" id=06:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=366">06:06.000</a></div>
+        <div class="t">唯一的例外是Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:08.000" id=06:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=368">06:08.000</a></div>
+        <div class="t">沒有箭頭指進來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.000" id=06:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=369">06:09.000</a></div>
+        <div class="t">它只有指給別人</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:11.000" id=06:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=371">06:11.000</a></div>
+        <div class="t">但是一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.000" id=06:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=372">06:12.000</a></div>
+        <div class="t">它可以指給很多不同的詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.000" id=06:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=374">06:14.000</a></div>
+        <div class="t">比如說Want</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:15.000" id=06:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=375">06:15.000</a></div>
+        <div class="t">它可以指向I</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:17.000" id=06:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=377">06:17.000</a></div>
+        <div class="t">也可以指向Study</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.000" id=06:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=378">06:18.000</a></div>
+        <div class="t">那因為它是一個樹狀的結構</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:20.000" id=06:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=380">06:20.000</a></div>
+        <div class="t">所以在這個樹狀結構裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:23.000" id=06:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=383">06:23.000</a></div>
+        <div class="t">的每一個Node</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:26.000" id=06:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=386">06:26.000</a></div>
+        <div class="t">每一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.000" id=06:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=387">06:27.000</a></div>
+        <div class="t">它都有唯一的一條路徑</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=390">06:30.000</a></div>
+        <div class="t">可以回溯到它的Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:33.000" id=06:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=393">06:33.000</a></div>
+        <div class="t">因為它是一個樹狀的結構</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:34.000" id=06:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=394">06:34.000</a></div>
+        <div class="t">所以它不會有兩條不同路徑</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:36.000" id=06:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=396">06:36.000</a></div>
+        <div class="t">回溯到Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.000" id=06:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=397">06:37.000</a></div>
+        <div class="t">每一個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:38.000" id=06:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=398">06:38.000</a></div>
+        <div class="t">都只有一個唯一的路徑</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.000" id=06:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=400">06:40.000</a></div>
+        <div class="t">可以回溯到Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:43.000" id=06:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=403">06:43.000</a></div>
+        <div class="t">這個就是Dependency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:46.000" id=06:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=406">06:46.000</a></div>
+        <div class="t">就是我們要用Machine Learning</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:48.000" id=06:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=408">06:48.000</a></div>
+        <div class="t">找出來的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.000" id=06:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=410">06:50.000</a></div>
+        <div class="t">那怎麼找出一個Dependency的Parsing Tree呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:54.000" id=06:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=414">06:54.000</a></div>
+        <div class="t">其實這個方法可能比你想像的還要更簡單</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=418">06:58.000</a></div>
+        <div class="t">還記不記得我們在講</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:59.000" id=06:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=419">06:59.000</a></div>
+        <div class="t">Constituency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:01.000" id=07:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=421">07:01.000</a></div>
+        <div class="t">我們說怎麼知道一串文字</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=424">07:04.000</a></div>
+        <div class="t">一個Spam 是不是Constituent呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:07.000" id=07:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=427">07:07.000</a></div>
+        <div class="t">你就Train一個Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=429">07:09.000</a></div>
+        <div class="t">這個Classifier吃一串文字</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:11.000" id=07:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=431">07:11.000</a></div>
+        <div class="t">接下來它會說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.000" id=07:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=432">07:12.000</a></div>
+        <div class="t">它是Constituent 還是不是Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:16.000" id=07:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=436">07:16.000</a></div>
+        <div class="t">那它是哪一種Constituent呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.000" id=07:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=438">07:18.000</a></div>
+        <div class="t">把它當作一個Multiclass Classification的Problem來看待</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:23.000" id=07:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=443">07:23.000</a></div>
+        <div class="t">讓Classifier決定說這串文字</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:26.000" id=07:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=446">07:26.000</a></div>
+        <div class="t">它是哪一個Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:30.000" id=07:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=450">07:30.000</a></div>
+        <div class="t">它如果是Constituent的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:32.000" id=07:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=452">07:32.000</a></div>
+        <div class="t">它是哪一個Constituent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:34.000" id=07:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=454">07:34.000</a></div>
+        <div class="t">其實Dependency Parsing也是一樣的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:37.000" id=07:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=457">07:37.000</a></div>
+        <div class="t">Dependency Parsing在意的是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:39.000" id=07:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=459">07:39.000</a></div>
+        <div class="t">兩個詞彙間他們有沒有關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.000" id=07:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=462">07:42.000</a></div>
+        <div class="t">如果有的話是什麼樣的關係</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.000" id=07:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=465">07:45.000</a></div>
+        <div class="t">所以真正要做的事情就是訓練一個Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:48.000" id=07:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=468">07:48.000</a></div>
+        <div class="t">這Classifier吃兩個詞彙作為Input</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:52.000" id=07:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=472">07:52.000</a></div>
+        <div class="t">然後它來判斷說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:54.000" id=07:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=474">07:54.000</a></div>
+        <div class="t">到底左邊這個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.000" id=07:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=476">07:56.000</a></div>
+        <div class="t">該不該有一個箭頭指向右邊這個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:00.000" id=08:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=480">08:00.000</a></div>
+        <div class="t">Classifier會吃兩個輸出</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.000" id=08:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=481">08:01.000</a></div>
+        <div class="t">Classifier會吃兩個輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:04.000" id=08:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=484">08:04.000</a></div>
+        <div class="t">我們叫它左輸入跟右輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:08.000" id=08:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=488">08:08.000</a></div>
+        <div class="t">那Classifier要決定說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.000" id=08:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=490">08:10.000</a></div>
+        <div class="t">左側的這個輸入能不能</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.000" id=08:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=492">08:12.000</a></div>
+        <div class="t">應不應該被指到右側這個輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:16.000" id=08:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=496">08:16.000</a></div>
+        <div class="t">那應不應該呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:17.000" id=08:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=497">08:17.000</a></div>
+        <div class="t">這是一個Binary的Classification的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:20.000" id=08:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=500">08:20.000</a></div>
+        <div class="t">這只是一個簡單的二元分類的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.000" id=08:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=504">08:24.000</a></div>
+        <div class="t">左邊這個詞彙要指到右邊這個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=507">08:27.000</a></div>
+        <div class="t">或左邊這個詞彙不要指到右邊這個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:30.000" id=08:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=510">08:30.000</a></div>
+        <div class="t">這是一個二元分類的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:33.000" id=08:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=513">08:33.000</a></div>
+        <div class="t">如果我們確定說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:34.000" id=08:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=514">08:34.000</a></div>
+        <div class="t">左邊這個詞彙要指到右邊這個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:37.000" id=08:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=517">08:37.000</a></div>
+        <div class="t">那這兩個詞彙間的關係到底是什麼呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:39.000" id=08:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=519">08:39.000</a></div>
+        <div class="t">把它當作一個Multiclass Classification的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:43.000" id=08:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=523">08:43.000</a></div>
+        <div class="t">然後就Train下去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:45.000" id=08:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=525">08:45.000</a></div>
+        <div class="t">就結束了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=529">08:49.000</a></div>
+        <div class="t">假設你真的Train出來了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:52.000" id=08:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=532">08:52.000</a></div>
+        <div class="t">一個這樣子的Classifier以後</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=534">08:54.000</a></div>
+        <div class="t">你怎麼會透過這個Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.000" id=08:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=536">08:56.000</a></div>
+        <div class="t">來得到一個Dependency的Parsing Tree呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.000" id=09:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=540">09:00.000</a></div>
+        <div class="t">你要做的事情就是這個樣子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:02.000" id=09:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=542">09:02.000</a></div>
+        <div class="t">你有N個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:05.000" id=09:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=545">09:05.000</a></div>
+        <div class="t">那你其實除了這N個詞彙以外</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:07.000" id=09:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=547">09:07.000</a></div>
+        <div class="t">你還多加一個多餘的詞彙叫做Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.000" id=09:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=551">09:11.000</a></div>
+        <div class="t">接下來呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:12.000" id=09:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=552">09:12.000</a></div>
+        <div class="t">把這些N個詞彙加上Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:15.000" id=09:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=555">09:15.000</a></div>
+        <div class="t">兩兩丟到Classifier裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:17.000" id=09:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=557">09:17.000</a></div>
+        <div class="t">問Classifier說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.000" id=09:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=559">09:19.000</a></div>
+        <div class="t">左邊這個輸入應不應該接到右邊這個輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.000" id=09:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=562">09:22.000</a></div>
+        <div class="t">舉例來說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.000" id=09:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=563">09:23.000</a></div>
+        <div class="t">現在Classifier的輸入是Root跟Want</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:26.000" id=09:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=566">09:26.000</a></div>
+        <div class="t">那你在訓練的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:28.000" id=09:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=568">09:28.000</a></div>
+        <div class="t">你有Ground Truth</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=569">09:29.000</a></div>
+        <div class="t">你有標準答案</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:30.000" id=09:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=570">09:30.000</a></div>
+        <div class="t">你有Label好的標準答案</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:32.000" id=09:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=572">09:32.000</a></div>
+        <div class="t">所以你知道說Root要指到Want</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.000" id=09:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=577">09:37.000</a></div>
+        <div class="t">所以Classifier就會說Yes</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.000" id=09:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=579">09:39.000</a></div>
+        <div class="t">Root要指到Want</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.000" id=09:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=581">09:41.000</a></div>
+        <div class="t">或者是你把另外兩個詞彙Q跟A</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.000" id=09:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=584">09:44.000</a></div>
+        <div class="t">分別當作Classifier的左邊的輸入跟右邊的輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:48.000" id=09:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=588">09:48.000</a></div>
+        <div class="t">Q有指到A嗎</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:50.000" id=09:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=590">09:50.000</a></div>
+        <div class="t">沒有</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.000" id=09:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=591">09:51.000</a></div>
+        <div class="t">所以Classifier就要說No</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:53.000" id=09:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=593">09:53.000</a></div>
+        <div class="t">那你只要訓練出這樣的Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:55.000" id=09:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=595">09:55.000</a></div>
+        <div class="t">然後把這個Classifier跑N加1平方次</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=599">09:59.000</a></div>
+        <div class="t">因為這邊有N個Word加Root嘛</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.000" id=10:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=601">10:01.000</a></div>
+        <div class="t">所以總共有N加1個Token</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.000" id=10:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=604">10:04.000</a></div>
+        <div class="t">然後這些Token兩兩間都要用Classifier來跑一下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:09.000" id=10:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=609">10:09.000</a></div>
+        <div class="t">它們應不應該被接在一起</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:11.000" id=10:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=611">10:11.000</a></div>
+        <div class="t">那你就跑N加1平方次就好了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=613">10:13.000</a></div>
+        <div class="t">那事實上N加1平方次是高估啦</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.000" id=10:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=615">10:15.000</a></div>
+        <div class="t">不應該是N加1平方次啦</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.000" id=10:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=617">10:17.000</a></div>
+        <div class="t">因為自己跟自己不用算嘛</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:19.000" id=10:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=619">10:19.000</a></div>
+        <div class="t">所以其實是N加1乘N</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:22.000" id=10:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=622">10:22.000</a></div>
+        <div class="t">而且其實還應該要再更少一點</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.000" id=10:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=625">10:25.000</a></div>
+        <div class="t">為什麼還應該要再更少一點呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:27.000" id=10:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=627">10:27.000</a></div>
+        <div class="t">因為Root它只能夠指向別人</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:30.000" id=10:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=630">10:30.000</a></div>
+        <div class="t">它不能夠被別人指向</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.000" id=10:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=632">10:32.000</a></div>
+        <div class="t">所以你不需要去檢查說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.000" id=10:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=634">10:34.000</a></div>
+        <div class="t">愛會不會指向Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:36.000" id=10:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=636">10:36.000</a></div>
+        <div class="t">Want會不會指向Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.000" id=10:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=637">10:37.000</a></div>
+        <div class="t">因為這本來就是不合理不可能的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:39.000" id=10:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=639">10:39.000</a></div>
+        <div class="t">一開始你就不會去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:41.000" id=10:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=641">10:41.000</a></div>
+        <div class="t">不需要去檢查這件事</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:42.000" id=10:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=642">10:42.000</a></div>
+        <div class="t">你只需要檢查說Root能不能指愛</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.000" id=10:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=645">10:45.000</a></div>
+        <div class="t">Root能不能指Want</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:46.000" id=10:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=646">10:46.000</a></div>
+        <div class="t">所以這邊N加1平方次是遠遠的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:49.000" id=10:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=649">10:49.000</a></div>
+        <div class="t">其實是高估啦</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.000" id=10:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=651">10:51.000</a></div>
+        <div class="t">其實還有很多可能你是不需要考慮的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.000" id=10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=653">10:53.000</a></div>
+        <div class="t">那總之呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.000" id=10:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=655">10:55.000</a></div>
+        <div class="t">你只需要把這些Token兩兩丟到Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:58.000" id=10:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=658">10:58.000</a></div>
+        <div class="t">讓Classifier告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.000" id=11:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=660">11:00.000</a></div>
+        <div class="t">要不要被接在一起</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:01.000" id=11:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=661">11:01.000</a></div>
+        <div class="t">就結束了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.000" id=11:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=663">11:03.000</a></div>
+        <div class="t">Dependency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.000" id=11:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=665">11:05.000</a></div>
+        <div class="t">就做完了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=667">11:07.000</a></div>
+        <div class="t">就這樣子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.000" id=11:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=669">11:09.000</a></div>
+        <div class="t">在文獻上真的是這麼做的嗎</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:12.000" id=11:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=672">11:12.000</a></div>
+        <div class="t">真的是這麼做</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:14.000" id=11:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=674">11:14.000</a></div>
+        <div class="t">所以這邊就是引用了一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:16.000" id=11:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=676">11:16.000</a></div>
+        <div class="t">iClear的論文跟ACL18的論文</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.000" id=11:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=679">11:19.000</a></div>
+        <div class="t">告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.000" id=11:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=681">11:21.000</a></div>
+        <div class="t">真的就是這麼做</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:23.000" id=11:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=683">11:23.000</a></div>
+        <div class="t">當然這邊我們可以來稍微看一下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:25.000" id=11:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=685">11:25.000</a></div>
+        <div class="t">18年的ACL這篇Paper的做法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.000" id=11:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=687">11:27.000</a></div>
+        <div class="t">它先用Bidirectional的LSTM</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.000" id=11:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=690">11:30.000</a></div>
+        <div class="t">把每一個Token的Embedding抽出來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:33.000" id=11:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=693">11:33.000</a></div>
+        <div class="t">因為那個時候BERT呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.000" id=11:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=695">11:35.000</a></div>
+        <div class="t">還沒有BERT</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=696">11:36.000</a></div>
+        <div class="t">所以就不會用BERT</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.000" id=11:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=698">11:38.000</a></div>
+        <div class="t">用這個Bidirectional的LSTM</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:40.000" id=11:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=700">11:40.000</a></div>
+        <div class="t">今天你如果自己要做的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:42.000" id=11:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=702">11:42.000</a></div>
+        <div class="t">你當然會選擇用BERT</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:44.000" id=11:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=704">11:44.000</a></div>
+        <div class="t">然後把這個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:46.000" id=11:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=706">11:46.000</a></div>
+        <div class="t">我們現在就是要把這個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.000" id=11:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=708">11:48.000</a></div>
+        <div class="t">兩兩丟到Classifier裡面去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:51.000" id=11:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=711">11:51.000</a></div>
+        <div class="t">然後Classifier幫我們決定說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:53.000" id=11:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=713">11:53.000</a></div>
+        <div class="t">這兩個Embedding要不要被連在一起</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:56.000" id=11:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=716">11:56.000</a></div>
+        <div class="t">如果它們被連在一起的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.000" id=11:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=718">11:58.000</a></div>
+        <div class="t">那它們的Relation應該是什麼</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:01.000" id=12:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=721">12:01.000</a></div>
+        <div class="t">那實際上在這篇Paper裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.000" id=12:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=723">12:03.000</a></div>
+        <div class="t">它的做法就是說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:04.000" id=12:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=724">12:04.000</a></div>
+        <div class="t">我們把這個Embedding乘上一個Transform</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:07.000" id=12:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=727">12:07.000</a></div>
+        <div class="t">得到另外一個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:08.000" id=12:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=728">12:08.000</a></div>
+        <div class="t">我們把這個Embedding再乘上另外一個Transform</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.000" id=12:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=731">12:11.000</a></div>
+        <div class="t">得到另外一個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.000" id=12:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=732">12:12.000</a></div>
+        <div class="t">然後呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.000" id=12:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=733">12:13.000</a></div>
+        <div class="t">我們把這兩個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=736">12:16.000</a></div>
+        <div class="t">做類似Attention這樣子的機制</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:21.000" id=12:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=741">12:21.000</a></div>
+        <div class="t">那實際上它做的事情是把</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=743">12:23.000</a></div>
+        <div class="t">右邊這個Embedding乘上一個Transform</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:26.000" id=12:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=746">12:26.000</a></div>
+        <div class="t">再乘上左邊這個Embedding</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.000" id=12:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=748">12:28.000</a></div>
+        <div class="t">然後會得到一個數值</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:29.000" id=12:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=749">12:29.000</a></div>
+        <div class="t">那個數值就代表說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:31.000" id=12:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=751">12:31.000</a></div>
+        <div class="t">這兩個Token應不應該被連在一起</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:35.000" id=12:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=755">12:35.000</a></div>
+        <div class="t">它們應該被連在一起的Confident</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:37.000" id=12:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=757">12:37.000</a></div>
+        <div class="t">這個數值就代表了一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.000" id=12:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=759">12:39.000</a></div>
+        <div class="t">Binary Classifier的Output</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.000" id=12:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=761">12:41.000</a></div>
+        <div class="t">然後就結束了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=762">12:42.000</a></div>
+        <div class="t">像Label的部分其實也是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:45.000" id=12:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=765">12:45.000</a></div>
+        <div class="t">就以此類推而已</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:49.000" id=12:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=769">12:49.000</a></div>
+        <div class="t">好 但講到這邊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.000" id=12:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=770">12:50.000</a></div>
+        <div class="t">我們可能會發現一個問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:52.000" id=12:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=772">12:52.000</a></div>
+        <div class="t">那你會發現說呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.000" id=12:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=773">12:53.000</a></div>
+        <div class="t">在這個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.000" id=12:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=776">12:56.000</a></div>
+        <div class="t">在講這個Dependency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.000" id=12:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=779">12:59.000</a></div>
+        <div class="t">跟Constituency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:00.000" id=13:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=780">13:00.000</a></div>
+        <div class="t">有很多類似的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.000" id=13:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=782">13:02.000</a></div>
+        <div class="t">其實在講這個Constituency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:05.000" id=13:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=785">13:05.000</a></div>
+        <div class="t">我們也講過類似的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.000" id=13:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=787">13:07.000</a></div>
+        <div class="t">就是你如果單純把整個問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.000" id=13:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=789">13:09.000</a></div>
+        <div class="t">看作是一個分類的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:11.000" id=13:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=791">13:11.000</a></div>
+        <div class="t">你可能會製造出矛盾的結果</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.000" id=13:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=794">13:14.000</a></div>
+        <div class="t">你可能會製造出</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:15.000" id=13:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=795">13:15.000</a></div>
+        <div class="t">不是Tree的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:18.000" id=13:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=798">13:18.000</a></div>
+        <div class="t">不符合規則的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:20.000" id=13:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=800">13:20.000</a></div>
+        <div class="t">舉例來說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:21.000" id=13:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=801">13:21.000</a></div>
+        <div class="t">你有可能說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.000" id=13:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=802">13:22.000</a></div>
+        <div class="t">有一個Binary Classifier告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:24.000" id=13:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=804">13:24.000</a></div>
+        <div class="t">W1要接到W</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.000" id=13:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=807">13:27.000</a></div>
+        <div class="t">所以你就在W1跟W2之間</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:29.000" id=13:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=809">13:29.000</a></div>
+        <div class="t">加一個Age</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.000" id=13:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=810">13:30.000</a></div>
+        <div class="t">然後這個Binary Classifier又說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:32.000" id=13:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=812">13:32.000</a></div>
+        <div class="t">現在我們把W3當作左邊的輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=816">13:36.000</a></div>
+        <div class="t">W2當作右邊的輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.000" id=13:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=817">13:37.000</a></div>
+        <div class="t">它又說Yes</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:38.000" id=13:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=818">13:38.000</a></div>
+        <div class="t">代表說W3應該要接到W2</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:42.000" id=13:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=822">13:42.000</a></div>
+        <div class="t">但這樣就矛盾了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.000" id=13:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=823">13:43.000</a></div>
+        <div class="t">因為在Dependency Parsing Tree裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:45.000" id=13:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=825">13:45.000</a></div>
+        <div class="t">每一個Node只能夠有一個Incoming的Age</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:49.000" id=13:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=829">13:49.000</a></div>
+        <div class="t">它只能夠有一個輸入的箭頭</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.000" id=13:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=831">13:51.000</a></div>
+        <div class="t">它不可以有兩個輸入的箭頭</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:53.000" id=13:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=833">13:53.000</a></div>
+        <div class="t">這樣你就製造出一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:54.000" id=13:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=834">13:54.000</a></div>
+        <div class="t">不合法的Dependency Parsing Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:58.000" id=13:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=838">13:58.000</a></div>
+        <div class="t">那這個是我們不想要的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=840">14:00.000</a></div>
+        <div class="t">但是如果單純把Dependency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.000" id=14:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=843">14:03.000</a></div>
+        <div class="t">看作是一個Binary Classification Problem的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:06.000" id=14:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=846">14:06.000</a></div>
+        <div class="t">你會遇到這樣子的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:09.000" id=14:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=849">14:09.000</a></div>
+        <div class="t">所以怎麼辦呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:10.000" id=14:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=850">14:10.000</a></div>
+        <div class="t">你可以用類似Maximum Spanning Tree的Algorithm</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:15.000" id=14:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=855">14:15.000</a></div>
+        <div class="t">來解釋這個問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:16.000" id=14:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=856">14:16.000</a></div>
+        <div class="t">其實我們在講Constituency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=859">14:19.000</a></div>
+        <div class="t">也說遇到這樣子的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.000" id=14:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=861">14:21.000</a></div>
+        <div class="t">有可能產生不符合文法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:23.000" id=14:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=863">14:23.000</a></div>
+        <div class="t">不符合規則的文法數的狀況</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:26.000" id=14:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=866">14:26.000</a></div>
+        <div class="t">我們就用另外一個方法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:28.000" id=14:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=868">14:28.000</a></div>
+        <div class="t">我們說如果是Dependency Parsing的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:31.000" id=14:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=871">14:31.000</a></div>
+        <div class="t">你就是用這個CKY的Parser</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.000" id=14:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=874">14:34.000</a></div>
+        <div class="t">CKY的Chart Based Parsing來解決這個問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.000" id=14:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=877">14:37.000</a></div>
+        <div class="t">那如果在Dependency Parsing裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.000" id=14:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=879">14:39.000</a></div>
+        <div class="t">你會用Maximum的Spanning Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.000" id=14:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=881">14:41.000</a></div>
+        <div class="t">那它的概念是這個樣子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=883">14:43.000</a></div>
+        <div class="t">根據我們的Classifier</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:45.000" id=14:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=885">14:45.000</a></div>
+        <div class="t">我們會知道所有的Node</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:48.000" id=14:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=888">14:48.000</a></div>
+        <div class="t">兩兩之間</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.000" id=14:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=889">14:49.000</a></div>
+        <div class="t">它們應該被連在一起的分數</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:53.000" id=14:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=893">14:53.000</a></div>
+        <div class="t">Classifier會Output一個分數給我們</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:55.000" id=14:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=895">14:55.000</a></div>
+        <div class="t">Classifier可能會說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:56.000" id=14:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=896">14:56.000</a></div>
+        <div class="t">Root連到W2的信心分數給它0.2分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:01.000" id=15:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=901">15:01.000</a></div>
+        <div class="t">Root連到W1的信心分數給它0.9分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:04.000" id=15:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=904">15:04.000</a></div>
+        <div class="t">W1連到W2的信心分數給它0.7分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:07.000" id=15:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=907">15:07.000</a></div>
+        <div class="t">W2連到W1的信心分數給它0.3分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:11.000" id=15:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=911">15:11.000</a></div>
+        <div class="t">接下來你重啟所有合乎規則的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.000" id=15:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=915">15:15.000</a></div>
+        <div class="t">Dependency Parsing Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:17.000" id=15:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=917">15:17.000</a></div>
+        <div class="t">比如說Root</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.000" id=15:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=918">15:18.000</a></div>
+        <div class="t">它只能夠指到W1跟W2的其中一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.000" id=15:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=921">15:21.000</a></div>
+        <div class="t">指誰呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:22.000" id=15:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=922">15:22.000</a></div>
+        <div class="t">它指W2</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:23.000" id=15:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=923">15:23.000</a></div>
+        <div class="t">如果它指W2的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=925">15:25.000</a></div>
+        <div class="t">W2就得去指W1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:28.000" id=15:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=928">15:28.000</a></div>
+        <div class="t">那另外一個可能的Parsing Tree呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.000" id=15:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=931">15:31.000</a></div>
+        <div class="t">是Root去指W1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:33.000" id=15:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=933">15:33.000</a></div>
+        <div class="t">然後W1再去指W2</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.000" id=15:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=935">15:35.000</a></div>
+        <div class="t">那再看說在這兩個Case</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:37.000" id=15:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=937">15:37.000</a></div>
+        <div class="t">哪一個Case</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=938">15:38.000</a></div>
+        <div class="t">它上面的這個Edge</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:40.000" id=15:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=940">15:40.000</a></div>
+        <div class="t">上面的這個Edge</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=942">15:42.000</a></div>
+        <div class="t">總合起來的分數比較高</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.000" id=15:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=944">15:44.000</a></div>
+        <div class="t">比如說下面這個Case</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:46.000" id=15:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=946">15:46.000</a></div>
+        <div class="t">總合起來的分數比較高</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.000" id=15:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=948">15:48.000</a></div>
+        <div class="t">那下面這個Case</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:49.000" id=15:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=949">15:49.000</a></div>
+        <div class="t">就是Dependency Parsing的結果</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.000" id=15:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=952">15:52.000</a></div>
+        <div class="t">那因為今天這個例子非常簡單</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:54.000" id=15:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=954">15:54.000</a></div>
+        <div class="t">只有兩個詞彙</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.000" id=15:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=957">15:57.000</a></div>
+        <div class="t">所以我們可以用重啟的方法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:59.000" id=15:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=959">15:59.000</a></div>
+        <div class="t">找出所有符合規則的Parsing Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:01.000" id=16:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=961">16:01.000</a></div>
+        <div class="t">看誰的分數最高</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:04.000" id=16:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=964">16:04.000</a></div>
+        <div class="t">那如果有非常多的Node呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.000" id=16:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=966">16:06.000</a></div>
+        <div class="t">那你就會用類似Maximum Spanning Tree的演算法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:10.000" id=16:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=970">16:10.000</a></div>
+        <div class="t">來找出符合規則</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.000" id=16:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=974">16:14.000</a></div>
+        <div class="t">且分數最高的那個數</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.000" id=16:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=977">16:17.000</a></div>
+        <div class="t">就這樣</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:19.000" id=16:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=979">16:19.000</a></div>
+        <div class="t">那其實在Dependency Parsing裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:22.000" id=16:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=982">16:22.000</a></div>
+        <div class="t">也可以做Transition Based Approach</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:25.000" id=16:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=985">16:25.000</a></div>
+        <div class="t">我們在講Constituency Parsing的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:27.000" id=16:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=987">16:27.000</a></div>
+        <div class="t">也有講過這個Transition Based Approach</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:31.000" id=16:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=991">16:31.000</a></div>
+        <div class="t">那時候我們有講說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.000" id=16:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=993">16:33.000</a></div>
+        <div class="t">有一個Stake 有一個Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:35.000" id=16:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=995">16:35.000</a></div>
+        <div class="t">然後有三個Action是你可以採取的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:38.000" id=16:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=998">16:38.000</a></div>
+        <div class="t">那在Dependency Parsing裡面也是一樣</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.000" id=16:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1000">16:40.000</a></div>
+        <div class="t">你也有一個Stake</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:42.000" id=16:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1002">16:42.000</a></div>
+        <div class="t">你也有一個Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.000" id=16:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1004">16:44.000</a></div>
+        <div class="t">你一樣也有三個Action可以採取</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:48.000" id=16:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1008">16:48.000</a></div>
+        <div class="t">那你只要有這個Stake</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1010">16:50.000</a></div>
+        <div class="t">一開始是空的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:51.000" id=16:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1011">16:51.000</a></div>
+        <div class="t">然後你有一個Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.000" id=16:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1012">16:52.000</a></div>
+        <div class="t">Buffer一開始是把整個句子直接填進去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.000" id=16:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1016">16:56.000</a></div>
+        <div class="t">然後你只要採取一連串的Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:58.000" id=16:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1018">16:58.000</a></div>
+        <div class="t">你只要不斷的決定說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:00.000" id=17:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1020">17:00.000</a></div>
+        <div class="t">有三個Action要採取哪一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.000" id=17:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1022">17:02.000</a></div>
+        <div class="t">採取一連串的Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:03.000" id=17:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1023">17:03.000</a></div>
+        <div class="t">最後就會得到一個Parsing Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.000" id=17:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1025">17:05.000</a></div>
+        <div class="t">那因為這個部分跟Constituency Parsing差不多</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:08.000" id=17:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1028">17:08.000</a></div>
+        <div class="t">那這門課我們其實真正想要Focus</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:12.000" id=17:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1032">17:12.000</a></div>
+        <div class="t">Focus的是Deep Learning的部分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.000" id=17:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1034">17:14.000</a></div>
+        <div class="t">所以我們就不會再重複跟你講說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1036">17:16.000</a></div>
+        <div class="t">在Dependency Parsing裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:18.000" id=17:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1038">17:18.000</a></div>
+        <div class="t">是怎麼做Transition Based Approach</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:20.000" id=17:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1040">17:20.000</a></div>
+        <div class="t">要知道說跟Constituency Parsing很像</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.000" id=17:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1043">17:23.000</a></div>
+        <div class="t">我們就是要看這個Stake的內容</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:26.000" id=17:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1046">17:26.000</a></div>
+        <div class="t">看這個Buffer的內容</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.000" id=17:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1047">17:27.000</a></div>
+        <div class="t">決定要採取哪一個Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.000" id=17:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1050">17:30.000</a></div>
+        <div class="t">就結束了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1053">17:33.000</a></div>
+        <div class="t">所以在文獻上就有很多這樣子的做法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:37.000" id=17:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1057">17:37.000</a></div>
+        <div class="t">那你看這個圖也大概可以知道它是怎麼做的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:39.000" id=17:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1059">17:39.000</a></div>
+        <div class="t">用一個RNN</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:41.000" id=17:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1061">17:41.000</a></div>
+        <div class="t">用一個LSTM</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.000" id=17:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1062">17:42.000</a></div>
+        <div class="t">把Stake讀過去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:44.000" id=17:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1064">17:44.000</a></div>
+        <div class="t">然後用一個LSTM把Buffer讀過去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:47.000" id=17:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1067">17:47.000</a></div>
+        <div class="t">用一個LSTM把過去採行過的Action讀過去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.000" id=17:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1071">17:51.000</a></div>
+        <div class="t">然後決定說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1072">17:52.000</a></div>
+        <div class="t">現在要採取三個Action裡面的哪一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.000" id=17:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1077">17:57.000</a></div>
+        <div class="t">那下面這個圖呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.000" id=17:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1078">17:58.000</a></div>
+        <div class="t">意思也是差不多</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:00.000" id=18:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1080">18:00.000</a></div>
+        <div class="t">就有一個Stake 有一個Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.000" id=18:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1081">18:01.000</a></div>
+        <div class="t">然後有一個Network</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.000" id=18:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1082">18:02.000</a></div>
+        <div class="t">把Stake跟Buffer的資訊讀進去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:04.000" id=18:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1084">18:04.000</a></div>
+        <div class="t">然後接下來決定要採取哪一個Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:07.000" id=18:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1087">18:07.000</a></div>
+        <div class="t">那你發現說這些Paper呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:09.000" id=18:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1089">18:09.000</a></div>
+        <div class="t">都是比較早期的Paper</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:11.000" id=18:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1091">18:11.000</a></div>
+        <div class="t">舉例來說像這樣子的想法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.000" id=18:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1093">18:13.000</a></div>
+        <div class="t">其實在14年的時候就已經有了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:17.000" id=18:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1097">18:17.000</a></div>
+        <div class="t">那這種Transition Based</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.000" id=18:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1099">18:19.000</a></div>
+        <div class="t">用Deep Learning做Transition Based的方法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:21.000" id=18:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1101">18:21.000</a></div>
+        <div class="t">其中最知名的就是SyntaxNet</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1106">18:26.000</a></div>
+        <div class="t">那SyntaxNet呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:27.000" id=18:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1107">18:27.000</a></div>
+        <div class="t">是Google在ACL16發表的Paper</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.000" id=18:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1110">18:30.000</a></div>
+        <div class="t">為什麼SyntaxNet特別知名呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.000" id=18:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1114">18:34.000</a></div>
+        <div class="t">我覺得其實有一個最關鍵的原因就是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:37.000" id=18:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1117">18:37.000</a></div>
+        <div class="t">它有一個好的Blog Post</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:41.000" id=18:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1121">18:41.000</a></div>
+        <div class="t">它又是Google做的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:42.000" id=18:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1122">18:42.000</a></div>
+        <div class="t">又有一個好的Post</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.000" id=18:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1123">18:43.000</a></div>
+        <div class="t">那個Post裡面有一個好的動畫</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:46.000" id=18:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1126">18:46.000</a></div>
+        <div class="t">這個動畫呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.000" id=18:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1127">18:47.000</a></div>
+        <div class="t">長這個樣子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.000" id=18:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1128">18:48.000</a></div>
+        <div class="t">我們來觀賞一下這個動畫</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:51.000" id=18:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1131">18:51.000</a></div>
+        <div class="t">你看有一個Stake 有一個Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:54.000" id=18:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1134">18:54.000</a></div>
+        <div class="t">然後不斷地採取不同的Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:57.000" id=18:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1137">18:57.000</a></div>
+        <div class="t">不斷地採取不同的Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:59.000" id=18:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1139">18:59.000</a></div>
+        <div class="t">每次要決定說要採取這三個Action裡面的哪一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1144">19:04.000</a></div>
+        <div class="t">然後你就產生了一個Parsing Tree了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1146">19:06.000</a></div>
+        <div class="t">再看一次</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.000" id=19:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1147">19:07.000</a></div>
+        <div class="t">我們要建一個Dependency的Parsing Tree</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:10.000" id=19:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1150">19:10.000</a></div>
+        <div class="t">有Stake 有Buffer</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:12.000" id=19:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1152">19:12.000</a></div>
+        <div class="t">然後每次要決定說要採取這三個Action裡面的哪一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.000" id=19:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1156">19:16.000</a></div>
+        <div class="t">然後呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1157">19:17.000</a></div>
+        <div class="t">你最後就可以產生一個Parsing Tree了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.000" id=19:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1160">19:20.000</a></div>
+        <div class="t">怎麼決定要採取哪一個Action呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.000" id=19:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1162">19:22.000</a></div>
+        <div class="t">就是用RNN LSTM</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.000" id=19:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1165">19:25.000</a></div>
+        <div class="t">把Stake跟Buffer讀過去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:26.000" id=19:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1166">19:26.000</a></div>
+        <div class="t">然後決定採取哪一個Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:28.000" id=19:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1168">19:28.000</a></div>
+        <div class="t">然後就結束了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:30.000" id=19:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1170">19:30.000</a></div>
+        <div class="t">那當然從今天的角度看來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:32.000" id=19:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1172">19:32.000</a></div>
+        <div class="t">這個不就是用Deep Learning做Transition Based的Parsing嗎</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:36.000" id=19:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1176">19:36.000</a></div>
+        <div class="t">不過當年,要看看這個Blog Post的時間</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:40.000" id=19:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1180">19:40.000</a></div>
+        <div class="t">是16年啊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.000" id=19:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1182">19:42.000</a></div>
+        <div class="t">16年的春天</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.000" id=19:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1184">19:44.000</a></div>
+        <div class="t">那是一個混亂的時代</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:46.000" id=19:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1186">19:46.000</a></div>
+        <div class="t">那個時候剛有AlphaGo</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:48.000" id=19:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1188">19:48.000</a></div>
+        <div class="t">所有人只要聽到一點點跟AI有關的東西</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:52.000" id=19:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1192">19:52.000</a></div>
+        <div class="t">都會大驚小怪</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:54.000" id=19:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1194">19:54.000</a></div>
+        <div class="t">當時很多人看到這個Post</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.000" id=19:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1196">19:56.000</a></div>
+        <div class="t">馬上嚇得魂不附體</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:58.000" id=19:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1198">19:58.000</a></div>
+        <div class="t">哇,這個是Google的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:00.000" id=20:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1200">20:00.000</a></div>
+        <div class="t">是Syntax內</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.000" id=20:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1202">20:02.000</a></div>
+        <div class="t">它一定可以解決所有的問題</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:04.000" id=20:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1204">20:04.000</a></div>
+        <div class="t">這個,這邊有Action</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.000" id=20:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1206">20:06.000</a></div>
+        <div class="t">它一定是用Reinforcement Learning Learn的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:08.000" id=20:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1208">20:08.000</a></div>
+        <div class="t">它就跟AlphaGo一樣</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:10.000" id=20:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1210">20:10.000</a></div>
+        <div class="t">所有NLP的問題都解決了</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.000" id=20:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1212">20:12.000</a></div>
+        <div class="t">才不是,這個就是一個Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:14.000" id=20:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1214">20:14.000</a></div>
+        <div class="t">為什麼要這麼大驚小怪呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:16.000" id=20:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1216">20:16.000</a></div>
+        <div class="t">它就是一個Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:18.000" id=20:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1218">20:18.000</a></div>
+        <div class="t">不過在2016年那個混亂的年代</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.000" id=20:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1220">20:20.000</a></div>
+        <div class="t">那個時候有各式各樣的裝神弄鬼</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:24.000" id=20:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1224">20:24.000</a></div>
+        <div class="t">那Syntax內</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:26.000" id=20:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1226">20:26.000</a></div>
+        <div class="t">今天甚至不是一個最好的Parser</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:28.000" id=20:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1228">20:28.000</a></div>
+        <div class="t">後面還有更多</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:30.000" id=20:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1230">20:30.000</a></div>
+        <div class="t">更好的Transition Based Parsing的方法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:33.000" id=20:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1233">20:33.000</a></div>
+        <div class="t">但反正這個是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.000" id=20:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1235">20:35.000</a></div>
+        <div class="t">它出現在2016年的上半年</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:39.000" id=20:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1239">20:39.000</a></div>
+        <div class="t">接在AlphaGo之後</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:41.000" id=20:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1241">20:41.000</a></div>
+        <div class="t">所以造成了一個巨大的轟動</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:43.000" id=20:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1243">20:43.000</a></div>
+        <div class="t">就是這麼回事</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.000" id=20:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1245">20:45.000</a></div>
+        <div class="t">好</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.000" id=20:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1247">20:47.000</a></div>
+        <div class="t">這個是Syntax內</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:49.000" id=20:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1249">20:49.000</a></div>
+        <div class="t">那還有很多其他的啦</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:51.000" id=20:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1251">20:51.000</a></div>
+        <div class="t">比如說有Stack Pointer啊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:53.000" id=20:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1253">20:53.000</a></div>
+        <div class="t">等等</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:55.000" id=20:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1255">20:55.000</a></div>
+        <div class="t">那我們就不再細講</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:57.000" id=20:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1257">20:57.000</a></div>
+        <div class="t">有關Dependency Parsing的部分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.000" id=20:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1259">20:59.000</a></div>
+        <div class="t">總之今天就是很快的帶過Dependency Parsing</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:01.000" id=21:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1261">21:01.000</a></div>
+        <div class="t">告訴大家說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:03.000" id=21:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1263">21:03.000</a></div>
+        <div class="t">怎麼用Deep Learning的技術</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:05.000" id=21:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1265">21:05.000</a></div>
+        <div class="t">來做Dependency Parsing這件事情</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:07.000" id=21:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1267">21:07.000</a></div>
+        <div class="t">好</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:09.000" id=21:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=9erBrs-VIqc&t=1269">21:09.000</a></div>
+        <div class="t">下次Reference</div>
+    </div>
+    
+</body>
+</html>   

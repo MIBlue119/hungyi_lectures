@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】神經網路壓縮 (Network Compression) (二) - 從各種不同的面向來壓縮神經網路</h2><a href=https://www.youtube.com/watch?v=xrlbLPaq_Og><img src=https://i.ytimg.com/vi/xrlbLPaq_Og/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGGUgZShlMA8=&rs=AOn4CLDFB4gdurFgdtx3vcgGyv0GpOJm_w></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1">00:01.000</a></div>
+        <div class="t">好,那我們來上課吧。那上周啊,我們講到network pruning,那接下來呢,我們講下一個可以讓network變小的方法,這個方法呢叫做knowledge distillation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:16.000" id=00:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=16">00:16.000</a></div>
+        <div class="t">那等一下你聽完knowledge distillation,會發現它的精神呢,跟network pruning其實也有一些類似的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.000" id=00:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=24">00:24.000</a></div>
+        <div class="t">好,那knowledge distillation是什麼呢?它的概念是這樣,我們先train一個大的network,那這個大的network啊,在knowledge distillation裡面叫做teacher network,它是老師。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:38.000" id=00:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=38">00:38.000</a></div>
+        <div class="t">那你要train的,你真正想要的那個小的network叫做student network,你先train一個大的network叫做teacher network,再根據這個大的network來製造student network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.000" id=00:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=51">00:51.000</a></div>
+        <div class="t">那在network pruning裡面,你是直接把那個大的network啊,做一些修剪,把大的network裡面其中一些參數拿掉,就把它變成小的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03.000" id=01:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=63">01:03.000</a></div>
+        <div class="t">那在knowledge distillation裡面呢,是不一樣的,這個小的network,這個student network,是去根據這個teacher network來學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12.000" id=01:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=72">01:12.000</a></div>
+        <div class="t">因為student network是根據teacher network來學習,所以一個就叫做teacher,一個就叫做student。好,那這個student是怎麼根據這個teacher來學習的呢?這個學習的方法是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=85">01:25.000</a></div>
+        <div class="t">假設我們現在要做的就是手寫數字辨識,那你就把你的訓練資料都丟到teacher裡面,然後teacher呢,就產生output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:37.000" id=01:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=97">01:37.000</a></div>
+        <div class="t">那因為今天是一個分類的問題,所以teacher的輸出呢,其實是一個distribution,其實是一個分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:45.000" id=01:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=105">01:45.000</a></div>
+        <div class="t">舉例來說,teacher的輸出可能是看到這張圖片,1的分數是0.7,7的分數是0.2,9這個數字的分數是0.1等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.000" id=01:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=116">01:56.000</a></div>
+        <div class="t">好,那接下來學生要做的事情就是給學生一模一樣的圖片,但是學生呢,不是去看這個圖片的正確答案來學習,他把老師的輸出就當作正確答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.000" id=02:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=131">02:11.000</a></div>
+        <div class="t">也就是老師輸出1要0.7,7要0.2,9要0.1。那學生的輸出呢,也就要盡量去逼近老師的輸出,盡量去逼近1是0.7,7是0.2,9是0.1這樣的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:27.000" id=02:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=147">02:27.000</a></div>
+        <div class="t">那你可能會問說,那如果老師犯錯了怎麼辦呢?如果老師的答案是錯的怎麼辦呢?不要管他,學生就是根據老師的答案學。就算老師的答案是錯的,學生就去學一個錯的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:41.000" id=02:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=161">02:41.000</a></div>
+        <div class="t">好,那講到這邊,你就會想說,那為什麼不直接train一個小的network就好了呢?為什麼不直接把小的network去根據正確答案學習,而是要多加一個步驟,先讓大的network學,再用小的network去跟大的network學習呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=179">02:59.000</a></div>
+        <div class="t">那這邊的理由跟network pruning是一樣的。記不記得上週我們講network pruning的時候,我們講說為什麼不直接訓練一個小的network呢?最直覺、最簡單的答案就是因為你直接train一個小的network,往往結果就是沒有從大的pruning來得好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:16.000" id=03:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=196">03:16.000</a></div>
+        <div class="t">那knowledge distillation的概念是一樣的,為什麼不直接train小的network?因為直接訓練一個小的network,沒有小的network根據大的network來學習,結果要來得好。那其實knowledge distillation這個技術,它也不是新的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:33.000" id=03:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=213">03:33.000</a></div>
+        <div class="t">knowledge distillation最知名的一篇文章是Hinton在2015年的時候就已經發表了。很多人會覺得knowledge distillation算是Hinton提出來的,因為Hinton有一篇文章,它的title就是knowledge distillation of neural network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:49.000" id=03:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=229">03:49.000</a></div>
+        <div class="t">但是其實在Hinton提出knowledge distillation這個概念之前,我其實就有看過其他文章使用了一模一樣的概念。舉例來說,在一篇文章叫做deep network really need to be deep,是一篇2013年的文章裡面,它也提出了network distillation的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:10.000" id=04:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=250">04:10.000</a></div>
+        <div class="t">這個顯然是一個比較早年的文章,在2013年的時候,那個時候還不是所有人都已經被說服說deep learning就是很棒的,所以那個時候你還需要寫一些文章,做一些研究來justify說deep learning是好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=264">04:24.000</a></div>
+        <div class="t">所以這篇文章它的標題就是deep network到底需不需要是deep,到底deep的好處在哪裡。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:31.000" id=04:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=271">04:31.000</a></div>
+        <div class="t">那為什麼knowledge distillation會有幫助呢?一個比較直覺的解釋是說,teacher network其實會提供這個student network額外的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:41.000" id=04:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=281">04:41.000</a></div>
+        <div class="t">如果你直接跟student network說這個是1,可能太難了,因為1可能跟其他的數字,比如1跟7也有點像,1跟9也長得有點像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:52.000" id=04:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=292">04:52.000</a></div>
+        <div class="t">所以對student network來說,你告訴它說看到這張圖片,你要輸出1,然後7、9它們的分數倒是0,可能很難,它可能學不起來,所以讓它直接去跟老師學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.000" id=05:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=305">05:05.000</a></div>
+        <div class="t">老師會告訴它說,就算1,你沒有辦法讓它是1分,也沒有關係,其實1跟7是有點像的,老師都分不出1跟7的差別,老師說1是0.7,7是0.2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:19.000" id=05:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=319">05:19.000</a></div>
+        <div class="t">學生只要學到1是0.7,7是0.2就夠了,這樣反而可以讓小的network學得比直接transfer from scratch,直接根據正確的答案要學來得要好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:32.000" id=05:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=332">05:32.000</a></div>
+        <div class="t">其實knowledge distillation有一些神奇的地方,如果你看那個Hinton的paper裡面,它甚至可以做到,光是teacher告訴student哪些數字之間有什麼樣的關係這件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:47.000" id=05:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=347">05:47.000</a></div>
+        <div class="t">就可以讓student在完全沒有看到某些數字的訓練資料下,他就可以把那個數字學會。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=356">05:56.000</a></div>
+        <div class="t">假設今天訓練資料裡面完全沒有7這個數字,但是teacher他在學的時候有看過7這個數字,但是student從來沒有看過7這個數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:06.000" id=06:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=366">06:06.000</a></div>
+        <div class="t">光是憑著teacher告訴student說1跟7有點像,7跟9有點像這樣的資訊,都有機會讓student可以學到7長什麼樣子,就像他在訓練的時候從來沒有看過7的訓練資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:20.000" id=06:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=380">06:20.000</a></div>
+        <div class="t">這個是knowledge distillation的基本概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:23.000" id=06:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=383">06:23.000</a></div>
+        <div class="t">那這個teacher network不一定要是單一一個巨大的network,它甚至可以是多個network的ensemble。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:33.000" id=06:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=393">06:33.000</a></div>
+        <div class="t">ensemble是什麼呢?到目前為止這一門課,我們其實沒有正式介紹過ensemble這個詞彙,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.000" id=06:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=400">06:40.000</a></div>
+        <div class="t">雖然它是deep learning裡面,尤其在機器學習的比賽裡面常常用到的一個技巧,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.000" id=06:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=405">06:45.000</a></div>
+        <div class="t">不過這個技巧非常的簡單,所以其實也不太需要真的花太多時間介紹。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.000" id=06:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=410">06:50.000</a></div>
+        <div class="t">它的概念很簡單就是,你就訓練多個模型,然後你輸出的結果就是多個模型,投票的結果就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=418">06:58.000</a></div>
+        <div class="t">或者是把多個模型的輸出平均起來的結果當作是最終的答案,那這個就是ensemble。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:06.000" id=07:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=426">07:06.000</a></div>
+        <div class="t">那雖然在比賽裡面常常會使用到ensemble的方法,今天如果在一個機器學習的比賽裡面,你要名列前茅,往往憑藉的就是超級的ensemble。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:18.000" id=07:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=438">07:18.000</a></div>
+        <div class="t">訓練個一百個模型、一千個模型,把那麼多模型的結果統統平均起來,往往你要在機器學習的這種leaderboard上面名列前茅,靠的就是這種ensemble的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:31.000" id=07:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=451">07:31.000</a></div>
+        <div class="t">但是在實用上,ensemble會遇到的問題就是,你訓練了一千個模型,進來一筆資料,你要一千個模型都跑過再取它的平均,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:40.000" id=07:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=460">07:40.000</a></div>
+        <div class="t">這個計算量也未免太大了吧,打比賽還勉強可以,要用在實際的系統上顯然是不行的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:47.000" id=07:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=467">07:47.000</a></div>
+        <div class="t">那怎麼辦呢?你可以把多個ensemble起來的network綜合起來變成一個,那這個就要用knowledge distillation的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.000" id=07:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=478">07:58.000</a></div>
+        <div class="t">你就把多個network ensemble起來的結果當作是teacher network的輸出,然後讓student network去學這個ensemble的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:08.000" id=08:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=488">08:08.000</a></div>
+        <div class="t">ensemble的輸出是什麼樣子,就讓student network去學這個ensemble的輸出,那這樣子你就可以讓student network去逼近一堆network ensemble起來有的正確率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:21.000" id=08:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=501">08:21.000</a></div>
+        <div class="t">那這個是knowledge distillation在ensemble上的應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:26.000" id=08:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=506">08:26.000</a></div>
+        <div class="t">那在使用knowledge distillation的時候有一個小技巧,這個小技巧是你會稍微改一下softmax的function,你會在softmax的function上面加一個temperature,這個temperature是什麼呢?我們馬上就會看到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.000" id=08:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=522">08:42.000</a></div>
+        <div class="t">那跟大家簡單的複習一下softmax,那我們在開學期初的時候在講分類的時候就跟大家介紹過softmax。softmax要做的事情就是你把每一個neuron的輸出都取exponential,然後再做normalize,得到最終network的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:01.000" id=09:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=541">09:01.000</a></div>
+        <div class="t">那這樣可以讓你的network的輸出變成一個機率的分布,network的輸出、最終的輸出、分值都是介於0到1之間的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:10.000" id=09:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=550">09:10.000</a></div>
+        <div class="t">那所謂的temperature的意思就是在做exponential之前把每一個數值都除上一個大T,那這個大T是一個hyperparameter,大T是一個你需要調的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.000" id=09:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=565">09:25.000</a></div>
+        <div class="t">那除這個大T有什麼作用呢?假設T大於1的話,那這個大T也就是temperature,它的作用就是把本來比較sharp、比較集中的分布讓它變得比較平滑一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.000" id=09:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=581">09:41.000</a></div>
+        <div class="t">那為什麼要讓集中的分布變得比較平滑一點呢?我們這邊舉一個例子,假設你的y1、y2、y3在做softmax之前,它的值分別是110跟1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.000" id=09:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=592">09:52.000</a></div>
+        <div class="t">那做完softmax以後你會發現,y1π就是softmax的結果,y1π是1,y2π、y3π都趨近於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:03.000" id=10:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=603">10:03.000</a></div>
+        <div class="t">那假設這是你的輸出,這個是你的teacher network的輸出,你叫你的學生、叫你的student network去跟這個結果學,那跟直接和正確的答案學完全沒有不同啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.000" id=10:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=615">10:15.000</a></div>
+        <div class="t">跟teacher學的一個好處就是,老師會告訴你說哪些類別其實是比較像的,讓student內在學的時候不會那麼辛苦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:23.000" id=10:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=623">10:23.000</a></div>
+        <div class="t">但是假設老師的輸出非常的集中,就是其中某一個class是1,其他都是0,那這樣子跟正確的答案學有什麼不同呢?就沒有不同啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.000" id=10:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=634">10:34.000</a></div>
+        <div class="t">所以你要取一個temperature,假設我們這邊temperature設為100,那你就是把y1、y2、y3都除100,就變成1、0.1跟0.01。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.000" id=10:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=645">10:45.000</a></div>
+        <div class="t">那對於老師來說啊,其實加上這個temperature,分類的結果是不會變的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:50.000" id=10:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=650">10:50.000</a></div>
+        <div class="t">做完softmax以後,最高分的還是最高分,最低分的還是最低分,所有class的這個排序是不會變的,分類的結果是完全不會變的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:01.000" id=11:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=661">11:01.000</a></div>
+        <div class="t">但好處是,每一個類別得到的分數啊,會比較平滑、比較平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=667">11:07.000</a></div>
+        <div class="t">那你拿這個結果去給student學,才有意義,才能夠把student學得好。那這個是knowledge distillation的一個小技巧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.000" id=11:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=677">11:17.000</a></div>
+        <div class="t">好,那我們來看一下有沒有同學有問題要問的。那我剛才發現說呢,我犯了一個錯誤,是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.000" id=11:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=684">11:24.000</a></div>
+        <div class="t">就是我忘了在手機上把大家的那個留言打開啦,所以呢,我現在趕快請容我打開一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:33.000" id=11:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=693">11:33.000</a></div>
+        <div class="t">好,我看一下喔。好,來我看一下有沒有同學有問題要問的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:04.000" id=12:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=724">12:04.000</a></div>
+        <div class="t">講到那個教育,剛才在聊天室裡面啊,我們有提到教育部的那個測驗嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.000" id=12:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=732">12:12.000</a></div>
+        <div class="t">那我突然想到說,假設你覺得說這個台灣的機器學習課程應該要有更多的運算資源,這樣大家才能夠做作業更順利的話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.000" id=12:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=742">12:22.000</a></div>
+        <div class="t">你去跟教育部講,你去跟教育部講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:34.000" id=12:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=754">12:34.000</a></div>
+        <div class="t">有同學問說,助教有說作業久,什麼時候公佈嗎?應該下週就可以公佈了,剛才其實有回答了這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:45.000" id=12:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=765">12:45.000</a></div>
+        <div class="t">好,我看看喔。好,有同學問說,那拿softmax錢的輸出拿來勸會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.000" id=12:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=776">12:56.000</a></div>
+        <div class="t">喔,你完全可以拿softmax錢的輸出拿來勸,其實還會有人拿這個network的每一層都拿來勸。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:06.000" id=13:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=786">13:06.000</a></div>
+        <div class="t">你可以說,我有一個大的teacher network,它是第一層,它有十二層,小的student network有六層,那我要讓student network的第六層像大的network的第十二層,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:16.000" id=13:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=796">13:16.000</a></div>
+        <div class="t">student network的第三層像大的network的第六層,可不可以呢?可以,那往往你做這種比較多的限制,其實可以得到更好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.000" id=13:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=807">13:27.000</a></div>
+        <div class="t">那這是一個常用的,在knowledge distillation常用的小技巧。好,那有同學想問Lifelong Learning的問題,可以,你可以問Lifelong Learning的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.000" id=13:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=820">13:40.000</a></div>
+        <div class="t">我看你的問題是什麼?上週有提到用generator產生資料讓模型學習,但這樣模型只要再學一次舊的資料,有達到Lifelong Learning的終止嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:53.000" id=13:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=833">13:53.000</a></div>
+        <div class="t">我可以了解你的問題,你說Lifelong Learning就是不要看到舊的資料啊,那我們現在再產生一些舊的資料,加到訓練資料裡面,有沒有違反Lifelong Learning的精神呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.000" id=14:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=847">14:07.000</a></div>
+        <div class="t">這是一個見仁見智的問題啦,那假設我們把Lifelong Learning定義成你不能去看真正的舊的資料,但是如果你的network自己有辦法去產生舊的資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:21.000" id=14:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=861">14:21.000</a></div>
+        <div class="t">它並沒有去真的把舊的資料存下來啊,那個舊的資料是它自己生出來的。至少今天在Lifelong Learning的community,如果你要寫Lifelong Learning的paper的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:34.000" id=14:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=874">14:34.000</a></div>
+        <div class="t">這樣子的方法是會被接受是一個Lifelong Learning的方法的,因為你並沒有真的用到舊的資料,舊的資料是被產生出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:42.000" id=14:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=882">14:42.000</a></div>
+        <div class="t">有一個同學問說,如果學生和老師差太多的話,可以加一個介於中間的network讓學生學那個network嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:52.000" id=14:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=892">14:52.000</a></div>
+        <div class="t">可以,就是可以。這樣子的技術,等一下在助教的錄影裡面,助教會跟大家提示,有這麼樣的一個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:03.000" id=15:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=903">15:03.000</a></div>
+        <div class="t">同學問到說,T太大的話,模型會不會改變很多?Temperature太大的話,會不會改變很多?會。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=912">15:12.000</a></div>
+        <div class="t">你想,假設你temperature是個接近無窮大,那這樣所有的class的分數就變得差不多了,這樣子student network也學不到東西了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.000" id=15:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=921">15:21.000</a></div>
+        <div class="t">T又是另外一個hyperparameter,它就跟learning rate一樣,這個是你在做noise distillation的時候要調的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:33.000" id=15:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=933">15:33.000</a></div>
+        <div class="t">好,有同學問說,老師,請問ensemble的distillation只有把logic合在一起的方式嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.000" id=15:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=944">15:44.000</a></div>
+        <div class="t">我猜這位同學想要問的問題是說,在做ensemble的時候,就我剛才在舉例告訴你什麼是ensemble的時候,我是舉說,啊,我們可以把很多的network呢,呃,呃,它的輸出平均起來,這就是一種ensemble。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:01.000" id=16:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=961">16:01.000</a></div>
+        <div class="t">那有沒有其他ensemble的方式呢?其實是有的,呃,這個說起來就有點話長了,呃,我之後,呃,這個ensemble的這個這個這個這個技術啊,其實之前在在過去的錄影其實也是有提過的,那我之後可以把這個錄影呢也貼在,呃,社團上,讓大家再來研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:26.000" id=16:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=986">16:26.000</a></div>
+        <div class="t">那其實ensemble呢是有很多各式各樣不同的變形的了,舉例來說,你在做ensemble的時候,剛才講的是在那個,呃,network的output上面做平均,那事實上還有其他做法,比如說你有看過有人直接在network的參數上面做平均,那這個network參數上面做平均的方法,在這一門課裡面,你甚至已經有用過了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:51.000" id=16:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1011">16:51.000</a></div>
+        <div class="t">在這個translation那個作業裡面,其實助教的這個程式就是有,就是已經有幫你做好ensemble,就是有把不同的參數做平均這樣子的小技巧,那這一招呢,在translation上面不知道為什麼特別有用哦,所以在助教的程式裡面有實做這個方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:09.000" id=17:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1029">17:09.000</a></div>
+        <div class="t">好,希望這樣子有回答到大家的問題。好,那如果大家沒有問題的話,那我們就繼續了,那剩下的這個有關,呃,那個network compression的部分沒有太多了,我們就趕快把它講完,接下來就可以放一下助教的錄影。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.000" id=17:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1051">17:31.000</a></div>
+        <div class="t">好,那接下來下一個要跟大家講的小技巧啊,叫做parameter的quantization,不過這一招呢,在我們的作業是用不上的,哎,為什麼在我們的作業是用不上的呢?因為我們的作業啊,對大家network大小的限制並不是看那個network的本身的大小,而是看你用了幾個參數了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:54.000" id=17:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1074">17:54.000</a></div>
+        <div class="t">所以你如果不是減少參數的量,單純是用其他方法來壓縮network的話,在這個作業裡面其實是不會得到比較好的結果的,是不會比較有利的。好,不過還是跟大家介紹一下這個parameter quantization的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.000" id=18:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1090">18:10.000</a></div>
+        <div class="t">而這個parameter quantization的做法是什麼意思呢?它的意思是說,我們能不能夠只用比較少的空間來儲存一個參數。舉例來說,你現在存一個參數的時候,你可能是用64個bit,你可能是用32個bit,真的有必要精度這麼高嗎?會不會用16個bit就夠了?會不會用8個bit就夠了?會不會甚至更少的bit就夠了?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.000" id=18:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1118">18:38.000</a></div>
+        <div class="t">所以parameter quantization最簡單的做法就是,本來如果你存network的時候,舉例來說你是16個bit存一個數值,現在改成6個bit、8個bit存一個數值,那你的儲存空間、你的network大小直接就砍半了,而且你的performance不會掉很多,甚至有時候你把你的儲存參數的精度變低,結果還會稍微更好一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1146">19:06.000</a></div>
+        <div class="t">還有一個在更進一步壓縮你的參數的方法叫做weight clustering。weight clustering的意思是什麼呢?我們直接舉例來跟大家說明。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1157">19:17.000</a></div>
+        <div class="t">假設這些是你的network的參數,然後你就做cluster,你就做分群,按照這個參數的數值來分群,數值接近的放在一群。那要分幾群呢?你會先事先設定好。舉例來說,我們這邊事先設定好說我們要分四群,那你就會發現說比較相近的數字就被當作是一群。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.000" id=19:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1182">19:42.000</a></div>
+        <div class="t">接下來,每一群我們都只拿一個數值來表示它,也就是只要分到黃色這一群的,原來它的數值是多少,我們不管,我們就說它都是-0.4。反正其他參數也都跟-0.4的結果可能都差不多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:59.000" id=19:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1199">19:59.000</a></div>
+        <div class="t">這個-0.4可能就是這裡面所有數值的平均,假設這裡面所有數值的平均是-0.4,我們就用-0.4來代表所有黃色的參數,用0.4來代表所有藍色的參數,用2.9來代表分到綠色這群的參數,用-4.2來代表分到紅色這一群的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:17.000" id=20:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1217">20:17.000</a></div>
+        <div class="t">這樣做有什麼好處呢?這樣做的好處是,你今天在儲存你的參數的時候,你就只要記兩個東西,一個是一個表格,這個表格是記錄說每一群代表的數值是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:30.000" id=20:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1230">20:30.000</a></div>
+        <div class="t">另外一個你要記錄的就是每一個參數它屬於哪一群。假設你群的數目是少一點,比如說你設4群而已,那這樣子你要存一個參數的時候,你就只要兩個bit就可以存一個參數了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.000" id=20:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1247">20:47.000</a></div>
+        <div class="t">本來你存一個參數,你可能要16個bit、8個bit再進一步壓縮到存一個參數,只需要兩個bit就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:55.000" id=20:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1255">20:55.000</a></div>
+        <div class="t">那你其實還可以把參數再更進一步做壓縮。假設你對通訊比較熟悉的話,那你可能學過一個東西叫做Hoffman encoding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:05.000" id=21:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1265">21:05.000</a></div>
+        <div class="t">Hoffman encoding的概念就是,比較常出現的東西就用比較少的bit來描述它,比較罕見的東西再用比較多的bit來描述它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.000" id=21:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1276">21:16.000</a></div>
+        <div class="t">這樣的好處就是,常出現的東西用少的bit來描述,罕見的東西用多的bit來描述,這樣平均起來,你需要儲存你的資料需要的bit的數目就變少了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:27.000" id=21:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1287">21:27.000</a></div>
+        <div class="t">所以這個就是Hoffman encoding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:30.000" id=21:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1290">21:30.000</a></div>
+        <div class="t">所以你可以用這些技巧來壓縮你的參數,讓你儲存每一個參數的時候需要的空間是比較小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:38.000" id=21:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1298">21:38.000</a></div>
+        <div class="t">好,那到底可以壓縮到什麼程度呢?最終極的結果就是,你可以只拿一個bit來存每一個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:49.000" id=21:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1309">21:49.000</a></div>
+        <div class="t">你可以說你的network裡面的weight,要嘛就是正一,要嘛就是負一,只有這兩種可能,沒有其他的了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.000" id=21:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1316">21:56.000</a></div>
+        <div class="t">假設你可以做到說你所有的weight就只有正負一兩種可能,那你每一個weight就只需要一個bit就可以存下來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.000" id=22:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1326">22:06.000</a></div>
+        <div class="t">那像這樣子的這種binary weights的研究,其實還蠻多的,那我這邊就是列了一些reference給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:13.000" id=22:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1333">22:13.000</a></div>
+        <div class="t">那至於實際上要怎麼訓練出這種binary的network,那這個細節我們就不講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:19.000" id=22:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1339">22:19.000</a></div>
+        <div class="t">那一般人會對binary network有的印象就是,哇,這個一個參數值,要嘛是正一,要嘛是負一,會不會這個network的performance很差啊,這個network應該很慘吧,它應該做得很爛吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.000" id=22:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1352">22:32.000</a></div>
+        <div class="t">這倒未必,這邊呢就是取那個binary network裡面的其中一個經典的方法叫做binary connect,它的結果來跟大家分享一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:42.000" id=22:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1362">22:42.000</a></div>
+        <div class="t">在binary connect這篇paper裡面它跟你說,它把binary connect這個技術用在三個影像辨識的問題上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:50.000" id=22:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1370">22:50.000</a></div>
+        <div class="t">從最簡單的at least,還有稍微難一點的Cypher 10,它試了幾個corpus,那它發現什麼?這個第一排是正常的network,不是binary的network,一般的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:03.000" id=23:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1383">23:03.000</a></div>
+        <div class="t">在at least上你的錯誤率是1.3%,這邊是錯誤率啦,所以值越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:08.000" id=23:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1388">23:08.000</a></div>
+        <div class="t">在Cypher 10上是10%,它發現用binary connect,也就是每一個參數要嘛是正一要嘛是負一,結果居然是比較好的,所以你用binary network的結果居然還比正常的network的performance好一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.000" id=23:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1403">23:23.000</a></div>
+        <div class="t">那這邊的理由可能是說,當我們用binary network的時候,我們給了network比較大的限制,我們給network capacity比較大的限制,所以它比較不容易overfitting。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:34.000" id=23:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1414">23:34.000</a></div>
+        <div class="t">所以用binary的weight,它反而可以達到防止overfitting的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:39.000" id=23:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1419">23:39.000</a></div>
+        <div class="t">這邊是想要跟大家分享一下binary network厲害的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:04.000" id=24:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1444">24:04.000</a></div>
+        <div class="t">好,有同學問到說,關於上週Lifelong Learning講到EWC的方法,在train每個新的task之前,為了要算每個parameter的重要性,都會用之前的data去算gradient,這樣是不是算跟GEM一樣,存有部分之前的data呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:27.000" id=24:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1467">24:27.000</a></div>
+        <div class="t">這邊是不一樣的,因為那個gradient它不是看到新的任務才算的,那個gradient就是我們要算parameter的重要性這件事情,在一個任務訓練完之後,你就會馬上計算了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.000" id=24:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1482">24:42.000</a></div>
+        <div class="t">所以你並不是等要做解新的任務的時候,才去舊的任務的data上去計算每個參數的重要性,是舊的任務一訓練完,馬上就把參數性記錄下來,把參數的重要性記錄下來,把參數的重要性記錄下來以後,舊的任務的所有資料就可以被丟掉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.000" id=25:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1501">25:01.000</a></div>
+        <div class="t">所以它跟GEM還是不太一樣的。不過我上週有提示說,你如果是用EWC這種方法,其實你也有用到額外的儲存空間嘛,所以雖然它沒有存資料,但是它需要儲存參數的重要性,那這個也是會耗用一些儲存的空間的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:18.000" id=25:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1518">25:18.000</a></div>
+        <div class="t">這邊要從消息理論那邊講吧。哦,我猜你是指Hoffman Coding,好啊,也可以從消息理論那邊講,資料壓縮啊等等。你知道,就是因為這個Weight Quantization這一系列的方法跟課程的主軸比較沒有關係啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:35.000" id=25:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1535">25:35.000</a></div>
+        <div class="t">所以在作業裡面我們就沒有特別強調Weight Quantization這一件事情,我只是想要跟大家講說,反正有這些技術就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.000" id=25:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1549">25:49.000</a></div>
+        <div class="t">有同學問說,Weight Clustering要怎麼做update?每次update都要重新分群嗎?其實Weight Clustering有一個很簡單的做法,你可能以為那個Weight Clustering是需要在訓練的時候就考慮的,但是有一個簡單的做法是,你先把network訓練完,再直接做Weight Clustering。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:10.000" id=26:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1570">26:10.000</a></div>
+        <div class="t">但你這樣直接做可能會導致你Cluster後的參數跟原來的參數相差太大,所以有一個做法是什麼呢?有一個做法是,我們在訓練的時候要求network的參數彼此之間比較接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:27.000" id=26:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1587">26:27.000</a></div>
+        <div class="t">你可以把這個訓練的criterion當作是loss的其中一個環節,直接塞到你的訓練的過程中,讓訓練的過程中達到參數有群聚的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:39.000" id=26:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1599">26:39.000</a></div>
+        <div class="t">這件事情是可以做到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.000" id=26:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1607">26:47.000</a></div>
+        <div class="t">有同學問說,要壓到什麼程度才不會丟掉太多的資訊?這個你就要自己算算看啦,到底要壓到什麼程度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:57.000" id=26:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1617">26:57.000</a></div>
+        <div class="t">你做壓縮的時候難免就是會掉一些資訊嘛,但到底掉多少資訊你能夠接受,這個就要看你的應用了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:12.000" id=27:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1632">27:12.000</a></div>
+        <div class="t">那個weight clustering裡面,每個cluster的數字要怎麼決定呢?決定好每個cluster的區間之後取它們的平均嗎?對,就是決定好每個cluster的區間之後取它們的平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:27.000" id=27:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1647">27:27.000</a></div>
+        <div class="t">有同學問說,binary weight加diver會比較好嗎?不好意思,我不太確定你這個diver是指什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:45.000" id=27:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1665">27:45.000</a></div>
+        <div class="t">剛剛有一個同學問說,關於剛剛EWC的問題,想請問老師那樣不同的task data對model的重要性會不會衝突,怎麼把不同task的importance merge?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:01.000" id=28:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1681">28:01.000</a></div>
+        <div class="t">這邊這個解法,怎麼把不同task的importance merge,在文件上的做法比你想像的要簡單,就是每一個task都會計算出一個重要性,然後把所有task的重要性加起來就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:19.000" id=28:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1699">28:19.000</a></div>
+        <div class="t">每一個參數在每一個task訓練完以後都會得到一個所謂的值,都會得到一個b,把每一個任務的b統統加起來就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:31.000" id=28:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1711">28:31.000</a></div>
+        <div class="t">希望這樣有回答到,diver是加入noise,反而可以保留更多的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:47.000" id=28:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1727">28:47.000</a></div>
+        <div class="t">我沒有看過有人研究過diver加binary weight這個問題,所以這邊我沒有很好的答案。這聽起來像是一個蠻有創意的方法,如果你有釋出什麼結果再告訴我好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:03.000" id=29:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1743">29:03.000</a></div>
+        <div class="t">希望有回答到大家的問題,那我們就繼續了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:14.000" id=29:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1754">29:14.000</a></div>
+        <div class="t">接下來要跟大家講的是network架構的設計,透過network架構的設計來達到減少參數量的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.000" id=29:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1763">29:23.000</a></div>
+        <div class="t">等一下要跟大家介紹的叫做depthwise separable的convolution,這個會是這次作業的主力,你要過strong baseline就靠這個方法了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:37.000" id=29:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1777">29:37.000</a></div>
+        <div class="t">在講這個方法之前,我們先幫大家很快的秒複習一下CNN,我們在開學期初的時候已經跟大家講過CNN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:46.000" id=29:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1786">29:46.000</a></div>
+        <div class="t">CNN是什麼呢?在CNN的convolution layer裡面,你每一個layer的input是一個feature map,在這個例子裡面,我們的feature map有兩個channel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:58.000" id=29:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1798">29:58.000</a></div>
+        <div class="t">如果你的feature map有兩個channel,那你的每一個filter的高度也得是2,所以這個filter並不是一個長方形而是一個立方體,你的channel有多少,你的filter就得有多厚。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:15.000" id=30:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1815">30:15.000</a></div>
+        <div class="t">然後你再把這個filter掃過這個feature map,你就會得到另外一個matrix,另外一個正方形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.000" id=30:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1823">30:23.000</a></div>
+        <div class="t">你有幾個filter,那output的feature map就有幾個channel,這邊有四個filter,每一個filter都是立方體,那output的feature map就有四個channel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.000" id=30:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1835">30:35.000</a></div>
+        <div class="t">那在這個例子裡面總共有多少參數呢?我們總共有四個filter,每一個filter的參數量是3乘以3乘以2,要注意一下每一個filter其實是立方體,所以總共的參數量是3乘以3乘以2乘以4,總共72個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:51.000" id=30:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1851">30:51.000</a></div>
+        <div class="t">那等一下要跟大家介紹的方法叫做Device Separable Convolution,那這個Device Separable Convolution它為什麼會好呢?這個等一下再跟大家講它的原理,在講它的原理之前,我們先直接講它的操作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.000" id=31:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1869">31:09.000</a></div>
+        <div class="t">這個Device Separable Convolution它分成兩個步驟,第一個步驟叫做Device-wise Convolution,Device-wise Convolution做的是什麼呢?它要做的事情是,有幾個channel,我們就有幾個filter,而每一個filter只管一個channel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.000" id=31:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1888">31:28.000</a></div>
+        <div class="t">因為每一個filter只管一個channel,所以有幾個channel就有幾個filter,舉例來說,假設input的feature map是兩個channel,那在Device-wise Convolution的layer裡面,我們就只放兩個filter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:44.000" id=31:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1904">31:44.000</a></div>
+        <div class="t">不像之前在一般的Convolution layer裡面,filter的數目跟channel的數目是沒有關係的,在前一個投影片的例子裡面,channel只有兩個,但filter可以有四個,但在Device-wise Convolution裡面,幾個channel,幾個filter,然後每一個filter就只負責一個channel而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:03.000" id=32:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1923">32:03.000</a></div>
+        <div class="t">其實我覺得這個Device-wise Convolution比較像是大家一般對CNN的誤解,假設有人對Convolution不太熟悉的話,一般都會誤以為Convolution的算法就跟Device-wise Convolution是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.000" id=32:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1937">32:17.000</a></div>
+        <div class="t">其實不是,你已經修過這門課了,已經花很多時間跟大家介紹過CNN了,所以你已經知道說CNN不是這樣算的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:24.000" id=32:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1944">32:24.000</a></div>
+        <div class="t">但是CNN裡面一個特別的變形,減少參數量的變形,其實跟大家一般對CNN的誤解蠻像的,就是每一個filter只去管一個channel就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:34.000" id=32:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1954">32:34.000</a></div>
+        <div class="t">那一個filter怎麼管一個channel呢?假設這個淺藍色的filter管第一個channel,那就淺藍色的filter在第一個channel上面滑過去、滑過去、滑過去,然後就算出一個feature map。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:49.000" id=32:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1969">32:49.000</a></div>
+        <div class="t">然後深藍色的filter管第二個channel,它就在第二個channel上面做Convolution,然後也得到另外一個feature map。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.000" id=32:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1977">32:57.000</a></div>
+        <div class="t">所以在Device-wise Convolution裡面,你input有幾個channel,你output channel的數目會是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:05.000" id=33:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1985">33:05.000</a></div>
+        <div class="t">這個跟一般的Convolution layer不一樣,一般的Convolution layer裡面input跟output的channel數目可以不一樣,但在Device-wise Convolution裡面,input跟output的channel數目是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:16.000" id=33:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=1996">33:16.000</a></div>
+        <div class="t">但是你會發現,如果你只做Device-wise Convolution,它會遇到一個問題,這個問題是channel和channel之間沒有任何的互動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:27.000" id=33:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2007">33:27.000</a></div>
+        <div class="t">假設今天有某一個pattern是跨channel才能夠看得出來的,那Device-wise Convolution對這種跨channel的pattern是無能為力的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:38.000" id=33:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2018">33:38.000</a></div>
+        <div class="t">所以怎麼辦呢?再多加一個Point-wise Convolution,Point-wise Convolution的意思是說,我們現在一樣有一堆filter,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:49.000" id=33:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2029">33:49.000</a></div>
+        <div class="t">這個跟一般的Convolution layer是一樣的,但我們這邊做一個限制式,我們的filter的大小,它的kernel的size通通都是1乘以1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:59.000" id=33:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2039">33:59.000</a></div>
+        <div class="t">在一般的Convolution layer裡面,你的filter大小可能開2乘以2、3乘以3、4乘以4,但是在Point-wise Convolution裡面,我們限制大小一定是1乘以1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:09.000" id=34:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2049">34:09.000</a></div>
+        <div class="t">那這個1乘以1的filter,它的目標、它的作用就是去考慮不同channel之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.000" id=34:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2056">34:16.000</a></div>
+        <div class="t">所以第一個這個1乘以1的filter,它做的事情就是去掃過這個Device-wise Convolution出來的feature map,然後得到另外一個feature map。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:29.000" id=34:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2069">34:29.000</a></div>
+        <div class="t">那這邊有另外三個filter,它們做的事情也是一樣,每一個filter會產生一個feature map。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:34.000" id=34:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2074">34:34.000</a></div>
+        <div class="t">所以Point-wise Convolution跟一般的Convolution layer是一樣的地方是輸入跟輸出的channel數目可以不一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:43.000" id=34:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2083">34:43.000</a></div>
+        <div class="t">但是Point-wise Convolution有一個非常大的限制,是我們強制要求說filter的大小只准是1乘以1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:51.000" id=34:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2091">34:51.000</a></div>
+        <div class="t">你只要考慮channel之間的關係就好了,你就不要考慮同一個channel內部的關係了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:57.000" id=34:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2097">34:57.000</a></div>
+        <div class="t">同一個channel內部的關係,已經Device-wise Convolution做完了,所以Point-wise Convolution只專注於考慮channel和channel間的關係就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:06.000" id=35:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2106">35:06.000</a></div>
+        <div class="t">那我們先來計算一下這個方法的參數量,你看,在Device-wise Convolution裡面,兩個filter,每一個filter大小是3乘以3,所以就3乘以3乘以2,總共是8個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:18.000" id=35:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2118">35:18.000</a></div>
+        <div class="t">那在Point-wise Convolution裡面四個filter,每一個filter的大小是2,每一個filter只用了兩個參數,所以總共是8個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:26.000" id=35:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2126">35:26.000</a></div>
+        <div class="t">左邊這個圖,這個是一般的Convolution,右邊這個圖是Device-wise加Point-wise的Convolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:35.000" id=35:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2135">35:35.000</a></div>
+        <div class="t">那我們現在來比較一下這兩者參數量的差異,我們現在假設我們先預設好說input的channel數目就是i一個channel,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:44.000" id=35:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2144">35:44.000</a></div>
+        <div class="t">output的channel數目就是k一個channel,然後呢,這個case跟這個case這邊的kernel size都是k乘以k。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:53.000" id=35:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2153">35:53.000</a></div>
+        <div class="t">好,那如果是一般的Convolution,你要有k乘以k的kernel size,inputi一個channel,outputo一個channel,那你到底會需要多少參數呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:03.000" id=36:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2163">36:03.000</a></div>
+        <div class="t">那你能先算一下每一個filter的大小,每一個filter的大小應該是k乘以kkernel size乘上inputchannel的數目,也就是k乘以k乘以i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:13.000" id=36:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2173">36:13.000</a></div>
+        <div class="t">如果你要outputO一個channel,大O一個channel,那你需要大O一個filter,所以總參數量是k乘以k乘以i一個filter的參數量再乘以大O。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:24.000" id=36:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2184">36:24.000</a></div>
+        <div class="t">如果是deskwise加pointwise的Convolution要達到inputi一個channel,outputO一個channel,那要怎麼做呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:33.000" id=36:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2193">36:33.000</a></div>
+        <div class="t">Deskwise的Convolution,它的這個filter啊,它的filter是沒有那個厚度的,它的filter是沒有厚度的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:42.000" id=36:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2202">36:42.000</a></div>
+        <div class="t">所以你會發現說deskwise的Convolution,所有的filter加起來,它的參數量只有k乘以k乘以i而已,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:50.000" id=36:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2210">36:50.000</a></div>
+        <div class="t">跟一般的Convolution裡面的一個filter的參數量是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:56.000" id=36:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2216">36:56.000</a></div>
+        <div class="t">然後我們看pointwise的Convolution,這邊呢是i乘以O,就是假設你input的channel的數目是i的話,那每一個1乘以1的Convolution,它的高度呢會是i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:09.000" id=37:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2229">37:09.000</a></div>
+        <div class="t">那O是哪來的呢?假設你要outputO一個channel的話,那你就要有大O一個1乘以1的Convolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:15.000" id=37:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2235">37:15.000</a></div>
+        <div class="t">所以今天pointwise的Convolution,它的總參數量是i乘以O,那你把這兩者進行比較,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:21.000" id=37:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2241">37:21.000</a></div>
+        <div class="t">你把k乘以k乘以i加上i乘以O,去除掉k乘以k乘以i乘以O,你把這兩者相除,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:28.000" id=37:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2248">37:28.000</a></div>
+        <div class="t">經過一番計算你會發現這兩者的比例是1除以O加1除以k加k。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:34.000" id=37:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2254">37:34.000</a></div>
+        <div class="t">那因為O通常是一個很大的值啦,你的channel數目你可能開個256啊、512啊,所以我們先把這個1除以O忽略不計。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:43.000" id=37:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2263">37:43.000</a></div>
+        <div class="t">那k乘以k通常是比較在這一整項裡面,它可能是比較關鍵的數值,這一整項的大小可能跟1除以k乘以k是比較有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:53.000" id=37:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2273">37:53.000</a></div>
+        <div class="t">那假設你的kernel size,今天常用的kernel size可能是3乘以3或者是2乘以2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:59.000" id=37:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2279">37:59.000</a></div>
+        <div class="t">假設你選2乘以2,你把一般的Convolution換成deskwise加pointwise的組合的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:05.000" id=38:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2285">38:05.000</a></div>
+        <div class="t">那network大小就變成2乘以2分之1。假設你的kernel size是3乘以3,當你從Convolution變成deskwise加pointwise的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:14.000" id=38:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2294">38:14.000</a></div>
+        <div class="t">你的network大小就變成原來的1乘以9分之1了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:18.000" id=38:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2298">38:18.000</a></div>
+        <div class="t">好,那接下來想要跟大家解釋的是,為什麼這招有用呢?這一招的原理是哪來的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:27.000" id=38:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2307">38:27.000</a></div>
+        <div class="t">那這個deskwise加pointwise這個招數,它其實是其來有之,在過去還沒有deskwise separable的Convolution之前,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:39.000" id=38:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2319">38:39.000</a></div>
+        <div class="t">就已經有一個方法是用low rank approximation來減少一層network的參數量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:46.000" id=38:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2326">38:46.000</a></div>
+        <div class="t">那你不知道什麼是low rank approximation沒有關係,這邊就直接告訴你這個是怎麼操作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:51.000" id=38:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2331">38:51.000</a></div>
+        <div class="t">假設你有某一個layer,那這個layer輸入有N個neuron,輸出有N個neuron。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:01.000" id=39:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2341">39:01.000</a></div>
+        <div class="t">那假設N或者是N其中一者非常大,這邊假設是N非常大,那你的這個參數量就會非常的可觀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:11.000" id=39:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2351">39:11.000</a></div>
+        <div class="t">這邊的參數量W,假設你的input是N個neuron,output是N個neuron,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:17.000" id=39:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2357">39:17.000</a></div>
+        <div class="t">那你的參數量是多少呢?這兩層之間的參數量是多少呢?是N乘以N對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:22.000" id=39:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2362">39:22.000</a></div>
+        <div class="t">那只要N跟N其中一者很大,那你這個W的參數就很多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:27.000" id=39:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2367">39:27.000</a></div>
+        <div class="t">那怎麼減少這個參數量呢?有一個非常簡單的方法是在N跟N中間再插一層,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:36.000" id=39:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2376">39:36.000</a></div>
+        <div class="t">這一層就不用activation function,直接多插一層,這一層的neuron的數目是大K。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:44.000" id=39:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2384">39:44.000</a></div>
+        <div class="t">由本來只有一層,現在拆成兩層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:48.000" id=39:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2388">39:48.000</a></div>
+        <div class="t">那這兩層裡面的第一層呢,我們用V來表示,第二層呢,我們用大U來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:55.000" id=39:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2395">39:55.000</a></div>
+        <div class="t">你可能會想說,這個把一層neuron拆成兩層neuron,這個參數量不是變多了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:03.000" id=40:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2403">40:03.000</a></div>
+        <div class="t">你仔細算算看,這個兩層的neuron參數量反而是比較少的哦,怎麼說呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:08.000" id=40:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2408">40:08.000</a></div>
+        <div class="t">你看,原來一層neuron你的參數量是大N乘以N。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:12.000" id=40:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2412">40:12.000</a></div>
+        <div class="t">現在我們拆成兩層neuron,第一層是多少?第一層是大N乘以K,對不對?大N乘以K。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:20.000" id=40:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2420">40:20.000</a></div>
+        <div class="t">第二層是多少?第二層是大K乘以N,大K乘以N。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:24.000" id=40:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2424">40:24.000</a></div>
+        <div class="t">如果你今天的K呢,遠小於N跟N,那你就會發現說,U跟V的參數量加起來是比大W還要少得多的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:36.000" id=40:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2436">40:36.000</a></div>
+        <div class="t">大W是N乘以N嘛,那U跟V的參數量加起來是K乘上N加N,就N跟N就沒有相乘了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:45.000" id=40:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2445">40:45.000</a></div>
+        <div class="t">那你只要K夠小,那整體而言,U加V的參數量就會變少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:49.000" id=40:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2449">40:49.000</a></div>
+        <div class="t">所以,你常常之前過去常有的做法就是,N1000、N1000,沒關係,我K塞個20、塞個50,那這個參數量呢,就減少蠻多的了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:03.000" id=41:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2463">41:03.000</a></div>
+        <div class="t">那像這樣子的方法雖然可以減少參數量,當然它還是會有一些限制啦,什麼樣的限制?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:10.000" id=41:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2470">41:10.000</a></div>
+        <div class="t">因為你會發現說,當你把W拆解成U乘上V的時候,當你把W分成用U跟V兩層來分開表示的時候,你會減少W的可能性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:21.000" id=41:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2481">41:21.000</a></div>
+        <div class="t">本來W它可以放任何的參數,但假設把W拆成U跟V的話,那這個W這個矩陣啊,它的rank會小於等於K。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:32.000" id=41:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2492">41:32.000</a></div>
+        <div class="t">那你不知道rank是什麼也沒有關係啦,反正就是W會有一些限制啦,所以會變成說它不是所有的W都可以變成用在,不是所有的W都可以變成當作你的參數,你的參數會變成有一些限制啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:48.000" id=41:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2508">41:48.000</a></div>
+        <div class="t">好,那這個方法呢,就是拿來減少參數的一個非常常用的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:54.000" id=41:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2514">41:54.000</a></div>
+        <div class="t">那其實剛才講的depthwise加pointwise的convolution,其實它用的就是我們這邊的概念,就是把一層拆成兩層這樣的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:04.000" id=42:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2524">42:04.000</a></div>
+        <div class="t">好,怎麼說呢?我們先來看一下原來的convolution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:08.000" id=42:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2528">42:08.000</a></div>
+        <div class="t">在原來的convolution裡面,紅色的這一個矩陣,左上角的這個參數是怎麼來的,是不是有一個紅色的這個filter放在feature input的feature map的左上角以後所得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:24.000" id=42:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2544">42:24.000</a></div>
+        <div class="t">那今天在這個例子裡面,一個filter的參數量是多少?一個filter的參數量是3乘以3乘以2,也就是18。你把filter裡面的18個參數跟input的feature map左上角的這18個數值做inner product以後,就會得到這邊output的feature map左上角這個值,所以你的每一個filter有18個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:50.000" id=42:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2570">42:50.000</a></div>
+        <div class="t">如果今天拆成deskwise加pointwise兩階的話,那會怎麼樣呢?如果拆成deskwise跟pointwise兩階的話,左上角output feature map左上角這個數值來自於中間的deskwise convolution的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:06.000" id=43:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2586">43:06.000</a></div>
+        <div class="t">所以左上角這個值來自於中間這個deskwise convolution output的左上角的這兩個值,而這兩個值來自於input的feature map第一個channel左上角的這九個值跟第二個channel左上角的這九個值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:24.000" id=43:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2604">43:24.000</a></div>
+        <div class="t">所以怎麼從這邊變到這邊呢?你可以看成是我們有兩個filter,這兩個filter分別是九個input得到輸出,然後接下來這兩個filter的輸出再把它綜合起來得到最終的輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:42.000" id=43:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2622">43:42.000</a></div>
+        <div class="t">所以本來是直接從這18個數值變成一個數值,現在是分兩階,18個數值變兩個數值再變一個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:55.000" id=43:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2635">43:55.000</a></div>
+        <div class="t">或者是如果我們今天看黃色的feature map左下角這個參數,黃色的feature map左下角這個數值來自於哪裡呢?來自於deskwise convolution的output左下角這兩個數值,而左下角這兩個數值來自於這個filter,來自於input的feature map左下角的這18個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:20.000" id=44:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2660">44:20.000</a></div>
+        <div class="t">所以其實今天你又可以再看成說呢,是我們把這個,當我們把這個一般的convolution拆成這個deskwise加pointwise的時候,我們就可以看成是把一層的network拆解成兩層的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:37.000" id=44:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2677">44:37.000</a></div>
+        <div class="t">所以它的原理跟剛才在前一頁投影片看到的low rank的approximation是一樣的,我們把一層拆成兩層,這個時候對於參數的需求反而是減少了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:50.000" id=44:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2690">44:50.000</a></div>
+        <div class="t">好,那這個是有關network architecture的設計,那其實有關network architecture的設計還有非常多論文可以參考啦,那這些文獻其實也都有放在助教的投影片裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:02.000" id=45:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2702">45:02.000</a></div>
+        <div class="t">那等一下助教不會細講這些network的架構啦,但是在這個作業裡面,如果你可以成功實作出剛才講的這個deskwise加pointwise的相疊的話,把一層CNN拆成兩層CNN的話,那你就很有機會可以過strong baseline了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:19.000" id=45:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2719">45:19.000</a></div>
+        <div class="t">好,我來看看同學們有沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:32.000" id=45:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2732">45:32.000</a></div>
+        <div class="t">好,那如果同學沒有問題的話呢,那我們就繼續吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:42.000" id=45:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2742">45:42.000</a></div>
+        <div class="t">好,最後一個要跟大家分享的是dynamic computation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:50.000" id=45:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2750">45:50.000</a></div>
+        <div class="t">那dynamic computation要做的事情跟前幾個方法想要達成的目標不太一樣,在前幾個方法裡面想要做的事情就是單純的把network變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:02.000" id=46:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2762">46:02.000</a></div>
+        <div class="t">那在dynamic computation裡面要做的事情是什麼呢?在dynamic computation裡面要做的事情是,我們希望network可以自由的運作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:10.000" id=46:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2770">46:10.000</a></div>
+        <div class="t">那在dynamic computation裡面要做的事情是什麼呢?在dynamic computation裡面要做的事情是,我們希望network可以自由的調整它需要的運算量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:20.000" id=46:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2780">46:20.000</a></div>
+        <div class="t">那在dynamic computation裡面要做的事情是什麼呢?在dynamic computation裡面要做的事情是,我們希望network可以自由的調整它需要的運算量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:30.000" id=46:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2790">46:30.000</a></div>
+        <div class="t">可能同樣的模型會想要跑在不同的device上面,而不同的device上面它有的運算資源是不太一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:40.000" id=46:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2800">46:40.000</a></div>
+        <div class="t">所以你期待說你訓練好一個network以後,你放到新的device上面,你不需要再重建這個network,因為你訓練一個神奇的模型,這個神奇的模型本來就可以自由調整它所需要的運算資源。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:53.000" id=46:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2813">46:53.000</a></div>
+        <div class="t">所以運算資源少的時候,它就只需要少的運算資源就可以運算,運算資源大的時候,它就可以充分利用充足的運算資源來進行運算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:03.000" id=47:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2823">47:03.000</a></div>
+        <div class="t">好,那另外一個可能是,就算是在同一個device上面,你也會需要不同的computation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:11.000" id=47:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2831">47:11.000</a></div>
+        <div class="t">比如說,舉例來說,假設你的手機非常有電的時候,那你可能就可以有比較多的運算資源。假設你的手機沒有電的時候,那你可能就需要把運算資源留著做其他的事情,那network可能可以分到的運算資源就比較少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:29.000" id=47:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2849">47:29.000</a></div>
+        <div class="t">所以就算是在同一個device上面,我們也希望一個network可以根據現有的運算資源,比如說手機現在的電量還有多少,來自由地調整它對運算量的需求。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:42.000" id=47:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2862">47:42.000</a></div>
+        <div class="t">好,那有人可能會問說,為什麼我們不直接準備一大堆的network就好了呢?假設我們今天需要應付各種不同運算資源的情況,我們為什麼不訓練10個network從運算量最少的到運算量最大的,然後根據我們的運算的狀況去選擇不同的network呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:03.000" id=48:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2883">48:03.000</a></div>
+        <div class="t">可是你知道,假設你是在同一台手機上,你需要根據不同的狀況做不同的因應,那你可能就需要訓練一大堆的network。而手機上的儲存空間有限啊,那你今天我們就是要減少我們的運算量,但是如果你需要訓練一大堆的network,那你需要一大堆的儲存空間,那這個可能不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:28.000" id=48:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2908">48:28.000</a></div>
+        <div class="t">所以我們其實期待可以做到說,一個network它可以自由地調整它對運算資源的需求。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:35.000" id=48:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2915">48:35.000</a></div>
+        <div class="t">好,那怎麼讓network自由地調整它對運算資源的需求呢?一個可能的方向是讓network自由地調整它的深度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:46.000" id=48:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2926">48:46.000</a></div>
+        <div class="t">怎麼讓network自由調整它的深度呢?你可以訓練,一般我們就是訓練一個很深的network,然後它有input,比如說在做image classification的話,它就是輸入一張圖片,然後輸出就是圖片分類的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:01.000" id=49:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2941">49:01.000</a></div>
+        <div class="t">然後呢,你可以在這個layer和layer中間再加上一個額外的layer。這個額外的layer它的工作呢,是根據每一個hidden layer的output去決定現在分類的結果應該是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:18.000" id=49:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2958">49:18.000</a></div>
+        <div class="t">那這樣子當你的運算資源比較充足的時候,你可以讓這張圖片去跑過所有的layer,得到最終的分類結果。當運算資源不充足的時候,你可以讓network決定說它要在哪一個layer自行做輸出。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:34.000" id=49:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2974">49:34.000</a></div>
+        <div class="t">比如說運算資源比較不充足的時候,通過第一個layer就直接丟到這個extra的layer1,然後呢,就得到最終的結果了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:42.000" id=49:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2982">49:42.000</a></div>
+        <div class="t">那怎麼訓練這樣一個network呢?那其實概念比你想像的還要簡單。我們訓練的時候都有label的資料,那一般在訓練的時候,我們只需要在意最後一層network它的output是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:55.000" id=49:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=2995">49:55.000</a></div>
+        <div class="t">我們希望它的output跟quantroop越接近越好。但是我們今天呢,也可以讓quantroop跟每一個extra layer的output越接近越好。那我們把所有的output跟quantroop的距離通通加起來,把所有的output跟quantroop的cross entropy通通加起來,得到大L,然後再去minimize這個大L,然後就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:22.000" id=50:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3022">50:22.000</a></div>
+        <div class="t">那這樣子最基本的方法,它能夠運作得好嗎?這個訓練方法是可以用的。你確實可以用我剛才講的訓練方法,就是每一層接出來做訓練,然後把所有接出來的結果去跟quantroop算距離,然後minimize所有接出來的結果跟quantroop的距離。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:42.000" id=50:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3042">50:42.000</a></div>
+        <div class="t">你確實可以用這個方法達到dynamic的深度。但是其實它不是一個最好的方法。如果你想知道最好的方法是怎麼做的,這個也不一定是現在最好的方法,但是假設你想知道比較好的方法是怎麼做的,也許你可以參考NSDNet這篇文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:59.000" id=50:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3059">50:59.000</a></div>
+        <div class="t">另外,還可以讓network自由的決定它的寬度。怎麼讓network自由決定它的寬度呢?你就是有設定好幾個不同的寬度,然後你今天同一張圖片丟進去,在訓練的時候同一張圖片丟進去,那每個不同寬度的network會有不同的輸出,我們再希望每一個輸出都跟正確答案越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:24.000" id=51:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3084">51:24.000</a></div>
+        <div class="t">就結束了,我們把所有的輸出跟quantroop的距離加起來,得到一個loss,然後我們要去minimize這個loss,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:33.000" id=51:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3093">51:33.000</a></div>
+        <div class="t">這邊要跟大家強調一下,雖然在這個投影片上我畫了三個network,但是這並不是三個不同的network,它們是同一個network可以選擇不同的寬度,也就是說這個weight就是這個weight就是這個weight,我標一樣顏色的就是同一個weight。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:54.000" id=51:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3114">51:54.000</a></div>
+        <div class="t">只是在最左邊這個狀況的時候,整個network所有的neuron都會被用到,但是在中間這個狀況的時候,你可能會決定說有25%的neuron不會用到,但是哪些neuron不用到你就事先決定好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:09.000" id=52:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3129">52:09.000</a></div>
+        <div class="t">某一些neuron在你選擇說只要用75%的參數的時候,哪25%的neuron我們不要用它,或哪50%的neuron我們不要用它,然後在訓練的時候就把所有的狀況一起考慮,然後所有的狀況都得到一個output,所有的output都去跟quantroop計算距離,然後要讓所有的距離都越小越好,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:32.000" id=52:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3152">52:32.000</a></div>
+        <div class="t">但是實際上你會發現,這樣train也是有問題的,所以需要一些特別的想法來解決這個問題。有關dynamic寬度的network怎麼訓練這件事,大家可以參考Slimable的neuron network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:48.000" id=52:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3168">52:48.000</a></div>
+        <div class="t">剛才講的,我們可以train一個network,我們可以自由去決定它的深度跟它的寬度,但是所謂的決定權還是在人這一邊。你要自己去決定說,今天電池電量少於多少的時候,我們就用多少層或者是多寬的network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:11.000" id=53:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3191">53:11.000</a></div>
+        <div class="t">但是有沒有辦法讓network自行決定根據它的環境,根據我們的情境,決定它的寬度或者是深度呢?這個也是有辦法的。為什麼我們需要network自己去決定它的寬度跟深度呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:26.000" id=53:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3206">53:26.000</a></div>
+        <div class="t">那是因為有時候就算同樣是影像分類的問題,有一些影像可能特別難,有一些影像可能特別簡單。對那些比較簡單的影像,也許你只要通過一層layer,network就已經可以知道答案了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:43.000" id=53:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3223">53:43.000</a></div>
+        <div class="t">對於一些比較難的問題,舉例來說,同樣是貓,這隻貓是被做成一個墨西哥捲餅的樣子,所以這是一個特別困難的問題。也許這張圖片只通過一個layer的時候,network會覺得它是一個捲餅。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:58.000" id=53:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3238">53:58.000</a></div>
+        <div class="t">在通過第二個layer的時候,還是一個捲餅。要通過很多個layer的時候,network才能夠判斷它是一隻貓。如果是這種比較難的問題,你就不應該在中間停下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:09.000" id=54:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3249">54:09.000</a></div>
+        <div class="t">那我們能不能讓network自己決定說,這是一張簡單的圖片,所以通過第一層就停下來,這是一個比較困難的圖片,所以要跑到最後一層才停下來呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:20.000" id=54:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3260">54:20.000</a></div>
+        <div class="t">我們是可以這麼做的。假設你想要知道怎麼做的話,可以參考以下幾篇reference。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:27.000" id=54:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3267">54:27.000</a></div>
+        <div class="t">像這樣子的方法,其實就不一定限制在運算資源比較有限的狀況了。有時候就算是你運算資源很充足,但是對一些簡單的圖片,如果你可以用比較少的layer就可以得到你要的結果,那其實也就夠了,這樣你就可以省下一些運算資源去做其他的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:48.000" id=54:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3288">54:48.000</a></div>
+        <div class="t">就好像說,我可以了解說,在這一門課裡面,因為我們今天把做什麼事情會得到幾分都定得非常的明確,所以大家就會知道說,你做了哪些事情大概就可以拿到A+,所以後面的作業你拿到A+,可能後面的作業你就不想做了,所以你就跟上面這個情況一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:08.000" id=55:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3308">55:08.000</a></div>
+        <div class="t">做到中間呢,你就停下來,得到A+,以後你就off你的結果,就結束了。那這也是人之常情,我也是可以接受的啦。不過像以前啊,呃,以前這個,呃,這學期呢,這個成績是,這個原始成績就直接定義定,就直接對應到那個等第啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:25.000" id=55:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3325">55:25.000</a></div>
+        <div class="t">那過去其實有一陣子,這個原始成績是沒有直接定義到等第,成績是相對的,這個時候大家就會很痛苦啦,有的同學就會,欸,他原始成績拿到一百多分,哇,結果稀簡這樣子。以前如果是直接按照比例分配,就前四分之一的人A+,以此類推的話,那就有可能有點痛苦啦。不過這學期,我們就是直接把原始成績對應到等第,讓大家日子過得比較輕鬆一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:48.500" id=55:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3348">55:48.500</a></div>
+        <div class="t">好,那以上呢,就是跟大家介紹的五個技術。那前面四個技術啊,都是讓network可以變小,那這四個技術呢,它們並不是互斥的。其實你今天要在做network的壓縮的時候,你其實沒有什麼道理只做一個技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:07.500" id=56:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3367">56:07.500</a></div>
+        <div class="t">你可以既用network的architecture,也做knowledge distillation,你還可以在做完knowledge distillation以後,再去做network pruning,你還可以在做完network pruning以後,再去做parameter的quantization。如果你今天真的想要把network壓縮到很小的話,這些方法並不是互斥的,它們都是可以一起被使用的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:31.000" id=56:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=xrlbLPaq_Og&t=3391">56:31.000</a></div>
+        <div class="t">好,那以上呢,就是有關network compression的介紹。那我們其實在這邊呢,到這邊的network compression呢,就講到一個段落,來看看大家有沒有問題要問的。</div>
+    </div>
+    
+</body>
+</html>   

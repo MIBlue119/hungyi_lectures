@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】類神經網路訓練不起來怎麼辦 (三)：自動調整學習速率 (Learning Rate)</h2><a href=https://www.youtube.com/watch?v=HYUXEeh3kwY><img src=https://i.ytimg.com/vi/HYUXEeh3kwY/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGEAgQChyMA8=&rs=AOn4CLC5GNbLdtxVqQqlC3_fFrNv9TqwNQ></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1">00:01.000</a></div>
+        <div class="t">好,那上週呢,我們講到了Critical Point的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:08.000" id=00:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=8">00:08.000</a></div>
+        <div class="t">那接下來呢,我要告訴大家說,Critical Point其實不一定是你在訓練一個Network的時候會遇到的最大的障礙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=19">00:19.000</a></div>
+        <div class="t">那今天呢,這份投影片裡面要告訴大家的是一個叫做Adaptive Learning Rate的技術,也就是我們要給每一個參數不同的Learning Rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.000" id=00:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=31">00:31.000</a></div>
+        <div class="t">好,那為什麼我說這個Critical Point不一定是我們訓練過程中最大的阻礙呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:39.000" id=00:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=39">00:39.000</a></div>
+        <div class="t">往往同學們在訓練一個Network的時候,你會把他的Loss記錄下來,所以你會看到說你的Loss原來很大,那隨著你參數不斷的Update,橫軸代表參數Update的次數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:53.000" id=00:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=53">00:53.000</a></div>
+        <div class="t">隨著你參數不斷的Update,這個Loss會越來越小,最後就卡住了,卡住的意思就是你的Loss不再下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01.000" id=01:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=61">01:01.000</a></div>
+        <div class="t">那多數時候這個時候大家就會猜說,那是不是走到了Critical Point,因為Gradient等於0的關係,所以我們沒有辦法再更新參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13.000" id=01:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=73">01:13.000</a></div>
+        <div class="t">但是,真的是這樣嗎?當我們說走到Critical Point的時候,意味著Gradient非常的小,但是你有確認過當你的Loss不再下降的時候,Gradient真的很小嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:27.000" id=01:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=87">01:27.000</a></div>
+        <div class="t">其實多數的同學可能都沒有確認過這件事。而事實上,在這個例子裡面,在今天有Show的這個例子裡面,當我們的Loss不再下降的時候,Gradient並沒有真的變得很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.000" id=01:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=103">01:43.000</a></div>
+        <div class="t">下面是Gradient的Null,也就是Gradient的這個向量,Gradient是一個向量嘛,Gradient這個向量的長度,隨著參數更新的時候的變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.000" id=01:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=114">01:54.000</a></div>
+        <div class="t">那你會發現說,雖然Loss不再下降,但是這個Gradient的Null,Gradient的大小並沒有真的變得很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:04.000" id=02:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=124">02:04.000</a></div>
+        <div class="t">事實上,在最後訓練的最終結的時候,Loss已經幾乎沒有再動了,Loss幾乎沒有再減少了,但是Gradient卻突然還上升了一下。這是怎麼一回事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:17.000" id=02:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=137">02:17.000</a></div>
+        <div class="t">而那這樣子的結果,其實也不難猜想,也許你遇到的是這樣子的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=145">02:25.000</a></div>
+        <div class="t">這個是我們的Error Surface,然後你現在的Gradient呢,在Error Surface三股的兩個股壁間不斷的來回的震盪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:34.000" id=02:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=154">02:34.000</a></div>
+        <div class="t">這個時候,你的Loss不會再下降,所以你會覺得看到這樣子的狀況,你的Loss不會再越來越小。但是實際上,它真的卡到了Critical Point,卡到了Saddle Point,卡到了Local Minima嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:48.000" id=02:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=168">02:48.000</a></div>
+        <div class="t">不是的,它的Gradient仍然很大,只是Loss不見得在減小了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:54.000" id=02:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=174">02:54.000</a></div>
+        <div class="t">所以你要注意,當你今天訓練一個Navigation,到後來發現Loss不再下降的時候,你不要隨便說,我卡在Local Minima,我卡在Saddle Point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.000" id=03:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=185">03:05.000</a></div>
+        <div class="t">有時候根本兩個都不是,你只是單純的Loss沒有辦法再下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:11.000" id=03:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=191">03:11.000</a></div>
+        <div class="t">這是為什麼在作業2-2會有一個作業叫大家算一下Gradient的None,然後算一下說你現在是卡在Saddle Point還是Critical Point。因為多數的時候,當你說你訓練卡住了,很少有人會去分析卡住的原因。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:26.000" id=03:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=206">03:26.000</a></div>
+        <div class="t">為了強化你的印象,我們有一個作業讓你來分析一下卡住的原因是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:33.000" id=03:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=213">03:33.000</a></div>
+        <div class="t">講到這邊,有的同學就會有一個問題了。如果我們在訓練的時候其實很少卡到Saddle Point或者是Local Minima,那這一個圖是怎麼做出來的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:46.000" id=03:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=226">03:46.000</a></div>
+        <div class="t">你還記得這個圖嗎?我們上次有畫過這個圖是說,我們現在訓練一個Network,訓練到現在參數在Critical Point附近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.000" id=03:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=235">03:55.000</a></div>
+        <div class="t">然後我們再來根據Eigenvalue的正負號來判斷說這個Critical Point比較像是Saddle Point還是Local Minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.000" id=04:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=243">04:03.000</a></div>
+        <div class="t">那如果實際上在訓練的時候,要走到Saddle Point或者是Local Minima是一件困難的事情,那這個圖到底是怎麼畫出來的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.000" id=04:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=254">04:14.000</a></div>
+        <div class="t">這邊告訴大家一個秘密,這個圖你要訓練出這樣子的結果,你要訓練到你的參數很接近Critical Point,用一般的Gradient Descent其實是做不到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:25.000" id=04:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=265">04:25.000</a></div>
+        <div class="t">用一般的Gradient Descent Thread,你往往會得到的結果是,你在Gradient還很大的時候,你的Loss就已經掉不下去了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:34.000" id=04:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=274">04:34.000</a></div>
+        <div class="t">這個是需要特別的方法去訓練的,所以做完這個實驗以後,我更感覺你要走到一個Critical Point其實是困難的一件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.000" id=04:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=284">04:44.000</a></div>
+        <div class="t">多數時候的訓練在還沒有走到Critical Point的時候就已經停止了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:50.000" id=04:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=290">04:50.000</a></div>
+        <div class="t">當然這並不代表說Critical Point不是一個問題,我只想要告訴你說,當你用Gradient Descent來做Optimization的時候,你真正的魔王,你真正應該要怪罪的對象,往往不是Critical Point,而是其他的原因。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:07.000" id=05:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=307">05:07.000</a></div>
+        <div class="t">如果今天Critical Point不是問題的話,為什麼我們的訓練會卡住呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:14.000" id=05:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=314">05:14.000</a></div>
+        <div class="t">我這邊舉一個非常簡單的例子。我們這邊有一個非常簡單的Error Surface。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:21.000" id=05:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=321">05:21.000</a></div>
+        <div class="t">我們只有兩個參數,兩個參數的值不一樣的時候,Loss的值不一樣,然後我們就畫出了一個Error Surface。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:27.000" id=05:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=327">05:27.000</a></div>
+        <div class="t">這個Error Surface的最低點在XX這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.000" id=05:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=331">05:31.000</a></div>
+        <div class="t">事實上這個Error Surface是Convex的形狀,如果你不知道Convex是什麼也沒有關係,總之它的等高線是橢圓形的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:44.000" id=05:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=344">05:44.000</a></div>
+        <div class="t">只是它在橫軸的地方,它的Gradient非常的小,它的坡度的變化非常的小,它非常的平滑,所以這個橢圓的長軸非常的長,短軸相對之下比較短。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:59.000" id=05:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=359">05:59.000</a></div>
+        <div class="t">在縱軸的地方,Gradient的變化很大,你的Error Surface的這個坡度非常的陡峭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:06.000" id=06:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=366">06:06.000</a></div>
+        <div class="t">那現在呢,我們要從這個地方,這個地方當作初始的點,然後來做Gradient Descent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:13.000" id=06:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=373">06:13.000</a></div>
+        <div class="t">你可能覺得說,啊,這個是個Convex的Error Surface啊,做Gradient Descent有什麼難的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:19.000" id=06:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=379">06:19.000</a></div>
+        <div class="t">不就是一路滑下來,然後可能再走過去嗎?應該是非常容易吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:24.000" id=06:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=384">06:24.000</a></div>
+        <div class="t">你實際上自己試一下,你會發現說,就連這種Convex的Error Surface,形狀這麼簡單的Error Surface,你用Gradient Descent都不見得能把它做好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:35.000" id=06:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=395">06:35.000</a></div>
+        <div class="t">舉例來說,這個是我實際上自己試了一下的結果,我Learning Rate設十的負二次方的時候。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:42.000" id=06:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=402">06:42.000</a></div>
+        <div class="t">那我的這個參數呢,在峽谷的兩端,你可以想像說這邊是一個山壁,然後另外一邊在這個圖片之外也是一個山壁,我的參數在山壁的兩端不斷地震盪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=418">06:58.000</a></div>
+        <div class="t">那我的Loss就掉不下去,但是Gradient其實仍然是很大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:02.000" id=07:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=422">07:02.000</a></div>
+        <div class="t">那你可能會說,那就是因為你Learning Rate設太大啦,Learning Rate決定了我們Update參數的時候步伐有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:09.000" id=07:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=429">07:09.000</a></div>
+        <div class="t">Learning Rate設太大,顯然步伐太大,那你沒有辦法慢慢地滑到山谷裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.000" id=07:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=435">07:15.000</a></div>
+        <div class="t">那這個是咎由自取,只要把Learning Rate設小一點,不就可以解決這個問題了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:22.000" id=07:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=442">07:22.000</a></div>
+        <div class="t">事實不然,因為我試著去調整了這個Learning Rate,你就會發現光是要Train這種Convex的Optimization的問題,你都覺得很痛苦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:33.000" id=07:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=453">07:33.000</a></div>
+        <div class="t">你知道嗎?覺得非常痛苦啊。我就調這個Learning Rate從10的負二次方,一直調到10的負七次方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.000" id=07:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=463">07:43.000</a></div>
+        <div class="t">調到10的負七次方以後,終於不再震盪了,終於從這個地方滑滑滑到山谷底,終於左轉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:52.000" id=07:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=472">07:52.000</a></div>
+        <div class="t">但是你發現說,這個訓練永遠走不到終點。為什麼?因為我的Learning Rate已經太小了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.000" id=08:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=481">08:01.000</a></div>
+        <div class="t">在這個很斜的地方,因為坡度很陡,Gradient值很大,所以還能夠前進一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:08.000" id=08:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=488">08:08.000</a></div>
+        <div class="t">到這個地方,坡度已經非常的平滑了,這麼小的Learning Rate根本沒有辦法再讓我們的訓練前進。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=495">08:15.000</a></div>
+        <div class="t">事實上,在這個地方,你看這邊一大堆黑點,烏漆抹黑的,這邊有多少個點呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:22.000" id=08:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=502">08:22.000</a></div>
+        <div class="t">這邊有十萬個點。這個是張寮八百重十萬的那個十萬,知道嗎?這個是十萬個點。但是我都沒有辦法靠近這個Local Minima的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:35.000" id=08:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=515">08:35.000</a></div>
+        <div class="t">所以顯然,就算是一個Convex的Aero Surface,你用Gradient Descent,也很難Train好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.000" id=08:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=522">08:42.000</a></div>
+        <div class="t">那有同學可能會想說,這個Convex Optimization的問題應該有別的更好的方法可以解吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=528">08:48.000</a></div>
+        <div class="t">你不一定要用Gradient Descent這麼土的方法,你確實有別的方法可以解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:52.000" id=08:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=532">08:52.000</a></div>
+        <div class="t">但是你想想看,如果今天是更複雜的Aero Surface,你真的要Train一個Deep Network的時候,Gradient Descent是你唯一可以仰賴的工具。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:01.000" id=09:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=541">09:01.000</a></div>
+        <div class="t">但是Gradient Descent這個工具,連這麼簡單的Aero Surface都做不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.000" id=09:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=546">09:06.000</a></div>
+        <div class="t">一事之不致,何以天下國家為?這麼簡單的問題都做不好,那如果難的問題,它又怎麼有可能做好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:15.000" id=09:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=555">09:15.000</a></div>
+        <div class="t">所以我們需要更好的Gradient Descent的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:19.000" id=09:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=559">09:19.000</a></div>
+        <div class="t">那怎麼把Gradient Descent做得更好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.000" id=09:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=562">09:22.000</a></div>
+        <div class="t">在之前我們的Gradient Descent裡面,所有的參數都是設同樣的Learning Rate,這顯然是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=569">09:29.000</a></div>
+        <div class="t">Learning Rate它應該要為每一個參數客製化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.000" id=09:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=574">09:34.000</a></div>
+        <div class="t">所以接下來我們就是要講,客製化的Learning Rate怎麼做到這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:40.000" id=09:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=580">09:40.000</a></div>
+        <div class="t">那我們要怎麼客製化這個Learning Rate呢?我們不同的參數到底需要什麼樣的Learning Rate呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=589">09:49.000</a></div>
+        <div class="t">從剛才的例子裡面,其實我們可以看到一個大原則。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:54.000" id=09:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=594">09:54.000</a></div>
+        <div class="t">這個大原則是,如果在某一個方向上,我們的Gradient的值很小,在某一個方向上非常的平坦,那我們會希望Learning Rate調大一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.000" id=10:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=606">10:06.000</a></div>
+        <div class="t">如果在某一個方向上非常的陡峭,某一個方向上坡度很大,那我們其實期待Learning Rate可以設得小一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.000" id=10:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=615">10:15.000</a></div>
+        <div class="t">那這個Learning Rate要如何自動地根據這個Gradient的大小做調整呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.000" id=10:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=621">10:21.000</a></div>
+        <div class="t">我們要改一下Gradient Descent原來的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.000" id=10:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=625">10:25.000</a></div>
+        <div class="t">這邊我們等一下在講解的時候,我們只放某一個參數Update的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.000" id=10:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=632">10:32.000</a></div>
+        <div class="t">我們之前在講Gradient Descent的時候,我們往往是講所有參數Update的式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.000" id=10:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=637">10:37.000</a></div>
+        <div class="t">那這邊為了等一下簡化這個問題,我們只看一個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:43.000" id=10:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=643">10:43.000</a></div>
+        <div class="t">但是你完全可以把這個方法推廣到所有參數的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:48.000" id=10:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=648">10:48.000</a></div>
+        <div class="t">我們只看一個參數,這個參數叫做Seta i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.000" id=10:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=652">10:52.000</a></div>
+        <div class="t">那這個Seta i在第七個Iteration的值,減掉在第七個Iteration,這個參數i算出來的Gradient,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.000" id=11:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=663">11:03.000</a></div>
+        <div class="t">這個G上標T下標i,代表在第七個Iteration,也就是Seta等於Seta T的時候,參數Seta i對Loss的微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:12.000" id=11:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=672">11:12.000</a></div>
+        <div class="t">我們把這個Seta上標T下標i,減掉Learning Rate乘上G上標T下標i,會更新Learning Rate到Seta上標T加1下標i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:23.000" id=11:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=683">11:23.000</a></div>
+        <div class="t">這是我們原來的Gradient Descent,我們的Learning Rate是固定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:27.000" id=11:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=687">11:27.000</a></div>
+        <div class="t">現在我們要有一個會客製化的Learning Rate,隨著參數客製化的Learning Rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:35.000" id=11:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=695">11:35.000</a></div>
+        <div class="t">要怎麼做呢?我們把原來Learning Rateeta這一項改寫成eta除以Sigma上標T下標i。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:43.000" id=11:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=703">11:43.000</a></div>
+        <div class="t">這個Sigma上標T下標i,你發現它一個上標T有一個下標i,就代表說這個Sigma這個參數,首先它是dependent i的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:53.000" id=11:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=713">11:53.000</a></div>
+        <div class="t">它是參數dependent的,不同的參數我們要給它不同的Sigma。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.000" id=11:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=717">11:57.000</a></div>
+        <div class="t">同時它也是Iteration dependent的,不同的Iteration我們也會有不同的Sigma。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:04.000" id=12:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=724">12:04.000</a></div>
+        <div class="t">所以當我們把我們的Learning Rate從eta改成eta除以Sigma上標T下標i的時候,我們就有一個parameter dependent的Learning Rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:12.000" id=12:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=732">12:12.000</a></div>
+        <div class="t">那接下來我們就是要看說這個parameter dependent的Learning Rate有什麼常見的計算方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.000" id=12:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=740">12:20.000</a></div>
+        <div class="t">那這個Sigma有什麼樣的方式可以把它計算出來呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:26.000" id=12:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=746">12:26.000</a></div>
+        <div class="t">一個常見的類型是算Gradient的Root Mean Square。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:32.000" id=12:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=752">12:32.000</a></div>
+        <div class="t">什麼意思呢?這個是我們現在參數要update的式子,我們從Theta0,我們等一下就不把i唸出來了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=762">12:42.000</a></div>
+        <div class="t">大家知道我這邊是考慮某一個參數,所以一個下標i,等一下為了方便講課,所以我們就不把i唸出來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:49.000" id=12:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=769">12:49.000</a></div>
+        <div class="t">Theta上標0初始化參數,減掉這個G0乘上Learning Rateeta除以Sigma0就得到Theta1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:58.000" id=12:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=778">12:58.000</a></div>
+        <div class="t">那這個Sigma0怎麼算出來的呢?在第一次update參數的時候,這個Sigma0是G0的平方除以開根號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:08.000" id=13:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=788">13:08.000</a></div>
+        <div class="t">這個G0就是我們的Gradient的平方除以開根號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:13.000" id=13:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=793">13:13.000</a></div>
+        <div class="t">那這一項其實就是G0的絕對值啦,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.000" id=13:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=797">13:17.000</a></div>
+        <div class="t">所以你把G0的絕對值帶到這邊,那這個G0跟這個G0它們的大小是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=803">13:23.000</a></div>
+        <div class="t">所以這邊這一項只會有一個,它要嘛是正義,要嘛是負義,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:28.000" id=13:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=808">13:28.000</a></div>
+        <div class="t">就代表說我們第一次在update參數從Theta0update到Theta1的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:33.000" id=13:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=813">13:33.000</a></div>
+        <div class="t">要嘛是加上eta,要嘛是減掉eta,跟Learning Rate,跟這個Gradient的大小沒什麼關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.000" id=13:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=820">13:40.000</a></div>
+        <div class="t">只看你這個eta的值設多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:43.000" id=13:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=823">13:43.000</a></div>
+        <div class="t">這個是第一步的狀況,那這個地方沒有特別重要啦,所以第一步的地方如果你聽得有點模模糊糊就算了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:49.000" id=13:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=829">13:49.000</a></div>
+        <div class="t">重點是接下來怎麼處理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.000" id=13:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=832">13:52.000</a></div>
+        <div class="t">那Theta1呢,它要一樣減掉Gradient,G1乘上eta,除以Sigma1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:59.000" id=13:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=839">13:59.000</a></div>
+        <div class="t">現在呢,在第二次update參數的時候,是要除以Sigma1,不是Sigma0,是Sigma1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:06.000" id=14:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=846">14:06.000</a></div>
+        <div class="t">那這個Sigma1是怎麼被算出來的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:09.000" id=14:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=849">14:09.000</a></div>
+        <div class="t">這個Sigma1就是我們過去所有計算出來的Gradient,它的平方的平均在開根號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:18.000" id=14:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=858">14:18.000</a></div>
+        <div class="t">我們到目前為止,在第一次update參數的時候我們算出了G0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:22.000" id=14:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=862">14:22.000</a></div>
+        <div class="t">在第二次update參數的時候我們算出了G1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.000" id=14:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=865">14:25.000</a></div>
+        <div class="t">所以這個Sigma1就是G0平方加G1平方除以二分之一再開根號,這個就是Ruling Square。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:33.000" id=14:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=873">14:33.000</a></div>
+        <div class="t">我們算出這個Sigma1以後,我們的Learning Rate就是eta除以Sigma1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.000" id=14:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=877">14:37.000</a></div>
+        <div class="t">然後你把Theta1減掉eta除以Sigma1乘以G1,得到Theta2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:42.000" id=14:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=882">14:42.000</a></div>
+        <div class="t">同樣的操作就反覆繼續下去,在Theta2的地方,你要減掉eta除以Sigma2乘以G2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.000" id=14:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=889">14:49.000</a></div>
+        <div class="t">那這個Sigma是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:51.000" id=14:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=891">14:51.000</a></div>
+        <div class="t">這個Sigma2就是過去所有算出來的Gradient,它的平方和平均再開根號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.000" id=14:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=899">14:59.000</a></div>
+        <div class="t">所以你把G0取平方G1取平方G2取平方再平均再開根號,得到Sigma2放在這個地方,然後update參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:09.000" id=15:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=909">15:09.000</a></div>
+        <div class="t">所以這個process,這個過程就反覆繼續下去,到第T次update參數的時候,其實這個是第T加1次,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.000" id=15:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=918">15:18.000</a></div>
+        <div class="t">第T加1次update參數的時候,你的這個SigmaT要怎麼設定呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:23.000" id=15:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=923">15:23.000</a></div>
+        <div class="t">它就是過去所有的Gradient Gt從第一步到目前為止所有所算出來的Gt的平方和再平均再開根號,得到SigmaT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:37.000" id=15:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=937">15:37.000</a></div>
+        <div class="t">然後把它除learning rate,然後用這一項當作是新的learning rate來update你的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:45.000" id=15:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=945">15:45.000</a></div>
+        <div class="t">這一招被用在一個叫做other grade的方法裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.000" id=15:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=951">15:51.000</a></div>
+        <div class="t">那為什麼這一招是有用的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:55.000" id=15:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=955">15:55.000</a></div>
+        <div class="t">為什麼這一招可以做到我們剛才講的,坡度比較大的時候learning rate就減小,坡度比較小的時候learning rate就放大呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.000" id=16:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=963">16:03.000</a></div>
+        <div class="t">你可以想像說,現在我們有兩個參數,一個叫Theta1,一個叫Theta2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.000" id=16:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=967">16:07.000</a></div>
+        <div class="t">Theta1,坡度小,Theta2,坡度大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.000" id=16:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=971">16:11.000</a></div>
+        <div class="t">Theta1,因為它坡度小的關係,所以你在Theta1這個參數上面算出來的Gradient值都比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:20.000" id=16:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=980">16:20.000</a></div>
+        <div class="t">因為Gradient算出來的值比較小,然後這個Sigma是Gradient的rooming square,Gradient的平方和取平均再開根號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:30.000" id=16:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=990">16:30.000</a></div>
+        <div class="t">所以既然Gradient小,算出來的Sigma就小,Sigma小,learning rate就大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.000" id=16:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=996">16:36.000</a></div>
+        <div class="t">反過來說,Theta2是一個比較陡峭的參數,在Theta2這個方向上,Loss的變化比較大,所以你算出來的Gradient都比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:48.000" id=16:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1008">16:48.000</a></div>
+        <div class="t">你算出來的Gradient比較大,你的Sigma就比較大,你的Sigma比較大,那你在update的時候,你的參數update的時候的量就比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1019">16:59.000</a></div>
+        <div class="t">所以有了Sigma這一項以後,你就可以隨著每個參數Gradient的不同來自動的調整learning rate的大小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:10.000" id=17:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1030">17:10.000</a></div>
+        <div class="t">那這個並不是你今天會用的最終極的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1036">17:16.000</a></div>
+        <div class="t">剛才那個版本還有什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.000" id=17:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1039">17:19.000</a></div>
+        <div class="t">就算是同一個參數,它需要的learning rate也會隨著時間而改變。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:29.000" id=17:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1049">17:29.000</a></div>
+        <div class="t">我們剛才的假設是好像是同一個參數,它的Gradient的大小就會固定是差不多的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.000" id=17:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1058">17:38.000</a></div>
+        <div class="t">但事實上並不一定是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:41.000" id=17:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1061">17:41.000</a></div>
+        <div class="t">舉例來說,我們來看這個星月形的Aero Surface。如果我們考慮橫軸的話,考慮左右橫的水平線的方向的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1072">17:52.000</a></div>
+        <div class="t">你會發現說在這個地方,坡度比較平滑,你會發現在這個地方坡度比較陡峭,所以我們需要比較小的learning rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:04.000" id=18:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1084">18:04.000</a></div>
+        <div class="t">但是走到了中間這一段的時候,坡度又變得平滑了起來,這邊坡度比較陡峭,這邊坡度變得平滑了起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:12.000" id=18:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1092">18:12.000</a></div>
+        <div class="t">所以我們在這個地方又需要比較大的learning rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.000" id=18:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1096">18:16.000</a></div>
+        <div class="t">所以就算是同一個參數,同一個方向,我們也期待說learning rate是可以動態的調整的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:24.000" id=18:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1104">18:24.000</a></div>
+        <div class="t">所以怎麼辦呢?就有了一個新的招數,這個招數叫做RMSProp。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.000" id=18:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1110">18:30.000</a></div>
+        <div class="t">RMSProp這個方法有點傳奇,它傳奇的地方在於它找不到論文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.000" id=18:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1116">18:36.000</a></div>
+        <div class="t">找不到論文這個方法出自於哪裡呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:40.000" id=18:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1120">18:40.000</a></div>
+        <div class="t">非常多年前,應該是將近十年前,Hinton在Coursera上開過deep learning的課程。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.000" id=18:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1129">18:49.000</a></div>
+        <div class="t">那個時候,他在他的課程裡面講了RMSProp這個方法,然後這個方法沒有論文,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.000" id=18:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1135">18:55.000</a></div>
+        <div class="t">所以你要Cite的話,你要Cite那個影片的連結。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:00.000" id=19:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1140">19:00.000</a></div>
+        <div class="t">這是個傳奇的方法,叫RMSProp。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1144">19:04.000</a></div>
+        <div class="t">RMSProp這個方法是怎麼做的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.000" id=19:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1147">19:07.000</a></div>
+        <div class="t">它的第一步跟剛才講的算Rooming Square,也就是Anagram的方法是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.000" id=19:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1155">19:15.000</a></div>
+        <div class="t">所以第一步我們就不要看了,我們看第二步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:19.000" id=19:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1159">19:19.000</a></div>
+        <div class="t">第二步有什麼不同呢?一樣要算出σ1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.000" id=19:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1162">19:22.000</a></div>
+        <div class="t">只是我們現在算出σ1的方法跟剛才算Rooming Square的時候不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:27.000" id=19:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1167">19:27.000</a></div>
+        <div class="t">剛才在算Rooming Square的時候,每一個Gradient都有同等的重要性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:33.000" id=19:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1173">19:33.000</a></div>
+        <div class="t">但在RMSProp裡面,它決定你可以自己調整現在的這個Gradient,你覺得它有多重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.000" id=19:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1182">19:42.000</a></div>
+        <div class="t">所以在RMSProp裡面,我們的這個σ1,它是之前的σ0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:48.000" id=19:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1188">19:48.000</a></div>
+        <div class="t">前一步算出來的σ0裡面就是有G0嘛,所以這個σ0就代表了這個G0的大小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:55.000" id=19:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1195">19:55.000</a></div>
+        <div class="t">所以它是σ0的平方乘上α,加上1-α乘上現在我們剛算出來的新鮮熱騰騰的Gradient,就是G1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:05.000" id=20:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1205">20:05.000</a></div>
+        <div class="t">那這個α,另外一個參數,就像Learning Rate一樣,你要自己調它,它就是一個Hyperparameter,你要自己調它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:14.000" id=20:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1214">20:14.000</a></div>
+        <div class="t">那你可以想像說,如果我今天α設很小,趨近於0,就代表說我覺得G1相較於之前所算出來的Gradient而言比較重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:24.000" id=20:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1224">20:24.000</a></div>
+        <div class="t">我α設很大,趨近於1,那就代表說我覺得現在算出來的G1比較不重要,之前算出來的Gradient比較重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:32.000" id=20:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1232">20:32.000</a></div>
+        <div class="t">所以同理,在第三次Update參數的時候,我們要算σ2,那怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.000" id=20:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1238">20:38.000</a></div>
+        <div class="t">我們要把σ1拿出來取平方再乘上α,那σ1裡面有G1跟σ0,σ0裡面又有G0,所以你知道σ1裡面它有G1、有G0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:50.000" id=20:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1250">20:50.000</a></div>
+        <div class="t">然後這個G1跟G0呢,它們會被乘上α,然後再加上1-α乘上這個G2的平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:59.000" id=20:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1259">20:59.000</a></div>
+        <div class="t">那α就會決定說G2它在整個σ2裡面佔有多大的exactly。那同樣的過程就反覆繼續下去,σt等於√α乘上σt-1的平方加上1-αGt的平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:15.000" id=21:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1275">21:15.000</a></div>
+        <div class="t">你用α來決定現在剛算出來的Gt它有多重要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:20.000" id=21:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1280">21:20.000</a></div>
+        <div class="t">好,那這個呢,就是RNSPrime。那RNSPrime我們剛才講過說透過α這一項,你可以決定說Gt相較於之前存在σt-1裡面的G1到Gt-1而言,它的重要性有多大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:36.000" id=21:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1296">21:36.000</a></div>
+        <div class="t">如果你用RNSPrime的話,你就可以動態調整σ這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:41.000" id=21:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1301">21:41.000</a></div>
+        <div class="t">我們現在呢,假設從這個地方開始,這個黑線呢是我們的error surface,從這個地方開始呢,你要update參數,你這個球呢就從這邊走走走走到這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.000" id=21:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1312">21:52.000</a></div>
+        <div class="t">那因為一路上都很平坦,很平坦就代表說G算出來很小,G算出來很小就代表說σ算出來很小,σ算出來很小就代表說現在update參數的時候我們會走比較大的步伐。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:07.000" id=22:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1327">22:07.000</a></div>
+        <div class="t">好,接下來你繼續滾,滾到這邊。滾到這邊以後我們Gradient變大了。如果是原來的,不是RNSPrime,原來的adagrand的話,它反應比較慢。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:17.000" id=22:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1337">22:17.000</a></div>
+        <div class="t">但如果你用RNSPrime,然後你把α設小一點,也就是讓新的剛看到的Gradient影響比較大的話,那你就可以很快地讓σ的值變大,可以很快地讓你的步伐變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.000" id=22:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1352">22:32.000</a></div>
+        <div class="t">你就可以踩一個煞車,本來很平滑,走到這個地方突然變得很陡,那RNSPrime可以很快地踩一個煞車,把learning rate變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:41.000" id=22:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1361">22:41.000</a></div>
+        <div class="t">那如果你沒有踩煞車的話,你走到這個地方,learning rate太大了,那Gradient又很大,兩個很大的東西乘起來,你可能就啪的一下,你就飛出去了,就很快就飛出去了,就飛到很遠的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.000" id=22:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1372">22:52.000</a></div>
+        <div class="t">如果繼續走走走,又走到平滑的地方了,因為現在σt,你可以調整α,讓它比較看重於最近算出來的Gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:03.000" id=23:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1383">23:03.000</a></div>
+        <div class="t">所以Gradient一變小,σ可能就反應很快,它的值就變小了,然後你走的步伐就變大了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:12.000" id=23:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1392">23:12.000</a></div>
+        <div class="t">這個就是RNSPrime。那今天你最常用的Optimization的策略,Optimization的策略有人又叫做Optimizer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:23.000" id=23:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1403">23:23.000</a></div>
+        <div class="t">你今天比較常用的Optimization,最常用Optimization的策略就是Add-in。Add-in是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.000" id=23:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1411">23:31.000</a></div>
+        <div class="t">Add-in就是RNSPrime加上我們上週講過的Momentum。那Add-in的演算法跟原始的論文,我們就列在投影片上,我們就不細講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:42.000" id=23:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1422">23:42.000</a></div>
+        <div class="t">可能說不細講的話,我怎麼知道怎麼做這個Add-in呢?今天你不用擔心PyTorch裡面都幫你寫得好好的了,或者是你打開助教程式來看,搜尋Add-in,裡面就有一個地方是Add-in。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:55.000" id=23:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1435">23:55.000</a></div>
+        <div class="t">所以你今天不用擔心Optimization的問題,Optimizer這個DeepLane的套件往往都幫你做好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:04.000" id=24:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1444">24:04.000</a></div>
+        <div class="t">這個Optimizer裡面也有一些參數需要調,也有一些Hyperparameter需要人工決定,但是你往往用預設的那一種參數就夠好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.000" id=24:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1456">24:16.000</a></div>
+        <div class="t">你自己調有時候反而會調到比較差的,往往你直接Call這個PyTorch裡面Add-in這個Optimizer,然後那個預設的參數不要隨便調,你就可以得到不錯的結果了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:28.000" id=24:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1468">24:28.000</a></div>
+        <div class="t">關於Add-in的細節就留給大家自己研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:32.000" id=24:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1472">24:32.000</a></div>
+        <div class="t">好,那我們剛才講說這個簡單的Aero Surface我們都train不起來,現在我們來看一下加上Adaptive Learning Array以後,train不train得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:44.000" id=24:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1484">24:44.000</a></div>
+        <div class="t">這邊是採用最原始的AdaGrade的做法,就是把過去看過的Gradient統統都取平方,再平均,再開根號,當作這個sigma。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.000" id=25:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1501">25:01.000</a></div>
+        <div class="t">那做起來怎麼樣呢?做起來是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:07.000" id=25:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1507">25:07.000</a></div>
+        <div class="t">你先不要管這邊,我知道你看到這個一定覺得大家吃一驚啊,這個到底是怎麼回事,這個黑壓壓的到底是什麼東西,是不是打翻墨水了,先不要管這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:16.000" id=25:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1516">25:16.000</a></div>
+        <div class="t">你這個走下來,沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:20.000" id=25:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1520">25:20.000</a></div>
+        <div class="t">然後接下來在左轉的時候,剛才我們update了十萬次,這邊也是update十萬次啦,剛才update十萬次,只卡在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:30.000" id=25:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1530">25:30.000</a></div>
+        <div class="t">但現在有AdaGrade以後,你可以再繼續走下去,走到非常接近終點的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.000" id=25:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1537">25:37.000</a></div>
+        <div class="t">為什麼AdaGrade可以繼續走下去呢?因為當你走到這個地方的時候,因為這個左右方向的Gradient很小,所以Learning Array會自動調整,左右方向的Learning Array會自動變大,所以這個步伐就可以變大,就可以不斷地前進。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:52.000" id=25:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1552">25:52.000</a></div>
+        <div class="t">問題就是,為什麼走到這邊突然爆炸了呢?你想想看,我們在算這個σ的時候,我們是把過去所有看到的Gradient都拿來做平均。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.000" id=26:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1566">26:06.000</a></div>
+        <div class="t">所以這個縱軸的方向,雖然在初始的這個地方,感覺Gradient很大,但是這邊走了很長一段路以後,這個縱軸的方向Gradient算出來都很小啊,所以這個歪軸的方向就累積了很小的σ。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:28.000" id=26:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1588">26:28.000</a></div>
+        <div class="t">因為我們在這個歪軸的方向看到很多很小的Gradient,所以我們就累積了很小的σ。累積到一個地步以後,這個step就變很大,然後就爆走,就噴出去了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:40.000" id=26:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1600">26:40.000</a></div>
+        <div class="t">但噴出去以後沒有關係,有辦法修正回來。為什麼?因為噴出去以後就走到了Gradient比較大的地方,走到Gradient比較大的地方以後,這個σ又慢慢地變大。σ慢慢變大以後,參數update的距離、update的步伐大小又慢慢地變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:00.000" id=27:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1620">27:00.000</a></div>
+        <div class="t">你會發現說,走著走著,突然往左右噴了一下,但是這個噴了一下不會永遠震盪,不會做減斜運動停不下來。這個力道會慢慢變小,有摩擦力讓它慢慢地又回到中間這個峽谷來。但是又累積一段時間以後又會噴,然後又慢慢地回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:22.000" id=27:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1642">27:22.000</a></div>
+        <div class="t">怎麼辦呢?有一個方法也許可以解決這個問題,這個叫做learning rate的scheduling。什麼是learning rate的scheduling呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:32.000" id=27:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1652">27:32.000</a></div>
+        <div class="t">我們剛才這邊還有一項eta,這個eta是一個固定的值。learning rate scheduling的意思就是說這個eta它要是跟時間有關的,我們不要把它當成一個常數,我們把它跟時間有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.000" id=27:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1668">27:48.000</a></div>
+        <div class="t">那learning rate怎麼讓它跟時間有關呢?最常見的策略叫做learning rate decay,也就是說隨著時間不斷地進行,隨著參數不斷地update,我們這個eta讓它越來越小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:03.000" id=28:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1683">28:03.000</a></div>
+        <div class="t">這個也是合理的,為什麼會這樣想呢?為什麼要讓learning rate越來越小呢?因為一開始我們距離終點很遠,隨著參數不斷update,我們距離終點越來越近,所以我們把learning rate減小,讓我們的參數的更新踩一個煞車,讓我們參數的更新能夠慢慢地慢下來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:24.000" id=28:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1704">28:24.000</a></div>
+        <div class="t">所以剛才那個狀況,如果加上learning rate decay,有辦法解決,剛才那個狀況如果加上learning rate decay的話,我們就可以很平順地走到終點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:36.000" id=28:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1716">28:36.000</a></div>
+        <div class="t">因為在這個地方,這個eta已經變得非常的小了。eta變得非常的小,雖然說它本來想要左右亂噴,但是因為乘上這個非常小的eta,就停下來了,就可以慢慢地走到終點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:50.000" id=28:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1730">28:50.000</a></div>
+        <div class="t">那除了learning rate decay以外,還有另外一個經典非常常用的learning rate scheduling的方式,叫做Warm-up。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:59.000" id=28:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1739">28:59.000</a></div>
+        <div class="t">那我本來很猶豫要不要講Warm-up這件事,但是其實我們有一個跟BERT有關的作業,你可能需要用到Warm-up才能夠得到好的結果,所以我們還是把Warm-up拿出來講一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:12.000" id=29:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1752">29:12.000</a></div>
+        <div class="t">Warm-up這個方法聽起來有點匪夷所思。Warm-up的方法是說,我們這個learning rate要先變大,後變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:23.000" id=29:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1763">29:23.000</a></div>
+        <div class="t">那你會問說,那變大要變到多大呢?變大速度要多快呢?變小要變小速度要多快呢?這個也是hyperparameter,你要自己用手調的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.000" id=29:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1773">29:33.000</a></div>
+        <div class="t">但是大方向的大策略就是,learning rate要先變大,後變小。那這個方法聽起來很神奇,就是一個黑科技。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:45.000" id=29:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1785">29:45.000</a></div>
+        <div class="t">這個黑科技出現在很多遠古時代的論文裡面,最近因為在訓練BERT的時候往回需要用到Warm-up,所以又被大家常常拿出來講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:59.000" id=29:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1799">29:59.000</a></div>
+        <div class="t">並不是有BERT以後才有Warm-up的。Warm-up這個東西,遠古時代就有了。舉例來說,residual network裡面是有Warm-up的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.000" id=30:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1808">30:08.000</a></div>
+        <div class="t">這邊是放了residual network放在archive上面的文章連結。今天這種有關machine learning的文章,往往在投conference之前,投國際會議之前,就會先放到一個叫做archive的網站上,把它公開來,讓全世界的人都可以看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.000" id=30:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1824">30:24.000</a></div>
+        <div class="t">那你其實看這個archive的網址,你就可以知道這篇文章是什麼時候放到網路上的。怎麼看呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:32.000" id=30:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1832">30:32.000</a></div>
+        <div class="t">archive的這前四個數字,這15代表年份,所以代表說residual network這篇文章是2015年放到archive上面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:42.000" id=30:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1842">30:42.000</a></div>
+        <div class="t">或兩個數字代表月份,所以它是15年的12月,15年的年底放在archive上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:49.000" id=30:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1849">30:49.000</a></div>
+        <div class="t">所以五、六年前的文章,那在deep learning這個變化這麼快速的領域裡面,五、六年前就是上古時代。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:58.000" id=30:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1858">30:58.000</a></div>
+        <div class="t">那在上古時代的residual network裡面,就已經記載了Warm-up的這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:04.000" id=31:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1864">31:04.000</a></div>
+        <div class="t">它說我們用learning rate 0.01去Warm-up,先用learning rate 0.01,再把learning rate改成0.1。就過去我們通常最常見的train learning rate scheduling的方法就是讓learning rate越來越小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:22.000" id=31:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1882">31:22.000</a></div>
+        <div class="t">但是residual network這邊特別著名,它反其道而行,一開始要設0.01,接下來設0.1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:30.000" id=31:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1890">31:30.000</a></div>
+        <div class="t">它還特別加個註解說,一開始用0.1反正就是train不好,不知道為什麼,也沒解釋,反正就是train不好,需要Warm-up這個黑科技。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:39.000" id=31:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1899">31:39.000</a></div>
+        <div class="t">那在這個黑科技,在知名的transformer裡面,我相信很多同學可能都聽過transformer這個技術,我們這門課也會講到transformer這個東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:49.000" id=31:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1909">31:49.000</a></div>
+        <div class="t">這個黑科技在transformer裡面也用一個式子提了它,它這邊有一個式子說它的learning rate遵守這一個神奇的function來設定它的learning rate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:02.000" id=32:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1922">32:02.000</a></div>
+        <div class="t">這個神奇的function,你乍看之下會覺得,哇,在寫什麼,不知道在寫些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:07.000" id=32:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1927">32:07.000</a></div>
+        <div class="t">但這個東西,你實際上把這個function畫出來,你實際上把equation 3畫出來的話,就會發現它就是Warm-up,learning rate會先增加,然後接下來再遞減。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:21.000" id=32:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1941">32:21.000</a></div>
+        <div class="t">所以發現說,Warm-up這個技術在很多知名的network裡面,都被當作一個黑科技。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:29.000" id=32:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1949">32:29.000</a></div>
+        <div class="t">我裡面不解釋說為什麼要用這個,但是就偷偷在一個小地方,你沒有注意到的小地方告訴你說,這個network要用這種黑科技才能夠把它訓練起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:39.000" id=32:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1959">32:39.000</a></div>
+        <div class="t">那為什麼需要Warm-up呢?這個仍然是今天一個可以研究的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:46.000" id=32:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1966">32:46.000</a></div>
+        <div class="t">我並不認為為什麼要用Warm-up這件事已經獲得了完全的解答。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:50.000" id=32:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1970">32:50.000</a></div>
+        <div class="t">但是這邊有一個可能的解釋是說,你想想看,我們在用Adam、RNSProp或Adagre的時候,我們會需要計算sigma。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:01.000" id=33:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1981">33:01.000</a></div>
+        <div class="t">這個sigma是怎麼來的?它是一個統計的結果,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.000" id=33:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1986">33:06.000</a></div>
+        <div class="t">這個sigma告訴我們說,某一個方向,它到底有多陡或者是多平滑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:12.000" id=33:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1992">33:12.000</a></div>
+        <div class="t">那這個統計的結果,要看了夠多筆數據以後,這個統計才精準。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:18.000" id=33:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=1998">33:18.000</a></div>
+        <div class="t">所以一開始我們的統計是不精準的,一開始我們的sigma是不精準的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:23.000" id=33:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2003">33:23.000</a></div>
+        <div class="t">所以我們一開始不要讓我們的參數走離初始的地方太遠,先讓它在初始的地方做一些像是探索。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.000" id=33:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2014">33:34.000</a></div>
+        <div class="t">所以一開始learning rate比較小的是讓它探索,收集一些有關error surface的情報,先收集有關sigma的統計數據等sigma統計的比較精準以後,再讓learning rate慢慢的爬升。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:51.000" id=33:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2031">33:51.000</a></div>
+        <div class="t">所以這是一個解釋為什麼我們需要Warm-up的可能性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:56.000" id=33:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2036">33:56.000</a></div>
+        <div class="t">那如果你想要學更多有關Warm-up的東西的話,你其實可以看一篇paper,它是Addon的進階版,叫做Reddon,裡面對Warm-up這件事情有更多的解釋。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:09.000" id=34:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2049">34:09.000</a></div>
+        <div class="t">好,那有關optimization的部分,其實我們就講到這邊啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:14.000" id=34:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2054">34:14.000</a></div>
+        <div class="t">所以我們從最原始的Gradient Descent進化到這個版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:20.000" id=34:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2060">34:20.000</a></div>
+        <div class="t">這個版本裡面有什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:22.000" id=34:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2062">34:22.000</a></div>
+        <div class="t">第一個,我們有momentum,也就是說我們現在不是完全順著Gradient的方向,不是現在不是完全順著這個時間點算出來的Gradient的方向來update參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:35.000" id=34:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2075">34:35.000</a></div>
+        <div class="t">而是把過去所有算出來的Gradient的方向做一個加總,當作update的方向,這個是momentum。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:43.000" id=34:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2083">34:43.000</a></div>
+        <div class="t">那接下來到底應該要update多大的步伐呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:47.000" id=34:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2087">34:47.000</a></div>
+        <div class="t">我們要除掉Gradient的domain square。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:51.000" id=34:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2091">34:51.000</a></div>
+        <div class="t">那講到這邊,可能有同學會覺得很困惑,這個momentum是考慮過去所有的Gradient,這個sigma也是考慮過去所有的Gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:03.000" id=35:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2103">35:03.000</a></div>
+        <div class="t">這個一個放在分子,一個放在分母,都考慮過去所有的Gradient,不就是正好抵消了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:10.000" id=35:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2110">35:10.000</a></div>
+        <div class="t">但是其實這個momentum跟這個sigma,他們在使用過去所有Gradient的方式是不一樣的。momentum是直接把所有的Gradient通通都加起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:23.000" id=35:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2123">35:23.000</a></div>
+        <div class="t">所以他有考慮方向,他有考慮Gradient的正負號,他有考慮Gradient是往左走還是往右走。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:31.000" id=35:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2131">35:31.000</a></div>
+        <div class="t">但是這個rooming square他就不考慮Gradient的方向了,他只考慮Gradient的大小。記不記得我們在算sigma的時候,我們都要取平方向,我們都要把Gradient取一個平方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:46.000" id=35:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2146">35:46.000</a></div>
+        <div class="t">我們是把平方的結果加起來,所以我們只考慮Gradient的大小,不考慮它的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:53.000" id=35:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2153">35:53.000</a></div>
+        <div class="t">所以momentum跟這個sigma算出來的結果並不會互相抵消掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:59.000" id=35:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2159">35:59.000</a></div>
+        <div class="t">最後我們還會加上一個learning rate的scheduling,這個是今天optimization完整的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:07.000" id=36:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2167">36:07.000</a></div>
+        <div class="t">這種optimizer除了addon以外,addon可能是今天最常用的,除了addon以外,還有各式各樣的變形。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:14.000" id=36:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2174">36:14.000</a></div>
+        <div class="t">但其實各式各樣的變形都不多,就是要嘛不同的方法算n,要嘛不同的方法算sigma,要嘛不同的learning rate scheduling的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:24.000" id=36:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2184">36:24.000</a></div>
+        <div class="t">如果你想要知道更多跟optimization有關的事情的話,有之前助教的錄影給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:32.000" id=36:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2192">36:32.000</a></div>
+        <div class="t">這影片蠻長的,大概兩個小時,所以可以想見說有關optimizer的東西,其實還有蠻多東西可以講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:39.000" id=36:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2199">36:39.000</a></div>
+        <div class="t">但是因為時間的關係,我們就不講下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:42.000" id=36:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2202">36:42.000</a></div>
+        <div class="t">到目前為止,我們講的是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:45.000" id=36:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2205">36:45.000</a></div>
+        <div class="t">我們講的是當我們的error surface非常的崎嶇,就像這個例子一樣,非常的崎嶇的時候,我們需要一些比較好的方法來做optimization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:58.000" id=36:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2218">36:58.000</a></div>
+        <div class="t">前面有一個山擋著,我們希望可以繞過那座山,就是山不轉,路轉的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:05.000" id=37:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2225">37:05.000</a></div>
+        <div class="t">你知道這個規點,就是這個奇怪的error surface,就會讓人覺得很痛苦,一單沒有康幾樓,一單沒有湯給樓。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:15.000" id=37:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2235">37:15.000</a></div>
+        <div class="t">再來會怎麼樣呢?再來就是要用神羅天真把這個地炸平。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:19.000" id=37:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2239">37:19.000</a></div>
+        <div class="t">接下來我們會講的技巧,就是有沒有可能直接把這個error surface移平。我們改network裡面的什麼東西,改network的架構activation function,或者是其他的東西,直接移平error surface,讓它變得比較好train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:38.000" id=37:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=HYUXEeh3kwY&t=2258">37:38.000</a></div>
+        <div class="t">這個山擋在前面,就把山直接鏟平了。</div>
+    </div>
+    
+</body>
+</html>   

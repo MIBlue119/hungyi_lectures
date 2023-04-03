@@ -1,0 +1,4000 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】類神經網路訓練不起來怎麼辦 (一)： 局部最小值 (local minima) 與鞍點 (saddle point)</h2><a href=https://www.youtube.com/watch?v=QW6uINn7uGk><img src=https://i.ytimg.com/vi/QW6uINn7uGk/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGEQgRShyMA8=&rs=AOn4CLC5iTrEQrTqeAYWHA-9PgM3Ab4bkA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1">00:01.000</a></div>
+        <div class="t">好,那我們來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:04.000" id=00:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=4">00:04.000</a></div>
+        <div class="t">那接下來我們要講什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:06.000" id=00:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=6">00:06.000</a></div>
+        <div class="t">接下來呢,我們要講如果optimization失敗的時候怎麼辦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.000" id=00:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=12">00:12.000</a></div>
+        <div class="t">所以看一下我們剛才的攻略,現在我們要講的是optimization的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:18.000" id=00:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=18">00:18.000</a></div>
+        <div class="t">所以等一下我們要講的東西,基本上跟比如說overfitting沒有什麼太大的關聯,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:24.000" id=00:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=24">00:24.000</a></div>
+        <div class="t">我們只是討論optimization的時候,怎麼把gradient descent做得更好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:30.000" id=00:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=30">00:30.000</a></div>
+        <div class="t">好,那為什麼optimization會失敗呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:36.000" id=00:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=36">00:36.000</a></div>
+        <div class="t">那你常常在做optimization的時候,你會發現說隨著你的參數不斷的update,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:42.000" id=00:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=42">00:42.000</a></div>
+        <div class="t">你的training的loss不會再下降,但是你對這個loss仍然不滿意。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:47.000" id=00:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=47">00:47.000</a></div>
+        <div class="t">就像我剛才說的,你可以把deep的network跟linear的model或比較shallow的network</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.000" id=00:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=52">00:52.000</a></div>
+        <div class="t">比較發現說它沒有做得更好,所以你覺得deep的network沒有發揮它完整的力量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:57.000" id=00:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=57">00:57.000</a></div>
+        <div class="t">所以optimization顯然是有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00.000" id=01:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=60">01:00.000</a></div>
+        <div class="t">那有時候你會甚至發現說,一開始你的model就train不起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05.000" id=01:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=65">01:05.000</a></div>
+        <div class="t">一開始你不管怎麼update你的參數,你的loss通通都掉不下去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11.000" id=01:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=71">01:11.000</a></div>
+        <div class="t">那這個時候到底發生了什麼事情呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.000" id=01:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=75">01:15.000</a></div>
+        <div class="t">那過去常見的一個猜想是,因為我們現在走到了一個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.000" id=01:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=82">01:22.000</a></div>
+        <div class="t">這個地方參數對loss的微分為零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26.000" id=01:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=86">01:26.000</a></div>
+        <div class="t">當你的參數對loss的微分為零的時候,gradient descent就沒有辦法再update參數了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:35.000" id=01:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=95">01:35.000</a></div>
+        <div class="t">這個時候training就停下來了,你的參數不再update了,loss當然就不會再下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:41.000" id=01:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=101">01:41.000</a></div>
+        <div class="t">那講到gradient為零的時候,大家通常最先想到的,腦海中最先浮現的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:48.000" id=01:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=108">01:48.000</a></div>
+        <div class="t">可能就是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:51.000" id=01:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=111">01:51.000</a></div>
+        <div class="t">所以常有人說,我做deep learning,你用gradient descent,你會卡在local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:57.000" id=01:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=117">01:57.000</a></div>
+        <div class="t">所以gradient descent不work,所以deep learning不work。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:01.000" id=02:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=121">02:01.000</a></div>
+        <div class="t">但是如果有一天你要寫跟deep learning相關的paper的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:05.000" id=02:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=125">02:05.000</a></div>
+        <div class="t">你千萬不要講什麼卡在local minima這種事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:08.000" id=02:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=128">02:08.000</a></div>
+        <div class="t">別人會覺得你非常沒有水準,為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.000" id=02:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=131">02:11.000</a></div>
+        <div class="t">因為不是只有local minima的gradient是零,還有其他可能會讓gradient是零,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.000" id=02:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=139">02:19.000</a></div>
+        <div class="t">比如說saddle point,所謂的saddle point其實就是gradient是零,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:25.000" id=02:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=145">02:25.000</a></div>
+        <div class="t">但是不是local minima,也不是local maxima的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:31.000" id=02:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=151">02:31.000</a></div>
+        <div class="t">像在這個例子裡面,紅色的這個點,它在左右這個方向是比較高的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:39.000" id=02:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=159">02:39.000</a></div>
+        <div class="t">前後這個方向是比較低的,它就像是一個馬鞍的形狀,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:43.000" id=02:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=163">02:43.000</a></div>
+        <div class="t">所以叫做saddle point,中文就翻成鞍點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.000" id=02:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=167">02:47.000</a></div>
+        <div class="t">那像saddle point這種地方,它也是gradient為零,但它不是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:53.000" id=02:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=173">02:53.000</a></div>
+        <div class="t">那像這種gradient為零的點,統稱為critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.000" id=02:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=179">02:59.000</a></div>
+        <div class="t">所以你可以說你的loss沒有辦法再下降,也許是因為卡在了critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:06.000" id=03:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=186">03:06.000</a></div>
+        <div class="t">但你不能說是卡在local minima,因為saddle point也是為分為零的點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:13.000" id=03:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=193">03:13.000</a></div>
+        <div class="t">好,但是如果我們今天你發現你的gradient真的很靠近零,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:19.000" id=03:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=199">03:19.000</a></div>
+        <div class="t">卡在了某個critical point,我們有沒有辦法知道到底是local minima還是saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:26.000" id=03:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=206">03:26.000</a></div>
+        <div class="t">其實是有辦法的,不是完全沒有辦法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.000" id=03:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=211">03:31.000</a></div>
+        <div class="t">那為什麼我們會想要知道到底是卡在local minima還是卡在saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:36.000" id=03:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=216">03:36.000</a></div>
+        <div class="t">因為如果是卡在local minima,那可能就沒有路可以走了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:41.000" id=03:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=221">03:41.000</a></div>
+        <div class="t">因為四周都比較高,你現在所在的位置已經是最低的點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:46.000" id=03:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=226">03:46.000</a></div>
+        <div class="t">loss最低的點了,往四周走,loss都會比較高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:49.000" id=03:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=229">03:49.000</a></div>
+        <div class="t">你會不知道怎麼走到其他的地方去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:51.000" id=03:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=231">03:51.000</a></div>
+        <div class="t">那saddle point就比較沒有這個問題,如果你今天是卡在saddle point的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.000" id=03:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=235">03:55.000</a></div>
+        <div class="t">你今天是走到一個saddle point的話,saddle point旁邊還是有路,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:00.000" id=04:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=240">04:00.000</a></div>
+        <div class="t">可以走的還是有路,可以讓你的loss更低的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.000" id=04:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=243">04:03.000</a></div>
+        <div class="t">你只要逃離saddle point,你就有可能讓你的loss更低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.000" id=04:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=246">04:06.000</a></div>
+        <div class="t">所以鑑別今天我們走到critical point的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:09.000" id=04:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=249">04:09.000</a></div>
+        <div class="t">到底是local minima還是saddle point是一個值得去探討的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:17.000" id=04:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=257">04:17.000</a></div>
+        <div class="t">那怎麼知道今天一個critical point到底是屬於local minima還是saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:24.000" id=04:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=264">04:24.000</a></div>
+        <div class="t">這邊需要用到一點數學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.000" id=04:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=267">04:27.000</a></div>
+        <div class="t">以下這一段,其實沒有很難的數學啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:30.000" id=04:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=270">04:30.000</a></div>
+        <div class="t">就只是微積分跟線性代數,但如果你沒有聽懂的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:34.000" id=04:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=274">04:34.000</a></div>
+        <div class="t">以下這一段skip掉是沒有關係的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:37.000" id=04:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=277">04:37.000</a></div>
+        <div class="t">那怎麼知道一個點到底是local minima還是saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:43.000" id=04:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=283">04:43.000</a></div>
+        <div class="t">你要知道我們loss function的形狀。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:46.000" id=04:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=286">04:46.000</a></div>
+        <div class="t">可是我們怎麼知道loss function的形狀呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:48.000" id=04:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=288">04:48.000</a></div>
+        <div class="t">Narrow本身很複雜,用復雜的Narrow算出來的loss function顯然也很複雜,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:52.000" id=04:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=292">04:52.000</a></div>
+        <div class="t">我們怎麼知道loss function長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:56.000" id=04:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=296">04:56.000</a></div>
+        <div class="t">雖然我們沒有辦法完整知道整個loss function的樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=299">04:59.000</a></div>
+        <div class="t">但是如果給定某一組參數,比如說藍色的這個saddle point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.000" id=05:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=305">05:05.000</a></div>
+        <div class="t">在saddle point附近的loss function是有辦法被寫出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.000" id=05:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=311">05:11.000</a></div>
+        <div class="t">它寫出來就像是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:15.000" id=05:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=315">05:15.000</a></div>
+        <div class="t">所以這個LO of saddle完整的樣子寫不出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:20.000" id=05:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=320">05:20.000</a></div>
+        <div class="t">但是它在saddle point附近,你可以用這個式子來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:26.000" id=05:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=326">05:26.000</a></div>
+        <div class="t">你可能說,哇,這個是什麼,這個還有好多種顏色啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.000" id=05:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=328">05:28.000</a></div>
+        <div class="t">這個東西到底是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.000" id=05:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=330">05:30.000</a></div>
+        <div class="t">這個東西是Heller-Series Approximation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:34.000" id=05:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=334">05:34.000</a></div>
+        <div class="t">這個假設你在微積分的時候其實已經學過了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:38.000" id=05:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=338">05:38.000</a></div>
+        <div class="t">所以我就不會細講說這一串是怎麼來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:40.000" id=05:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=340">05:40.000</a></div>
+        <div class="t">但我們就只講一下它的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:43.000" id=05:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=343">05:43.000</a></div>
+        <div class="t">這一串裡面包含什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.000" id=05:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=345">05:45.000</a></div>
+        <div class="t">第一項是LO of saddle point,就告訴我們說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:50.000" id=05:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=350">05:50.000</a></div>
+        <div class="t">當saddle跟saddle point很近的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.000" id=05:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=352">05:52.000</a></div>
+        <div class="t">LO of saddle應該跟LO of saddle point還蠻靠近的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:57.000" id=05:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=357">05:57.000</a></div>
+        <div class="t">那第二項是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:58.000" id=05:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=358">05:58.000</a></div>
+        <div class="t">第二項是saddle-saddle point的transpose乘上G,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:03.000" id=06:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=363">06:03.000</a></div>
+        <div class="t">G是什麼?G是一個向量,這個G就是我們的gradient,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.000" id=06:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=369">06:09.000</a></div>
+        <div class="t">我們在上週已經講過gradient這個東西了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:11.000" id=06:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=371">06:11.000</a></div>
+        <div class="t">我們用綠色的這個G來代表gradient,它是一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:16.000" id=06:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=376">06:16.000</a></div>
+        <div class="t">那這個gradient告訴我們什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.000" id=06:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=378">06:18.000</a></div>
+        <div class="t">這個gradient會來彌補saddle point跟saddle之間的差距,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:24.000" id=06:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=384">06:24.000</a></div>
+        <div class="t">我們雖然剛才說saddle跟saddle point他們應該很接近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.000" id=06:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=388">06:28.000</a></div>
+        <div class="t">但是中間還是有些差距的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=390">06:30.000</a></div>
+        <div class="t">那這個差距第一項我們用這個gradient來表示他們之間的差距。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:36.000" id=06:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=396">06:36.000</a></div>
+        <div class="t">那這個G呢,就是有時候gradient會寫成倒三角形of L,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.000" id=06:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=401">06:41.000</a></div>
+        <div class="t">它是由saddle point這個地方的G,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:44.000" id=06:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=404">06:44.000</a></div>
+        <div class="t">然後G是一個向量,它的第一個component就是saddle的第一個component,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:49.000" id=06:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=409">06:49.000</a></div>
+        <div class="t">對L的微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:52.000" id=06:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=412">06:52.000</a></div>
+        <div class="t">好,光是看G還是沒有辦法完整的描述LO of saddle,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:58.000" id=06:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=418">06:58.000</a></div>
+        <div class="t">你還要看第三項,第三項是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:01.000" id=07:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=421">07:01.000</a></div>
+        <div class="t">第三項跟hesion有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=424">07:04.000</a></div>
+        <div class="t">這邊有一個H,這個H叫做hesion,它是一個矩陣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:10.000" id=07:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=430">07:10.000</a></div>
+        <div class="t">這個第三項是saddle-saddle point的全後乘上H再乘上saddle-saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.000" id=07:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=437">07:17.000</a></div>
+        <div class="t">第三項會再補足再加上gradient以後跟真正的LO of saddle之間的差距。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:25.000" id=07:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=445">07:25.000</a></div>
+        <div class="t">那這個H裡面放的是什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.000" id=07:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=447">07:27.000</a></div>
+        <div class="t">這個H裡面放的是LO的二次微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:32.000" id=07:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=452">07:32.000</a></div>
+        <div class="t">這個H它的第i個row,第j個column的值是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=458">07:38.000</a></div>
+        <div class="t">它第i個row,第j個column的值就是把saddle的第i個component對L做微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.000" id=07:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=465">07:45.000</a></div>
+        <div class="t">再把saddle的第j個component對L做微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:50.000" id=07:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=470">07:50.000</a></div>
+        <div class="t">再把saddle的第i個component對L做微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:53.000" id=07:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=473">07:53.000</a></div>
+        <div class="t">做兩次微分後的結果就是這個Hij。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.000" id=07:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=477">07:57.000</a></div>
+        <div class="t">好,如果這邊你覺得有點聽不太懂的話也沒有關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:01.000" id=08:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=481">08:01.000</a></div>
+        <div class="t">反正你就記得說這個LO of saddle,這個Loss function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:05.000" id=08:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=485">08:05.000</a></div>
+        <div class="t">這個Loss surface在saddle point附近可以寫成這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:10.000" id=08:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=490">08:10.000</a></div>
+        <div class="t">這個式子跟兩個東西有關係,跟gradient有關係,跟Hij有關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=495">08:15.000</a></div>
+        <div class="t">Gradient就是一次微分,Hij就是裡面有二次微分的項目。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.000" id=08:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=503">08:23.000</a></div>
+        <div class="t">好,那如果我們今天走到了一個critical point,那意味著什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=507">08:27.000</a></div>
+        <div class="t">意味著gradient為0,也就是綠色的這一項完全都不見了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.000" id=08:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=512">08:32.000</a></div>
+        <div class="t">即使一個zero vector,綠色的這一項完全都不見了,只剩下紅色的這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.000" id=08:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=518">08:38.000</a></div>
+        <div class="t">所以當在critical point的時候,這個Loss function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.000" id=08:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=522">08:42.000</a></div>
+        <div class="t">它可以被近似為L of saddle point加上紅色的這一項。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=528">08:48.000</a></div>
+        <div class="t">我們可以根據紅色的這一項來判斷說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:51.000" id=08:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=531">08:51.000</a></div>
+        <div class="t">在saddle point附近的arrow surface到底長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=534">08:54.000</a></div>
+        <div class="t">知道arrow surface長什麼樣子,我們就可以判斷說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:57.000" id=08:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=537">08:57.000</a></div>
+        <div class="t">saddle point它是一個local minima,是一個local maxima,還是一個saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:03.000" id=09:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=543">09:03.000</a></div>
+        <div class="t">我們可以靠這一項來了解這個arrow surface的地貌大概長什麼樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:08.000" id=09:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=548">09:08.000</a></div>
+        <div class="t">知道它地貌長什麼樣子,我們就可以知道說現在是在什麼樣的狀態。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:13.000" id=09:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=553">09:13.000</a></div>
+        <div class="t">這個是Hij。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:16.000" id=09:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=556">09:16.000</a></div>
+        <div class="t">好,那我們就來看一下怎麼根據Hij,怎麼根據紅色的這一項來判斷saddle point附近的地貌。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.000" id=09:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=567">09:27.000</a></div>
+        <div class="t">我們現在為了等一下符號方便起見,我們把saddle-saddle point用V這個向量來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:34.000" id=09:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=574">09:34.000</a></div>
+        <div class="t">saddle是一個向量,saddle point也是一個向量,這兩個向量相減,我們用V這個向量來表示它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:43.000" id=09:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=583">09:43.000</a></div>
+        <div class="t">如果今天對任何可能的V,V的control H乘上V都大於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:50.000" id=09:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=590">09:50.000</a></div>
+        <div class="t">也就是說現在saddle不管帶任何值,V可以是任何的V,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:55.000" id=09:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=595">09:55.000</a></div>
+        <div class="t">就代表說saddle-saddle point可以是任何值,也就是saddle可以是任何值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=599">09:59.000</a></div>
+        <div class="t">不管saddle帶任何值,紅色框框裡面通通都大於0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.000" id=10:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=604">10:04.000</a></div>
+        <div class="t">那意味著什麼?意味著說紅色框框裡面都大於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:08.000" id=10:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=608">10:08.000</a></div>
+        <div class="t">換言之,意味著說L of saddle大於L of saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=613">10:13.000</a></div>
+        <div class="t">比如說saddle不管帶多少,只要在saddle point附近,saddleL of saddle都大於L of saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:19.000" id=10:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=619">10:19.000</a></div>
+        <div class="t">那代表什麼?代表L of saddle point是附近的一個最低點,所以它是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:27.000" id=10:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=627">10:27.000</a></div>
+        <div class="t">如果今天反過來說對所有的V而言,V transpose H乘上V都小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:32.000" id=10:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=632">10:32.000</a></div>
+        <div class="t">也就是紅色框框裡面永遠都小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:35.000" id=10:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=635">10:35.000</a></div>
+        <div class="t">也就是saddle不管帶什麼,什麼值,紅色框框裡面都小於0,那意味著什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:41.000" id=10:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=641">10:41.000</a></div>
+        <div class="t">意味著紅色框框裡面都小於0,意味著說L of saddle point都是大於L of saddle,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.000" id=10:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=647">10:47.000</a></div>
+        <div class="t">L of saddle小於L of saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:50.000" id=10:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=650">10:50.000</a></div>
+        <div class="t">代表說L of saddle point是附近最高的一個點,所以它是local maxima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:56.000" id=10:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=656">10:56.000</a></div>
+        <div class="t">第三個可能是假設V transpose HV有時候大於0有時候小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:02.000" id=11:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=662">11:02.000</a></div>
+        <div class="t">帶不同的V進去,也就是帶不同的saddle進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.000" id=11:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=665">11:05.000</a></div>
+        <div class="t">紅色這個框框裡面有時候大於0有時候小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:08.000" id=11:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=668">11:08.000</a></div>
+        <div class="t">意味著說在saddle point附近有時候有些Loss比L of,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:15.000" id=11:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=675">11:15.000</a></div>
+        <div class="t">有時候L of saddle大於L of saddle point,有時候L of saddle小於L of saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:20.000" id=11:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=680">11:20.000</a></div>
+        <div class="t">在L of saddle point附近有些地方高有些地方低,這意味著什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:25.000" id=11:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=685">11:25.000</a></div>
+        <div class="t">這意味著這是一個saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:29.000" id=11:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=689">11:29.000</a></div>
+        <div class="t">這邊你會有的接下一個問題是,我們看紅色這一項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:34.000" id=11:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=694">11:34.000</a></div>
+        <div class="t">我們現在可以判斷它是local minima還是saddle point還是local maxima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.000" id=11:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=699">11:39.000</a></div>
+        <div class="t">但是你這邊是說我們要帶所有的V去看V transpose HV是大於0還是小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:45.000" id=11:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=705">11:45.000</a></div>
+        <div class="t">我們怎麼有可能把所有的V都拿來試試看呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.000" id=11:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=708">11:48.000</a></div>
+        <div class="t">所以有一個更簡便的方法去確認說這一個條件或這一個條件會不會發生,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:54.000" id=11:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=714">11:54.000</a></div>
+        <div class="t">這個就直接告訴你結論,先進代數理論上是有教過這件事情的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.000" id=12:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=720">12:00.000</a></div>
+        <div class="t">如果今天對所有的V而言,V transpose HV都大於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:05.000" id=12:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=725">12:05.000</a></div>
+        <div class="t">那這種矩陣叫做positive definite。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:10.000" id=12:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=730">12:10.000</a></div>
+        <div class="t">Positive definite的矩陣有什麼特性呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.000" id=12:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=733">12:13.000</a></div>
+        <div class="t">它所有的Eigenvalue都是真的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:16.000" id=12:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=736">12:16.000</a></div>
+        <div class="t">所以如果你今天算出一個Hesitant,你不需要把它跟所有的V都乘看看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.000" id=12:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=740">12:20.000</a></div>
+        <div class="t">你只要去直接看這個H的Eigenvalue,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=743">12:23.000</a></div>
+        <div class="t">如果你發現說所有Eigenvalue都是真的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.000" id=12:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=747">12:27.000</a></div>
+        <div class="t">那就代表說這一個條件成立,V transpose HV會大於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:33.000" id=12:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=753">12:33.000</a></div>
+        <div class="t">也就代表說是一個local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:36.000" id=12:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=756">12:36.000</a></div>
+        <div class="t">所以你從Hesitant metric可以看出它是不是local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.000" id=12:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=759">12:39.000</a></div>
+        <div class="t">你只要算出Hesitant metric,算完以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.000" id=12:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=762">12:42.000</a></div>
+        <div class="t">看它的Eigenvalue發現都是真的,它就是local minima,就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.000" id=12:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=766">12:46.000</a></div>
+        <div class="t">那反過來說也是一樣,如果今天在這個狀況,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:51.000" id=12:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=771">12:51.000</a></div>
+        <div class="t">對所有的V而言,V transpose HV小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:54.000" id=12:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=774">12:54.000</a></div>
+        <div class="t">那H是negative definite,那就代表所有的Eigenvalue都是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:01.000" id=13:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=781">13:01.000</a></div>
+        <div class="t">所有的Eigenvalue都是負的,就保證它是local maxima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.000" id=13:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=787">13:07.000</a></div>
+        <div class="t">那如果Eigenvalue有正有負,那就代表是stable point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.000" id=13:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=792">13:12.000</a></div>
+        <div class="t">那假設講到這邊,你沒有聽得很懂的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.000" id=13:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=794">13:14.000</a></div>
+        <div class="t">你就可以記得結論,你只要算出一個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.000" id=13:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=797">13:17.000</a></div>
+        <div class="t">這個東西的名字叫做hesion,它是一個矩陣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:20.000" id=13:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=800">13:20.000</a></div>
+        <div class="t">這個矩陣,如果它所有的Eigenvalue都是正的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=803">13:23.000</a></div>
+        <div class="t">那就代表我們現在在local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:26.000" id=13:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=806">13:26.000</a></div>
+        <div class="t">如果它有正有負,就代表還是stable point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:29.000" id=13:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=809">13:29.000</a></div>
+        <div class="t">所以我們是有辦法判斷說是local minima還是stable point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=816">13:36.000</a></div>
+        <div class="t">那如果剛才講的,你覺得你沒有聽得很懂的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:39.000" id=13:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=819">13:39.000</a></div>
+        <div class="t">我們這邊舉一個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.000" id=13:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=821">13:41.000</a></div>
+        <div class="t">我們現在有一個史上最廢的Neuron,它廢到什麼程度呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:46.000" id=13:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=826">13:46.000</a></div>
+        <div class="t">輸入一個X,它只有一個Neuron乘上W1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:50.000" id=13:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=830">13:50.000</a></div>
+        <div class="t">而且這個Neuron還沒有activation function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:53.000" id=13:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=833">13:53.000</a></div>
+        <div class="t">所以X乘上W1以後,之後就輸出,然後再乘上W2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:57.000" id=13:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=837">13:57.000</a></div>
+        <div class="t">然後就再輸出,就得到最終的數值就是Y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=840">14:00.000</a></div>
+        <div class="t">總之這一個function非常的簡單,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:02.000" id=14:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=842">14:02.000</a></div>
+        <div class="t">單Y等於W1乘以W2乘以X,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.000" id=14:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=845">14:05.000</a></div>
+        <div class="t">這是一個史上最廢的Neuron network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:08.000" id=14:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=848">14:08.000</a></div>
+        <div class="t">那我們有一個史上最廢的training dataset,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.000" id=14:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=851">14:11.000</a></div>
+        <div class="t">這個dataset說我們只有一筆data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:14.000" id=14:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=854">14:14.000</a></div>
+        <div class="t">這筆data是X是1的時候,它的label是1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=859">14:19.000</a></div>
+        <div class="t">所以輸入1進去,你希望最終的輸出跟1越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:24.000" id=14:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=864">14:24.000</a></div>
+        <div class="t">這個史上最廢的training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:27.000" id=14:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=867">14:27.000</a></div>
+        <div class="t">這個史上最廢的training它的error surface,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.000" id=14:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=870">14:30.000</a></div>
+        <div class="t">你是有辦法直接畫出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.000" id=14:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=872">14:32.000</a></div>
+        <div class="t">因為反正只有兩個參數W1、W2嘛,連bias都沒有。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:35.000" id=14:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=875">14:35.000</a></div>
+        <div class="t">假設沒有bias,只有W1跟W2兩個參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.000" id=14:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=879">14:39.000</a></div>
+        <div class="t">這個Neuron只有兩個參數W1跟W2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=883">14:43.000</a></div>
+        <div class="t">那我們可以窮取所有W1跟W2的數值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:46.000" id=14:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=886">14:46.000</a></div>
+        <div class="t">算出所有W1、W2的數值所帶來的loss,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:50.000" id=14:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=890">14:50.000</a></div>
+        <div class="t">然後就畫出error surface,長這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:54.000" id=14:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=894">14:54.000</a></div>
+        <div class="t">所以這邊是高的,這邊loss是高的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:56.000" id=14:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=896">14:56.000</a></div>
+        <div class="t">這邊loss是高的,這邊loss也是高的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.000" id=14:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=899">14:59.000</a></div>
+        <div class="t">四個角落loss是高的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:02.000" id=15:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=902">15:02.000</a></div>
+        <div class="t">這個圖上你可以看出來說有一些critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:06.000" id=15:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=906">15:06.000</a></div>
+        <div class="t">哪些地方critical point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.000" id=15:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=908">15:08.000</a></div>
+        <div class="t">這個黑點點的地方,這個0,0啊,圓點的地方是critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:13.000" id=15:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=913">15:13.000</a></div>
+        <div class="t">然後事實上呢,這一條線這邊也是一排critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:19.000" id=15:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=919">15:19.000</a></div>
+        <div class="t">也是一排critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.000" id=15:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=921">15:21.000</a></div>
+        <div class="t">如果你更進一步要分析它們是saddle point還是local minimum的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=925">15:25.000</a></div>
+        <div class="t">那圓心這個地方,圓點這個地方,它是saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.000" id=15:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=931">15:31.000</a></div>
+        <div class="t">為什麼它是saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:32.000" id=15:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=932">15:32.000</a></div>
+        <div class="t">你往這個方向走,loss會變大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:35.000" id=15:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=935">15:35.000</a></div>
+        <div class="t">往這個方向走loss會變大,往這個方向走loss會變小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=938">15:38.000</a></div>
+        <div class="t">往這個方向走loss會變小,它是一個saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:42.000" id=15:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=942">15:42.000</a></div>
+        <div class="t">而這兩群critical point,它們都是local minimum。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:49.000" id=15:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=949">15:49.000</a></div>
+        <div class="t">所以這個三溝裡面有一排local minimum,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.000" id=15:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=952">15:52.000</a></div>
+        <div class="t">這一排三溝裡面有一排local minimum,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:54.000" id=15:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=954">15:54.000</a></div>
+        <div class="t">然後在圓點的地方有一個saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.000" id=15:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=957">15:57.000</a></div>
+        <div class="t">這個是我們把error surface報收以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:00.000" id=16:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=960">16:00.000</a></div>
+        <div class="t">報收所有的參數得到的loss function以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.000" id=16:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=963">16:03.000</a></div>
+        <div class="t">得到的loss的值以後,畫出error surface,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:05.000" id=16:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=965">16:05.000</a></div>
+        <div class="t">可以得到這樣的結論。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.000" id=16:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=967">16:07.000</a></div>
+        <div class="t">那現在假設如果不報收所有可能的loss,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:12.000" id=16:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=972">16:12.000</a></div>
+        <div class="t">那如果要直接算出一個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.000" id=16:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=975">16:15.000</a></div>
+        <div class="t">是local minimum還是saddle point的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:19.000" id=16:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=979">16:19.000</a></div>
+        <div class="t">怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:21.000" id=16:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=981">16:21.000</a></div>
+        <div class="t">我們可以把loss的function寫出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:24.000" id=16:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=984">16:24.000</a></div>
+        <div class="t">這個loss的function,這個l呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:26.000" id=16:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=986">16:26.000</a></div>
+        <div class="t">是正確答案y hat減掉model的輸出,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:31.000" id=16:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=991">16:31.000</a></div>
+        <div class="t">也就是w1,w2乘以x。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:33.000" id=16:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=993">16:33.000</a></div>
+        <div class="t">那這邊取這個square error,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.000" id=16:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=996">16:36.000</a></div>
+        <div class="t">這邊只有一筆data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:37.000" id=16:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=997">16:37.000</a></div>
+        <div class="t">所以就不會submention over所有的training data,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:39.000" id=16:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=999">16:39.000</a></div>
+        <div class="t">因為反正只有一筆data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.000" id=16:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1001">16:41.000</a></div>
+        <div class="t">x代1,y hat代1,我剛才說過,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:43.000" id=16:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1003">16:43.000</a></div>
+        <div class="t">只有一筆訓練資料,最廢的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:45.000" id=16:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1005">16:45.000</a></div>
+        <div class="t">只有一筆訓練資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:46.000" id=16:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1006">16:46.000</a></div>
+        <div class="t">所以loss function就是1減w1,w2的平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1010">16:50.000</a></div>
+        <div class="t">那你可以把這個loss function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.000" id=16:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1012">16:52.000</a></div>
+        <div class="t">它的gradient求出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:54.000" id=16:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1014">16:54.000</a></div>
+        <div class="t">那這邊細節我們就不講了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.000" id=16:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1016">16:56.000</a></div>
+        <div class="t">你可以,你如果維基尊都還記得的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1019">16:59.000</a></div>
+        <div class="t">算一下就會知道說這個是對的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:01.000" id=17:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1021">17:01.000</a></div>
+        <div class="t">反正w1對l的微分寫出來是這個樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.000" id=17:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1025">17:05.000</a></div>
+        <div class="t">w2對l的微分寫出來是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:08.000" id=17:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1028">17:08.000</a></div>
+        <div class="t">那這個東西就是所謂的G,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.000" id=17:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1031">17:11.000</a></div>
+        <div class="t">所謂的規點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.000" id=17:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1033">17:13.000</a></div>
+        <div class="t">什麼時候規點會0呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.000" id=17:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1034">17:14.000</a></div>
+        <div class="t">什麼時候會到一個critical point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1036">17:16.000</a></div>
+        <div class="t">舉例來說,如果w1等於0,w2等於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:19.000" id=17:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1039">17:19.000</a></div>
+        <div class="t">在原心這個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:20.000" id=17:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1040">17:20.000</a></div>
+        <div class="t">如果你w1代0,w2代0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.000" id=17:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1043">17:23.000</a></div>
+        <div class="t">這個規點算出來就都是0了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.000" id=17:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1045">17:25.000</a></div>
+        <div class="t">如果w1代0,w2代0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.000" id=17:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1047">17:27.000</a></div>
+        <div class="t">w1對l的微分,w2對l的微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.000" id=17:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1050">17:30.000</a></div>
+        <div class="t">算出來就都是0,就都是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:32.000" id=17:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1052">17:32.000</a></div>
+        <div class="t">這個時候我們就知道說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:34.000" id=17:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1054">17:34.000</a></div>
+        <div class="t">原點是一個critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:37.000" id=17:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1057">17:37.000</a></div>
+        <div class="t">但是它是一個critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:39.000" id=17:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1059">17:39.000</a></div>
+        <div class="t">但它是local maxima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:41.000" id=17:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1061">17:41.000</a></div>
+        <div class="t">它是local minima,還是settled point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:44.000" id=17:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1064">17:44.000</a></div>
+        <div class="t">那你就要看Hessian才能夠知道了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.000" id=17:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1068">17:48.000</a></div>
+        <div class="t">你就要看Hessian才能夠知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:50.000" id=17:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1070">17:50.000</a></div>
+        <div class="t">那我們剛才已經報收說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:52.000" id=17:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1072">17:52.000</a></div>
+        <div class="t">可能w1,w2了啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:53.000" id=17:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1073">17:53.000</a></div>
+        <div class="t">所以你已經知道說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:54.000" id=17:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1074">17:54.000</a></div>
+        <div class="t">它顯然是一個settled point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:56.000" id=17:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1076">17:56.000</a></div>
+        <div class="t">但是現在假設還沒有報收</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.000" id=17:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1078">17:58.000</a></div>
+        <div class="t">所有可能的loss,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:00.000" id=18:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1080">18:00.000</a></div>
+        <div class="t">所以我們要看看能不能夠用H,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.000" id=18:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1082">18:02.000</a></div>
+        <div class="t">用Hessian看出它是什麼樣的critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:07.000" id=18:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1087">18:07.000</a></div>
+        <div class="t">那怎麼算出這個H呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:10.000" id=18:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1090">18:10.000</a></div>
+        <div class="t">H它是一個矩陣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.000" id=18:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1093">18:13.000</a></div>
+        <div class="t">那這個矩陣裡面呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:15.000" id=18:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1095">18:15.000</a></div>
+        <div class="t">就是收集了l的各次微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.000" id=18:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1099">18:19.000</a></div>
+        <div class="t">所以這個矩陣裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:21.000" id=18:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1101">18:21.000</a></div>
+        <div class="t">第一個row,第一個column的位置,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.000" id=18:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1103">18:23.000</a></div>
+        <div class="t">就是w1對l微分兩次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1106">18:26.000</a></div>
+        <div class="t">第一個row,第二個column的位置,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.000" id=18:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1108">18:28.000</a></div>
+        <div class="t">就是先用w2對l做微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:29.000" id=18:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1109">18:29.000</a></div>
+        <div class="t">再用w1對l做微分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:31.000" id=18:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1111">18:31.000</a></div>
+        <div class="t">然後這邊就是w1對l做微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:33.000" id=18:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1113">18:33.000</a></div>
+        <div class="t">w2對l做微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.000" id=18:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1114">18:34.000</a></div>
+        <div class="t">然後w2對l微分兩次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.000" id=18:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1116">18:36.000</a></div>
+        <div class="t">這四個值組合起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.000" id=18:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1118">18:38.000</a></div>
+        <div class="t">就是我們的Hessian。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:41.000" id=18:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1121">18:41.000</a></div>
+        <div class="t">那這個Hessian的值是多少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.000" id=18:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1123">18:43.000</a></div>
+        <div class="t">這個Hessian的式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:44.000" id=18:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1124">18:44.000</a></div>
+        <div class="t">我都已經把它寫出來了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:45.000" id=18:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1125">18:45.000</a></div>
+        <div class="t">你只要把w1等於0,w2等於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.000" id=18:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1127">18:47.000</a></div>
+        <div class="t">代進去,代進去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.000" id=18:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1129">18:49.000</a></div>
+        <div class="t">你就得到在原點的地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:51.000" id=18:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1131">18:51.000</a></div>
+        <div class="t">Hessian是0,w2,w2,0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1133">18:53.000</a></div>
+        <div class="t">這樣子的一個矩陣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.000" id=18:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1135">18:55.000</a></div>
+        <div class="t">好,那這個矩陣告訴我們,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:58.000" id=18:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1138">18:58.000</a></div>
+        <div class="t">這個Hessian告訴我們,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:00.000" id=19:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1140">19:00.000</a></div>
+        <div class="t">它是local minima還是saddle point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:02.000" id=19:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1142">19:02.000</a></div>
+        <div class="t">那就要看這個矩陣的eigenvalue了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:05.000" id=19:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1145">19:05.000</a></div>
+        <div class="t">算一下發現,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1146">19:06.000</a></div>
+        <div class="t">這個矩陣有兩個eigenvalue,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:08.000" id=19:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1148">19:08.000</a></div>
+        <div class="t">2跟-2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.000" id=19:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1149">19:09.000</a></div>
+        <div class="t">eigenvalue有正有負,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.000" id=19:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1151">19:11.000</a></div>
+        <div class="t">代表saddle point,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:13.000" id=19:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1153">19:13.000</a></div>
+        <div class="t">我們剛才講,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:14.000" id=19:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1154">19:14.000</a></div>
+        <div class="t">eigenvalue有正有負,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.000" id=19:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1156">19:16.000</a></div>
+        <div class="t">就代表的是saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.000" id=19:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1160">19:20.000</a></div>
+        <div class="t">好,那所以我們現在呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:22.000" id=19:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1162">19:22.000</a></div>
+        <div class="t">就是用一個例子跟你操作一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:24.000" id=19:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1164">19:24.000</a></div>
+        <div class="t">告訴你說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.000" id=19:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1165">19:25.000</a></div>
+        <div class="t">你怎麼從Hessian看出一個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:28.000" id=19:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1168">19:28.000</a></div>
+        <div class="t">它一個critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:29.000" id=19:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1169">19:29.000</a></div>
+        <div class="t">它是saddle point還是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:33.000" id=19:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1173">19:33.000</a></div>
+        <div class="t">好,如果今天呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:35.000" id=19:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1175">19:35.000</a></div>
+        <div class="t">你卡的地方是saddle point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:39.000" id=19:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1179">19:39.000</a></div>
+        <div class="t">也許你就不用那麼害怕了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:41.000" id=19:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1181">19:41.000</a></div>
+        <div class="t">為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.000" id=19:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1182">19:42.000</a></div>
+        <div class="t">因為如果你今天你發現</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.000" id=19:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1184">19:44.000</a></div>
+        <div class="t">你停下來的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:45.000" id=19:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1185">19:45.000</a></div>
+        <div class="t">是因為saddle point停下來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:47.000" id=19:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1187">19:47.000</a></div>
+        <div class="t">那你可以放心的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:49.000" id=19:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1189">19:49.000</a></div>
+        <div class="t">你其實就有機會可以放心了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:53.000" id=19:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1193">19:53.000</a></div>
+        <div class="t">為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:54.000" id=19:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1194">19:54.000</a></div>
+        <div class="t">因為H啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:55.000" id=19:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1195">19:55.000</a></div>
+        <div class="t">它不只可以幫助我們判斷</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:57.000" id=19:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1197">19:57.000</a></div>
+        <div class="t">現在是不是在一個saddle point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:59.000" id=19:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1199">19:59.000</a></div>
+        <div class="t">它還指出了我們參數</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.000" id=20:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1202">20:02.000</a></div>
+        <div class="t">可以update的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:04.000" id=20:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1204">20:04.000</a></div>
+        <div class="t">就之前我們參數update的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:06.000" id=20:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1206">20:06.000</a></div>
+        <div class="t">都是看gradient,看G,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:08.000" id=20:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1208">20:08.000</a></div>
+        <div class="t">但是我們走到某個地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:09.000" id=20:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1209">20:09.000</a></div>
+        <div class="t">又發現G變成0了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:11.000" id=20:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1211">20:11.000</a></div>
+        <div class="t">不能再看G了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.000" id=20:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1212">20:12.000</a></div>
+        <div class="t">G不見了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:13.000" id=20:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1213">20:13.000</a></div>
+        <div class="t">gradient沒有了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:14.000" id=20:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1214">20:14.000</a></div>
+        <div class="t">但如果是一個saddle point的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:16.000" id=20:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1216">20:16.000</a></div>
+        <div class="t">還可以再看H。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:18.000" id=20:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1218">20:18.000</a></div>
+        <div class="t">怎麼再看H呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:19.000" id=20:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1219">20:19.000</a></div>
+        <div class="t">H怎麼告訴我們</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:20.000" id=20:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1220">20:20.000</a></div>
+        <div class="t">怎麼update參數呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:23.000" id=20:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1223">20:23.000</a></div>
+        <div class="t">我們這邊假設U啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:25.000" id=20:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1225">20:25.000</a></div>
+        <div class="t">是H的eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:27.000" id=20:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1227">20:27.000</a></div>
+        <div class="t">然後λ是U的eigenvalue,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:30.000" id=20:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1230">20:30.000</a></div>
+        <div class="t">就H有一個eigenvalue叫λ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:32.000" id=20:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1232">20:32.000</a></div>
+        <div class="t">它的對應的eigenvector叫做U。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.000" id=20:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1235">20:35.000</a></div>
+        <div class="t">如果我們把這邊的V換成U的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.000" id=20:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1238">20:38.000</a></div>
+        <div class="t">會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:39.000" id=20:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1239">20:39.000</a></div>
+        <div class="t">如果我們把U乘在H的左邊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:42.000" id=20:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1242">20:42.000</a></div>
+        <div class="t">跟H的右邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:43.000" id=20:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1243">20:43.000</a></div>
+        <div class="t">也就U乘Pose乘上H乘U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.000" id=20:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1245">20:45.000</a></div>
+        <div class="t">會得到什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.000" id=20:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1247">20:47.000</a></div>
+        <div class="t">H乘以U啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:48.000" id=20:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1248">20:48.000</a></div>
+        <div class="t">會得到λU,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:50.000" id=20:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1250">20:50.000</a></div>
+        <div class="t">為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:51.000" id=20:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1251">20:51.000</a></div>
+        <div class="t">因為U是一個eigenvector啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:53.000" id=20:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1253">20:53.000</a></div>
+        <div class="t">所以H乘上eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:54.000" id=20:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1254">20:54.000</a></div>
+        <div class="t">會得到λeigenvalue乘上eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:57.000" id=20:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1257">20:57.000</a></div>
+        <div class="t">所以這邊得到UT乘於λU。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:00.000" id=21:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1260">21:00.000</a></div>
+        <div class="t">然後再整理一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:02.000" id=21:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1262">21:02.000</a></div>
+        <div class="t">把UT跟U乘起來得到U的那種平方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:04.000" id=21:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1264">21:04.000</a></div>
+        <div class="t">所以得到λU的那種平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:07.000" id=21:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1267">21:07.000</a></div>
+        <div class="t">所以這一項啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:09.000" id=21:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1269">21:09.000</a></div>
+        <div class="t">這一項,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:10.000" id=21:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1270">21:10.000</a></div>
+        <div class="t">假設我們這邊V</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:11.000" id=21:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1271">21:11.000</a></div>
+        <div class="t">帶的是一個eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:13.000" id=21:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1273">21:13.000</a></div>
+        <div class="t">我們這邊θ減θpoint</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:15.000" id=21:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1275">21:15.000</a></div>
+        <div class="t">放的是一個eigenvector的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.000" id=21:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1276">21:16.000</a></div>
+        <div class="t">會發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:18.000" id=21:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1278">21:18.000</a></div>
+        <div class="t">我們這個紅色的項裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:20.000" id=21:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1280">21:20.000</a></div>
+        <div class="t">其實就是λ乘上U的那種平方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.000" id=21:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1285">21:25.000</a></div>
+        <div class="t">那今天如果λ小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:28.000" id=21:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1288">21:28.000</a></div>
+        <div class="t">eigenvalue小於0的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:30.000" id=21:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1290">21:30.000</a></div>
+        <div class="t">會發生什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:32.000" id=21:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1292">21:32.000</a></div>
+        <div class="t">如果eigenvalue小於0的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:34.000" id=21:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1294">21:34.000</a></div>
+        <div class="t">那λ乘上U的那種平方就會小於0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:37.000" id=21:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1297">21:37.000</a></div>
+        <div class="t">因為U的那種平方一定是正的嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:39.000" id=21:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1299">21:39.000</a></div>
+        <div class="t">所以eigenvalue是負的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:40.000" id=21:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1300">21:40.000</a></div>
+        <div class="t">那這一整項就會是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:42.000" id=21:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1302">21:42.000</a></div>
+        <div class="t">也就是U的Pose乘上H乘上U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:44.000" id=21:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1304">21:44.000</a></div>
+        <div class="t">它是負的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:46.000" id=21:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1306">21:46.000</a></div>
+        <div class="t">也就是紅色這個框框裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:48.000" id=21:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1308">21:48.000</a></div>
+        <div class="t">是小於0的,是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:51.000" id=21:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1311">21:51.000</a></div>
+        <div class="t">所以這個意思是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:52.000" id=21:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1312">21:52.000</a></div>
+        <div class="t">假設θ減θpoint等於U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.000" id=21:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1316">21:56.000</a></div>
+        <div class="t">那這一項就是負的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:58.000" id=21:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1318">21:58.000</a></div>
+        <div class="t">也就是λθ會小於λθpoint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:03.000" id=22:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1323">22:03.000</a></div>
+        <div class="t">也就是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:04.000" id=22:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1324">22:04.000</a></div>
+        <div class="t">假設θ減θpoint等於U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.000" id=22:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1326">22:06.000</a></div>
+        <div class="t">也就是θ等於θpoint加U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:08.000" id=22:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1328">22:08.000</a></div>
+        <div class="t">你把θpoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:10.000" id=22:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1330">22:10.000</a></div>
+        <div class="t">本來參數在θpoint的位置加上U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.000" id=22:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1332">22:12.000</a></div>
+        <div class="t">沿著U的方向做update得到θ,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.000" id=22:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1334">22:14.000</a></div>
+        <div class="t">你就可以讓loss變小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.000" id=22:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1336">22:16.000</a></div>
+        <div class="t">因為根據這個式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:19.000" id=22:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1339">22:19.000</a></div>
+        <div class="t">你只要θ減θpoint等於U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:21.000" id=22:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1341">22:21.000</a></div>
+        <div class="t">loss就會變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:22.000" id=22:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1342">22:22.000</a></div>
+        <div class="t">所以你今天只要讓θ等於θpoint加U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:25.000" id=22:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1345">22:25.000</a></div>
+        <div class="t">你就可以讓loss變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:27.000" id=22:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1347">22:27.000</a></div>
+        <div class="t">你只要沿著U,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.000" id=22:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1348">22:28.000</a></div>
+        <div class="t">也就是eigenvector的方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:30.000" id=22:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1350">22:30.000</a></div>
+        <div class="t">去更新你的參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:32.000" id=22:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1352">22:32.000</a></div>
+        <div class="t">去改變你的參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.000" id=22:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1353">22:33.000</a></div>
+        <div class="t">你就可以讓loss變小了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:35.000" id=22:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1355">22:35.000</a></div>
+        <div class="t">所以雖然在critical point沒有gradient,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:38.000" id=22:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1358">22:38.000</a></div>
+        <div class="t">如果我們今天是在一個theta point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:40.000" id=22:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1360">22:40.000</a></div>
+        <div class="t">你也不一定要驚慌,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:43.000" id=22:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1363">22:43.000</a></div>
+        <div class="t">你只要找出負的eigenvalue,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:49.000" id=22:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1369">22:49.000</a></div>
+        <div class="t">再找出它對應的eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:51.000" id=22:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1371">22:51.000</a></div>
+        <div class="t">用這個eigenvector去加θpoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:54.000" id=22:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1374">22:54.000</a></div>
+        <div class="t">就可以找到一個新的點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:56.000" id=22:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1376">22:56.000</a></div>
+        <div class="t">這個點的loss比原來還要低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:58.000" id=22:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1378">22:58.000</a></div>
+        <div class="t">如果這樣你聽得不是很清楚的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:01.000" id=23:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1381">23:01.000</a></div>
+        <div class="t">我們就舉具體的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:02.000" id=23:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1382">23:02.000</a></div>
+        <div class="t">剛才我們已經發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:04.000" id=23:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1384">23:04.000</a></div>
+        <div class="t">原點是一個critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:06.000" id=23:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1386">23:06.000</a></div>
+        <div class="t">它的hesion長這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:10.000" id=23:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1390">23:10.000</a></div>
+        <div class="t">我們現在發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:11.000" id=23:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1391">23:11.000</a></div>
+        <div class="t">這個hesion有一個負的eigenvalue,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:15.000" id=23:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1395">23:15.000</a></div>
+        <div class="t">這個eigenvalue等於負2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:22.000" id=23:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1402">23:22.000</a></div>
+        <div class="t">這個eigenvalue等於負2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:26.000" id=23:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1406">23:26.000</a></div>
+        <div class="t">那它對應的eigenvector長什麼樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:28.000" id=23:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1408">23:28.000</a></div>
+        <div class="t">它有很多個,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:29.000" id=23:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1409">23:29.000</a></div>
+        <div class="t">其實是無窮多個對應的eigenvector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:32.000" id=23:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1412">23:32.000</a></div>
+        <div class="t">我們就取一個出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:33.000" id=23:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1413">23:33.000</a></div>
+        <div class="t">我們取11,11是它對應的一個eigenvector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.000" id=23:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1420">23:40.000</a></div>
+        <div class="t">那我們其實只要順著這個u的方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:43.000" id=23:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1423">23:43.000</a></div>
+        <div class="t">順著11這個vector的方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:45.000" id=23:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1425">23:45.000</a></div>
+        <div class="t">去更新我們的參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:47.000" id=23:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1427">23:47.000</a></div>
+        <div class="t">你就可以找到一個比θpoint的loss,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:50.000" id=23:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1430">23:50.000</a></div>
+        <div class="t">還要更低的點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:54.000" id=23:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1434">23:54.000</a></div>
+        <div class="t">如果以今天這個例子來看的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:56.000" id=23:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1436">23:56.000</a></div>
+        <div class="t">你的θpoint在00這個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:00.000" id=24:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1440">24:00.000</a></div>
+        <div class="t">你在這個地方因為沒有歸點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:02.000" id=24:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1442">24:02.000</a></div>
+        <div class="t">就會告訴你說你要怎麼更新參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:04.000" id=24:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1444">24:04.000</a></div>
+        <div class="t">那hesion告訴我們說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:06.000" id=24:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1446">24:06.000</a></div>
+        <div class="t">hesion的eigenvector告訴我們說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.000" id=24:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1448">24:08.000</a></div>
+        <div class="t">只要往11的方向更新,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:10.000" id=24:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1450">24:10.000</a></div>
+        <div class="t">你就可以讓loss變得更小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:12.000" id=24:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1452">24:12.000</a></div>
+        <div class="t">只要往u這個eigenvector的方向更新,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:14.000" id=24:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1454">24:14.000</a></div>
+        <div class="t">11的方向更新,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.000" id=24:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1456">24:16.000</a></div>
+        <div class="t">你就可以讓你的loss變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:19.000" id=24:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1459">24:19.000</a></div>
+        <div class="t">也就是說你可以逃離你的θpoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:21.000" id=24:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1461">24:21.000</a></div>
+        <div class="t">然後讓你的loss變小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:24.000" id=24:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1464">24:24.000</a></div>
+        <div class="t">所以從這個角度來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:27.000" id=24:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1467">24:27.000</a></div>
+        <div class="t">似乎θpoint並沒有那麼可怕。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:31.000" id=24:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1471">24:31.000</a></div>
+        <div class="t">如果你今天在training的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.000" id=24:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1473">24:33.000</a></div>
+        <div class="t">你的訓練停下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:35.000" id=24:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1475">24:35.000</a></div>
+        <div class="t">你的歸點變成0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:36.000" id=24:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1476">24:36.000</a></div>
+        <div class="t">你的訓練停下來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:37.000" id=24:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1477">24:37.000</a></div>
+        <div class="t">是因為θpoint的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:39.000" id=24:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1479">24:39.000</a></div>
+        <div class="t">那似乎還有解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:42.000" id=24:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1482">24:42.000</a></div>
+        <div class="t">但是當然實際上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:43.000" id=24:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1483">24:43.000</a></div>
+        <div class="t">在實際的implementation裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.000" id=24:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1486">24:46.000</a></div>
+        <div class="t">你幾乎不會真的把hesion算出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:50.000" id=24:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1490">24:50.000</a></div>
+        <div class="t">為什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:51.000" id=24:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1491">24:51.000</a></div>
+        <div class="t">這個要是二次微分,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:53.000" id=24:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1493">24:53.000</a></div>
+        <div class="t">要計算這個矩陣的computation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:56.000" id=24:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1496">24:56.000</a></div>
+        <div class="t">需要的運算量非常非常的大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:59.000" id=24:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1499">24:59.000</a></div>
+        <div class="t">更遑論你還要把它的eigenvalue</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:02.000" id=25:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1502">25:02.000</a></div>
+        <div class="t">跟eigenvector找出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:04.000" id=25:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1504">25:04.000</a></div>
+        <div class="t">所以在實作上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:05.000" id=25:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1505">25:05.000</a></div>
+        <div class="t">你幾乎沒有看到有人用這一個方法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.000" id=25:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1508">25:08.000</a></div>
+        <div class="t">來逃離θpoint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:11.000" id=25:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1511">25:11.000</a></div>
+        <div class="t">等一下我們會講其他</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:12.000" id=25:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1512">25:12.000</a></div>
+        <div class="t">也有機會逃離θpoint的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:14.000" id=25:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1514">25:14.000</a></div>
+        <div class="t">他們的運算量都比要算這個h還要小很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:17.000" id=25:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1517">25:17.000</a></div>
+        <div class="t">那今天之所以我們把這個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:19.000" id=25:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1519">25:19.000</a></div>
+        <div class="t">θpoint跟eigenvector,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:21.000" id=25:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1521">25:21.000</a></div>
+        <div class="t">跟hesion的eigenvector拿出來講,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:23.000" id=25:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1523">25:23.000</a></div>
+        <div class="t">是想要告訴你說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:24.000" id=25:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1524">25:24.000</a></div>
+        <div class="t">如果是卡在θpoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:26.000" id=25:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1526">25:26.000</a></div>
+        <div class="t">也許沒有那麼可怕。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:28.000" id=25:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1528">25:28.000</a></div>
+        <div class="t">在這招的狀況下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:29.000" id=25:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1529">25:29.000</a></div>
+        <div class="t">你還有這一招可以告訴你</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:31.000" id=25:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1531">25:31.000</a></div>
+        <div class="t">要往哪一個方向走。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:35.000" id=25:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1535">25:35.000</a></div>
+        <div class="t">好,那在講到這邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.000" id=25:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1536">25:36.000</a></div>
+        <div class="t">你就會有一個問題了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.000" id=25:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1537">25:37.000</a></div>
+        <div class="t">這個問題是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:38.000" id=25:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1538">25:38.000</a></div>
+        <div class="t">那到底θpoint跟local minima</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:42.000" id=25:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1542">25:42.000</a></div>
+        <div class="t">誰比較常見呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:43.000" id=25:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1543">25:43.000</a></div>
+        <div class="t">我們說θpoint其實並沒有很可怕,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:46.000" id=25:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1546">25:46.000</a></div>
+        <div class="t">那如果我們今天常遇到的是θpoint,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:49.000" id=25:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1549">25:49.000</a></div>
+        <div class="t">比較少遇到local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:51.000" id=25:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1551">25:51.000</a></div>
+        <div class="t">那就太好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:53.000" id=25:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1553">25:53.000</a></div>
+        <div class="t">那到底θpoint跟local minima</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:55.000" id=25:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1555">25:55.000</a></div>
+        <div class="t">哪一個比較常見呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.000" id=25:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1558">25:58.000</a></div>
+        <div class="t">那這邊呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:59.000" id=25:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1559">25:59.000</a></div>
+        <div class="t">我們要講一個不相干的故事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:02.000" id=26:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1562">26:02.000</a></div>
+        <div class="t">先講一個故事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:03.000" id=26:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1563">26:03.000</a></div>
+        <div class="t">這個故事是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:04.000" id=26:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1564">26:04.000</a></div>
+        <div class="t">這個故事發生在1543年。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:07.000" id=26:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1567">26:07.000</a></div>
+        <div class="t">1543年發生了什麼事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:10.000" id=26:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1570">26:10.000</a></div>
+        <div class="t">那一年這個君士坦丁堡淪陷,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:14.000" id=26:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1574">26:14.000</a></div>
+        <div class="t">這個是君士坦丁堡淪陷圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:16.000" id=26:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1576">26:16.000</a></div>
+        <div class="t">君士坦丁堡本來是東羅馬帝國的領土,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:20.000" id=26:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1580">26:20.000</a></div>
+        <div class="t">然後被鄂圖曼土耳其帝國佔領了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:23.000" id=26:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1583">26:23.000</a></div>
+        <div class="t">然後東羅馬帝國就滅亡了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:27.000" id=26:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1587">26:27.000</a></div>
+        <div class="t">在鄂圖曼土耳其人進攻君士坦丁堡的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:31.000" id=26:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1591">26:31.000</a></div>
+        <div class="t">那時候東羅馬帝國的國王是君士坦丁一世,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:35.000" id=26:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1595">26:35.000</a></div>
+        <div class="t">他不知道要怎麼對抗土耳其人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:39.000" id=26:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1599">26:39.000</a></div>
+        <div class="t">有人就獻上了一策,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:41.000" id=26:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1601">26:41.000</a></div>
+        <div class="t">找來了一個魔法師叫做迪奧倫馬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:46.000" id=26:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1606">26:46.000</a></div>
+        <div class="t">這是真實的故事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:49.000" id=26:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1609">26:49.000</a></div>
+        <div class="t">知道嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:50.000" id=26:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1610">26:50.000</a></div>
+        <div class="t">出自三體的故事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.000" id=26:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1612">26:52.000</a></div>
+        <div class="t">迪奧倫馬這樣說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:54.000" id=26:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1614">26:54.000</a></div>
+        <div class="t">迪奧倫馬是誰呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:56.000" id=26:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1616">26:56.000</a></div>
+        <div class="t">他有一個能力跟張飛一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:58.000" id=26:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1618">26:58.000</a></div>
+        <div class="t">張飛不是可以萬軍從中取上將首級錄,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:02.000" id=27:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1622">27:02.000</a></div>
+        <div class="t">探囊取錄嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:04.000" id=27:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1624">27:04.000</a></div>
+        <div class="t">迪奧倫馬也是一樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:06.000" id=27:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1626">27:06.000</a></div>
+        <div class="t">他可以直接取得蘇丹的頭,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:10.000" id=27:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1630">27:10.000</a></div>
+        <div class="t">他可以從萬軍中取得蘇丹的頭。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:13.000" id=27:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1633">27:13.000</a></div>
+        <div class="t">大家想說迪奧倫馬怎麼這麼厲害,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:16.000" id=27:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1636">27:16.000</a></div>
+        <div class="t">他真的有這麼強大的魔法嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:18.000" id=27:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1638">27:18.000</a></div>
+        <div class="t">所以大家就要迪奧倫馬先展示一下他的力量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:21.000" id=27:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1641">27:21.000</a></div>
+        <div class="t">這時候迪奧倫馬就拿出了一個聖杯,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:25.000" id=27:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1645">27:25.000</a></div>
+        <div class="t">大家看到這個聖杯就大吃一驚,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:28.000" id=27:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1648">27:28.000</a></div>
+        <div class="t">為什麼大家看到這個聖杯要大吃一驚呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:31.000" id=27:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1651">27:31.000</a></div>
+        <div class="t">因為這個聖杯本來是放在聖索菲亞大教堂的地下室,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:36.000" id=27:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1656">27:36.000</a></div>
+        <div class="t">而且它是被放在一個石棺裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:39.000" id=27:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1659">27:39.000</a></div>
+        <div class="t">這個石棺是密封的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.000" id=27:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1662">27:42.000</a></div>
+        <div class="t">沒有人可以打開它,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:44.000" id=27:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1664">27:44.000</a></div>
+        <div class="t">但是迪奧倫馬他從裡面取得了聖杯,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:47.000" id=27:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1667">27:47.000</a></div>
+        <div class="t">而且還放了一串葡萄進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:50.000" id=27:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1670">27:50.000</a></div>
+        <div class="t">那君士坦丁十一世為了要驗證迪奧倫馬是不是真的有這個能力,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:55.000" id=27:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1675">27:55.000</a></div>
+        <div class="t">就帶了一堆人真的去撬開了這個石棺,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:58.000" id=27:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1678">27:58.000</a></div>
+        <div class="t">發現聖杯真的被拿走了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.000" id=28:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1680">28:00.000</a></div>
+        <div class="t">裡面真的有一串新鮮的葡萄,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:03.000" id=28:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1683">28:03.000</a></div>
+        <div class="t">就知道迪奧倫馬真的有萬軍從中去上將首級的能力。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:09.000" id=28:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1689">28:09.000</a></div>
+        <div class="t">那為什麼迪奧倫馬可以做到這件事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:11.000" id=28:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1691">28:11.000</a></div>
+        <div class="t">那是因為這個石棺你覺得它是封閉的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:15.000" id=28:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1695">28:15.000</a></div>
+        <div class="t">那是因為你是從三維的空間來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:19.000" id=28:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1699">28:19.000</a></div>
+        <div class="t">從三維的空間來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.000" id=28:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1701">28:21.000</a></div>
+        <div class="t">這個石棺是封閉的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:23.000" id=28:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1703">28:23.000</a></div>
+        <div class="t">沒有任何路可以進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:25.000" id=28:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1705">28:25.000</a></div>
+        <div class="t">但是迪奧倫馬可以進入四維的空間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:28.000" id=28:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1708">28:28.000</a></div>
+        <div class="t">從高維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:29.000" id=28:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1709">28:29.000</a></div>
+        <div class="t">這個石棺是有路可以進去的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:32.000" id=28:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1712">28:32.000</a></div>
+        <div class="t">它並不是封閉的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:34.000" id=28:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1714">28:34.000</a></div>
+        <div class="t">那至於迪奧倫馬有沒有成功刺殺蘇丹呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:37.000" id=28:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1717">28:37.000</a></div>
+        <div class="t">你可以想像一定是沒有嘛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:39.000" id=28:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1719">28:39.000</a></div>
+        <div class="t">所以君士坦丁堡才淪陷了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:41.000" id=28:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1721">28:41.000</a></div>
+        <div class="t">那至於為什麼沒有,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:42.000" id=28:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1722">28:42.000</a></div>
+        <div class="t">大家請見三體,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:43.000" id=28:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1723">28:43.000</a></div>
+        <div class="t">這樣就不雷大家了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:45.000" id=28:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1725">28:45.000</a></div>
+        <div class="t">那總之從三維的空間來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.000" id=28:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1729">28:49.000</a></div>
+        <div class="t">是沒有路可以走的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:51.000" id=28:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1731">28:51.000</a></div>
+        <div class="t">在高維空間中是有路可以走的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:55.000" id=28:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1735">28:55.000</a></div>
+        <div class="t">Error surface會不會也一樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:58.000" id=28:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1738">28:58.000</a></div>
+        <div class="t">所以你在一維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.000" id=29:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1742">29:02.000</a></div>
+        <div class="t">一維的一個參數的Error surface,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:04.000" id=29:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1744">29:04.000</a></div>
+        <div class="t">你會覺得好像到處都是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.000" id=29:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1749">29:09.000</a></div>
+        <div class="t">但是會不會在二維的空間來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:12.000" id=29:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1752">29:12.000</a></div>
+        <div class="t">它就只是一個zero point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.000" id=29:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1755">29:15.000</a></div>
+        <div class="t">常常會有人畫類似這樣的圖,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.000" id=29:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1757">29:17.000</a></div>
+        <div class="t">告訴你說deep learning的訓練,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:19.000" id=29:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1759">29:19.000</a></div>
+        <div class="t">是非常的複雜的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.000" id=29:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1761">29:21.000</a></div>
+        <div class="t">如果我們移動某兩個參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:24.000" id=29:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1764">29:24.000</a></div>
+        <div class="t">Error surface的變化,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:26.000" id=29:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1766">29:26.000</a></div>
+        <div class="t">非常的複雜是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:28.000" id=29:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1768">29:28.000</a></div>
+        <div class="t">那它顯然有非常多的local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:31.000" id=29:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1771">29:31.000</a></div>
+        <div class="t">我在這邊顯然有一個local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.000" id=29:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1775">29:35.000</a></div>
+        <div class="t">但是會不會這個local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:37.000" id=29:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1777">29:37.000</a></div>
+        <div class="t">只是在二維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:39.000" id=29:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1779">29:39.000</a></div>
+        <div class="t">看起來是一個local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:42.000" id=29:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1782">29:42.000</a></div>
+        <div class="t">在更高維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:44.000" id=29:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1784">29:44.000</a></div>
+        <div class="t">它看起來就是zero point呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:47.000" id=29:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1787">29:47.000</a></div>
+        <div class="t">在二維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:49.000" id=29:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1789">29:49.000</a></div>
+        <div class="t">我們沒有路可以走,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:51.000" id=29:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1791">29:51.000</a></div>
+        <div class="t">那會不會在更高的維度上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:53.000" id=29:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1793">29:53.000</a></div>
+        <div class="t">因為更高的維度,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:54.000" id=29:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1794">29:54.000</a></div>
+        <div class="t">我們沒有辦法比較來測,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:55.000" id=29:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1795">29:55.000</a></div>
+        <div class="t">我們沒辦法真的拿出來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:57.000" id=29:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1797">29:57.000</a></div>
+        <div class="t">會不會在更高維的空間中,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:59.000" id=29:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1799">29:59.000</a></div>
+        <div class="t">其實有路可以走呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:02.000" id=30:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1802">30:02.000</a></div>
+        <div class="t">那如果維度越高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:03.000" id=30:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1803">30:03.000</a></div>
+        <div class="t">是不是可以走的路就越多了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:08.000" id=30:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1808">30:08.000</a></div>
+        <div class="t">而今天我們在訓練一個network的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:11.000" id=30:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1811">30:11.000</a></div>
+        <div class="t">我們的參數往往動輒百萬千萬上億。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:15.000" id=30:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1815">30:15.000</a></div>
+        <div class="t">所以我們的Error surface,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:17.000" id=30:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1817">30:17.000</a></div>
+        <div class="t">其實是在一個非常高的維度中。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:20.000" id=30:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1820">30:20.000</a></div>
+        <div class="t">我們參數有多少,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.000" id=30:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1821">30:21.000</a></div>
+        <div class="t">就代表我們的Error surface的維度有多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:23.000" id=30:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1823">30:23.000</a></div>
+        <div class="t">參數是一千萬,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:25.000" id=30:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1825">30:25.000</a></div>
+        <div class="t">就代表Error surface的維度是一千萬。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:28.000" id=30:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1828">30:28.000</a></div>
+        <div class="t">這樣維度這麼高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:30.000" id=30:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1830">30:30.000</a></div>
+        <div class="t">會不會其實根本就有非常多的路可以走呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:33.000" id=30:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1833">30:33.000</a></div>
+        <div class="t">那既然有非常多的路可以走,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.000" id=30:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1835">30:35.000</a></div>
+        <div class="t">會不會其實local minima根本就很少呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:40.000" id=30:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1840">30:40.000</a></div>
+        <div class="t">而經驗上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:42.000" id=30:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1842">30:42.000</a></div>
+        <div class="t">如果你自己做一些實驗的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:44.000" id=30:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1844">30:44.000</a></div>
+        <div class="t">也支持這個假說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:47.000" id=30:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1847">30:47.000</a></div>
+        <div class="t">這邊是訓練某一個network的結果,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.000" id=30:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1850">30:50.000</a></div>
+        <div class="t">每一個點代表訓練那個network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:53.000" id=30:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1853">30:53.000</a></div>
+        <div class="t">訓練完之後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:54.000" id=30:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1854">30:54.000</a></div>
+        <div class="t">把他的hesion拿出來進行計算。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:58.000" id=30:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1858">30:58.000</a></div>
+        <div class="t">所以這邊的每一個點都代表一個network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:02.000" id=31:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1862">31:02.000</a></div>
+        <div class="t">就我們訓練某一個network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:03.000" id=31:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1863">31:03.000</a></div>
+        <div class="t">然後把他訓練訓練訓練到,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:05.000" id=31:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1865">31:05.000</a></div>
+        <div class="t">規律很小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:07.000" id=31:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1867">31:07.000</a></div>
+        <div class="t">卡在critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:08.000" id=31:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1868">31:08.000</a></div>
+        <div class="t">把那組參數拿出來分析,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:10.000" id=31:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1870">31:10.000</a></div>
+        <div class="t">看看他比較像是saddle point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:12.000" id=31:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1872">31:12.000</a></div>
+        <div class="t">還是比較像是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:15.000" id=31:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1875">31:15.000</a></div>
+        <div class="t">那這邊的縱軸跟橫軸是什麼意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:17.000" id=31:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1877">31:17.000</a></div>
+        <div class="t">縱軸代表training的時候的loss,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:19.000" id=31:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1879">31:19.000</a></div>
+        <div class="t">就是我們今天卡住了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:21.000" id=31:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1881">31:21.000</a></div>
+        <div class="t">那個loss沒辦法再下降了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:23.000" id=31:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1883">31:23.000</a></div>
+        <div class="t">那個loss是多少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:24.000" id=31:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1884">31:24.000</a></div>
+        <div class="t">那很多時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:25.000" id=31:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1885">31:25.000</a></div>
+        <div class="t">你的loss在還很高的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:27.000" id=31:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1887">31:27.000</a></div>
+        <div class="t">訓練就不動了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:28.000" id=31:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1888">31:28.000</a></div>
+        <div class="t">就卡在critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:31.000" id=31:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1891">31:31.000</a></div>
+        <div class="t">那很多時候loss可以降得很低,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:33.000" id=31:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1893">31:33.000</a></div>
+        <div class="t">才卡在critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:35.000" id=31:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1895">31:35.000</a></div>
+        <div class="t">這是縱軸的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:37.000" id=31:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1897">31:37.000</a></div>
+        <div class="t">橫軸的部分是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:38.000" id=31:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1898">31:38.000</a></div>
+        <div class="t">橫軸的部分是minimum ratio。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:41.000" id=31:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1901">31:41.000</a></div>
+        <div class="t">什麼叫minimum ratio呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:43.000" id=31:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1903">31:43.000</a></div>
+        <div class="t">minimum ratio是eigenvalue的數目,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:47.000" id=31:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1907">31:47.000</a></div>
+        <div class="t">分之正的eigenvalue的數目。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:51.000" id=31:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1911">31:51.000</a></div>
+        <div class="t">如果所有的eigenvalue都是正的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:55.000" id=31:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1915">31:55.000</a></div>
+        <div class="t">代表我們今天的critical point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:59.000" id=31:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1919">31:59.000</a></div>
+        <div class="t">是local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.000" id=32:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1921">32:01.000</a></div>
+        <div class="t">如果有正有負,代表saddle point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:04.000" id=32:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1924">32:04.000</a></div>
+        <div class="t">那在實作上你會發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:06.000" id=32:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1926">32:06.000</a></div>
+        <div class="t">你幾乎找不到完全所有eigenvalue</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:10.000" id=32:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1930">32:10.000</a></div>
+        <div class="t">都是正的critical point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:13.000" id=32:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1933">32:13.000</a></div>
+        <div class="t">你看這邊這個例子裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:14.000" id=32:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1934">32:14.000</a></div>
+        <div class="t">這個minimum ratio代表eigenvalue的數目,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:18.000" id=32:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1938">32:18.000</a></div>
+        <div class="t">分之正的eigenvalue的數目,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:20.000" id=32:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1940">32:20.000</a></div>
+        <div class="t">最大也不過0.5到0.6間而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:24.000" id=32:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1944">32:24.000</a></div>
+        <div class="t">代表說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:25.000" id=32:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1945">32:25.000</a></div>
+        <div class="t">只有一半的eigenvalue是正的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.000" id=32:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1948">32:28.000</a></div>
+        <div class="t">還有一半的eigenvalue是負的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:31.000" id=32:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1951">32:31.000</a></div>
+        <div class="t">所以今天雖然在這個圖上越往右,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:34.000" id=32:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1954">32:34.000</a></div>
+        <div class="t">代表我們的critical point越像local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:37.000" id=32:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1957">32:37.000</a></div>
+        <div class="t">但是他們都沒有真的變成local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:42.000" id=32:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1962">32:42.000</a></div>
+        <div class="t">就算是在最極端的狀況,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:44.000" id=32:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1964">32:44.000</a></div>
+        <div class="t">我們仍然有一半的case,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:47.000" id=32:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1967">32:47.000</a></div>
+        <div class="t">我們的eigenvalue是負的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:49.000" id=32:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1969">32:49.000</a></div>
+        <div class="t">這一半的case,eigenvalue是正的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:51.000" id=32:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1971">32:51.000</a></div>
+        <div class="t">代表說在所有的維度裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:53.000" id=32:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1973">32:53.000</a></div>
+        <div class="t">有一半的路,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.000" id=32:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1974">32:54.000</a></div>
+        <div class="t">其實都還可以讓Loss下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:58.000" id=32:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1978">32:58.000</a></div>
+        <div class="t">這一半的路會讓Loss上升,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:00.000" id=33:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1980">33:00.000</a></div>
+        <div class="t">還有一半的路可以讓Loss下降。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:02.000" id=33:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1982">33:02.000</a></div>
+        <div class="t">所以從經驗上看起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.000" id=33:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1984">33:04.000</a></div>
+        <div class="t">其實local minima並沒有那麼常見。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:08.000" id=33:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1988">33:08.000</a></div>
+        <div class="t">多數的時候你覺得你圈到一個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:10.000" id=33:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1990">33:10.000</a></div>
+        <div class="t">你規定真的很小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:11.000" id=33:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1991">33:11.000</a></div>
+        <div class="t">所以你的參數不再update了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.000" id=33:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=1994">33:14.000</a></div>
+        <div class="t">往往是因為你卡在了一個Zero point。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:20.000" id=33:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2000">33:20.000</a></div>
+        <div class="t">好,那接下來我們就是要講說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:23.000" id=33:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2003">33:23.000</a></div>
+        <div class="t">假設你圈啊圈啊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:25.000" id=33:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2005">33:25.000</a></div>
+        <div class="t">也許你卡在local minima,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:27.000" id=33:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2007">33:27.000</a></div>
+        <div class="t">雖然我剛才講說local minima</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:28.000" id=33:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2008">33:28.000</a></div>
+        <div class="t">出現的狀況也許沒有那麼多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:30.000" id=33:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2010">33:30.000</a></div>
+        <div class="t">或卡在Zero point,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:31.000" id=33:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2011">33:31.000</a></div>
+        <div class="t">或甚至是在Zero point附近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:33.000" id=33:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2013">33:33.000</a></div>
+        <div class="t">也就是非常平坦的地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:35.000" id=33:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2015">33:35.000</a></div>
+        <div class="t">那麼有什麼樣可能的解決方法?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:39.000" id=33:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2019">33:39.000</a></div>
+        <div class="t">好,那在這邊我們還是停一下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:42.000" id=33:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=QW6uINn7uGk&t=2022">33:42.000</a></div>
+        <div class="t">看看大家有沒有問題要問的。</div>
+    </div>
+    
+</body>
+</html>   

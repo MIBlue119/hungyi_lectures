@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】生成式對抗網路 (Generative Adversarial Network, GAN) (四) – Cycle GAN</h2><a href=https://www.youtube.com/watch?v=wulqhgnDr7E><img src=https://i.ytimg.com/vi/wulqhgnDr7E/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGGUgZShlMA8=&rs=AOn4CLAh9MoSuf827VxlOVAl16NgxEn96A></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=0">00:00.000</a></div>
+        <div class="t">好,那有關 GAN 的最後一段,我們要講一個 GAN 的神奇應用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:09.700" id=00:09.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=9">00:09.700</a></div>
+        <div class="t">這個是什麼樣神奇的應用呢?這個是把 GAN 用在 Unsupervised Learning 上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:18.000" id=00:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=18">00:18.000</a></div>
+        <div class="t">你常常聽到說,有人說 GAN 可以用在 Unsupervised Learning 上,現在就要告訴你說,這個 GAN 怎麼用在 Unsupervised Learning 上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:26.500" id=00:26.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=26">00:26.500</a></div>
+        <div class="t">到目前為止,我們講的幾乎都是 Supervised Learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:32.500" id=00:32.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=32">00:32.500</a></div>
+        <div class="t">我們要訓練一個 Network,Network 的輸入叫做 X,輸出叫做 Y,我們需要成對的資料,才有辦法訓練這樣子的 Network。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:42.500" id=00:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=42">00:42.500</a></div>
+        <div class="t">但是你可能會遇到一個狀況是,我們有一堆 X,我們有一堆 Y,但 X 跟 Y 是不成對的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.500" id=00:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=51">00:51.500</a></div>
+        <div class="t">在這種狀況下,我們有沒有辦法拿這樣的資料來訓練 Network 呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:57.500" id=00:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=57">00:57.500</a></div>
+        <div class="t">像這種沒有成對的資料,我們就叫做 Unlabel 的資料,沒有標註的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05.500" id=01:05.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=65">01:05.500</a></div>
+        <div class="t">至於怎麼使用這些沒有標註的資料呢?其實在作業三跟作業五裡面都提供給你兩個例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:13.500" id=01:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=73">01:13.500</a></div>
+        <div class="t">我們就把怎麼用沒有標註的資料,怎麼做 Semi-supervised Learning 這件事情放在作業裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.500" id=01:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=82">01:22.500</a></div>
+        <div class="t">如果你有興趣的話,就可以來體驗一下 Semi-supervised Learning 到底可以帶來多大的幫助。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.500" id=01:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=90">01:30.500</a></div>
+        <div class="t">但是不管是作業三的 Pseudo-labeling,還是作業五的 Back-translation,這些方法或多或少都還是需要一些成對的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:41.500" id=01:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=101">01:41.500</a></div>
+        <div class="t">在作業三裡面,你得先訓練出一個模型,這個模型可以幫你提供 Pseudo-label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:47.500" id=01:47.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=107">01:47.500</a></div>
+        <div class="t">如果你一開始根本就沒有太多有標註的資料,你的模型很差,你根本就沒有辦法產生比較好的 Pseudo-label。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:56.500" id=01:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=116">01:56.500</a></div>
+        <div class="t">或做 Back-translation,你也得有一個 Back-translation 的 model,你才有辦法做 Back-translation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:02.500" id=02:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=122">02:02.500</a></div>
+        <div class="t">所以不管是作業三還是作業五的方法,還是都需要一些成對的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.500" id=02:09.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=129">02:09.500</a></div>
+        <div class="t">但是假設我們遇到一個更艱鉅的狀況,是我們一點成對的資料都沒有,那要怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.500" id=02:19.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=139">02:19.500</a></div>
+        <div class="t">那你可能會問說,什麼時候會一點成對的資料都沒有呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:23.500" id=02:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=143">02:23.500</a></div>
+        <div class="t">我永遠可以找個工讀生還是或多或少幫我標一點資料吧,只是可能不一定可以標很多而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:29.500" id=02:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=149">02:29.500</a></div>
+        <div class="t">什麼時候會完全沒有成對的資料呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.500" id=02:32.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=152">02:32.500</a></div>
+        <div class="t">我們這邊舉一個例子,舉例來說,影像風格轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:36.500" id=02:36.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=156">02:36.500</a></div>
+        <div class="t">假設我們今天要訓練一個 Deep Neural,他要做的事情是把 X-domain 的圖,我們假設是真人的照片,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.500" id=02:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=165">02:45.500</a></div>
+        <div class="t">Y-domain 的圖是二次元人物的頭像,真人的頭像轉成二次元人物的頭像,這個叫做影像風格轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.500" id=02:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=176">02:56.500</a></div>
+        <div class="t">真人的頭像是 X-domain,二次元人物的頭像是 Y-domain,把 X-domain 的東西轉成 Y-domain 的東西,這個是影像風格轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:04.500" id=03:04.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=184">03:04.500</a></div>
+        <div class="t">在這個例子裡面,我們可能就沒有任何的成對的資料,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:10.500" id=03:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=190">03:10.500</a></div>
+        <div class="t">如果你要產生成對的資料,那你得先比如說幫新元結衣拍個照片,然後再把新元結衣二次元的版本畫出來,你才有辦法訓練內臥。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:21.500" id=03:21.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=201">03:21.500</a></div>
+        <div class="t">這個顯然實在是太昂貴了,工讀生也沒辦法做這件事情,所以影像風格轉換你可能一點成對的資料都沒有。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.500" id=03:30.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=210">03:30.500</a></div>
+        <div class="t">在這種狀況下,還有沒有辦法訓練一個內臥,輸入一個 X 產生一個 Y 呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:37.500" id=03:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=217">03:37.500</a></div>
+        <div class="t">這個就是 GAN 可以幫我們做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:42.500" id=03:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=222">03:42.500</a></div>
+        <div class="t">接下來我們就是要看看,怎麼用 GAN 在這種完全沒有成對資料的情況下進行學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:50.500" id=03:50.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=230">03:50.500</a></div>
+        <div class="t">這個是我們之前在講 unconditional generation 的時候,你看到的 generator 的架構,輸入是一個 Gaussian 的分布,輸出可能是一個複雜的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.500" id=04:04.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=244">04:04.500</a></div>
+        <div class="t">現在我們再稍微轉換一下我們的想法,輸入我們不說它是 Gaussian 的分布,我們說它是 X-domain 的圖片的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:15.500" id=04:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=255">04:15.500</a></div>
+        <div class="t">那輸出我們說是 Y-domain 圖片的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.500" id=04:20.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=260">04:20.500</a></div>
+        <div class="t">我們有沒有可能訓練這樣一個 generator,輸入是 X-domain 圖片的分布,輸出是 Y-domain 圖片的分布呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:28.500" id=04:28.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=268">04:28.500</a></div>
+        <div class="t">如果可以做到的話,其實就結束了,這個問題就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:33.500" id=04:33.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=273">04:33.500</a></div>
+        <div class="t">就做出來了,你就訓練出一個內臥,你可以給它一個 X-domain 的東西,讓它把它轉成 Y-domain 的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.500" id=04:40.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=280">04:40.500</a></div>
+        <div class="t">那有沒有辦法做這件事情呢?乍聽之下,好像沒有很難,你完全可以套用原來的 game 的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:49.500" id=04:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=289">04:49.500</a></div>
+        <div class="t">在原來的 game 裡面,我們說我們從 Gaussian sample 的向量丟到 generator 裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:56.500" id=04:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=296">04:56.500</a></div>
+        <div class="t">那我們一開始也說,其實不一定要從 Gaussian sample,只要那個 distribution 是有辦法被 sample 的就行了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:03.500" id=05:03.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=303">05:03.500</a></div>
+        <div class="t">我們選 Gaussian 只是因為 Gaussian 的 formulation 我們知道,我們可以從 Gaussian sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:08.500" id=05:08.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=308">05:08.500</a></div>
+        <div class="t">那我們現在如果輸入是 X-domain 的 distribution,我們只要改成可以從 X-domain sample 就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.500" id=05:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=317">05:17.500</a></div>
+        <div class="t">那你有沒有辦法從 X-domain sample 呢?可以,你就從人臉的照片裡面,真實的人臉裡面隨便挑一張出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.500" id=05:25.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=325">05:25.500</a></div>
+        <div class="t">這是一個死臭酸宅,然後就結束了,你就可以從 X-domain sample 照片出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:32.500" id=05:32.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=332">05:32.500</a></div>
+        <div class="t">你把這個照片丟到 generator 裡面,讓他產生另外一張圖片,產生另外一個 distribution 裡面的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:42.500" id=05:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=342">05:42.500</a></div>
+        <div class="t">那怎麼讓他變成是 Y-domain 的 distribution 呢?那就需要仰仗一個 discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:49.500" id=05:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=349">05:49.500</a></div>
+        <div class="t">這個 discriminator 給他看過很多 Y-domain 的圖,所以他能夠分辨 Y-domain 的圖跟不是 Y-domain 的圖的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.500" id=05:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=356">05:56.500</a></div>
+        <div class="t">看到 Y-domain 的圖就給他高分,看到不是 Y-domain 不是二次元人物就給他低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:03.500" id=06:03.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=363">06:03.500</a></div>
+        <div class="t">那就這樣,結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:07.500" id=06:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=367">06:07.500</a></div>
+        <div class="t">那你說這個跟原來的 GAN 的訓練有什麼不同?沒什麼不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.500" id=06:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=372">06:12.500</a></div>
+        <div class="t">如果你想要自己在那個作業裡面做一下的話,就記得說本來在作業裡面呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:18.500" id=06:18.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=378">06:18.500</a></div>
+        <div class="t">這個 generator 的 input 你那個 sample 是從那個 Gaussian distribution sample 出來,現在記得換一個 sample 的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:26.500" id=06:26.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=386">06:26.500</a></div>
+        <div class="t">從真人的人臉裡面 sample 一張圖片出來,好像就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:32.500" id=06:32.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=392">06:32.500</a></div>
+        <div class="t">但是你再仔細想想看,光是套用原來的 GAN 訓練 generator 跟 discriminator 好像是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:39.500" id=06:39.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=399">06:39.500</a></div>
+        <div class="t">怎麼說呢?因為我們現在的 discriminator 他要做的事情是要讓這個 generator 輸出一張 Y-domain 的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:47.500" id=06:47.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=407">06:47.500</a></div>
+        <div class="t">那 generator 他可能真的可以學到輸出 Y-domain 的圖,但是他輸出的 Y-domain 的圖一定要跟輸入有關係嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.500" id=06:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=416">06:56.500</a></div>
+        <div class="t">你沒有任何的限制要求你的 generator 做這件事啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.500" id=07:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=420">07:00.500</a></div>
+        <div class="t">你的 generator 也許就把這張圖片當作一個 Gaussian noise,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.500" id=07:04.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=424">07:04.500</a></div>
+        <div class="t">然後反正他就是看到不管你輸入什麼他都無視他,反正他就輸出一個像是二次元人物的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.500" id=07:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=432">07:12.500</a></div>
+        <div class="t">discriminator 覺得他做得很好,其實就結束了,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.500" id=07:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=437">07:17.500</a></div>
+        <div class="t">所以如果我們完全只套用一般的 GAN 的做法,只訓練一個 generator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:24.500" id=07:24.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=444">07:24.500</a></div>
+        <div class="t">這個 generator input distribution 從 Gaussian 變成 X-domain 的 image,然後訓練一個 discriminator,顯然是不夠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:31.500" id=07:31.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=451">07:31.500</a></div>
+        <div class="t">因為你訓練出來的 generator 他可以產生二次元人物的頭像,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:35.500" id=07:35.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=455">07:35.500</a></div>
+        <div class="t">但是跟輸入的真實的照片沒有什麼特別的關係,那這個不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.500" id=07:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=462">07:42.500</a></div>
+        <div class="t">那怎麼辦呢?怎麼解決這個問題?怎麼強化輸入與輸出的關係呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.500" id=07:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=469">07:49.500</a></div>
+        <div class="t">那這個 generator 完全無視輸入這件事啊,你會發現說我們在 conditional GAN 的時候是不是也看過一模一樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:57.500" id=07:57.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=477">07:57.500</a></div>
+        <div class="t">在講 conditional GAN 的時候,我們有特別提到說假設你的 discriminator 只看 Y,那他可能會無視 generator 的輸入,那你產生出來的結果不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:08.500" id=08:08.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=488">08:08.500</a></div>
+        <div class="t">但是這邊啊,如果我們要從 unpaired data 學習,我們也沒有辦法直接套用 conditional GAN 的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.500" id=08:15.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=495">08:15.500</a></div>
+        <div class="t">因為在剛才講的 conditional GAN 裡面,我們是有成對的資料,我們可以用這些成對的資料來訓練 discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.500" id=08:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=503">08:23.500</a></div>
+        <div class="t">但今天現在我們沒有成對的資料了,我們根本沒有辦法拿出成對的資料來告訴 discriminator 說怎麼樣的 X 跟 Y 的組合才是對的,我們沒有這種資料了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:37.500" id=08:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=517">08:37.500</a></div>
+        <div class="t">怎麼辦呢?那這邊就用了一個,這邊這個想法叫做 cycle GAN,那在 cycle GAN 裡面我們會 train 兩個 generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.500" id=08:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=528">08:48.500</a></div>
+        <div class="t">第一個 generator 他的工作是把 X-domain 的圖變成 Y-domain 的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.500" id=08:54.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=534">08:54.500</a></div>
+        <div class="t">第二個 generator 他的工作是看到一張 Y-domain 的圖,把他還原回 X-domain 的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:01.500" id=09:01.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=541">09:01.500</a></div>
+        <div class="t">在訓練的時候,我們今天增加了一個額外的目標,就是我們希望輸入一張圖片,從 X-domain 轉成 Y-domain 以後,要從 Y-domain 轉回原來一模一樣的 X-domain 的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:16.500" id=09:16.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=556">09:16.500</a></div>
+        <div class="t">經過兩次轉換以後,輸入跟輸出要越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.500" id=09:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=563">09:23.500</a></div>
+        <div class="t">你說怎麼讓兩張圖片越接近越好呢?這個很簡單啦,就是一個圖片其實就是一個向量,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.500" id=09:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=569">09:29.500</a></div>
+        <div class="t">兩張圖片就是兩個向量,這兩個向量之間的距離,就是讓這兩個向量他們之間的距離越接近越好,就是要兩張圖片越向越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:43.500" id=09:43.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=583">09:43.500</a></div>
+        <div class="t">因為這邊有一個循環,從 X 到 Y,再從 Y 回到 X,它是一個 cycle,所以叫做 cycle gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:51.500" id=09:51.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=591">09:51.500</a></div>
+        <div class="t">這個要讓輸入經過兩次轉換以後變成輸出,輸入跟輸出越接近越好,就叫做 cycle consistency。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:00.500" id=10:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=600">10:00.500</a></div>
+        <div class="t">所以現在這邊我們有三個 level,第一個 generator 他的工作是把 X 轉成 Y,第二個 generator 他的工作是要把 Y 還原回原來的 X。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:12.500" id=10:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=612">10:12.500</a></div>
+        <div class="t">這個 discriminator 他的工作仍然是要看藍色的 generator 他的輸出像不像是 Y-domain 的圖。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:20.500" id=10:20.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=620">10:20.500</a></div>
+        <div class="t">那加入了這個橙色的,從 Y 到 X 的 generator 以後會有什麼不一樣的地方呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:27.500" id=10:27.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=627">10:27.500</a></div>
+        <div class="t">對於前面這個藍色的 generator 來說,他就再也不能夠隨便亂做了,他就不能夠隨便產生亂七八糟跟輸入沒有關係的人臉了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.500" id=10:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=637">10:37.500</a></div>
+        <div class="t">這邊假設輸入一個死臭酸宅,這邊假設輸出的是灰夜,對另外一個不知道這是誰的人,他是灰夜大小姐。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.500" id=10:47.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=647">10:47.500</a></div>
+        <div class="t">對第二個 generator 來說,他就是吃這張灰夜作為輸入,他根本無法想像說要把灰夜還原回死臭酸宅,他根本不知道說原來輸入的圖片長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:00.500" id=11:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=660">11:00.500</a></div>
+        <div class="t">所以怎麼辦呢?對第一個 generator 來說,為了要讓第二個 generator 能夠成功地還原原來的圖片,他產生出來的圖片就不能跟輸入差太多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:10.500" id=11:10.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=670">11:10.500</a></div>
+        <div class="t">所以這邊是一個死臭酸宅,這邊輸出至少也得是一個戴眼鏡的男生的角色才行吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.500" id=11:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=677">11:17.500</a></div>
+        <div class="t">所以這邊是一個戴眼鏡男生的角色,這個是星巴,然後第二個 generator 才能夠把這個角色還原回原來的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:26.500" id=11:26.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=686">11:26.500</a></div>
+        <div class="t">所以如果你加 psycho game,你至少可以強迫你的 generator,他輸出的 y-domain 的圖片至少跟輸入的 x-domain 的圖片有一些關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:37.500" id=11:37.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=697">11:37.500</a></div>
+        <div class="t">但講到這邊呢,你可能會有的一個問題就是,你這邊只保證有一些關係啊,你怎麼知道這個關係是我們要的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.500" id=11:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=709">11:49.500</a></div>
+        <div class="t">機器有沒有可能學到很奇怪的轉換?輸入一個戴眼鏡的人,然後這個 generator 學到的是看到眼鏡就把眼鏡抹掉,然後把它變成一顆痣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.500" id=12:00.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=720">12:00.500</a></div>
+        <div class="t">然後第二個 generator 學到的是看到痣就還原回眼鏡,這樣還是可以滿足 psycho consistency 啊,還是可以把輸入的圖片變成輸出的圖片啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.500" id=12:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=731">12:11.500</a></div>
+        <div class="t">我舉一個更極端的例子,假設第一個 generator 學到的就是把圖片左右翻轉,第二個 generator 也只要學到把圖片左右翻轉,你就可以還原啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.500" id=12:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=742">12:22.500</a></div>
+        <div class="t">所以今天如果我們做 psycho game,用 psycho consistency,似乎沒有辦法保證我們輸入跟輸出的人臉看起來真的很像,因為也許機器會學到很奇怪的轉換,反正只要第二個 generator 可以轉得回來就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:39.500" id=12:39.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=759">12:39.500</a></div>
+        <div class="t">那會不會有這樣的問題發生呢?確實有可能有這樣的問題發生。那有什麼樣特別好的解法呢?目前沒有什麼特別好的解法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:48.500" id=12:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=768">12:48.500</a></div>
+        <div class="t">但我可以告訴你說,實際上你在使用 psycho game 的時候,這樣子的狀況沒有那麼容易出現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.500" id=12:55.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=775">12:55.500</a></div>
+        <div class="t">如果你實際上使用 psycho game,你會發現輸入跟輸出往往真的就會看起來非常像。而且甚至在實作的經驗上,你就算沒有第二個 generator,你不用 psycho game,用一般的 game 來做,這種圖片風格轉換的任務往往也做得起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.500" id=13:14.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=794">13:14.500</a></div>
+        <div class="t">因為在實作上,你會發現 network 其實非常懶惰。它輸入一個圖片,它往往就想輸出,它 by default 就是想輸出很像的東西,它不太想把輸入的圖片做太複雜的轉換。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.500" id=13:27.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=807">13:27.500</a></div>
+        <div class="t">所以什麼眼鏡變成一顆痣這種狀況,它不愛這麼麻煩的東西,有眼鏡就輸出眼鏡,可能對它來說是比較容易的抉擇。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:35.500" id=13:35.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=815">13:35.500</a></div>
+        <div class="t">所以在真的實作上,這個問題沒有很大,輸入跟輸出會是像的。但是在理論上,好像沒有什麼保證說輸入跟輸出的圖片一定要很像,就算你加了 psycho consistency。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:50.500" id=13:50.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=830">13:50.500</a></div>
+        <div class="t">所以這個是實作與理論上你可能會遇到的差異。總之,雖然 psycho game 沒有保證說輸入跟輸出一定很像,但實際上你會發現輸入跟輸出往往非常像,你只是改變了風格而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.500" id=14:03.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=843">14:03.500</a></div>
+        <div class="t">那這個 psycho game 可以是雙向的,什麼意思呢?我們剛才有一個 generator,輸入 y-domain 的圖片,輸出 x-domain 的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:13.500" id=14:13.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=853">14:13.500</a></div>
+        <div class="t">那我們是先把 x-domain 的圖片轉成 y,再把 y 轉回 x。在訓練 psycho game 的時候,你可以同時做另外一個方向的訓練,也就是你把這個橙色的 generator 拿來,給它 y-domain 的圖片,讓它產生 x-domain 的圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:29.500" id=14:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=869">14:29.500</a></div>
+        <div class="t">然後再把藍色的 generator 拿來,把 x-domain 的圖片還原回原來 y-domain 的圖片。那你依然要讓輸入跟輸出越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:39.500" id=14:39.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=879">14:39.500</a></div>
+        <div class="t">那你一樣要訓練一個 discriminator,這個 discriminator 是 x-domain 的 discriminator,它是要看一張圖片像不像是真實人臉的 discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.500" id=14:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=889">14:49.500</a></div>
+        <div class="t">那這個 discriminator 要去看說,這個橙色的 generator 的輸出像不像是真實的人臉。那這個橙色的 generator 它要去騙過這個 dx,這個綠色的左邊這個 discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:03.500" id=15:03.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=903">15:03.500</a></div>
+        <div class="t">再來就是 psycho game,那除了 psycho game 以外,你可能也聽過很多其他的可以做風格轉換的 game,比如說 disco game,比如說 duo game,它們跟 psycho game 有什麼不同呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:19.500" id=15:19.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=919">15:19.500</a></div>
+        <div class="t">就是沒有半毛錢的不同。你可以發現,disco game, duo game 跟 psycho game 其實是一樣的東西,它們是一樣的想法。神奇的事情是,完全不同的團隊在幾乎一樣的時間提出了幾乎一模一樣的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:36.500" id=15:36.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=936">15:36.500</a></div>
+        <div class="t">反正這三篇文章放到 archive 上的時間都是 2017 年的 3 月、2017 年的 4 月跟 2017 年的 3 月,不同的團隊幾乎在一樣的時間有了一樣的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:49.500" id=15:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=949">15:49.500</a></div>
+        <div class="t">那除了 psycho game 以外,還有另外一個更進階的可以做影像風格轉換的版本叫做 star game。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:56.500" id=15:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=956">15:56.500</a></div>
+        <div class="t">psycho game 只能在兩種風格間做轉換,那 star game 它厲害的地方是它可以在多種風格間做轉換。不過這個就不是我們接下來想要細講的重點,我們就停在這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.500" id=16:11.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=971">16:11.500</a></div>
+        <div class="t">真實的人臉轉二次元的人物,實際上能不能做呢?實際上可以做了。右上角這邊放了一個連結,這個應該是一個韓國的團隊,他們做了一個網站,你可以上傳一張圖片,它可以幫你變成二次元的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:29.500" id=16:29.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=989">16:29.500</a></div>
+        <div class="t">它們實際上用的不是 psycho game,它們用的也是 game 的技術,但是是一個進階版的東西,那我們這邊就不細講,我就把論文的連結放在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:41.500" id=16:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1001">16:41.500</a></div>
+        <div class="t">這個網頁做得怎麼樣呢?我就實際測試了一下,這個不知道大家認不認得,這是新元結衣,這個是你老婆,你總該認得吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.500" id=16:50.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1010">16:50.500</a></div>
+        <div class="t">把你老婆轉成二次元的人物長成這個樣子,你老婆二次元長這個樣子,你會發現說機器確實有學到一些二次元人物的特徵,比如說把眼睛變大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.500" id=17:05.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1025">17:05.500</a></div>
+        <div class="t">本來眼睛其實沒有很大,變成二次元人物以後眼睛變這麼大。但有時候也是會失敗啦,比如說這個是美國前總統轉完以後變成這個樣子,兩隻眼睛一眼大一眼小就是了,它不是總是會成功的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:21.500" id=17:21.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1041">17:21.500</a></div>
+        <div class="t">同樣的技術不是只能用在影像上,也可以用在文字上,你也可以做文字風格的轉換,比如說把一句負面的句子轉成正面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:35.500" id=17:35.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1055">17:35.500</a></div>
+        <div class="t">如果你要做一個模型,輸入一個句子輸出一個句子,那這個模型就是要能夠吃一個sequence輸出一個sequence,所以它得是一個sequence to sequence的model,你可能就會用到我們在作業5裡面的transformer的架構來做文字風格轉換的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:53.500" id=17:53.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1073">17:53.500</a></div>
+        <div class="t">我們在作業5做的是翻譯嘛,輸入一個語言輸出另外一個語言嘛,那現在如果要做文字風格轉換就是輸出一個句子輸出另外一個風格的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.500" id=18:03.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1083">18:03.500</a></div>
+        <div class="t">那怎麼做文字風格轉換呢?跟cycle game是一模一樣的,首先你要有訓練資料,蒐集一大堆負面的句子,蒐集一大堆正面的句子,假設你要把負面的句子轉成正面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.500" id=18:18.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1098">18:18.500</a></div>
+        <div class="t">文字風格轉換的問題就是要負面的句子轉成正面的句子,就蒐集一堆負面的句子、蒐集一堆正面的句子。這個其實沒有那麼難蒐集,你可以網路上爬一爬,像我們就是去PTT上爬,然後只要是推文就當作是正面的,虛文就當作是負面的,就有一大堆正面的句子跟負面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.500" id=18:36.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1116">18:36.500</a></div>
+        <div class="t">只是成對的資料沒有而已,你不知道這句推文要怎麼轉成這句虛文,這句虛文要怎麼轉成這句推文,你沒有這種資料,但是一堆推文一堆虛文的資料你總是可以找得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:48.500" id=18:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1128">18:48.500</a></div>
+        <div class="t">接下來,完全套用Cycle Game的方法,完全沒有任何不同,所以這邊就不需要再細講。很快講過,有一個Discriminator,Discriminator要看說,假設我們是要負面的句子轉正面的句子。Discriminator要看說,現在Generator的輸出實際上不像是真正的正面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.500" id=19:07.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1147">19:07.500</a></div>
+        <div class="t">然後呢,我們還要有另外一個Generator,要有兩個Generator,這個Generator要學會把正面的句子轉回原來負面的句子,那你要用Cycle Consistency,負面的句子轉成正面的句子以後,還可以轉回原來負面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:23.500" id=19:23.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1163">19:23.500</a></div>
+        <div class="t">那你可能會問說,這兩個句子,他們兩個是句子啊,怎麼算他們的相似度啊?圖片還比較好理解,圖片就是一個向量啊,兩個向的距離就是他們的相似度啊,那兩個句子要怎麼做呢?這個如果你有興趣,再留給你慢慢研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:42.500" id=19:42.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1182">19:42.500</a></div>
+        <div class="t">那這邊還有另外一個問題就是,這個Sequence-to-Sequence Model輸出是文字,可是剛才不是有講說如果輸出是文字,接到Discriminator會有問題嗎?對,會有問題,這邊你需要用RL映作。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.500" id=19:56.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1196">19:56.500</a></div>
+        <div class="t">那做出來的結果怎麼樣呢?這個是真正的Demo,就是真的拿PTT的推文當正面的句子、虛文當負面的句子。那你就可以給他一個負面的句子,他就幫你轉成正面的句子。做起來像是這個樣子,跟他說,未曾沒睡醒,各種不舒服。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:12.500" id=20:12.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1212">20:12.500</a></div>
+        <div class="t">他就說,生日快樂,睡醒,超級舒服。或你跟他說,我都想去上班了,真夠賤了。他就說,我都想去睡了,真帥了。所以他很厲害啊,他知道上班的相反就是去睡啊,還挺聰明的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:28.500" id=20:28.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1228">20:28.500</a></div>
+        <div class="t">那你跟他說,暈死了吃燒烤,竟然遇到一個變態狂。他就說,哈哈好,吃燒烤,居然遇到帥狂。他就把變態狂變成帥狂,他自己發明了一個詞彙,也不知道在說些什麼。但是因為這個訓練是完全unsupervised的,就只給他正面的句子跟負面的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:45.500" id=20:45.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1245">20:45.500</a></div>
+        <div class="t">所以他有時候會犯非常奇怪的錯誤,比如說我跟他說,我肚子痛得厲害,他就說,我生日快樂厲害。但是你會發現說,機器雖然犯錯,但是他錯了是有固定的規則的。你發現,胃疼跟肚子痛,只要是腹部有毛病,他轉過來都是生日快樂啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:04.000" id=21:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1264">21:04.000</a></div>
+        <div class="t">不知道為什麼,機器覺得說腹部有毛病的相反,就是生日快樂。你可能問說,這個系統有什麼用?就是沒有任何用處,沒半點用處。但是如果你覺得你的老闆說話特別壞的話,你就可以把這個系統裝在你的耳機裡面,把所有的負面句子轉成正面的句子,那你的人生可能就會過得特別快樂一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:24.100" id=21:24.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1284">21:24.100</a></div>
+        <div class="t">那其實,像這種文字風格轉換,還有很多其他的應用,不是只有正面句子轉負面句子而已。舉例來說,假設我有很多長的文章,我有另外一堆摘要。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:38.980" id=21:38.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1298">21:38.980</a></div>
+        <div class="t">那這些摘要不是這些長的文章的摘要,是不同的來源,一堆長的文章、一堆摘要。讓機器學習文字風格的轉換,你可以讓機器學會把長的文章變成簡短的摘要,讓它學會怎麼精簡的寫作,讓它學會把長的文章變成短的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.840" id=21:56.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1316">21:56.840</a></div>
+        <div class="t">甚至還有更狂的,同樣的想法,可以做unsupervised的翻譯。什麼叫unsupervised的翻譯呢?收集一堆英文的句子,收集一堆中文的句子,沒有任何成對的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:12.680" id=22:12.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1332">22:12.680</a></div>
+        <div class="t">這就跟你作業5不一樣。作業5,你有成對的資料嘛,你有知道說這句英文對到這句中文嘛。但是unsupervised的翻譯就是,完全不用任何成對的資料,網路上爬一堆中文、網路上爬一堆英文,用剛才那個psycho game的做法硬做,機器就可以學會把中文翻成英文了,你可以自己看一下文獻,看看說機器做得怎麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:33.540" id=22:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1353">22:33.540</a></div>
+        <div class="t">到目前為止,我們說的兩種風格都還是文字。可不可以兩種風格甚至是不同類型的資料呢?有可能做,這是我們實驗室最早做的,我們試圖去做非督導式的語音辨識,也就是讓機器聽一堆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:52.460" id=22:52.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1372">22:52.460</a></div>
+        <div class="t">語音辨識是什麼呢?語音辨識就是你需要蒐集成對的資料,你需要蒐集一大堆的聲音訊號,然後找空讀生幫你把這些聲音訊號標註,機器才能夠學會某個語言的語音辨識。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:03.960" id=23:03.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1383">23:03.960</a></div>
+        <div class="t">但是要標註資料,索費不支,所以我們想要挑戰非督導式的語音辨識,也就是機器只聽了一堆聲音,這些聲音沒有對應的文字,機器上網爬一堆文字,這些文字沒有對應的聲音,然後用psycho game硬做看看機器有沒有辦法把聲音轉成文字,看看它的正確率可以做到什麼樣的地步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:28.880" id=23:28.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1408">23:28.880</a></div>
+        <div class="t">那至於正確率可以做到什麼樣的地步呢?那我把文獻留在這邊給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:35.080" id=23:35.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=wulqhgnDr7E&t=1415">23:35.080</a></div>
+        <div class="t">好,那以上就是有關 game 的部分。</div>
+    </div>
+    
+</body>
+</html>   

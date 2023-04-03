@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>GAN Lecture 6 (2018): WGAN, EBGAN</h2><a href=https://www.youtube.com/watch?v=3JP-xuBJsyc><img src=https://i.ytimg.com/vi_webp/3JP-xuBJsyc/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:01.000" id=00:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1">00:01.000</a></div>
+        <div class="t">好,那接下來呢,我們要講一些可以improve GAN的training的tips,尤其就是我們要強調的是,要講的就是WGAN,要講的就是WGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:13.000" id=00:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=13">00:13.000</a></div>
+        <div class="t">好,那我們之前已經有講到說呢,假設我們在train GAN的時候,最原始的GAN,他量的是train generated data跟real data之間的JS divergence,但是今天用JS divergence來衡量的時候,其實有一個非常嚴重的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:36.000" id=00:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=36">00:36.000</a></div>
+        <div class="t">這個嚴重的問題它的根源是什麼呢?它的根源是你的generator產生出來的data distribution跟你的real data distribution往往是沒有任何重疊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:48.000" id=00:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=48">00:48.000</a></div>
+        <div class="t">為什麼generate出來的data跟real data往往是沒有重疊的呢?一個理由是data本質上的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:56.000" id=00:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=56">00:56.000</a></div>
+        <div class="t">因為我們通常相信說image是一個high dimensional的高微空間中的低微的manifold,也就是說image它實際上在高微空間中的分布其實是低微的一個manifold,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10.000" id=01:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=70">01:10.000</a></div>
+        <div class="t">就是你在三維空間中把一個二維的平面折到三維的空間中,這樣就是一個低微的manifold。或者說你有一個二維的平面,image在這個二維平面上的分布可能就像是一條曲線一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:28.000" id=01:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=88">01:28.000</a></div>
+        <div class="t">所以你今天在一個高微的空間中的兩個低微的manifold,它們的overlap的地方幾乎是可以忽略的。你有兩條曲線,在一個二維的平面上,你有兩條曲線,它們中間重疊的地方幾乎是可以忽略的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:44.000" id=01:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=104">01:44.000</a></div>
+        <div class="t">所以p data跟p g幾乎是可以忽略的,這是第一個理由。有人可能會說,嗯,我不相信,我覺得image不是高微空間中的低微的manifold。我從另外一個角度來說服你,我們實際上在衡量p g跟p data的divergence的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:02.880" id=02:02.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=122">02:02.880</a></div>
+        <div class="t">我們是先做sample,對不對?我們從兩個data distribution裡面做一些sample,得到兩堆data,再用discriminator去量它們之間的divergence。所以我們現在就算你的p g跟p data這兩個distribution是有overlap的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:19.920" id=02:19.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=139">02:19.920</a></div>
+        <div class="t">但是你是先從這兩個distribution裡面做一些sample,而且sample的時候你其實也不會sample太多,你就從紅色distribution裡面sample一些點,從藍色distribution裡面再sample一些點,你sample了兩堆點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:33.520" id=02:33.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=153">02:33.520</a></div>
+        <div class="t">這兩堆點,它們的overlap幾乎是不會出現的,除非你sample真的很多,不然這兩堆點其實完全就可以視為是兩個沒有任何交集的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:47.120" id=02:47.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=167">02:47.120</a></div>
+        <div class="t">所以就算是本質上實際上p data跟p g有overlap,但你在量divergence的時候你是sample少量的data出來才量divergence,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:58.160" id=02:58.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=178">02:58.160</a></div>
+        <div class="t">那在你sample出來的少量data裡面,p g跟p data看起來根本就是沒有重合的。那怎麼辦?怎麼辦?會遇到什麼樣的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:07.280" id=03:07.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=187">03:07.280</a></div>
+        <div class="t">當p g跟p data沒有重合的時候,你用j's divergence來衡量p g跟p data之間的距離,它們p g跟p data之間的差異,會對你training的時候造成很大的障礙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.480" id=03:20.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=200">03:20.480</a></div>
+        <div class="t">什麼樣的障礙呢?因為j's divergence的這個divergence它的特性是這樣,如果兩個distribution沒有任何的重合,算出來就是log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.240" id=03:30.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=210">03:30.240</a></div>
+        <div class="t">不管這兩個distribution實際上是不是有接近,只要沒有重合,沒有overlap,算出來就是log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:38.080" id=03:38.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=218">03:38.080</a></div>
+        <div class="t">所以今天假設你的p data是紅色這一條線,你有一個g0 generator0號,g0 generate出來的distribution是這樣一條線,你用j's divergence去量,它們的j's divergence是log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:50.400" id=03:50.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=230">03:50.400</a></div>
+        <div class="t">這個case,你有一個g1,你算g1跟p data的divergence,它也是log2。雖然實際上g1其實是比g0好的,因為g1產生出來的data其實相較於g0,它更接近real data distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:07.840" id=04:07.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=247">04:07.840</a></div>
+        <div class="t">所以實際上我們知道g1比g0好,但從j's divergence看起來,g1和g0是一樣差的,除非說現在你的g100跟p data完全重合,這時候j's divergence算出來才會是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:21.760" id=04:21.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=261">04:21.760</a></div>
+        <div class="t">只要沒有重合,它們就算是非常的靠近,你算出來也是log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:27.920" id=04:27.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=267">04:27.920</a></div>
+        <div class="t">所以這樣子會對你的training造成問題,因為我們知道我們實際上training的時候,generator要做的事情就是想要去minimize你的divergence。你用discriminator量出divergence,量出j's divergence或其他divergence以後,generator要做的事情是minimize你的divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:43.920" id=04:43.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=283">04:43.920</a></div>
+        <div class="t">但對generator來說,p g0跟p g1,p g1就是唱嘻哈的,p g0跟p g1,它們其實是一樣差的,所以對generator來說,它根本就不會把p g0update成p g1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:05.840" id=05:05.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=305">05:05.840</a></div>
+        <div class="t">因為對它來說,p g0跟p g1是一樣差的,所以你根本沒有辦法把p g0update到p g1,你也不會最後也沒有辦法update到p g100。你在p g0的地方就卡住了,它沒有辦法update到p g1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.520" id=05:17.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=317">05:17.520</a></div>
+        <div class="t">所以今天如果你從j's divergence來衡量兩個distribution,而這兩個distribution有沒有太多重疊,它們重疊幾乎可以無視的時候,你會發現你train起來是有問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.680" id=05:31.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=331">05:31.680</a></div>
+        <div class="t">那為什麼這兩個distribution沒有重疊,我剛才試著用兩個不同面向來說服你說,data的distribution跟generator的distribution,非常可能就是沒有重疊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.680" id=05:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=341">05:41.680</a></div>
+        <div class="t">假如你說你對j's divergence不熟,你不知道說j's divergence只要沒有重疊算出來就是log2,那我們從另外一個直覺的方向來告訴你說,為什麼今天只要兩個distribution沒有重合,它們量出來的divergence就會一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.560" id=06:00.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=360">06:00.560</a></div>
+        <div class="t">因為你想想看,我們今天實際上在量j's divergence的時候我們做的事情是什麼,我們是說我們有兩群data,把它視為是兩個class,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.760" id=06:09.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=369">06:09.760</a></div>
+        <div class="t">認一個discriminator,認一個binary classifier,你用cross,minimize cross entropy當成一個loss function,你認一個binary classifier去分別出這兩組data之間的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.040" id=06:21.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=381">06:21.040</a></div>
+        <div class="t">但假設你認的是一個binary classifier,其實只要這兩堆data沒有重合,它的loss就是一樣的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.720" id=06:30.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=390">06:30.720</a></div>
+        <div class="t">因為假設你認一個binary classifier,它可以完全地分辨這兩堆data,它可以完全地分辨這兩堆data,只要沒有重合,binary classifier只要它的capacity是無窮大,它就可以分辨這兩堆data,它就可以分辨這兩堆data。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.520" id=06:45.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=405">06:45.520</a></div>
+        <div class="t">在這兩堆data都可以分辨,在這兩堆data都可以分辨的前提之下,你算出來的loss其實會是一樣大或者是一樣小的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:55.360" id=06:55.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=415">06:55.360</a></div>
+        <div class="t">那我們說你在勸binary classifier,所以你勸到最後你得到的那個loss,或是你得到那個objective的value,其實就是你的j's divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:03.760" id=07:03.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=423">07:03.760</a></div>
+        <div class="t">今天如果你的binary classifier不管在這個case還是在這個case,它都可以完全把兩堆data分開,它算出來的objective都是一樣大,它算出來的loss都是一樣小的,那意味著你量出來的divergence就是一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:20.000" id=07:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=440">07:20.000</a></div>
+        <div class="t">總之這邊要告訴大家的事情是說,在原始的game裡面,當你勸的是一個binary classifier的時候,你會發現你是比較難勸的,因為對你的game來說,這個case和這個case其實是一樣差的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:33.920" id=07:33.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=453">07:33.920</a></div>
+        <div class="t">或者是這邊是用另外一個直觀的方法來說明,就假設這個是你的real data的distribution,假設這是你的fake data的distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.200" id=07:45.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=465">07:45.200</a></div>
+        <div class="t">那我們今天要認一個binary classifier,這個binary classifier會給這些藍色的點零分,給這些綠色的點一分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:52.720" id=07:52.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=472">07:52.720</a></div>
+        <div class="t">那我們知道說我們的binary classifier它的output是由sigmoid的,所以它在接近1這邊特別平,它在接近0這邊特別平。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:04.160" id=08:04.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=484">08:04.160</a></div>
+        <div class="t">那你勸好這個classifier以後,本來我們是期待說你勸一個generator,這個generator會帶領這些藍色的點順著這個紅色的線的歸點,這個generator會順著discriminator給我們的歸點去改變它generate distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:22.400" id=08:22.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=502">08:22.400</a></div>
+        <div class="t">所以本來期待是generator會順著紅色的這個線的歸點,把藍色的點往右移。但實際上你會發現說,這些藍色的點是不動的,為什麼?因為在這個藍色的點附近的歸點都是零。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:34.160" id=08:34.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=514">08:34.160</a></div>
+        <div class="t">如果你今天是勸一個binary classifier,它的output有一個sigmoid function的話,它在藍色的這個點附近,它是非常平的,所以你會發現說它的微分幾乎都是零,你根本就勸不動它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:46.000" id=08:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=526">08:46.000</a></div>
+        <div class="t">所以如果你真的實際上去勸一個binary classifier,你直接勸gain,然後勸一個binary classifier的話,你很容易遇到這樣子的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:53.760" id=08:53.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=533">08:53.760</a></div>
+        <div class="t">那過去的一個解法是說,不要把那個binary classifier勸得太好,就不要勸得太好,因為如果你勸得太好的話,它把這些綠色的藍色的點都給它領,這邊就會變得很平,綠色的點都給它移,就會變得很平。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:07.200" id=09:07.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=547">09:07.200</a></div>
+        <div class="t">不要讓它勸得太好,不要update太多次,讓它在這邊仍然保有一些斜率,不要讓它勸得太好。但這樣的問題就是,什麼叫做不要勸得太好,你就會很痛苦,你搞不清楚什麼叫做不要勸得太好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.080" id=09:22.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=562">09:22.080</a></div>
+        <div class="t">你不能夠在勸discriminator的時候,當然太小力不行,沒辦法分別real跟fake的data,但太大力也不行,太大力的話你就會陷入這個狀況,你會陷入這個微分是零,沒有辦法勸的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.440" id=09:35.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=575">09:35.440</a></div>
+        <div class="t">什麼叫做不要太大力、不要太小力,你就會很難控制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.140" id=09:39.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=579">09:39.140</a></div>
+        <div class="t">在早年還沒有我們剛才講的種種tip的時候,gain其實不太容易勸起來,所以你勸的時候通常就是,你一邊updatediscriminator,然後你就一邊吃飯,你就會看它output的結果,每十個iteration就output一次結果,看看它好不好,如果發現結果不好的話,就重做這樣子,就一邊吃飯一邊看那個結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.920" id=09:59.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=599">09:59.920</a></div>
+        <div class="t">所以後來就有一個方法叫做least square gain,叫做LS gain,LS gain做的事情就是把sigmoid換成linear。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:15.700" id=10:15.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=615">10:15.700</a></div>
+        <div class="t">這樣子是怎麼回事呢?這樣子你就不會有這種在某些地方特別平坦的情形,因為你現在的output是linear。我們本來是一個classification的problem,現在把output換成linear了以後,它就變成一個regression的problem。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.540" id=10:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=631">10:31.540</a></div>
+        <div class="t">這個regression的problem是怎樣呢?這個regression的problem是說,如果是positive的example,我們就讓它的值越接近1越好,而如果是negative的example,我們就讓它的值越接近0越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.900" id=10:45.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=645">10:45.900</a></div>
+        <div class="t">這其實跟原來binary classifier是非常像的,只是我們把sigmoid拔掉,把它變成linear。這個叫做least square gain。我們之前有講說,在作業裡面,least square gain、W gain跟W gain、GP,你要選一個來implement,其中一個你可以implement的tip就是least square gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.400" id=11:05.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=665">11:05.400</a></div>
+        <div class="t">其實如果大家做出來這些gain的tip做出來沒有比較好,也不用太擔心,你不一定要做出比較好的來跟你原來的gain比較一下,其實就可以了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.560" id=11:17.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=677">11:17.560</a></div>
+        <div class="t">這個是作業裡面其中一個你可以做的東西,叫做least square gain。今天很多人都會用的一個技術叫做W gain,advanced sustained distance gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:28.240" id=11:28.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=688">11:28.240</a></div>
+        <div class="t">那這邊有一個冷知識,就是這個字看起來好像應該念什麼vast sustain,但其實它是念vast sustained,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:37.520" id=11:37.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=697">11:37.520</a></div>
+        <div class="t">那vast sustained是什麼呢?在vast sustained gain裡面,我們做的事情是,我們換了另外一種evaluation的measure來衡量p data跟p g。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.200" id=11:48.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=708">11:48.200</a></div>
+        <div class="t">我們之前說在原來的gain裡面,要衡量p data跟p g的差異,我們用的是JS divergence。在我們講F gain的時候,我們說你不一定要JS divergence,你其實可以用任何其他的F divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.680" id=12:00.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=720">12:00.680</a></div>
+        <div class="t">那在W gain裡面用的是Earth movers的distance,或者又叫做vast sustained distance,來衡量兩個distribution的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.880" id=12:09.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=729">12:09.880</a></div>
+        <div class="t">那它其實不是F divergence的一種,所以在F divergence的table裡面,在F gain的table裡面其實是沒有W gain的,所以這邊是另外不一樣的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.120" id=12:20.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=740">12:20.120</a></div>
+        <div class="t">但是同樣的地方是,就是你換了一個divergence來衡量你的generated data和real data之間的差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.440" id=12:28.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=748">12:28.440</a></div>
+        <div class="t">那我們先來介紹一下,什麼是Earth movers的distance。那Earth movers的distance的意思是這樣,假設你有兩堆data,這兩個distribution叫做p跟g。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:40.160" id=12:40.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=760">12:40.160</a></div>
+        <div class="t">那Earth movers distance它的意思是說,你就想像你是在開一台推土機,那把你的土從p的地方鏟到q的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.480" id=12:50.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=770">12:50.480</a></div>
+        <div class="t">就p的地方是一堆土,q的地方是你準備要把土移過去的位置,然後你看你那個推土機把p的土鏟到q那邊所走的平均的距離,就叫做Earth movers distance,就叫做vast sustained distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:10.000" id=13:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=790">13:10.000</a></div>
+        <div class="t">好,那這個vast sustained distance怎麼定義呢?如果是在這個非常簡單的case,我們假設說p的distribution就集中在一維空間中的某一個點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:20.160" id=13:20.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=800">13:20.160</a></div>
+        <div class="t">q的distribution也集中在一維空間中的某一個點。如果你要開一台推土機把p的土挪到q的地方去,那假設p跟q它們之間的距離是d,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.080" id=13:31.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=811">13:31.080</a></div>
+        <div class="t">那你的vast sustained distance,p這個distribution跟q這個distribution的vast sustained distance就等於d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:40.080" id=13:40.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=820">13:40.080</a></div>
+        <div class="t">但實際上你可能會遇到一個更複雜的狀況,假設你的p的distribution是長這個樣子,假設你的q的distribution是長這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:50.160" id=13:50.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=830">13:50.160</a></div>
+        <div class="t">那如果你今天要衡量這兩個distribution之間的Earth movers distance,假設你要衡量它們之間的vast sustained distance怎麼辦呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:58.680" id=13:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=838">13:58.680</a></div>
+        <div class="t">為什麼會造成問題呢?因為你會發現說,當你要把p的土鏟到q的位置的時候,其實有很多組不同的鏟法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.920" id=14:07.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=847">14:07.920</a></div>
+        <div class="t">舉例來說,你可以說把這邊的土挪到這邊來,把這邊的土挪到這邊來,想辦法把p變成q。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:14.720" id=14:14.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=854">14:14.720</a></div>
+        <div class="t">但是你也可以說我捨近求遠,我故意把這個土鏟到這邊來,我把這個土鏟到這邊來,一樣也可以變成q。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:22.040" id=14:22.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=862">14:22.040</a></div>
+        <div class="t">但是你的推土機走的平均距離是不一樣的,這樣就會變成說同樣的兩個distribution推土機走的距離不一樣,你不知道哪一個才是vast sustained distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:32.880" id=14:32.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=872">14:32.880</a></div>
+        <div class="t">我們說vast sustained distance就是,你把某一堆土鏟到你的目標的位置去,平均所走的距離就是vast sustained distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:40.920" id=14:40.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=880">14:40.920</a></div>
+        <div class="t">那現在你的問題就是,鏟土的方法有很多種,到底哪一個才是vast sustained distance呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:47.800" id=14:47.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=887">14:47.800</a></div>
+        <div class="t">所以今天vast sustained distance實際上的定義是說,窮舉所有可能的鏟土的方法,每一種鏟土的方法我們就叫它一個moving plan,叫它一個鏟土的計劃。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:00.320" id=15:00.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=900">15:00.320</a></div>
+        <div class="t">窮舉出所有鏟土的計劃,有的可能是比較有效的,有的可能是捨近求遠的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:06.760" id=15:06.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=906">15:06.760</a></div>
+        <div class="t">窮舉出所有鏟土的計劃,每一個鏟土的計劃推土機平均要走的距離通通都算出來,看哪一個距離最小,就是vast sustained distance,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:17.040" id=15:17.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=917">15:17.040</a></div>
+        <div class="t">那今天在這個例子裡面,其實最好的鏟土的方法是像這個圖上所示的這個樣子,那我們把同樣的一堆土就用同樣的顏色來表示它,所以你把這堆土挪到這個地方,你把這堆土挪到這個地方,你把這堆土挪到這個地方,粉紅色這邊的土也挪一點到這個地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.320" id=15:38.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=938">15:38.320</a></div>
+        <div class="t">你用這一個moving plan來挪土的時候,你的推土機平均走的距離是最短的,這個平均走的距離就是vast sustained distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:50.080" id=15:50.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=950">15:50.080</a></div>
+        <div class="t">那這邊是一個更正式的定義,如果你要把這個Q的distribution挪到,比如說你要把P挪到Q,但其實意思是一樣的,它是對稱的,所以P挪到Q,Q挪到P,算出來的距離是一樣的,不過我們剛才都是講P挪到Q的樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:06.880" id=16:06.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=966">16:06.880</a></div>
+        <div class="t">假設你要把這個P的土挪到Q這邊,那首先你要定一個moving plan,那什麼是一個moving plan呢?moving plan其實你要表示它的話,你可以把它畫作是一個matrix,把它畫作是一個矩陣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:23.520" id=16:23.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=983">16:23.520</a></div>
+        <div class="t">那今天這個矩陣就是某一個moving plan,我們把它叫作γ。那在這個矩陣上的每一個element就代表說,我們要從縱坐標的這個位置挪多少土到橫坐標的這個位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.560" id=16:40.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1000">16:40.560</a></div>
+        <div class="t">今天的每一個element的值就代表說,我們要從這個地方挪多少土到這個位置上面去。那這邊的值,月亮就代表說,我們挪的土越多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.360" id=16:53.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1013">16:53.360</a></div>
+        <div class="t">所以說你會發現說,我們要從這邊挪很多的土到這邊,我們要從這裡挪很多的土到這邊,我們要從這裡挪很多的土到這邊,如果是這一塊土,我們要挪一些到這裡,我們要挪一些到這裡,我想大家應該會了解我的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:11.080" id=17:11.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1031">17:11.080</a></div>
+        <div class="t">那因為這是一個moving plan,所以實際上你會發現在它的這個column,你把column這些值合起來,就會變成這個bar的高度,如果你把這個row的這些值合起來,就會變成這個bar的高度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.840" id=17:25.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1045">17:25.840</a></div>
+        <div class="t">因為這邊所有的土都會挪到這邊,這邊所有的土都會分配到這個位置,被分配到這個位置,所以這邊合起來就是這個bar的高度,這邊合起來就是這個bar的高度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.520" id=17:38.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1058">17:38.520</a></div>
+        <div class="t">好,接下來你要做的事情是,假設給你一個moving plan,這個moving plan叫做gamma,你會不會算,就你這個moving plan挪土的時候要走多少距離呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.920" id=17:48.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1068">17:48.920</a></div>
+        <div class="t">那很簡單嘛,你就算說,假設這邊的每一個縱軸的值叫做sp,橫軸的每一個值叫做xq,那你先算說從sp的這個位置,你就窮取所有的sp跟xq的組合。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:05.720" id=18:05.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1085">18:05.720</a></div>
+        <div class="t">然後再算說,從sp你要挪多少的土到xq去,那這個土要挪多少是受這個gamma決定的,是這個moving plan決定的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.480" id=18:16.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1096">18:16.480</a></div>
+        <div class="t">然後再算sp跟xq之間的距離,再summation over所有sp跟xq的pair,這個就是moving plan,就是給一個moving plangamma的時候,你算出來的挪土的average distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:30.040" id=18:30.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1110">18:30.040</a></div>
+        <div class="t">那接下來呢,這個vector-strand distance或Earth-mover distance它做的事情就是,窮取所有的gamma,窮取所有可能的gamma,看哪一個gamma它算出來的距離最小,那個最小的距離就是vector-strand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.960" id=18:43.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1123">18:43.960</a></div>
+        <div class="t">所以你會發現說,這個vector-strand distance它是一個很神奇的distance,為什麼?今天一般的distance就是直接套一個公式運算出來你就得到結果,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.440" id=18:55.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1135">18:55.440</a></div>
+        <div class="t">但vector-strand distance你要算它的話,你要解一個optimization problem,就很麻煩,因為你要窮取所有的gamma,看哪一個gamma可以算出來的距離最小,那個才是vector-strand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.840" id=19:06.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1146">19:06.840</a></div>
+        <div class="t">所以你先給兩個distribution,要算vector-strand distance是很麻煩的,因為你要解一個optimization problem才算得出vector-strand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.520" id=19:17.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1157">19:17.520</a></div>
+        <div class="t">好,那我等一下再講說,怎麼用discriminator來衡量vector-strand distance,那我們現在先來看說,如果用vector-strand distance來衡量兩個distribution的距離有什麼樣的好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:30.720" id=19:30.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1170">19:30.720</a></div>
+        <div class="t">那我們之前有看到說,假設你今天是用JS divergence,這個G0跟data它的距離,G50跟data之間的距離,對JS divergence來說根本就是一樣的,除非你今天可以把G0一步跳到G100,然後讓G100正好跟Pdata重疊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.920" id=19:50.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1190">19:50.920</a></div>
+        <div class="t">不然machine在update你的generator參數的時候,它根本沒有辦法從G0update到G50,因為在這個case,他們其實是,JS divergence其實是一樣大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.460" id=20:02.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1202">20:02.460</a></div>
+        <div class="t">好,那這個其實就讓我想到一個演化上的例子,我們知道說人眼是非常複雜的,它是一個非常複雜的器官。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:11.780" id=20:11.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1211">20:11.780</a></div>
+        <div class="t">有人就會想說,憑藉著天擇的力量不斷地突變,到底怎麼可能讓生物突然產生人眼呢?也許這個天擇的假說並不是正確的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:24.760" id=20:24.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1224">20:24.760</a></div>
+        <div class="t">但是實際上,今天生物是怎麼從完全沒有眼睛變到有眼睛的呢?它並不是一步就產生眼睛,而是透過著不斷地微小的突變的累積才產生眼睛這麼複雜的器官。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:38.020" id=20:38.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1238">20:38.020</a></div>
+        <div class="t">比如說一開始,生物只是在皮膚上面產生了一些感光的細胞,那透過突變,某一些細胞具有感光的能力,也許是做得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:47.420" id=20:47.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1247">20:47.420</a></div>
+        <div class="t">接下來,感光的細胞所在的那個皮膚就凹陷下去。凹陷的好處是說,光線從不同的方向進來,不同的感光細胞會受到刺激,那生物就可以判斷光線進來的方向。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:03.640" id=21:03.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1263">21:03.640</a></div>
+        <div class="t">接下來,因為有凹洞的關係,所以就會容易堆灰塵,所以在裡面就放了一些液體,然後免得灰塵跑進去,然後再用一個蓋子把它蓋起來,最後就變成眼睛這個器官。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.340" id=21:16.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1276">21:16.340</a></div>
+        <div class="t">但是,你要直接從皮膚就突然突變變異產生出眼睛是不可能的,這就像人沒有辦法一下子就長出翅膀變成一個鳥人一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:25.820" id=21:25.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1285">21:25.820</a></div>
+        <div class="t">天擇只能夠做小小的變異,而每一個變異都必須是有好處的,才能夠把這些變異累積起來,最後才能夠產生巨大的變異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:36.660" id=21:36.660>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1296">21:36.660</a></div>
+        <div class="t">所以從產生感光細胞到皮膚凹陷下去,到產生體液把蓋子蓋起來等等,每一個小小步驟對生物的生存來說都是有利的,所以演化才會由左往右走,人類、生物才會產生眼睛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:51.520" id=21:51.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1311">21:51.520</a></div>
+        <div class="t">如果要產生翅膀可能就比較困難,因為假設你一開始產生很小的翅膀,沒有辦法飛的話,那就沒有占到什麼優勢,所以人就沒有辦法一下子突變產生翅膀變成一個鳥人。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:01.180" id=22:01.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1321">22:01.180</a></div>
+        <div class="t">那對這個產生機器來說也是一樣的,它如果說G50並沒有比G0好,你就沒有辦法從G0變到G50,然後慢慢累積變化變到G100。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:14.060" id=22:14.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1334">22:14.060</a></div>
+        <div class="t">但是如果你用Fastest Step Distance就不一樣了,因為對Fastest Step Distance來說,這兩個distribution之間的差異是D0,這兩個distribution之間的差異是D50。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:24.780" id=22:24.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1344">22:24.780</a></div>
+        <div class="t">D50是比D0還要小的,所以從Fastest Step Distance來說,這個distribution是比這個distribution好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:31.620" id=22:31.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1351">22:31.620</a></div>
+        <div class="t">所以對Generator來說,它就可以update參數,把distribution從這個地方挪到這個地方,直到最後你Generator的output可以和Data真正的重合。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.220" id=22:46.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1366">22:46.220</a></div>
+        <div class="t">好,那接下來要問的問題就是,我們現在要量Pg和Pdata之間的差異,我們要量Pg和Pdata之間的Fastest Step Distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:56.320" id=22:56.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1376">22:56.320</a></div>
+        <div class="t">我們要怎麼去改Discriminator,讓它可以衡量Pg和Pdata的Fastest Step Distance呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:02.500" id=23:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1382">23:02.500</a></div>
+        <div class="t">這邊就是直接告訴大家結果,這個推論的過程其實是非常複雜的,這個證明的過程其實很複雜,所以我們就直接告訴大家結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:10.820" id=23:10.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1390">23:10.820</a></div>
+        <div class="t">怎麼樣設計一個Discriminator,它train完以後,它的objective function的值,就是Fastest Step Distance呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.980" id=23:17.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1397">23:17.980</a></div>
+        <div class="t">就像下面這個樣子,式子就像下面這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:20.780" id=23:20.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1400">23:20.780</a></div>
+        <div class="t">這個式子其實看起來很單純,其實也是很容易理解的,這個意思是什麼?意思是說,如果今天X是從Pdata裡面sample出來的,讓它的Discriminator的output越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:32.580" id=23:32.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1412">23:32.580</a></div>
+        <div class="t">如果X是從Pg裡面sample出來的,讓它的Discriminator的output越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:38.560" id=23:38.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1418">23:38.560</a></div>
+        <div class="t">但是你不能夠光只讓從Data裡面sample出來的X和從Pg裡面sample出來的X,你不能夠只讓這些從Pdata裡面sample出來的X,它的值越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:49.500" id=23:49.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1429">23:49.500</a></div>
+        <div class="t">讓Pg裡面sample出來的X,它的值越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:52.240" id=23:52.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1432">23:52.240</a></div>
+        <div class="t">你還要有一個constraint,這個constraint是這樣,Discriminator必須要是一個one distance function,那可能大家不見得知道distance function是什麼,等一下會給大家定義。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:01.460" id=24:01.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1441">24:01.460</a></div>
+        <div class="t">你先記得說,所謂的one distance function的意思是說,這個Discriminator它是很平滑的,它是很smooth的,這個就叫做one distance function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:11.240" id=24:11.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1451">24:11.240</a></div>
+        <div class="t">為什麼這個one distance function是必要的呢?當然你可以說,根據證明,就是要這麼做,算出來才是best of same distance,結束這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:19.940" id=24:19.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1459">24:19.940</a></div>
+        <div class="t">但是你也可以非常直觀的了解這件事,怎麼樣非常直觀的了解這件事呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:25.100" id=24:25.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1465">24:25.100</a></div>
+        <div class="t">你的直觀的了解方法可以是這樣,這個是generator產生出來的sample,這個是從real data裡面sample出來的sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:34.340" id=24:34.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1474">24:34.340</a></div>
+        <div class="t">如果我們不考慮這個constraint,我們只說要讓Discriminator的分數越大越好,就是這些data帶到Discriminator裡面分數要越大越好,這些data帶到Discriminator裡面分數要越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:47.040" id=24:47.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1487">24:47.040</a></div>
+        <div class="t">那你train的時候,Discriminator就會知道說,這邊的分數要讓它一直拉高一直拉高,這邊的分數要讓它一直壓低一直壓低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.520" id=24:54.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1494">24:54.520</a></div>
+        <div class="t">如果你的這兩堆data是沒有overlap的,我們講過說real data跟generated data很有可能是沒有overlap的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.340" id=25:01.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1501">25:01.340</a></div>
+        <div class="t">如果這兩堆data是沒有overlap的,今天如果只是Discriminator一味的要讓這些data值越來越高,這些data值越來越多越小,它就崩潰了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:11.380" id=25:11.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1511">25:11.380</a></div>
+        <div class="t">因為這個training永遠不會收斂,它這個值可以越來越大直到無限大,這個值可以越來越小直到無限小,你的training永遠不會停止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:20.020" id=25:20.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1520">25:20.020</a></div>
+        <div class="t">所以怎麼辦?你必須要有一個額外的限制,這個額外的限制是說,你今天的Discriminator必須要是夠平滑的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:28.840" id=25:28.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1528">25:28.840</a></div>
+        <div class="t">因為如果你今天的Discriminator沒有給任何限制,那它可能real data這邊就跑到無窮大,這邊就會跑到無窮小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:37.560" id=25:37.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1537">25:37.560</a></div>
+        <div class="t">但是假設這邊跑到無窮大,這邊跑到無窮小,這段距離之間的差距就會變得很大,它們就會拉得很開,那你的這個Discriminator就不平滑了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:48.200" id=25:48.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1548">25:48.200</a></div>
+        <div class="t">那麼說,我們給一個限制是Discriminator必須是平滑的,這樣就可以強迫所有人在認這個Discriminator的時候,不會認到說這邊一直上升,這邊一直下降,永遠不會停下來,它最終還是會停下來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:06.800" id=26:06.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1566">26:06.800</a></div>
+        <div class="t">那實際上,什麼是One Listed Function呢?一個Listed Function它的定義是這個樣子的,你有一個Function叫做f,如果它是一個Listed Function的話,它滿足下面這個條件。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:19.040" id=26:19.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1579">26:19.040</a></div>
+        <div class="t">你把x1代到f裡面,你把x2代到f裡面,然後把f of x1減掉f of x2,這個差距必須小於等於k倍的x1跟x2之間的距離,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:35.200" id=26:35.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1595">26:35.200</a></div>
+        <div class="t">所以這個Listed Function它的意思到底是什麼?它的意思是說,這邊是output的change,這邊是input的change,就是你的input從x1改到x2,然後你的output會從f of x1變到f of x2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:52.280" id=26:52.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1612">26:52.280</a></div>
+        <div class="t">接下來,這個input的差距乘上k倍,要大於等於output的差距,意思就是說,當你input有一個變化的時候,output的變化不能太大,才能夠讓input的差距乘上k倍,大於等於output的差距。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:07.960" id=27:07.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1627">27:07.960</a></div>
+        <div class="t">也就是說,output的差距不能夠太大,不能夠比input的差距大很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:14.760" id=27:14.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1634">27:14.760</a></div>
+        <div class="t">那所謂的One Listed Function的意思就是說,把k設為0,就是One Listed Function。所以當你把k設為1的時候,是One Listed Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:25.200" id=27:25.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1645">27:25.200</a></div>
+        <div class="t">當把k設為1的時候,意味著說你output的變化總是比input的變化要小的,那意味著說這個function它是一個smooth的function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:35.240" id=27:35.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1655">27:35.240</a></div>
+        <div class="t">舉例來說,現在假設有兩個function,一個是綠色的function,一個是藍色的function。那像藍色的function,它變化這麼劇烈,它變化這麼劇烈,在某些地方它的output的變化可能會大過input的變化,那就不是One Listed Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:51.000" id=27:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1671">27:51.000</a></div>
+        <div class="t">那像藍色這個function,它很平滑,它的變化很小,它在每一個地方,output的變化都小於input的變化,那它就是一個One Listed Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:00.600" id=28:00.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1680">28:00.600</a></div>
+        <div class="t">那如果你這個你記不起來的話也沒有關係,反正你就記得說,一個function只要很smooth,它就是一個One Listed Function。它只要很平滑,它就是一個One Listed Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:11.240" id=28:11.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1691">28:11.240</a></div>
+        <div class="t">好,接下來的問題是,怎麼解這個optimization的problem?如果我們把這個constraint,這個gain discriminator的constraint拿掉,你就用gradient ascent去maximize它就好了,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:24.440" id=28:24.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1704">28:24.440</a></div>
+        <div class="t">完全沒有任何的問題,對不對?你用gradient ascent,你就可以maximize,打括號裡面的這個式子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:31.320" id=28:31.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1711">28:31.320</a></div>
+        <div class="t">但現在問題是,你的discriminator是有constraint的,我們一般在做gradient descent的時候,我們並不會給我們的參數constraint。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:37.960" id=28:37.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1717">28:37.960</a></div>
+        <div class="t">你會發現說,如果你要給參數constraint的話,在learning的時候還蠻困難的,你會不太清楚應該要怎麼做,你會不太清楚應該要怎麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:47.720" id=28:47.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1727">28:47.720</a></div>
+        <div class="t">所以,今天你要給discriminator的constraint是蠻困難的,那實際上到底是怎麼做的呢?在最原始的WGAN裡面,它的做法就是weight clipping。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:58.280" id=28:58.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1738">28:58.280</a></div>
+        <div class="t">那weight clipping的想法很簡單,它的想法是這樣子的,它說,我們今天一樣用原來的gradient descent去,或是用gradient ascent,因為現在要maximize,你要objective function,所以其實是gradient ascent。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:09.320" id=29:09.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1749">29:09.320</a></div>
+        <div class="t">用gradient ascent去train你的model,去train你的discriminator,但是train完之後,如果你發現你的weight大過某一個你事先設好的常數C,就把它設為C,如果小於-C,就把它設為-C,結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:24.640" id=29:24.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1764">29:24.640</a></div>
+        <div class="t">它希望說透過這個weight clipping的技術,可以讓你認出來discriminator它是比較平滑的,因為你限制住它的weight的大小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:33.000" id=29:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1773">29:33.000</a></div>
+        <div class="t">所以可以讓這個discriminator它在output的時候沒有辦法產生非常劇烈的變化,這個discriminator可以是比較平滑的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:40.000" id=29:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1780">29:40.000</a></div>
+        <div class="t">但是你可能會問說,加了這個限制就可以讓它變成一個one-disc function嗎?答案就是不行,就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:46.880" id=29:46.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1786">29:46.880</a></div>
+        <div class="t">那就是因為一開始也不知道怎麼解這個問題,所以就胡亂想一招這樣子,先冷凍再說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:53.040" id=29:53.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1793">29:53.040</a></div>
+        <div class="t">那我覺得有時候做研究就是這樣子嘛,就是你不需要一次解決所有的問題啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:57.640" id=29:57.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1797">29:57.640</a></div>
+        <div class="t">在WK的第一篇原始paper裡面,他就propose這個想法,他就propose說,如果disc是one-disc function,那我們就可以有兩倍sustain distance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:06.920" id=30:06.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1806">30:06.920</a></div>
+        <div class="t">但他不知道要怎麼真的optimize這個problem,沒關係,就先胡亂提一個,先擋著先,先propose,先把paper publish出去,然後再慢慢想這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:17.000" id=30:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1817">30:17.000</a></div>
+        <div class="t">所以先做一個方法叫做weight clipping,那weight clipping就非常簡單,我們說在作業裡面你可以選擇實作weight clipping,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.760" id=30:24.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1824">30:24.760</a></div>
+        <div class="t">那很容易這個就是秒做,對不對,秒做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:28.280" id=30:28.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1828">30:28.280</a></div>
+        <div class="t">那當然它的performance不見得是最好的,因為你用這個方法,它並沒有真的讓d限制在one-disc function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:35.400" id=30:35.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1835">30:35.400</a></div>
+        <div class="t">它就只是希望透過這個限制可以讓你的d是比較smooth的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:42.040" id=30:42.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1842">30:42.040</a></div>
+        <div class="t">那這個是WK最原始的版本,它用的是weight clipping,後來就有一個新的招數,它不是用weight clipping,它是用gradient penalty,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:50.560" id=30:50.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1850">30:50.560</a></div>
+        <div class="t">那這個技術叫做improved WGAN,或者是又叫做WGAN-GP。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.520" id=30:59.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1859">30:59.520</a></div>
+        <div class="t">好,那WGAN-GP這邊想要講的是什麼呢?它是說它的觀察是這個樣子,如果今天一個function它是one-disc function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.200" id=31:09.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1869">31:09.200</a></div>
+        <div class="t">if and only if,保證它在每一個位置的gradient的null都必須要小於等於1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:19.280" id=31:19.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1879">31:19.280</a></div>
+        <div class="t">這兩件事情其實是等價的,一個discriminator它是one-disc function,等價於如果你對所有可能的input x都拿去對discriminator求它的gradient的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:31.440" id=31:31.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1891">31:31.440</a></div>
+        <div class="t">這個gradient的null總是會小於等於1的,這兩件事情是等價的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:37.360" id=31:37.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1897">31:37.360</a></div>
+        <div class="t">所以今天假設你不知道怎麼弄它,那你能不能弄這一項呢?你不知道怎麼限制你的discriminator是one-disc function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:44.560" id=31:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1904">31:44.560</a></div>
+        <div class="t">你能不能限制你的discriminator對所有的input的x去算它的gradient的時候,它的null都要小於等於1呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:53.520" id=31:53.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1913">31:53.520</a></div>
+        <div class="t">這件事顯然是有辦法approximate的,怎麼approximate呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:58.640" id=31:58.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1918">31:58.640</a></div>
+        <div class="t">這個approximate的方法就是說在原來的這項後面,再加一個canalize的項,這項的作用有點像是regularization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:09.200" id=32:09.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1929">32:09.200</a></div>
+        <div class="t">這項的作用是說它對所有的x做積分,然後取一個max0,然後gradient的null-1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:18.720" id=32:18.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1938">32:18.720</a></div>
+        <div class="t">也就是說如果這個gradient的null大於1的話,這邊就有值,就有penalty,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:26.880" id=32:26.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1946">32:26.880</a></div>
+        <div class="t">如果這個gradient的null小於1的話,那就沒有penalty,如果gradient的null大於1,這一項就會有值,就會有penalty。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:35.760" id=32:35.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1955">32:35.760</a></div>
+        <div class="t">所以今天在train這個discriminator的時候,今天在training的時候會盡量希望這個discriminator,它的gradient的null小於等於1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:44.080" id=32:44.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1964">32:44.080</a></div>
+        <div class="t">但實際上這麼做會有一個問題,因為你不可能對所有的x都做積分,我們說一個function是this is function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:50.960" id=32:50.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1970">32:50.960</a></div>
+        <div class="t">它的if and only if的條件是對所有的x,這件事情都要滿足,但是你無法真的去check說所有的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:01.120" id=33:01.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1981">33:01.120</a></div>
+        <div class="t">不管你是在train還是在check的時候,你都無法做到說sample所有的x,讓它們通通滿足這個條件,這件事情你根本做不到,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:11.360" id=33:11.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=1991">33:11.360</a></div>
+        <div class="t">x代表的是所有可能的image,那個space這麼大,你根本無法sample所有的x,保證這件事情成立,所以怎麼辦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:20.320" id=33:20.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2000">33:20.320</a></div>
+        <div class="t">這邊做的另外一個approximation是說,假設x是從某一個事先定好的distribution,這個事先定好的distribution叫做p-penalty,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:31.440" id=33:31.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2011">33:31.440</a></div>
+        <div class="t">這個x是從p-penalty那個distribution sample出來的,我們只保證說在p-penalty那個distribution裡面的x,它的gradient的null小於等於1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:42.000" id=33:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2022">33:42.000</a></div>
+        <div class="t">其他部分就管不了那麼多,就無視它,管不了那麼多,你不可能讓所有的x,它的gradientnull都小於1,我們現在只能確保說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:50.880" id=33:50.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2030">33:50.880</a></div>
+        <div class="t">我們從distribution叫p-penalty裡面去sample說x,在p-penalty的distribution被涵蓋的範圍內,我們讓x的gradientnull小於1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:01.200" id=34:01.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2041">34:01.200</a></div>
+        <div class="t">那這個p-penalty長什麼樣子呢?在WGAN-GP裡面,它p-penalty是長這個樣子的,它說從p-data裡面sample一個點出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:12.400" id=34:12.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2052">34:12.400</a></div>
+        <div class="t">從p-g裡面sample一個點出來,把這兩個點相連,然後在這兩個點中間做一個random的sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:21.920" id=34:21.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2061">34:21.920</a></div>
+        <div class="t">就在這兩個點所連成的直線間做一個random的sample,sample出來的x就當作是從p-penaltysample出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:29.840" id=34:29.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2069">34:29.840</a></div>
+        <div class="t">這個紅色的點可以是p-data裡面sample出來的任何點,這個黃色的點可以是p-g裡面sample出來的任何點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:36.720" id=34:36.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2076">34:36.720</a></div>
+        <div class="t">從這兩個點連起來,從這個連線中間去sample,就是p-penalty,所以p-penalty的分布大概就是在p-g和p-data中間,也就是藍色的這個範圍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.280" id=34:49.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2089">34:49.280</a></div>
+        <div class="t">那你可能會問說,為什麼會是這樣子呢?為什麼我們本來應該對整個space,整個image的space,所有的x,通通去給它p-penalty,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:01.040" id=35:01.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2101">35:01.040</a></div>
+        <div class="t">但為什麼只在藍色的部分給p-penalty是可以的呢?在原始的improved WGAN-Penalty它是這樣寫的,它說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:09.120" id=35:09.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2109">35:09.120</a></div>
+        <div class="t">given that enforcing this constraint everywhere is intractable,剛才講過很多次了,給每個地方都給它歸類p-penalty是不可能的,它說, enforcing that only along this straight line,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:22.800" id=35:22.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2122">35:22.800</a></div>
+        <div class="t">seems sufficient and experimentally result in good performance,就是說實驗做起來這樣就是好的這樣子,實驗做起來這樣看起來是ok的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:32.160" id=35:32.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2132">35:32.160</a></div>
+        <div class="t">但是你從直覺上也可以了解說,這麼做是make sense的。怎麼說這麼做是make sense的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:39.600" id=35:39.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2139">35:39.600</a></div>
+        <div class="t">因為我們今天在train game的時候,我們不是要update那個generator,然後讓generator順著discriminator給我們的gradient的方向,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:49.600" id=35:49.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2149">35:49.600</a></div>
+        <div class="t">挪到p-data的位置去嗎?也就是說,我們要讓generator的這些點慢慢往左移,在這個例子裡面,generator的點要慢慢往左移,挪到p-data的位置去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:00.320" id=36:00.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2160">36:00.320</a></div>
+        <div class="t">所以generator在挪動它的位置的時候,在update參數的時候,它看的就是discriminator的gradient。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:08.160" id=36:08.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2168">36:08.160</a></div>
+        <div class="t">所以應該只有在generator output distribution跟real data的distribution中間的連線這個區域,才會真的影響你最後的結果,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:23.200" id=36:23.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2183">36:23.200</a></div>
+        <div class="t">因為今天這個p-g是看著這個地方的gradient,這個地方的斜率,去挪動它的參數,去update它的參數的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:32.400" id=36:32.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2192">36:32.400</a></div>
+        <div class="t">所以只有p-g和p-data之間的這個區域,你需要去考慮你的discriminator的shape長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:39.680" id=36:39.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2199">36:39.680</a></div>
+        <div class="t">其他這些地方,反正你的generator也走不到,那你就不需要去考慮discriminator的shape長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.280" id=36:47.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2207">36:47.280</a></div>
+        <div class="t">所以我覺得在p-g和p-data中間做sample,也是有道理的,也算是make sense的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:55.360" id=36:55.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2215">36:55.360</a></div>
+        <div class="t">接下來要再做另外一個proximation,實際上在WMGP裡面,它真的做的事情是這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:03.600" id=37:03.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2223">37:03.600</a></div>
+        <div class="t">它說本來我們是希望這個gradient的null,如果大過1,給它penalty,小於1,不用penalty。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.560" id=37:12.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2232">37:12.560</a></div>
+        <div class="t">因為我們就是要gradient null小於1嘛,沒有說小於1會怎樣,小於1是不用懲罰的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:17.360" id=37:17.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2237">37:17.360</a></div>
+        <div class="t">但實際上在WMGP的implementation裡面,它說我們實際上training的時候,我們是希望gradient越接近1越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:25.040" id=37:25.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2245">37:25.040</a></div>
+        <div class="t">本來理論上我們只需要gradient小於1,大過1給它懲罰,小於1沒有關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:29.760" id=37:29.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2249">37:29.760</a></div>
+        <div class="t">但實作的時候說gradient的null必須離1越接近越好,gradient null大過1有懲罰,小於1也有懲罰。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:36.880" id=37:36.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2256">37:36.880</a></div>
+        <div class="t">為什麼會這樣呢?在paper裡面說,simply penalizing overly large gradient also work in theory。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:44.560" id=37:44.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2264">37:44.560</a></div>
+        <div class="t">就是penalize太大gradient當然是可以的,但是experimentally we found that this approach converge faster and to better optimal,就這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:54.000" id=37:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2274">37:54.000</a></div>
+        <div class="t">實驗上這麼做的performance是比較好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:58.480" id=37:58.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2278">37:58.480</a></div>
+        <div class="t">當然這個improve W gap也不會是最終的solution,實際上你很直覺地會覺得它是有一些問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:05.280" id=38:05.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2285">38:05.280</a></div>
+        <div class="t">舉例來說,我這邊舉一個例子,假設紅色的這個區間是你的data,你在data上sample一個點是紅色的,你在黃色的是你的distributor這邊sample一個點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:19.680" id=38:19.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2299">38:19.680</a></div>
+        <div class="t">你說把它們兩個連起來,然後給這邊的這些限constraint,你不覺得其實是不make sense的嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:27.040" id=38:27.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2307">38:27.040</a></div>
+        <div class="t">因為如果我們今天照理說,我們只考慮黃色的點要如何挪到紅色的點,所以照理說我們應該在紅色的這個地方sample一個點跟黃色是最近的,比如說sample在這邊,然後只penalize這個地方跟黃色的點之間的歸點,這個才make sense吧,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:46.320" id=38:46.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2326">38:46.320</a></div>
+        <div class="t">因為到時候黃色的點,其實它要挪動的話,它還是走走走就走到最近的地方,它不會跨過這些已經有紅色點的地方跑到這裡來,這個是有點奇怪的,我認為它會走這個方向而不是走這樣的方向,所以你歸電penalty,penalize這個地方是有點奇怪的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:04.880" id=39:04.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2344">39:04.880</a></div>
+        <div class="t">那其實improveWGAN後面還有很多其他的變形,大家可以自己找一下,其實像今年的ICO2018就有一個improveWGAN的變形叫做improve的improveWGAN這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:18.960" id=39:18.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2358">39:18.960</a></div>
+        <div class="t">那improve的improveWGAN它有一個很重要的不同是說,它的歸電penalty不是只放在data跟pg之間,它覺得應該要放在這個紅色的區塊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:30.960" id=39:30.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2370">39:30.960</a></div>
+        <div class="t">那其實還有另外一個也很像WGAN的變形叫做dragon,就是龍的意思,那improve的title就是how to train your dragon,我發現它最開始的版本叫做how to train your dragon,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:42.320" id=39:42.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2382">39:42.320</a></div>
+        <div class="t">它可能後來閃電腦conference的時候沒有很討喜,所以後來名字就偷偷改了這樣子,它在archive上名字是有換過的,本來叫how to train your dragon,它就改成一個正常的名字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:52.080" id=39:52.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2392">39:52.080</a></div>
+        <div class="t">那篇paper也是propose說,今天你要放歸電penalty,應該放在pdata的地方,是有幫助的,總之這個就是給大家做參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:04.240" id=40:04.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2404">40:04.240</a></div>
+        <div class="t">反正你在作業裡面你只要LSGAN、WGAN跟WGANGP implement一個就好,那如果你要做最快的話就是WGAN做得最快,WGANGP你還要算歸電penalty,這個其實有點麻煩就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:17.040" id=40:17.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2417">40:17.040</a></div>
+        <div class="t">其實還有另外一招叫做spectrum norm,spectrum norm是什麼呢?spectrum norm是說,剛才那個WGAN什麼都是一堆approximation,你聽了也覺得不太舒服,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:29.360" id=40:29.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2429">40:29.360</a></div>
+        <div class="t">結果它出現很多experimentally就是這個樣子,你聽了也不太舒服,spectrum norm是這樣,它propose了一個方法,這個方法真的可以限制你的discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:40.400" id=40:40.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2440">40:40.400</a></div>
+        <div class="t">在每一個位置的歸電norm都是小於1的,本來WGANGP它只是penalize某一個區域的歸電norm小於1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:49.120" id=40:49.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2449">40:49.120</a></div>
+        <div class="t">但spectrum norm這個方法可以讓你的discriminator認完以後,它在每一個位置的歸電norm都是小於1的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:58.480" id=40:58.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2458">40:58.480</a></div>
+        <div class="t">細節,這個也是最近的paper,iClear 2018的paper,那細節我們就不提,大家再自己去看看,看看你作業裡面有沒有辦法implement這個。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:07.120" id=41:07.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2467">41:07.120</a></div>
+        <div class="t">你可以自己看一下它的demo,它的demo其實真的是蠻強的,它generate出來的圖真的是蠻好的,這個可以放,它就是demo了不同的狗,很清楚,很清楚,都是狗,通通都是狗,各種狗,我覺得還蠻厲害的,很強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:28.320" id=41:28.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2488">41:28.320</a></div>
+        <div class="t">這很長,這影片有好幾分鐘,所以這個就是你可以看看你自己做不做得起來,spectrum norm。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:42.080" id=41:42.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2502">41:42.080</a></div>
+        <div class="t">這個我們還是說一下GAN的algorithm,我們看一下怎麼從GAN改成WGAN,原來GAN的algorithm大家都很熟,sample一堆image,從原來data裡面sample出一堆image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:01.280" id=42:01.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2521">42:01.280</a></div>
+        <div class="t">然後sample一堆vector,根據這些vector產生generated image,x tilde,然後認一個discriminator,那認的objective function是這個樣子,我們說這個objective function就是量sets diversion,根據這個objective function去update你的discriminator,然後這邊你通常會跑k次,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:20.000" id=42:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2540">42:20.000</a></div>
+        <div class="t">然後接下來你再從你的某個distribution裡面sample一些noise,從fine distribution裡面sample一些noise,然後去update你的generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:30.080" id=42:30.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2550">42:30.080</a></div>
+        <div class="t">如果你要把原來的GAN改成WGAN的話,你只需要做這幾個改變,第一個改變是首先你要把log d of x改成d of x,你要把log1-d of x改成d of x,結束,這個就是描改。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:51.040" id=42:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2571">42:51.040</a></div>
+        <div class="t">那這邊要注意的地方是在原來的GAN裡面,你的discriminator有sigmoid,這件事是必要的,就有那個sigmoid你算出來才會是sets diversion,總之它是有那個sigmoid的,但是在WGAN裡面,你要把sigmoid拔掉,讓它的output是linear的,你算出來才會是sets diversion,所以你要把它的output拔掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:12.480" id=43:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2592">43:12.480</a></div>
+        <div class="t">接下來你在update你的discriminator,你在train你的discriminator的時候,要注意一下就是你要加上weight clipping或者是加上gradient penalty,不然這個training可能是不會收斂的,它會一直train下去,你要加上weight clipping或gradient penalty。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:28.160" id=43:28.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2608">43:28.160</a></div>
+        <div class="t">在train那個generator的時候也很容易,你就把本來是log1-d of g of z改成d of g of z,結束了,所以總共只要改四個地方,一個地方是改這個objective function,把sigmoid拿掉,然後把那個weight clipping加進去,然後改一下generator update的objective function,就結束了,就結束了,這個就是作業裡面大家可能會需要實作的WGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:56.480" id=43:56.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2636">43:56.480</a></div>
+        <div class="t">其實我們還有時間稍微講一下,還有一個東西叫做Energy-based GAN,就是EVGAN,其實EVGAN還有另外一個變形,就是把EV改過來變BEGAN這樣的另外一個變形,那我們就不講了,我們就講Energy-based GAN,EVGAN就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:13.600" id=44:13.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2653">44:13.600</a></div>
+        <div class="t">EVGAN是什麼?EVGAN它唯一跟一般的GAN不同的地方是,它改了discriminator的network架構,本來discriminator是一個binary classifier對不對,它現在把它改成autoencoder,就這樣,那generator不要動它,但你的discriminator是一個autoencoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:30.400" id=44:30.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2670">44:30.400</a></div>
+        <div class="t">你的discriminator是這樣,inputting an image,有一個encoder把它變成code,有一個decoder把它解回來,接下來你算autoencoder的reconstruction error,把reconstruction error成一個負號,就變成你的discriminator的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:47.200" id=44:47.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2687">44:47.200</a></div>
+        <div class="t">所謂的Energy-based GAN的意思就是說,你這個discriminator跟一般的discriminator其實也是一樣,inputting an image,output就是一個scalar,那這個scalar是怎麼來的?這個scalar是從autoencoder算出來的,本來你是說你有個binary classifier,它的output直接就是scalar,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:08.160" id=45:08.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2708">45:08.160</a></div>
+        <div class="t">現在變成說,你的discriminator是一個autoencoder,autoencoder丟一張image進去,它的reconstruction error就是你的discriminator的output。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:17.760" id=45:17.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2717">45:17.760</a></div>
+        <div class="t">也就是說,這個Energy-based GAN它的假設就是,假設某一張image它可以被reconstruction得越好,它的reconstruction error越低,就代表它是一個high quality的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:29.200" id=45:29.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2729">45:29.200</a></div>
+        <div class="t">如果它很難被reconstruction,它reconstruction error很大,代表它是一個low quality的image。那這種EB GAN它到底有什麼樣的好處呢?我覺得它最大的好處就是,你可以pre-train你的discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:41.640" id=45:41.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2741">45:41.640</a></div>
+        <div class="t">你要autoencoder在train的時候,不需要next example,你在train你的discriminator的時候,你需要next example對不對?你在train你的discriminator的時候,它是一個binary classifier,所以你要從你的data裡面去sample一些real的image,再用你的generatorsample一堆fake的image,然後再去train你的discriminator去分別real跟fake的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:02.200" id=46:02.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2762">46:02.200</a></div>
+        <div class="t">所以這個東西無法pre-train,對不對?你沒有辦法只拿positive example去train一個binary classifier,你沒辦法pre-train它,所以這邊會造成問題是什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:13.080" id=46:13.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2773">46:13.080</a></div>
+        <div class="t">會造成問題是,一開始你的generator很弱,所以它sample出來的next example也很弱,用很弱的next example,你認出來的就是一個很弱的discriminator,那discriminator必須要等generator慢慢變強以後,它才會越來越強。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:26.600" id=46:26.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2786">46:26.600</a></div>
+        <div class="t">所以discriminator一開始不會很厲害,你要train很久才會讓discriminator變得比較厲害。但是energy base變得不一樣,discriminator是一個autoencoder,autoencoder是可以pre-train的,autoencoder不需要next example,你只要給它positive example,讓它去minimize reconstruction error就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:45.000" id=46:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2805">46:45.000</a></div>
+        <div class="t">所以你真的要用energy base scan的時候,你要先pre-train好你的discriminator,先拿你手上的那些real的image,去把你的autoencoder先train好,所以你一開始的discriminator會很強,所以因為你的discriminator一開始就很強,所以你的generator一開始就可以generate很好的image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:01.800" id=47:01.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2821">47:01.800</a></div>
+        <div class="t">所以如果你今天是用energy base scan,你會發現說你前面幾個epa,你就可以產生還蠻清楚的image,那這個就是energy base scan一個厲害的地方。那energy base scan實際上在train的時候,還有一個細節你是要注意的,就是今天在trainenergy base scan的時候,你要讓real的example它得到的分數越大越好,也就是real的example它的reconstruction error越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:25.880" id=47:25.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2845">47:25.880</a></div>
+        <div class="t">但是要注意,你並不是要讓generated example它的分數越小越好,或是它的reconstruction error越大越好,為什麼?因為建設是比較難的,破壞是比較容易的,reconstruction error要讓它變小很難,因為你必須要input一張image,把它變成code,再output同樣一張image,這件事很難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:45.720" id=47:45.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2865">47:45.720</a></div>
+        <div class="t">但是如果你要讓input跟output非常不像,這件事太簡單了,input一張image,你要讓它reconstruction error很大,不就output一個noise就很大了嗎?所以如果你今天太專注於說要maximize這些generated image的reconstruction error,那你的discriminator到時候就學到說看到什麼image都output那個noise,這邊反正就犧牲掉就好,反正這個也增加不了多少,這邊儘量壓低,都output noise,故意把它壓低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:13.240" id=48:13.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2893">48:13.240</a></div>
+        <div class="t">這個時候你的discriminator的loss可以把它變得很小,但這個不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:19.160" id=48:19.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2899">48:19.160</a></div>
+        <div class="t">所以實際上在做的時候你會設一個margin說,今天generated reconstruction loss只要小於某一個threshold就好,當然這個threshold這個margin是你要手調的,還是你要手調的,多一個參數要調就是了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:33.080" id=48:33.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2913">48:33.080</a></div>
+        <div class="t">這個margin意思是說generated loss只要小於margin就好,不用再小,小於margin就好,不用讓它再更小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:43.480" id=48:43.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2923">48:43.480</a></div>
+        <div class="t">那今天其實還有另外一個東西也是有用到margin的概念叫做loss sensitive gain,至少要講這個,它有一個很有趣的地方就是它也是LS gain,我們一個least square gain,這邊還有一個loss sensitive gain,而這個loss sensitive gain它也有用到margin的概念,我們之前在做W gain的時候是說,如果是positive example就讓它的值越大越好,next example就讓它的值越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:10.440" id=49:10.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2950">49:10.440</a></div>
+        <div class="t">但是假設你已經有一些image其實已經很realistic的,你讓它的值越小越好其實也不make sense對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:18.200" id=49:18.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2958">49:18.200</a></div>
+        <div class="t">所以今天在LS gain裡面它的概念就是它加了一個叫做margin的東西,就是你需要先有一個方法去evaluate說你現在產生出來的image有多好,可能是把你產生出來的image,這邊有個錯,我又忘了改,這個是X double prime,我先找到了,這個是X double prime。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:40.440" id=49:40.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=3JP-xuBJsyc&t=2980">49:40.440</a></div>
+        <div class="t">今天就是如果今天這個X double prime跟X已經很像了,那它們的margin就小一點,如果X prime跟X很不像,它們的margin就大一點,所以你會希望X prime的分數被壓得很低,X double prime的分數只要壓低過margin就好,不需要壓得太低,那這個就是loss sensitive gain,後面就是一些reference給大家參考。</div>
+    </div>
+    
+</body>
+</html>   

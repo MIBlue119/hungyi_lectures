@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【生成式AI】ChatGPT 原理剖析 (1/3) — 對 ChatGPT 的常見誤解</h2><a href=https://www.youtube.com/watch?v=yiY4nPOzJEg><img src=https://i.ytimg.com/vi/yiY4nPOzJEg/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGC0gEyh_MA8=&rs=AOn4CLAxEQRflvb9vyMKTzaApI3sw8-lpg></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=0">00:00.000</a></div>
+        <div class="t">好,那在座的各位同學、線上的各位同學大家好啊,那我想大家都已經聽過ChairGBT了對不對,是不是聽到非常厭煩了,這一門課呢,我們還是要用ChairGBT作為開場,那我先講一下大家對ChairGBT常見的誤解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:22.400" id=00:22.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=22">00:22.400</a></div>
+        <div class="t">那ChairGBT呢,是在2022年11月30號的時候被公開的,那我那時候試玩了一下,老實說我的心情是大受震撼,因為我們實驗室其實做了很多跟這種聊天機器人有關的研究,那我們其實有很多訓練end-to-end模型的經驗,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:45.600" id=00:45.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=45">00:45.600</a></div>
+        <div class="t">那其實我也常常跟這種end-to-end的模型互動,所以我其實知道這一類完全憑藉類神經網路的模型,它生成的結果大概可以到什麼樣的等級,那我必須說它的能力是遠比我預期的要好的太多,好的就,我當時的感覺就是好的不像是AI,感覺有工讀生躲在背後的那種感覺,所以我心情是大受震撼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:12.080" id=01:12.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=72">01:12.080</a></div>
+        <div class="t">所以一週之後我就錄了一個錄影,講一下ChairGBT背後可能的原理,讓大家知道說ChairGBT可能是怎麼被訓練出來的,背後它仍然是科學而不是魔法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:26.960" id=01:26.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=86">01:26.960</a></div>
+        <div class="t">好,那接下來呢,現在已經又再過了三個多月,那我今天呢,想要花更長的時間跟大家講一下ChairGBT背後可能的原理。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:39.600" id=01:39.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=99">01:39.600</a></div>
+        <div class="t">好,那在開始之前呢,還是很俗套的跟大家講一下ChairGBT它表面上看起來是怎麼運作的,那假設有同學完全還沒有玩過ChairGBT,你可以趁這個機會認識一下。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:55.280" id=01:55.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=115">01:55.280</a></div>
+        <div class="t">好,ChairGBT進來以後呢,就是這樣一個介面,下面有一個對話框,那你可以輸入任何東西,舉例來說,你可以跟他說,我下學期要教一門叫機器學習的課程,請幫我規劃課程大綱。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:11.040" id=02:11.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=131">02:11.040</a></div>
+        <div class="t">那ChairGBT會做的事情就是有問必答,你輸入一個東西,一定會給你回應,所以ChairGBT給我的回應就是,它真的給我了一個課程大綱,而且你仔細讀一下會發現說這個課程大綱有模有樣,其實跟我們這門課的安排也非常的接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:30.560" id=02:30.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=150">02:30.560</a></div>
+        <div class="t">我們先做機器學習的簡介,講機器學習的定義,機器學習的應用,督導式學習,非督導式學習,強化學習,這是第一週。第二週講監督學習,然後從線性回歸開始講起,跟這門課的安排其實也蠻類似的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:49.120" id=02:49.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=169">02:49.120</a></div>
+        <div class="t">然後它可以一直拉下來,它總共安排了11週的課程,而且我要強調一下ChairGBT每次的輸出都不一樣,所以如果你問一模一樣的問題,你可能會得到非常不一樣的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:04.880" id=03:04.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=184">03:04.880</a></div>
+        <div class="t">ChairGBT的另外一個功能是你可以再繼續追問,在同一個對話裡面可以有多輪的互動。舉例來說,我接下來繼續問,課程太長了,請給我三週的規劃,它就會把原來的規劃做一下修改,真的給了我一個三週的規劃,第一週教機器學習,第二週教監督式學習,第三週教非監督式學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:30.960" id=03:30.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=210">03:30.960</a></div>
+        <div class="t">而且一個有趣的地方是,我現在問的問題是完全沒有提到機器學習這四個字的,但是顯然ChairGBT知道我之前已經問過的問題,它已經知道說在這個對話裡面,我們要討論的就是機器學習這門課的大綱,所以就算我沒有明確地說出三週的規劃指的是機器學習的大綱,它還是給我機器學習這門課的規劃。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:57.600" id=03:57.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=237">03:57.600</a></div>
+        <div class="t">所以在同一則對話裡面,ChairGBT知道我們過去的疏入。如果你要重新開始,要refresh ChairGBT的memory,你必須要點new chat才行,你要點new chat,它才會忘記之前對答過的內容。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:14.240" id=04:14.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=254">04:14.240</a></div>
+        <div class="t">對ChairGBT,我看到幾個常見的誤解。第一個誤解是,ChairGBT的回答是罐頭訊息。在很多人的想像裡面,也許當你叫ChairGBT說個笑話的時候,它就是從一個笑話全集裡面準備了很多笑話,這些笑話都是開發者事先準備好的,然後程式就是從這些事先寫好的笑話裡面隨機挑一個做回覆。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:41.280" id=04:41.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=281">04:41.280</a></div>
+        <div class="t">事實上,ChairGBT絕對不是這麼做的。如果你有玩過就知道說,它的回覆不可能是罐頭訊息。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:49.200" id=04:49.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=289">04:49.200</a></div>
+        <div class="t">我舉個例子,這邊我要ChairGBT說一個跟人工智慧有關的笑話,其中要包含一般人對人工智慧的誤解,這個笑話是要在機器學習這門課開學的第一堂課講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:02.960" id=05:02.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=302">05:02.960</a></div>
+        <div class="t">讓我們來看看ChairGBT說出什麼樣的笑話,我這邊讓他一行一行地說出來,希望你會覺得這個笑話有趣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:11.760" id=05:11.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=311">05:11.760</a></div>
+        <div class="t">這是ChairGBT的答案,好的,以下是一個跟人工智慧有關的笑話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:16.080" id=05:16.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=316">05:16.080</a></div>
+        <div class="t">有一天,一個人工智慧的新手學生走進機器學習的第一堂課,老師問他,你對人工智慧有什麼認識?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:22.960" id=05:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=322">05:22.960</a></div>
+        <div class="t">學生回答,我知道人工智慧就是讓電腦像人一樣思考和行動。老師說,這是一個常見的誤解,實際上,人工智慧是讓電腦學習從數據中推斷和預測,講的還蠻不錯,而不是像人一樣思考,它只是在模擬人腦的部分功能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:41.040" id=05:41.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=341">05:41.040</a></div>
+        <div class="t">學生聽了很驚訝問道,那你的意思是說,電腦不會像人一樣思考和行動?老師說,沒錯,電腦只能執行它被編程或訓練過的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:52.720" id=05:52.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=352">05:52.720</a></div>
+        <div class="t">學生突然說,那你是說,電腦不會自己決定去哪裡吃午餐?老師笑著回答,正是如此,除非你讓它學習和決定這個問題的程序,否則它不會決定去哪裡吃午餐。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:05.520" id=06:05.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=365">06:05.520</a></div>
+        <div class="t">學生回答,好吧,我猜我還是要和我的電腦一起吃午餐,結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:10.160" id=06:10.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=370">06:10.160</a></div>
+        <div class="t">老師和學生都笑了,現場氣氛變得輕鬆愉快了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:13.920" id=06:13.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=373">06:13.920</a></div>
+        <div class="t">學生回答,好吧,我猜我還是要和我的電腦一起吃午餐,結束。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:43.920" id=06:43.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=403">06:43.920</a></div>
+        <div class="t">一個人去買了一部智能手機,但是他不知道該怎麼用,於是他就問手機,你能不能幫我做一些家務呢?手機回答,我不能幫你做家事,因為我只是一個手機。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:56.080" id=06:56.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=416">06:56.080</a></div>
+        <div class="t">那個人很失望,就說,那你有什麼用呢?手機說,我可以為你搜尋資訊、播放音樂、發送簡訊等等,我還有很多功能。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.400" id=07:04.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=424">07:04.400</a></div>
+        <div class="t">那個人就說,哦,我明白了,你就是一個智能的娛樂中心啊,不知道在說什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:10.480" id=07:10.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=430">07:10.480</a></div>
+        <div class="t">手機回答,不,我是一個非常聰明的計算機,我能夠學習和成長,並自己寫程序。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.200" id=07:17.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=437">07:17.200</a></div>
+        <div class="t">那個人聽了說,那你現在去學習做家務吧,手機無語,只好默默接受這個人的誤解。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:22.960" id=07:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=442">07:22.960</a></div>
+        <div class="t">這個笑話我覺得可以放在早餐店飲料的封膜上面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:28.080" id=07:28.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=448">07:28.080</a></div>
+        <div class="t">而且最後Chet GPT還要自己解釋這個笑話,他說這個笑話說明一些人工智慧的誤解,他自己想要解釋一下他的笑點在哪裡,所以這是Chet GPT的笑話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.920" id=07:43.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=463">07:43.920</a></div>
+        <div class="t">我試了很久以後,我試出一個我覺得最好的,看看大家欣不欣賞這個笑話,這個笑話是這樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:51.120" id=07:51.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=471">07:51.120</a></div>
+        <div class="t">以下是一個跟人工智慧有關的笑話,這個笑話不只是一個笑話,他還教你人工智慧哦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.240" id=07:58.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=478">07:58.240</a></div>
+        <div class="t">有一天,人工智慧初學者去上機器學習的第一堂課,老師問他,你知道什麼是人工智慧嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.920" id=08:03.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=483">08:03.920</a></div>
+        <div class="t">學生回答,我知道,那就是讓機器像人一樣思考和行動。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:08.080" id=08:08.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=488">08:08.080</a></div>
+        <div class="t">老師笑了笑問道,那你知道什麼是無監督學習嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.240" id=08:12.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=492">08:12.240</a></div>
+        <div class="t">這個底線是我幫他加上去的啦,他這邊要解釋一個機器學習的專有名詞給你聽哦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:18.960" id=08:18.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=498">08:18.960</a></div>
+        <div class="t">無監督學習是什麼呢?學生說道,是不是讓機器自己學習,不需要人類的監督呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:25.520" id=08:25.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=505">08:25.520</a></div>
+        <div class="t">老師接著說,那你知道什麼是監督學習嗎?我們很快也會看到什麼是監督學習。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:31.760" id=08:31.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=511">08:31.760</a></div>
+        <div class="t">學生說,當然,就是讓人類告訴機器正確的答案,讓他學習如何達到正確的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:38.160" id=08:38.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=518">08:38.160</a></div>
+        <div class="t">我覺得這個解釋也蠻不錯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:40.640" id=08:40.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=520">08:40.640</a></div>
+        <div class="t">那老師接著問,什麼是強化學習呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:43.920" id=08:43.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=523">08:43.920</a></div>
+        <div class="t">學生說,是不是就是讓機器自己試錯誤,不斷學習做出正確的決策呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.440" id=08:49.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=529">08:49.440</a></div>
+        <div class="t">我覺得這個答案我也可以接受。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:51.760" id=08:51.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=531">08:51.760</a></div>
+        <div class="t">老師最後問說,那你知道什麼是半監督學習嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.000" id=08:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=536">08:56.000</a></div>
+        <div class="t">學生說,半監督學習是什麼?我不清楚耶。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:59.280" id=08:59.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=539">08:59.280</a></div>
+        <div class="t">那老師說,半監督學習就是你今天早上遲到了還是能夠跟上這門課的進度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:04.240" id=09:04.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=544">09:04.240</a></div>
+        <div class="t">我是說這個真的非常的冷,大家一定覺得這個非常的無聊,但CheerGPT產生笑話,就是這個等級。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:11.200" id=09:11.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=551">09:11.200</a></div>
+        <div class="t">好,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:13.120" id=09:13.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=553">09:13.120</a></div>
+        <div class="t">所以現在了解說,這個顯然不是人想的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:16.080" id=09:16.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=556">09:16.080</a></div>
+        <div class="t">如果這是人想的,那這個人的笑點顯然非常的奇怪。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:21.840" id=09:21.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=561">09:21.840</a></div>
+        <div class="t">那另外一個常見的誤解是,大家會覺得CheerGPT回答問題的方式是這樣,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.440" id=09:27.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=567">09:27.440</a></div>
+        <div class="t">你問他一個問題,什麼是Diffusion Model,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:30.560" id=09:30.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=570">09:30.560</a></div>
+        <div class="t">然後呢,這個CheerGPT就去網路上做一下搜尋,搜尋到好多跟Diffusion Model有關的文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.520" id=09:37.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=577">09:37.520</a></div>
+        <div class="t">從這些文章裡面做一下整理、重組,給我們一個答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:43.440" id=09:43.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=583">09:43.440</a></div>
+        <div class="t">所以也許他的答案就是網路上抄來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:47.600" id=09:47.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=587">09:47.600</a></div>
+        <div class="t">但是如果你把CheerGPT給你的答案去網路上搜尋,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.400" id=09:52.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=592">09:52.400</a></div>
+        <div class="t">你會發現多數時候CheerGPT的答案在網路上都找不到一模一樣的文句,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:00.080" id=10:00.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=600">10:00.080</a></div>
+        <div class="t">甚至他常常給我們幻想出來的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:04.320" id=10:04.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=604">10:04.320</a></div>
+        <div class="t">什麼叫做幻想出來的答案呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:06.320" id=10:06.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=606">10:06.320</a></div>
+        <div class="t">這邊直接舉一個例子,我跟CheerGPT說,我要準備一堂介紹念能力的課程,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:12.640" id=10:12.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=612">10:12.640</a></div>
+        <div class="t">請給我幾個學習念能力的網頁,而且我這邊強調,要附上連結。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:18.480" id=10:18.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=618">10:18.480</a></div>
+        <div class="t">他確實幫我附上一些連結,但他對念能力有一些誤解啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:22.480" id=10:22.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=622">10:22.480</a></div>
+        <div class="t">他以為念能力是念書的能力,那這個我也不怪他,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.520" id=10:25.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=625">10:25.520</a></div>
+        <div class="t">你知道念能力是只有職業獵人才會的,這個念能力本來就是應該被保密的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.280" id=10:31.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=631">10:31.280</a></div>
+        <div class="t">所以CheerGPT不知道,我也是可以接受的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:34.960" id=10:34.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=634">10:34.960</a></div>
+        <div class="t">但是,如果你仔細看一下這些網址,看起來都像模像樣哦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:41.120" id=10:41.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=641">10:41.120</a></div>
+        <div class="t">比如說念書技巧,這個網址是How to read faster and improve reading comprehension,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.200" id=10:47.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=647">10:47.200</a></div>
+        <div class="t">或者是念能力訓練,他當然不是指的是獵人的念能力啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.440" id=10:51.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=651">10:51.440</a></div>
+        <div class="t">他是說How to improve your reading comprehension skill,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:54.960" id=10:54.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=654">10:54.960</a></div>
+        <div class="t">或念書技巧,Study tips,How to improve your reading skill,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:59.440" id=10:59.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=659">10:59.440</a></div>
+        <div class="t">看起來這些網址都像模像樣,但是上述網址沒有一個是存在的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.200" id=11:05.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=665">11:05.200</a></div>
+        <div class="t">我每個去點了,他通通沒有這些網頁,這些網頁是CheerGPT幻想出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:11.920" id=11:11.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=671">11:11.920</a></div>
+        <div class="t">所以他並沒有去網路上做搜尋,他不是把網路的答案塞藥給你看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:18.240" id=11:18.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=678">11:18.240</a></div>
+        <div class="t">這些答案是他自己想出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:20.880" id=11:20.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=680">11:20.880</a></div>
+        <div class="t">事實上OpenAI官方也有澄清過了,有人問說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.640" id=11:24.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=684">11:24.640</a></div>
+        <div class="t">為什麼CheerGPT都會給一些錯的答案呢?他的答案到底能不能相信呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:30.000" id=11:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=690">11:30.000</a></div>
+        <div class="t">那官方的第一句話就告訴你說,CheerGPT是沒有聯網的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=696">11:36.000</a></div>
+        <div class="t">他的答案並不是網路上搜尋得到的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:40.160" id=11:40.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=700">11:40.160</a></div>
+        <div class="t">那官方還給了一些補充,首先呢,因為他不是網路上搜尋的答案,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:45.920" id=11:45.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=705">11:45.920</a></div>
+        <div class="t">所以你並不能夠保證他得到的是正確答案,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:48.960" id=11:48.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=708">11:48.960</a></div>
+        <div class="t">但網路上搜尋到的答案也不一定是正確的啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:51.760" id=11:51.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=711">11:51.760</a></div>
+        <div class="t">但是這邊想要表達的意思是說,他的答案不是來自於網路上的某一篇文章,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.480" id=11:58.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=718">11:58.480</a></div>
+        <div class="t">而且呢,他對於2021年以後的事發生的事情所知是蠻有限的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:06.160" id=12:06.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=726">12:06.160</a></div>
+        <div class="t">所以官方建議說,如果你要用CheerGPT,他的答案不能盡信,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.280" id=12:11.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=731">12:11.280</a></div>
+        <div class="t">你要自己去核實CheerGPT的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:14.160" id=12:14.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=734">12:14.160</a></div>
+        <div class="t">那以上這個回應是來自於OpenAI的官網,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:17.440" id=12:17.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=737">12:17.440</a></div>
+        <div class="t">所以OpenAI的官網都告訴你說,CheerGPT是沒有聯網的喔!</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:22.560" id=12:22.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=742">12:22.560</a></div>
+        <div class="t">好,那實際上CheerGPT真正在做的事情是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:27.920" id=12:27.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=747">12:27.920</a></div>
+        <div class="t">CheerGPT真正在做的事情,一言以蔽之,就是做文字揭露。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:34.320" id=12:34.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=754">12:34.320</a></div>
+        <div class="t">所以正確理解CheerGPT的方式是,它就是一個函式,它就是一個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:42.080" id=12:42.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=762">12:42.080</a></div>
+        <div class="t">那我們這邊用小f來代表這個function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:45.280" id=12:45.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=765">12:45.280</a></div>
+        <div class="t">那一個function就是輸入一些東西,就輸出一些東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.400" id=12:50.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=770">12:50.400</a></div>
+        <div class="t">CheerGPT這個function,它可以有什麼樣的輸入,會有什麼樣的輸出呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.520" id=12:55.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=775">12:55.520</a></div>
+        <div class="t">它可以吃一個句子作為輸入,然後它輸出這個句子後面應該接的詞彙的機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:04.800" id=13:04.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=784">13:04.800</a></div>
+        <div class="t">你輸入是什麼是機器學習,它的輸出是一個詞彙的機率,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:10.720" id=13:10.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=790">13:10.720</a></div>
+        <div class="t">一個詞彙的probability distribution,它會給每一個可能的符號都一個機率。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:17.600" id=13:17.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=797">13:17.600</a></div>
+        <div class="t">舉例來說,如果輸入是什麼是機器學習,也許下一個可以接的中文詞彙,機率比較高的是機。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:26.400" id=13:26.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=806">13:26.400</a></div>
+        <div class="t">然後氣跟好也許有一些機率,那其他詞彙的機率就很低。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.840" id=13:31.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=811">13:31.840</a></div>
+        <div class="t">CheerGPT輸出的是這樣一個機率的分佈。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:36.000" id=13:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=816">13:36.000</a></div>
+        <div class="t">CheerGPT輸出機率分佈以後,接下來會從這個機率分佈裡面去做取樣,去做sample,根據這個機率分佈去sample出一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.400" id=13:48.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=828">13:48.400</a></div>
+        <div class="t">舉例來說,機它的機率是最高的,所以你從這個機率分佈裡面去sample一個詞彙,sample到機的機率可能是比較大的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:57.680" id=13:57.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=837">13:57.680</a></div>
+        <div class="t">但也不是不可能sample到其他的詞彙,也有可能sample到其他的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:03.040" id=14:03.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=843">14:03.040</a></div>
+        <div class="t">所以這就是為什麼CheerGPT每次的答案都是不一樣的,因為它每次產生答案的時候是有隨機性的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.200" id=14:11.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=851">14:11.200</a></div>
+        <div class="t">它是從一個機率分佈裡面去做取樣,所以它每次的答案都是不同的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:16.640" id=14:16.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=856">14:16.640</a></div>
+        <div class="t">那你可能會問說,那講到這裡,它也只能夠回答一個字啊,它沒有辦法回答一個句子啊,它是怎麼回答一個句子的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.440" id=14:25.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=865">14:25.440</a></div>
+        <div class="t">它回答句子的方式是這樣,已經產生機這個可以接在什麼是機器學習這個句子之後的詞彙了,就把機加到原來的輸入裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.840" id=14:37.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=877">14:37.840</a></div>
+        <div class="t">所以現在CheerGPT的輸入變成什麼是機器學習問號機,然後有了這段文字以後再根據這段文字去看看接下來應該接哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.440" id=14:49.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=889">14:49.440</a></div>
+        <div class="t">那已經輸出機了,所以接下來接器的機率可能就非常的高了,機後面接器才接得順,接其他詞彙可能就不太順。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:59.040" id=14:59.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=899">14:59.040</a></div>
+        <div class="t">所以器的機率很高,那你做sample很有可能就sample出器,然後你再把器當作是輸入再丟給CheerGPT,讓它輸出下一個可以接的字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.720" id=15:10.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=910">15:10.720</a></div>
+        <div class="t">然後這樣反覆繼續下去,反覆繼續下去,在CheerGPT可以輸出的符號裡面,應該會有一個符號代表結束這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.480" id=15:20.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=920">15:20.480</a></div>
+        <div class="t">當今天被sample出來的符號是結束,那就代表今天的輸出結束了,這段對話完成了,CheerGPT就把所有的答案輸出來給你看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.440" id=15:31.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=931">15:31.440</a></div>
+        <div class="t">所以CheerGPT真正做的事情是文字接龍。那你可能會問說,那它怎麼考慮過去的對話歷史記錄呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:41.680" id=15:41.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=941">15:41.680</a></div>
+        <div class="t">其實原理是一樣的,為什麼我說給我三週的規劃,CheerGPT會知道說現在討論的是機器學習而不是其他的課程呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.680" id=15:51.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=951">15:51.680</a></div>
+        <div class="t">因為它的輸入不是只有你現在的輸入,還包含同一則對話裡面所有過去的互動。所以同一則對話裡面,所有過去的互動也都會一起被輸入到這個function裡面,讓這個function決定要接哪一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.680" id=16:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=971">16:11.680</a></div>
+        <div class="t">那這個function顯然非常非常的複雜,你要給一段對話,你要給一句話,而且還要給一個歷史記錄,要找出要輸出合適的可以接在後面的詞彙,顯然不是一個容易的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:29.680" id=16:29.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=989">16:29.680</a></div>
+        <div class="t">所以這個function非常非常的複雜,這個function可能有1700億個參數。那為什麼說可能而不是給一個肯定的答案呢?那是因為在CheerGPT之前,OpenAI有另外一個版本的模型叫做GPT-3,GPT-3有1700億個參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.680" id=16:50.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1010">16:50.680</a></div>
+        <div class="t">那我想CheerGPT總不會比GPT-3少,我認為它只有可能更多,不會更少,所以我這邊說可能有1700億個參數。也許事後之後,OpenAI他們把CheerGPT相關的論文發表以後,你會發現這個模型更大,也說不定。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:06.680" id=17:06.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1026">17:06.680</a></div>
+        <div class="t">那到底參數是什麼意思呢?假設你不知道參數是什麼意思的話,那我就告訴你說,像這樣的函式,f of x 等於 ax 加 b,它的參數就是兩個,a 跟 b。那CheerGPT它裡面有1700億個以上的參數,所以它顯然非常的複雜。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.680" id=17:25.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1045">17:25.680</a></div>
+        <div class="t">那你最近可能也常常聽到說有人說CheerGPT就是一個大型的語言模型,什麼叫語言模型?做文字接龍的模型就是語言模型,所以當大家稱CheerGPT為語言模型的時候,意思就是說它做的事情就是文字接龍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:46.680" id=17:46.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1066">17:46.680</a></div>
+        <div class="t">那我們已經知道說CheerGPT其實就是一個函數,它吃使用者的輸入,過去對話的歷史記錄,輸出一個接下一個詞彙的機率分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:02.680" id=18:02.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1082">18:02.680</a></div>
+        <div class="t">那接下來要問的問題是,這個神奇又複雜的函數是怎麼被找出來的呢?那如果要講得科普一點的話,我會說這個神奇的函數是透過人類老師的教導加上大量網路上爬到的資料所找出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:22.680" id=18:22.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1102">18:22.680</a></div>
+        <div class="t">但是講到這邊,大家又會有點困惑,剛才不是才說CheerGPT沒有聯網嗎?怎麼這邊又說它是透過大量網路的資料來進行學習呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.680" id=18:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1114">18:34.680</a></div>
+        <div class="t">所以這邊大家要注意,上半部跟下半部要切成兩個部分來看。尋找函數的過程,我們叫做訓練,英文叫做training。尋找函數的時候,CheerGPT有去收集網路的資料來幫助它找到這個可以做文字接龍的函數F。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:58.680" id=18:58.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1138">18:58.680</a></div>
+        <div class="t">但是當這個可以做文字接龍的函數F被找出來以後,它就不需要聯網了。當這個F被找出來以後,就進入下一個階段,叫做測試,英文就是testing。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.680" id=19:11.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1151">19:11.680</a></div>
+        <div class="t">那測試的時候,就是人給一個輸入,CheerGPT給一個輸出。當進入測試的時候,是不需要去網路搜尋的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.680" id=19:21.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1161">19:21.680</a></div>
+        <div class="t">希望大家可以了解訓練跟測試之間的差異。如果打個比方的話,訓練就像是你在準備一個考試,在準備考試的時候,你當然可以閱讀教科書,或者是上網搜集資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:34.680" id=19:34.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1174">19:34.680</a></div>
+        <div class="t">那測試是真的在考場上,那在真的在考場上的時候,你就不能翻書,不能聯網,你要憑著你腦中記憶的東西產出答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:44.680" id=19:44.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=yiY4nPOzJEg&t=1184">19:44.680</a></div>
+        <div class="t">那CheerGPT也是一樣的,它現在的答案是憑藉它腦中的記憶產生出來的答案。</div>
+    </div>
+    
+</body>
+</html>   

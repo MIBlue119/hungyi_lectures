@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>[DLHLP 2020] BERT and its family - ELMo, BERT, GPT, XLNet, MASS, BART, UniLM, ELECTRA, and more</h2><a href=https://www.youtube.com/watch?v=Bywo7m6ySlk><img src=https://i.ytimg.com/vi_webp/Bywo7m6ySlk/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=0">00:00.000</a></div>
+        <div class="t">好,那我們來上課吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:03.000" id=00:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3">00:03.000</a></div>
+        <div class="t">好,那我們講到這種BERT的pre-trained model,然後我們說今天NLOP的任務已經不再是一個任務就給他一個模型,而是我們先pre-trained好一個模型以後,然後再把這個pre-trained好的模型fine-tune在很多不同的任務上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:22.000" id=00:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=22">00:22.000</a></div>
+        <div class="t">上週我們已經講過怎麼fine-tune,上週我們是假設已經有一個pre-trained好的模型,接下來我們要把這個pre-trained好的模型fine-tune在各式各樣不同的任務上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:35.000" id=00:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=35">00:35.000</a></div>
+        <div class="t">那這週我們要來講怎麼得到這個pre-trained好的模型。那怎麼得到這個pre-trained好的模型呢?上週我們有講說我們需要什麼樣的pre-trained的模型呢?今天我們希望我們可以有一個pre-trained的模型是把一串token吃進去,接下來他把每一串token變成一個embedding的vector。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:59.000" id=00:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=59">00:59.000</a></div>
+        <div class="t">而且我們希望說這些embedding的vector它是contextualized的,它是可以考慮上下文的。那怎麼樣訓練這樣的model呢?今天你在訓練這種model的時候,多數時候你用的方法是unsupervised的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.000" id=01:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=77">01:17.000</a></div>
+        <div class="t">不過像這種抽contextualized的embedding,抽contextualized的word vector的方法,我覺得最早的一篇文獻應該是Kov這篇paper。然後Kov這篇paper它並不是unsupervised得到這個model的,Kov這篇paper它是用translation的方法來訓練出這個model的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.000" id=01:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=103">01:43.000</a></div>
+        <div class="t">你從它的名字也可以看出來說Kov vector它是context vector的縮寫,所以顯然它就是可以考慮context information的word embedding,就跟今天Bert可以做到的事情很像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:57.000" id=01:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=117">01:57.000</a></div>
+        <div class="t">我們都說Bert跟Elmo相較原來的word vector不同的地方是它是contextualized的,那Kov它是contextualized的。那Kov就是海灣啦,然後它是取context的co跟vector的ve湊成Kov,那個時候湊名字還沒有那麼硬,也沒有一定要湊成芝麻街的人物。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:21.000" id=02:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=141">02:21.000</a></div>
+        <div class="t">那怎麼用translation來得到這樣子的model呢?那你其實就是把這個model當作translation的encoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:32.000" id=02:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=152">02:32.000</a></div>
+        <div class="t">在訓練translation的時候,你的input是某一個language,是A language,然後你有一個decoder,這個decoder根據encoder的output做一下attention,然後得到B language的輸出。然後你有很多這種language A跟language B的pair data,然後NTM的train,你就可以train好這個encoder,train好這個decoder,然後這個encoder就是我們pre-train的model,就是可以拿來得到contextualized word embedding的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:01.000" id=03:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=181">03:01.000</a></div>
+        <div class="t">那這邊我想之所以選擇這個翻譯作為pre-train的任務,我想是有道理的。因為如果你選擇的是別的任務,比如說summarization,也許你就沒有辦法得到很好的每一個token的representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:21.000" id=03:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=201">03:21.000</a></div>
+        <div class="t">你想想看,如果是summarization這個任務,machine要做的事情是找出重要的詞彙,無視那些不重要的詞彙,找出重要的詞彙組成一個摘要,然後把不重要的詞彙濾掉。所以也許你的encoder就會學到說,看到不重要的詞彙,我們就給它一個特殊的embedding叫做不重要的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:43.000" id=03:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=223">03:43.000</a></div>
+        <div class="t">所以這樣子你的encoder可能就沒有辦法真的學到每一個token的representation。那這邊選擇的是翻譯這個任務。翻譯這個任務就是要把輸入的句子,它裏面的資訊如實地呈現在輸出裏面。所以輸入的句子裏面每一個詞彙可能都需要被考慮到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:02.500" id=04:02.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=242">04:02.500</a></div>
+        <div class="t">所以如果用翻譯這樣的技術來當做pre-train的方法來訓練這個encoder,那encoder可能比較有機會給每一個輸入的token都得到一個它應該有的,對應到它語意的這個embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:18.160" id=04:18.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=258">04:18.160</a></div>
+        <div class="t">當然如果你要translation,這樣最大的問題就是你需要大量的pair data才有辦法訓練這樣的model。那收集pair的data終究是比較困難的。所以我們期待的是,我們有沒有辦法用唾手可得的,沒有標註的文字,就直接去訓練出一個模型,就直接去訓練出一個pre-train的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:41.500" id=04:41.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=281">04:41.500</a></div>
+        <div class="t">過去這樣的方法就叫做unsupervised learning,就是從沒有標註的data做學習,就是unsupervised learning。不過近年來更常被叫做self-supervised learning。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:54.380" id=04:54.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=294">04:54.380</a></div>
+        <div class="t">我想之所以會被叫做self-supervised learning的一個原因是因為,楊百克有發一個po文說,以後我們要把unsupervised learning改叫self-supervised learning,因為unsupervised learning很容易讓人confused。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:12.380" id=05:12.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=312">05:12.380</a></div>
+        <div class="t">那所謂的self-supervised learning是什麼意思呢?它說self-supervised learning的意思就是說,the system learns to predict part of its input from other part of its input,就是它用部分的輸入去預測另外一部分的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:31.880" id=05:31.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=331">05:31.880</a></div>
+        <div class="t">也就是說呢,今天我們輸入的資料有一部分被拿來提供supervised的signal,那有一部分被拿來預測別人,這個是self-supervised的概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.380" id=05:45.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=345">05:45.380</a></div>
+        <div class="t">下面這個圖就是解釋一下self-supervised learning的概念,如果是supervised learning,我們要訓練的model有一個input x,有一個input y,然後y是哪來的?y是label來的,需要人提供label給我們xy的pair,我們才有辦法訓練一個模型。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:02.880" id=06:02.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=362">06:02.880</a></div>
+        <div class="t">那self-supervised learning是怎麼回事呢?self-supervised learningmodel的input跟output是自己產生出來的,人沒有去label input跟output,但我們根據我們手上沒有label的data,自己用非常low cost,完全不需要人工標註的一些簡單方法去產生輸入跟輸出的pair。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:26.380" id=06:26.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=386">06:26.380</a></div>
+        <div class="t">然後就用這種輸入跟輸出的pair,它是自己產生的,不是人標註的,來做self-supervised learning,這個就是self-supervised learning的基本概念。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:37.480" id=06:37.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=397">06:37.480</a></div>
+        <div class="t">那怎麼製造這種輸入跟輸出的關係呢?文字上最經典的做法就是給一個sequence預測下一個token,你訓練一個模型,它的工作就是給它w1,然後它會輸出一個representation叫做h1,然後根據h1,我們要去預測w2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:05.980" id=07:05.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=425">07:05.980</a></div>
+        <div class="t">預測w1後面接的下一個token,w2是什麼,那這邊w都代表一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:12.620" id=07:12.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=432">07:12.620</a></div>
+        <div class="t">那這個h1怎麼預測w2呢?那這邊還是幫大家說明一下,你有一個ht,它是從wt得到的,這個ht呢,通過一個linear transform,其實不一定要linear transform,其實也可以是更複雜的東西,這個都是看你高興,通過一個linear transform再加softmax,得到一個over你的token的probability distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.620" id=07:38.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=458">07:38.620</a></div>
+        <div class="t">也就是每個token都給它一個機率,你得到一個probability distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.620" id=07:43.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=463">07:43.620</a></div>
+        <div class="t">那接下來呢,你會希望這個probability distribution跟你的target,跟你訓練的目標,它們的cross entropy越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:53.620" id=07:53.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=473">07:53.620</a></div>
+        <div class="t">那你的target是什麼呢?你的target就是下一個word,你的target distribution就是wt-t加1的機率是1,那其他token的機率是0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:05.620" id=08:05.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=485">08:05.620</a></div>
+        <div class="t">好,你用w1產生h1,然後要希望h1可以拿來預測w2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:12.620" id=08:12.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=492">08:12.620</a></div>
+        <div class="t">那同樣的process呢,就反覆進行下去,你的model呢,是w1、w2,接下來呢,它輸出h2,然後你要用h2呢,去預測w3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.620" id=08:23.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=503">08:23.620</a></div>
+        <div class="t">那你的model是w1、w2、w3,然後接下來產生h3,然後你的model用h3去預測w4,以此類推,持w1到w4,它要預測w5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:35.620" id=08:35.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=515">08:35.620</a></div>
+        <div class="t">好,那這個東西呢,就是預測下一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:41.620" id=08:41.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=521">08:41.620</a></div>
+        <div class="t">那在使用這樣的model的時候啊,有一件事情你是需要注意一下的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:47.620" id=08:47.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=527">08:47.620</a></div>
+        <div class="t">當我們今天要做一個model去預測下一個token的時候呢,我們要設計我們的model,你不可以讓你的model一次把w1跟w4通通都讀進去,然後再去預測h1跟h4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:05.620" id=09:05.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=545">09:05.620</a></div>
+        <div class="t">這樣是不行的,因為如果你讓你的model直接持w1到w4,然後預測h1到h4會發生什麼事情呢,那model可能會學到說,呃,w1進來什麼也不重要啦,整個句子的資訊也不重要啦,我們就看右邊的token是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:22.620" id=09:22.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=562">09:22.620</a></div>
+        <div class="t">就把右邊這個token移來當作h1,我們就可以成功預測了,把右邊的token移來當作h2就可以成功預測了,那你的模型就學不到什麼有用的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:33.620" id=09:33.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=573">09:33.620</a></div>
+        <div class="t">所以,你在預測next token的時候呢,要注意設計一下你的模型,不要讓他偷看到他不該看到的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:41.620" id=09:41.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=581">09:41.620</a></div>
+        <div class="t">好的,像這種預測下一個token呢,是最早的unsupervised pre-trained model,最早期的unsupervised pre-trained model都使用這樣子的技術。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.620" id=09:52.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=592">09:52.620</a></div>
+        <div class="t">那我想這也是非常自然的,因為在過去NLP領域的人就知道要訓練language model這個東西,而language model他本來做的事情就是predict next token,所以我今天講的這個pre-trained model其實就是一個language model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:09.620" id=10:09.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=609">10:09.620</a></div>
+        <div class="t">好的,要用什麼樣的neural架構來訓練這個language model來預測下一個token呢?最早我們當然會想到要用LSTM,所以有很多知名的使用LSTM的pre-trained模型,其中最知名的就是大家今天都熟知的Elmo。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:28.620" id=10:28.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=628">10:28.620</a></div>
+        <div class="t">還有另外一個model也跟Elmo非常類似,也是LSTM,也是language model,也是希望pre-trained modelfine tune在各式各樣不同的task上,但他沒有Elmo那麼知名的,叫做universal language model fine tuning,ULMFIT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.620" id=10:45.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=645">10:45.620</a></div>
+        <div class="t">總之,這些模型都是language model,都是用LSTM。那今天呢,人們不再那麼喜歡LSTM,很多時候你會把LSTM換成self-attention。那也有很多language model使用self-attention,比如說有GPT、Megatron跟Turing、NLG,他們都是知名的例子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.620" id=11:09.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=669">11:09.620</a></div>
+        <div class="t">但是如果你今天你的內容裡面用的是self-attention的架構的話,那你其實就要稍微小心一點。要小心什麼呢?你要控制你的attention的範圍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:23.620" id=11:23.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=683">11:23.620</a></div>
+        <div class="t">我們知道說這個self-attention layer,它做的事情就是把整個sequence平行的讀進去,然後每一個位置都可以attain到其他的位置,就general的self-attention,是每一個位置都可以attain到其他的位置。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.620" id=11:39.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=699">11:39.620</a></div>
+        <div class="t">你把一般的self-attention用在這個地方的話,那是會慘掉的,那是不對的,因為對你的內容來說,它只要attain到下一個位置,它就可以得到它想要的資訊,它就可以成功地預測下一個token,這個顯然不是我們要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:55.620" id=11:55.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=715">11:55.620</a></div>
+        <div class="t">所以怎麼辦呢?今天如果你是用self-attention來做predict next token這件事的話,你要注意一下,你要給你的self-attention下一個contract,你要告訴它說只有某些位置是你可以去attain的,某些位置是你不能去attain的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:11.620" id=12:11.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=731">12:11.620</a></div>
+        <div class="t">這個表格裡面有圖色的地方代表可以attain的位置,所以你就告訴你的self-attention layer說,在W1這個位置你只准attain自己,在W2這個位置你只准attain W1、W2,在W3你只准attain W1、W2,在W4你才可以attain整個句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:33.620" id=12:33.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=753">12:33.620</a></div>
+        <div class="t">這樣就可以避免在predict next token的時候,你的model看到未來的答案。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.620" id=12:41.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=761">12:41.620</a></div>
+        <div class="t">這個GPT-2大家都已經非常熟悉了,這個我們就不用再講了。在網路上有一個連結叫做talk-to-transformer,你可以用GPT-2來產生文字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:53.620" id=12:53.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=773">12:53.620</a></div>
+        <div class="t">因為我們剛才講的這種predict next token的pre-trained model,他們在訓練的時候其實就是一個language model,所以他們擅長做的事情不只是可以拿來在downstream的test進行file queue,他們還可以拿來做generation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:07.620" id=13:07.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=787">13:07.620</a></div>
+        <div class="t">你就可以直接拿這種language model來產生一個長篇大論的文章。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:12.620" id=13:12.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=792">13:12.620</a></div>
+        <div class="t">GPT-2之所以在我的心裡的形象是一個獨角獸,就是因為它產生了一篇非常知名的獨角獸的文章。而今天這種用機器產生的文章就滿街跑了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:26.620" id=13:26.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=806">13:26.620</a></div>
+        <div class="t">舉例來說,有一個人強迫這個機器看了一千個小時的蝙蝠俠的電影,然後機器就自己寫了一個蝙蝠俠的劇本。這個劇本的第一頁看起來像是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:42.620" id=13:42.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=822">13:42.620</a></div>
+        <div class="t">蝙蝠俠回家後遇到Alfred,Alfred是蝙蝠俠的管家,就是阿福。這個劇集的場景發生了一個爆炸,這時候小丑和雙面人闖進了他們的山洞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:06.620" id=14:06.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=846">14:06.620</a></div>
+        <div class="t">Joker是一個小丑,他瘋瘋癲癲的。Two-Face是一個人,但他又是一個律師,不知道在說些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:17.620" id=14:17.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=857">14:17.620</a></div>
+        <div class="t">Batman就說,不,是雙面人和單面人。這個還滿聰明的,他知道Joker是雙面人。然後他說,他們討厭身為蝙蝠的我。這個時候,Batman就很壞,把阿福丟給了雙面人。雙面人就把阿福像一個銅板一樣拋在空中,然後雙面人就回家了,不知道在幹嘛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.620" id=14:44.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=884">14:44.620</a></div>
+        <div class="t">Batman就跟Joker說,現在只剩下你跟我了。Joker就說,這個句子還滿不錯的,你喝水,我喝混亂。Batman說,我喝蝙蝠,就像蝙蝠一樣,不知道在說些什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.620" id=15:10.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=910">15:10.620</a></div>
+        <div class="t">接下來,蝙蝠俠跟Joker就開始打起來了。蝙蝠俠就說,阿福生下羅賓。不知道為什麼生下羅賓,然後阿福就真的生下羅賓了,這就是因為他在做的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:23.620" id=15:23.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=923">15:23.620</a></div>
+        <div class="t">Joker就給蝙蝠俠一個禮物,Joker就說Happy Birthday。這個一語雙關,還滿厲害的。蝙蝠俠就打開他的禮物,裡面是什麼呢?裡面是一個Coupon for new parent,可以兌換新父母的兌換券,但已經過期了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:47.620" id=15:47.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=947">15:47.620</a></div>
+        <div class="t">This is the Joker joke,這是小丑的笑話。我看了覺得,哇,這個也不錯,機器也可以產生有趣的劇本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.620" id=15:57.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=957">15:57.620</a></div>
+        <div class="t">這個大概是怎麼做的呢?我在想說,看一千個小時的蝙蝠俠電影,應該意思不是讓機器真的去看那個電影吧,應該是看電影的劇本吧。因為今天是產生文字啊,你光看那個螢幕有什麼用?你光看畫面有什麼用?應該是有一千個小時的蝙蝠俠的劇本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:16.400" id=16:16.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=976">16:16.400</a></div>
+        <div class="t">劇本裡面一定就是寫誰說了什麼,有場景,然後你再train一個language model。當然只用一千個小時的劇本,那個量太少了,train不出什麼好language model的。所以大概是用GPT-2 fine tune吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:30.420" id=16:30.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=990">16:30.420</a></div>
+        <div class="t">但是我發現我錯了,這個就是人在模仿機器模仿人啊,這不是機器在模仿人啊,這是人在模仿機器模仿人啊。人在模仿機器模仿人是什麼意思呢?我強迫機器看了一千個小時的什麼東西是一個梗啊,剛才那個文章其實是人寫的啊,人故意仿造機器的風格來寫啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:56.020" id=16:56.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1016">16:56.020</a></div>
+        <div class="t">所以這是人在模仿機器在模仿人啊,然後那個作者還讓機器看了很多一千個小時不同的東西啊,不是只有蝙蝠俠而已啦,這是一個系列作啊,有什麼olive garden啊,還有各式各樣奇奇怪怪的東西啊。總之這個是人在模仿機器模仿人,就這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.120" id=17:13.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1033">17:13.120</a></div>
+        <div class="t">這個故事只是告訴我們說,現在大家都覺得說,機器可以寫些劇本啊,寫些有的沒的東西。為什麼這樣pretend next token的方法可以讓我們得到我們想要的embedding呢?可以讓我們得到embedding代表一個詞彙的一個token的意思呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:37.880" id=17:37.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1057">17:37.880</a></div>
+        <div class="t">有John Rupert Firth這位語言學家在1950年的時候就曾經說過,我們怎麼知道一個詞彙是什麼意思呢?You should know a word by the company it keeps。你要知道一個詞彙,你要知道跟它常常一起出現、跟它相鄰的詞彙是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:59.320" id=17:59.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1079">17:59.320</a></div>
+        <div class="t">所以其實這個方法就是體現了You should know a word by the company it keeps這件事。其實我們之前在講word embedding的時候,在Machine Learning的那門課講word embedding的時候也有跟大家提過說,word embedding在早期還沒有到contextualize word embedding的時候,傳統的那一套word embedding、word vector growth,它們的想法也是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:20.620" id=18:20.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1100">18:20.620</a></div>
+        <div class="t">我們怎麼知道一個詞彙的意思,把它變成embedding呢?要看這個詞彙跟哪些詞彙常常一起出現。而predictness token其實也做了非常類似的事情。我們今天為了要用H4去predict下一個word,W5。我們要怎麼predict W5呢?我們必須要先知道W1到W4是什麼意思,把W1到W4這樣子的token sequence引扣成H4,然後再用H4去預測W5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.640" id=18:47.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1127">18:47.640</a></div>
+        <div class="t">H4就包含了W4跟它的left context,W4跟它左邊在句子的前面曾經出現的word。我們把這些資訊變成一個vector,把W4跟它左邊的鄰居一起變成一個vector,我們就把W4跟它的鄰居一起的資訊拿來表示W4這個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:11.640" id=19:11.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1151">19:11.640</a></div>
+        <div class="t">所以這個符合語言學上常識,符合You should know a word by the company kids這句話。但是如果你這樣想的話,你馬上就有一個問題,這個H4只看了left context,怎麼不看右邊的鄰居呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:30.640" id=19:30.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1170">19:30.640</a></div>
+        <div class="t">Elmo這篇paper確實考慮了看右邊鄰居這件事。在Elmo這篇paper裡面,它有一個由左到右的LSTM,看W1到W4去預測W5。它有一個由右到左的LSTM,這個由右到左的LSTM看W7,就假設W7是句子的結尾,W7、W6、W5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:56.640" id=19:56.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1196">19:56.640</a></div>
+        <div class="t">然後它產生一個embedding,用這個embedding去預測W4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:02.640" id=20:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1202">20:02.640</a></div>
+        <div class="t">但在Elmo裡面,它會把這兩個vector,正向的LSTM輸出的vector跟逆向的LSTM輸出的vector concatenate起來。它把這兩個藍色的vector concatenate起來,當作代表W4的contextualized representation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:19.640" id=20:19.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1219">20:19.640</a></div>
+        <div class="t">所以在得到W4的representation的時候,我們不只考慮了W4的左邊的context,也透過逆向的LSTM得到考慮W4右邊的context。所以,左邊的context也考慮到了,右邊的context也考慮到了。這樣,人們應該要滿足了吧?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:41.640" id=20:41.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1241">20:41.640</a></div>
+        <div class="t">但是這樣還不夠。我們今天雖然左邊的context跟右邊的context都考慮到了,但是今天你的machine在考慮左邊的context,在encodeW1、W2、W3的時候,它沒看到句子結尾的部分。在考慮句子結尾的部分的時候,它沒看到句子開頭的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:01.140" id=21:01.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1261">21:01.140</a></div>
+        <div class="t">所以它看到的整個句子,在encode的時候,在處理的時候,它看到這個句子是不完整的,它都只看到一半。這個正向跟逆向的LSTM是沒有交匯的。它們兩個都是各自做各自的事,各自得到一半的資訊,再把它們各自得到的資訊接起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:19.140" id=21:19.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1279">21:19.140</a></div>
+        <div class="t">我們能不能夠在處理這個輸入,在處理left context的時候,就考慮right context的資訊,在考慮right context的時候,在encode right context的時候,就考慮left context的資訊呢?而BERT就可以做到這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:35.640" id=21:35.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1295">21:35.640</a></div>
+        <div class="t">BERT就不再是predict next token,BERT做的事情是,它會把輸入的一些token把它蓋住。這邊所謂的蓋住其實有兩種做法。一個做法是說,有一個特別的符號叫做mask,你會想說有一個特別的token,這個token不是表示任何意思,它就表示說我要把它蓋住。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:59.480" id=21:59.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1319">21:59.480</a></div>
+        <div class="t">你把原來的token換成mask token,就代表把原來的token蓋住。或者是,你也可以隨機sample一個token,就把它放在這邊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:08.240" id=22:08.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1328">22:08.240</a></div>
+        <div class="t">不管你是mask還是隨機蓋住,隨機換另外一個token,接下來你要做的事情就是,根據這個位置所輸出的embedding,去預測被蓋起來的那個token原來是什麼。而BERT裡面用的是transformer。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.020" id=22:28.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1348">22:28.020</a></div>
+        <div class="t">而BERT的transformer,它這邊用self-attention的時候是沒有任何限制的。什麼叫做沒有任何限制呢?就是每一個word都可以attain到其他所有的word,每一個word,每一個token都可以attain到其他所有的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.280" id=22:46.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1366">22:46.280</a></div>
+        <div class="t">所以當你在預測這個W2的時候,你是看了一整個完整的sentence,完整的token sequence,才來預測W2。而我們在process W3和W4的時候,可以透過self-attention看到W1的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:02.140" id=23:02.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1382">23:02.140</a></div>
+        <div class="t">在process W1的時候,你可以透過self-attention看W3和W4的資訊。當然W2的資訊已經被mask起來,或者是隨機置換成別的token,所以我們不怕說你的self-attention偷看到W2的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:17.500" id=23:17.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1397">23:17.500</a></div>
+        <div class="t">這個地方是被mask起來的,然後最終要能夠預測W2。這個東西就是BERT。那這個BERT這個想法,其實如果你回溯一下歷史,時光倒流到七、八年前,你會發現,咦?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:40.860" id=23:40.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1420">23:40.860</a></div>
+        <div class="t">這個東西跟SIBO,W2的其中一個訓練方法叫做SIBO,其實很像。SIBO做的事情是什麼呢?SIBO做的事情是說,現在給我們一個token sequence,我們要我們的model去預測第七個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:58.180" id=23:58.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1438">23:58.180</a></div>
+        <div class="t">怎麼預測第七個token呢?根據第七個token,左邊的一些token跟右邊的一些token。在這個例子裡面,是左邊的兩個token跟右邊的兩個token去預測第七個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:12.260" id=24:12.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1452">24:12.260</a></div>
+        <div class="t">只是過去啊,這種SIBO,這種train wall to vector的時候,我們用的模型非常的簡單,我們都是把這邊的每一個token,就是過一個transform,然後再把它加起來,加起來的vector呢,再過一個transform,就去預測第七個token了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:31.140" id=24:31.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1471">24:31.140</a></div>
+        <div class="t">通常我們也沒有辦法真的看很長,通常看左邊二十個、右邊二十個,就已經很長了。而你會發現,其實SIBO的訓練方法跟BERT的訓練方法根本就是一模一樣的啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:46.500" id=24:46.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1486">24:46.500</a></div>
+        <div class="t">BERT做的事情也就是給你一個句子,你有它左邊的context跟右邊的context,那你要預測被蓋起來的東西是什麼。只是BERT跟SIBO有幾個關鍵性的不同。第一個關鍵性的不同是,BERT它往左邊可以看多長呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:02.700" id=25:02.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1502">25:02.700</a></div>
+        <div class="t">你要看多長就看多長,看你給BERT多長的輸入,self-attention就看多長。往右邊可以看多長呢?要看多長就看多長,看你給BERT多長的輸入,它就可以往右邊看多長。不像SIBO,它是有一個固定的window的寬度,只會往左邊看固定一些token,右邊固定看一些token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:22.540" id=25:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1522">25:22.540</a></div>
+        <div class="t">還有一個更關鍵的不同就是,BERT很複雜,它有十二層、二十四層的self-transformation,而SIBO它就兩層,中間還沒有activation function,根本就是linear,它就兩層。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:36.140" id=25:36.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1536">25:36.140</a></div>
+        <div class="t">不過當年在講SIBO的時候,常常會有同學問我問題說,那怎麼是linear呢?改deep好不好呢?或者是說,這邊我們都不考慮每一個word跟中間這個word它們距離的關係嗎?比較遠的應該關係比較小吧?比較近的關係應該比較大吧?種種等等等等複雜的考量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.880" id=25:58.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1558">25:58.880</a></div>
+        <div class="t">那個時候,反正SIBO就是這樣嘛,沒有什麼不知道該怎麼回答。但是今天你就知道說,當年大家所提的種種的疑惑,為什麼不用deep learning,為什麼不考慮更複雜一點,都可以的,把各式各樣的東西考慮進去,用一個最複雜的model,這個東西就是BERT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:19.040" id=26:19.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1579">26:19.040</a></div>
+        <div class="t">所以你會發現說,遠古時代上古的神獸SIBO的training的方法,其實跟今天我們使用的BERT根本就是大同小異,只是模型的複雜程度不相同了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:33.140" id=26:33.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1593">26:33.140</a></div>
+        <div class="t">在原始的BERT裡面,要mask掉哪些token呢?要mask的token就是隨機決定的。但是隨機決定mask的token好嗎?也許不夠好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:51.100" id=26:51.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1611">26:51.100</a></div>
+        <div class="t">假設你做中文,我們中文的token單位通常就是一個character,一個方塊字。那你往往把一個方塊字蓋起來,你從這個方塊字的前面跟後面就可以預測被蓋起來的字是什麼了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:06.620" id=27:06.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1626">27:06.620</a></div>
+        <div class="t">Machine可能不需要學什麼太厲害的東西,不需要看整個句子,就可以猜出被蓋起來的方塊字。比如說一個地名,地名最容易被猜出來就是黑龍江,你把龍蓋住。那黑什麼江?除了黑龍江以外,難道可以是別的東西嗎?可以是黑狗江嗎?可以是黑貓江嗎?不太可能是別的東西,就是黑龍江了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:29.980" id=27:29.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1649">27:29.980</a></div>
+        <div class="t">所以如果蓋起來一個token,機器可能就學到說看左右的token就直接可以猜被蓋起來的token了。那你的機器根本學不到特別long-term的dependency,它只學到看左右的token而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:43.460" id=27:43.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1663">27:43.460</a></div>
+        <div class="t">所以怎麼辦呢?就會有一些比較複雜的masking的方法。舉例來說,whole word masking wwwn,從它的名字就可以知道說它就是要一次蓋一整個word。舉例來說,在原來的BERT裡面,如果是中文,你每次只蓋一個character。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:02.620" id=28:02.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1682">28:02.620</a></div>
+        <div class="t">如果是英文的話,英文有時候一個word也是被拆成好幾個token,比如說probability,它被拆成三個token,那也可以蓋住中間那個token,那你幾乎就可以猜出說中間被蓋住的東西是什麼了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:14.480" id=28:14.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1694">28:14.480</a></div>
+        <div class="t">但是如果是wwwn的話,就是一次要蓋一整個word。當然,如果中文什麼是word,你得先有一個斷詞的系統把word找出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:22.940" id=28:22.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1702">28:22.940</a></div>
+        <div class="t">所以模型是一個word,一次要把模型整個蓋住。預測是一個word,一次要把預測整個蓋住。probability,這其實是三個token所組成的,但這三個token組成一個word,那你一次要把三個token蓋起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:34.840" id=28:34.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1714">28:34.840</a></div>
+        <div class="t">那還可以蓋更長的,比如說你可以蓋phrase label,phrase就是好幾個word合起來,就是一個phrase,你可以一次蓋好幾個word。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.060" id=28:44.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1724">28:44.060</a></div>
+        <div class="t">或者是entity label,entity label是什麼意思呢?entity label就是你先做Name Entity Recognition,我們在講MLP任務介紹的時候講過Name Entity Recognition,什麼是Name Entity?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:56.260" id=28:56.260>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1736">28:56.260</a></div>
+        <div class="t">那我說這個就是你關心的東西,通常是人、地名、組織名,就是Name Entity。你先把Name Entity找出來,然後再把Name Entity蓋住。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:08.060" id=29:08.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1748">29:08.060</a></div>
+        <div class="t">那這邊你需要有一個Name Entity Recognition,NER的model,才能夠做這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:14.460" id=29:14.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1754">29:14.460</a></div>
+        <div class="t">那這個東西啊,就是我說湊梗湊得很硬的Ernie啦,他所謂的knowledge integration,我想指的就是你需要知道什麼是entity,需要知道什麼是phrase,那你才知道應該要mask什麼樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:30.760" id=29:30.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1770">29:30.760</a></div>
+        <div class="t">那還有一種masking的方法,叫做Spam Burr。Spam Burr就是說,我們也不要想什麼word啊,也不要想什麼phrase、entity,我們就是一次mask掉很長的一個範圍。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:44.040" id=29:44.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1784">29:44.040</a></div>
+        <div class="t">原來的Burr是每次只隨機選取一個token被蓋住,Spam Burr是一次我們就蓋住一排token,就這樣,結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:53.560" id=29:53.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1793">29:53.560</a></div>
+        <div class="t">那至於要蓋多長的呢?他就定了一個機率的分佈啦,就說一次蓋一個token機率是這樣,一次蓋十個token,一次把連續的十個token都蓋住,機率是這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:09.080" id=30:09.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1809">30:09.080</a></div>
+        <div class="t">那在Spam Burr裡面呢,也比較了各式各樣不同的masking的方法,比如說Subword Token,一次只蓋一個token,Whole Word,蓋整個word,蓋Name Entity,蓋名詞的片語,跟他所提出來的方法,他叫做Geometric的Spam。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:28.160" id=30:28.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1828">30:28.160</a></div>
+        <div class="t">當然他會說自己的方法都是比較好的,當然不會在所有的任務上都比較好啦。今天我覺得這種Burr的pre-training的方法,你往往很難找到一個技術是在所有的任務上都會好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:42.940" id=30:42.940>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1842">30:42.940</a></div>
+        <div class="t">通常pre-training的方法,新的pre-training的方法都是某幾個技術好,那有些技術會變差,但通常某幾個任務好,那有些任務會變差,但多數任務如果都好的話,那其實就已經是不錯的方法了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:58.720" id=30:58.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1858">30:58.720</a></div>
+        <div class="t">在Spam Burr裡面,他還提出了一種訓練的方法叫做Spam Boundary Objective,SBO。SBO是什麼呢?SBO是說,我們一般做的做法是,我們蓋住了一些word以後,蓋住了一些token以後,我們要把蓋住的部分把它預測回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:22.360" id=31:22.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1882">31:22.360</a></div>
+        <div class="t">SBO是說,我們希望根據這一個被蓋住範圍的左右兩邊的embedding,去預測被蓋住的範圍之內有什麼樣的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:38.860" id=31:38.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1898">31:38.860</a></div>
+        <div class="t">什麼意思呢?就是你今天在訓練你的Spam Burr的時候,你有一個objective叫SBO,你有一個簡單的小的module叫SBO,他會把這個蓋住範圍的左邊這個embedding吃進來,右邊這個embedding吃進來,再給他一個數值,再給他一個數值說3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:00.280" id=32:00.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1920">32:00.280</a></div>
+        <div class="t">3代表什麼意思?代表說,我們要還原這一個Spam裡面的第三個token。然後SBO就要預測出來說,這第三個token是誰呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:11.300" id=32:11.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1931">32:11.300</a></div>
+        <div class="t">W3,W4,W5,W6,SBO就要知道說,那我現在要還原W6出來。如果這邊數值是2,那就要還原W5出來,就要還原這一個Spam裡面的第二個token,就是把W5還原出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:26.740" id=32:26.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1946">32:26.740</a></div>
+        <div class="t">這個東西乍看之下,你可能會覺得有一點匪夷所思,就是原來的方法不好嗎?直接用這些embedding把這些token預測出來不好嗎?為什麼要用左右兩邊的來預測中間呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:41.580" id=32:41.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1961">32:41.580</a></div>
+        <div class="t">SBO它的設計是期待說,一個Spam左右兩邊的token可以包含它內部整個Spam的資訊。為什麼要這樣呢?之後我們講到coreference的時候,也許你會比較清楚。在coreference的時候,我們有很多機會會期待說,一個Spam前後兩邊的embedding包含整個Spam的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:04.280" id=33:04.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=1984">33:04.280</a></div>
+        <div class="t">這個我們留待coreference的時候再講。SBO確實有用在coreference上,確實也得到了不錯的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:34.280" id=33:34.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2014">33:34.280</a></div>
+        <div class="t">我甚至是懷疑說,他因為看到自己proposed的方法在coreference上比較低,所以緊急在proposed的一個新的objective加上去,然後就把結果救回來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:51.380" id=33:51.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2031">33:51.380</a></div>
+        <div class="t">好,希望這樣才有回答到你的問題。所以SPAM的適合coreference的部分不是指Spam Masking,指的是SBO的部分。接下來,下一個要跟大家講的是XLNet。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:08.560" id=34:08.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2048">34:08.560</a></div>
+        <div class="t">XLNet的XL是什麼意思呢?現在XLNet已經不是芝麻街的人物了,這個XL指的是TransformerXL,也就是說它裡面用的不是一般的Transformer,它用的是TransformerXL。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:23.240" id=34:23.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2063">34:23.240</a></div>
+        <div class="t">至於TransformerXL有什麼厲害的地方,比如說它可以跨segment讀取資訊,或者是它可以有relative的positional embedding等等,這個跟pre-trained的方法比較沒有關係,這個就留給大家自己研究。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:37.620" id=34:37.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2077">34:37.620</a></div>
+        <div class="t">其實XLNet,這篇paper也是宏極一時,尤其是它沒有那麼好懂,所以我等一下就是介紹一下它的大概念。詳細的細節,我今天等一下就是用我的理解講一下大概念,詳細的數學式,你可以再去看一下原始的論文。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:59.520" id=34:59.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2099">34:59.520</a></div>
+        <div class="t">XLNet裡面有一個觀點是我其實沒有非常認同的。它paper裡面有強調一件事情,它認為原來的BERT有一個問題。假設給你一個句子,"This is New York City",原來的BERT總是把New York這兩個token一起蓋住。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:20.300" id=35:20.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2120">35:20.300</a></div>
+        <div class="t">你就沒有辦法學到說根據New去predict York,根據York去predict New。New York這兩個token,這兩個詞彙,會是independent的,各自獨立的,被預測出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:35.220" id=35:35.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2135">35:35.220</a></div>
+        <div class="t">即使沒有辦法學到說,看到New後面就要接York,看到York前面就要接New。但是,真的實際上運作會是這個樣子的嗎?在BERT裡面,你如果是random sample你的masking,有時候New York都會被蓋住。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:52.560" id=35:52.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2152">35:52.560</a></div>
+        <div class="t">但有時候可能只蓋住New,那你就可以用New York去預測New,有時候只蓋住York,就可以用New去預測York。所以我其實沒有非常認同這個claim。但我可以了解說,也許這個claim的來源是,其實最早版本的BERT,它的masking是fixed的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:11.400" id=36:11.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2171">36:11.400</a></div>
+        <div class="t">這還蠻神奇的,就是說,給一個句子,如果你第一次sample的時候說要mask135的token,之後它就永遠mask135的token,就不會變了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:22.500" id=36:22.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2182">36:22.500</a></div>
+        <div class="t">不過後來在BERT的下一篇pattern有一篇叫做Roberta,它就有dynamic的masking,就每一次mask應該要random sample。那我覺得每一次mask都是random sample,那New跟York會independent被predict這件事情,這個問題也許就沒有那麼嚴重了吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:40.680" id=36:40.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2200">36:40.680</a></div>
+        <div class="t">好,那XLNet是怎麼運作的呢?它可以從兩個不同的觀點來看,它可以從language model的觀點來看,也可以從BERT的觀點來看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:52.680" id=36:52.680>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2212">36:52.680</a></div>
+        <div class="t">好,如果先從predictness token的觀點來看,我們說predictness token的問題就是,你只能看到left context,給你一個token sequence深度學習,你用深度去預測學,你只看得到left context。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:08.200" id=37:08.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2228">37:08.200</a></div>
+        <div class="t">那XLNet是說,我們把這個句子的token裡面的順序給它打亂。所以,深度學習有時候打亂成習度學深,那你今天在預測學的時候,那你就是用習跟度去預測學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:27.920" id=37:27.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2247">37:27.920</a></div>
+        <div class="t">所以有時候你用深跟度去預測學,有時候用習跟度去預測學。那這個打亂是隨機的,所以有時候打亂成習度學深,有時候打亂成深學度習,那你就是用深去預測學。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:42.220" id=37:42.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2262">37:42.220</a></div>
+        <div class="t">那你就是要教你的model說,用各式各樣不同的資訊去預測一個token,它可以學到比較多的dependency,它會知道深度跟學有什麼關係、深跟學有什麼關係、度跟習跟學有什麼關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:56.840" id=37:56.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2276">37:56.840</a></div>
+        <div class="t">這個是從language model的觀點來看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:00.480" id=38:00.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2280">38:00.480</a></div>
+        <div class="t">那如果從BERT的觀點來看呢,在原來BERT的方法是我們會把一些token mask起來,然後根據整個句子的資訊跟mask的資訊去預測出這個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:13.580" id=38:13.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2293">38:13.580</a></div>
+        <div class="t">那如果在XLNet裡面呢,你不會根據整個sentence,你會只根據這個sentence的一部分,但到底是這個input token的sequence的哪些部分是隨機決定的,你會讓你的attention只可以看某一些部分,比如說只看度跟習就要predict mask的地方是什麼,只看深就要predict mask的地方是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:41.420" id=38:41.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2321">38:41.420</a></div>
+        <div class="t">然後呢,今天XLNet還有一個特別的地方就是,它不會給你的model看到mask的部分啦,看到mask這樣子的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:54.000" id=38:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2334">38:54.000</a></div>
+        <div class="t">那這是XLNet的paper裡面強調的它一個厲害的地方,它覺得原來的BERT你會給model看到mask的這個token有點怪怪的,因為在downstream task裡面根本就沒有mask的這個token,那它現在呢不給model看mask的token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:08.760" id=39:08.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2348">39:08.760</a></div>
+        <div class="t">不過雖然不給model看mask的token,還是要給它那個positional information,你還是要告訴它說我們現在預測的word是第三個word,它這樣才能夠產生出正確的embedding,因為你的句子裡面好可能有好多個地方都被mask起來,你要告訴它說你現在是要讓哪一個位置的mask被預測出來,你是要預測哪一個位置的word,所以你要給它,其實你還是要給它positional information。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:37.640" id=39:37.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2377">39:37.640</a></div>
+        <div class="t">那其實XLNet為了要做到只給positional information,不給content的information,其實做了一個特別的network的架構的設計,那這個部分就留給大家自己閱讀XLNet這篇paper的時候,自己細細的品味。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:53.880" id=39:53.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2393">39:53.880</a></div>
+        <div class="t">一般講到BERT,大家會說BERT其實不擅言詞,為什麼說BERT不擅言詞呢?所謂不擅言詞的意思是說BERT不擅長做generation這個task。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:11.740" id=40:11.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2411">40:11.740</a></div>
+        <div class="t">如果我們今天要把BERT這樣portrait model拿來用在需要sequence-to-sequence model的NLP任務裡面,那我們需要BERT有產生句子的能力,而怎麼要產生一個句子呢?要有產生句子的能力就是必須要給部分的句子,然後預測下一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:31.960" id=40:31.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2431">40:31.960</a></div>
+        <div class="t">Language model做這件事情就做得下下焦,因為它訓練的時候它本來就是要做這件事的,它最擅長的事情就是給部分的sequence預測下一個token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:42.780" id=40:42.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2442">40:42.780</a></div>
+        <div class="t">對BERT來說,我個人覺得也不是沒有機會,雖然我從來沒有這樣試驗過,但是你可以說,我今天已經有W1、W2、W3這三個token,下一個token是什麼呢?我在W3後面放一個mask。把W1到W3的mask丟給BERT,叫他預測某一個word出來,預測出來W4也許就是下一個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:07.340" id=41:07.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2467">41:07.340</a></div>
+        <div class="t">但是用這樣子的方法也許並不是很好,因為BERT在訓練的時候,它是看一個完整的句子的。但是如果你只給它看一個部分的句子,只給它看句子的前半段,對BERT來說,這跟它訓練的狀況不一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:22.860" id=41:22.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2482">41:22.860</a></div>
+        <div class="t">訓練的時候,它會看mask的左邊有什麼token,右邊有什麼token,這邊右邊已經超出投影片範圍之外了,看右邊有什麼token,再決定mask的位置是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:34.180" id=41:34.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2494">41:34.180</a></div>
+        <div class="t">但問題是,現在你是generation的任務,你只有左邊已經生成出來的token,你沒有右邊的token,右邊的token還沒有生成出來。對BERT來說,這是它訓練的時候沒有看過的狀況,它可能就會很淒慘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:48.420" id=41:48.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2508">41:48.420</a></div>
+        <div class="t">不過,這個討論都只侷限在auto-regressive的model。什麼叫auto-regressive的model呢?auto-regressive的model意思就是說,我們在生成一個句子的時候,我們是由左而右生成token,我們生成第一個token,第二個,第三個,第四個,以此類推。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:08.140" id=42:08.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2528">42:08.140</a></div>
+        <div class="t">我們是由左而右,從句子的最左邊寫下第一個token,一直寫到最右邊那個token。我們一般人在寫字的時候,是這麼寫的,由左而右寫的,讓我們覺得說,對模型而言,也許這也是一個合理而自然的產生句子的方式。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:25.420" id=42:25.420>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2545">42:25.420</a></div>
+        <div class="t">但是實際上,我們在下周會講到non-auto-regressive的model,今天在NLP的任務裡面,已經開始有一系列的研究,看看有沒有更好的產生sequence的方法。它不見得要由左而右來產生sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:42.820" id=42:42.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2562">42:42.820</a></div>
+        <div class="t">如果不是由左而右產生sequence,那也許BERT反而就沒有問題了,也許BERT在不是由左而右的狀況,它也是擅長延遲的,你只是沒有把它放到適當的位置而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:58.100" id=42:58.100>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2578">42:58.100</a></div>
+        <div class="t">不過,等一下的討論,我們都只侷限在,假設我們還是在討論比較傳統的auto-regressive model的狀況下,所以這個時候BERT是不擅延遲的。那接下來就要看看說,有什麼方法可以讓BERT學會說話。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:14.820" id=43:14.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2594">43:14.820</a></div>
+        <div class="t">BERT因為缺乏generation的能力,所以它可能不太適合拿來做sequence-to-sequence model的pre-trained model,所以假設你要解的是需要sequence-to-sequence model的NLP的任務,那BERT可能只能當做encoder,那decoder的地方你就沒有pre-trained到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:39.140" id=43:39.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2619">43:39.140</a></div>
+        <div class="t">那我們有沒有辦法直接pre-train一個sequence-to-sequence model呢?是可以的,你可以直接pre-train一個sequence-to-sequence model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:48.500" id=43:48.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2628">43:48.500</a></div>
+        <div class="t">那怎麼用這種self-supervised learning的方法來pre-train一個sequence-to-sequence model呢?你可以說,我們現在input一個word sequence,進入encoder,然後你有decoder,decoder有attention,從encoder這邊讀一些資訊出來,然後output一個word sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:06.340" id=44:06.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2646">44:06.340</a></div>
+        <div class="t">我們可以說我們今天training這個sequence-to-sequence model的目標是要recontract原來的input,也就是原來的input是W1到W4,那你希望通過這個encoder,通過這個attention,再通過這個decoder以後,它的輸出也是W1到W4。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:25.380" id=44:25.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2665">44:25.380</a></div>
+        <div class="t">那在這邊有一件事你要注意一下,你一定要把這個輸入的W1到W4做某種程度的破壞。什麼意思呢?如果你這個W1到W4沒有任何破壞,那這個sequence-to-sequence model其實學不到任何東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:43.620" id=44:43.620>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2683">44:43.620</a></div>
+        <div class="t">這個decoder要怎麼outputW1到W4呢?太簡單了,它只要知道說我先copy第一個word出來,再copy第二個word出來,再看第三個position,再copy第三個word出來,它就可以recontract input了,它就可以讓input跟output一模一樣了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:59.460" id=44:59.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2699">44:59.460</a></div>
+        <div class="t">那這樣sequence-to-sequence model學不到任何東西。為了要增加問題的難度,你要把輸入的部分做某種程度的破壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:09.220" id=45:09.220>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2709">45:09.220</a></div>
+        <div class="t">那有什麼要破壞的方法呢?那這邊有兩篇文獻,都在探討這種train sequence-to-sequence model的時候,怎麼對輸入進行破壞。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:20.340" id=45:20.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2720">45:20.340</a></div>
+        <div class="t">一篇叫做Math,Math是Mask sequence-to-sequence pre-training的縮寫,另外一個叫做BART,BART是Bidirectional and Autoregressive Transformer的縮寫。雖然他們都有湊梗,但這個比Ernie還要合理太多了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:40.820" id=45:40.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2740">45:40.820</a></div>
+        <div class="t">那Math跟BART他們做的事情是什麼呢?Math的想法其實跟原來的BART是很像的,Math的想法就是說這是你原來的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:52.820" id=45:52.820>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2752">45:52.820</a></div>
+        <div class="t">那你要怎麼把它弄爛呢?Math的想法就是把一些部分random mask起來,把一些部分隨機的用Mask那個token取代掉。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:03.140" id=46:03.140>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2763">46:03.140</a></div>
+        <div class="t">因為Math就是質量的意思,所以我們就放一個砝碼在這邊來當作Math。所以Math的想法跟BART很像,就是把一些地方random mask起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:15.580" id=46:15.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2775">46:15.580</a></div>
+        <div class="t">那其實在Math的原始paper裡面,他並不要求今天吃這個sequence的時候要還原完整的sequence。只要能夠把Mask的部分,比如說這邊Mask的地方是D,只要能夠把Mask的部分吐出來就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:31.580" id=46:31.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2791">46:31.580</a></div>
+        <div class="t">因為其他部分都是存在的啊,你只需要用attention直接copy就好了。所以Math就只要求把Mask的地方把它還原出來就好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:43.580" id=46:43.580>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2803">46:43.580</a></div>
+        <div class="t">好,那在BART那篇paper裡面,就又提出了各式各樣的方法,比如說除了Mask以外,還有直接delete。Delete跟Mask不一樣的地方就是,Mask會留一個token下來,那delete就是直接拿掉,穿過水無痕這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:04.200" id=47:04.200>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2824">47:04.200</a></div>
+        <div class="t">機器必須要自己知道說,讀ABCE這個sequence發現,是不是中間有少東西啊,是不是少了D啊,要把D補回去。那如果在Mask裡面,就是直接告訴你說,這個地方就是有個洞,被蟲蛀掉了,你要把它補回去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:19.960" id=47:19.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2839">47:19.960</a></div>
+        <div class="t">還有一個方法是Permutation,Permutation是說,假設我們輸入是多個句子,那這邊是有AB跟CDE兩個句子,那我們把這兩個句子的順序打亂,就結束了,這個是Permutation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:35.960" id=47:35.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2855">47:35.960</a></div>
+        <div class="t">Rotation是說,我們現在把某些放在尾部的東西,拿到前面來,就是Rotation。我們改變它起始的位置,比如說本來是ABCDE,現在改成D double開頭變DE ABC,這個就是Rotation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#47:55.960" id=47:55.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2875">47:55.960</a></div>
+        <div class="t">還有一個方法叫Text Infusing,Text Infusing是說,我們會在這個句子裡面加入Mask,但加入Mask的狀況有兩種,一種是隨機插入,也就是我們並沒有把原來的句子蓋住任何東西,比如說AB中間本來是沒有任何東西的,我就插一個Mask進去誤導你。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:17.960" id=48:17.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2897">48:17.960</a></div>
+        <div class="t">機器要知道說,這個Mask是一個False Alarm,它沒有真的要插東西進去,記得要把它濾掉。然後呢,今天不管我們蓋掉的Sequence有多長,比如說這邊我們直接把C跟D兩個Token蓋掉,但都只放一個Mask的Token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:34.960" id=48:34.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2914">48:34.960</a></div>
+        <div class="t">機器要知道說,這邊雖然只有一個Mask的Token,但是實際上在還原的時候,它其實是有兩個Token被蓋掉了,要把C跟D都還原回來,這個叫做Text Infusing。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#48:47.960" id=48:47.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2927">48:47.960</a></div>
+        <div class="t">這個就是Bart在他的paper裡面就把這些方法都試了一輪。試完的結論怎麼樣呢?這邊直接給大家看Bart的結論,他的結論是Permutation跟Rotation不太好。我覺得這其實好像是可以預期的,因為Permutation跟Rotation會把原來的所有句子詞彙的順序打亂,也就是說對Bart來說他會看到奇奇怪怪順序的句子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:14.960" id=49:14.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2954">49:14.960</a></div>
+        <div class="t">如果你訓練的時候看的都是奇奇怪怪順序的句子,那在他的印象中這個世界的句子都是這種奇奇怪怪的句子,等他看到正常的句子的時候可能會反應不過來。所以Bart在使用Permutation跟Rotation來做訓練的時候,結果有點慘。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:33.960" id=49:33.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2973">49:33.960</a></div>
+        <div class="t">而哪一種方法最好呢?最好的方法是Text Infusing,這也是可以預期的,因為看起來這個問題是最艱鉅的。總之Bart告訴我們說Text Infusing這種Input Corruption的方法,最後得到的結果是最好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#49:50.960" id=49:50.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=2990">49:50.960</a></div>
+        <div class="t">剛才講了Bart跟Math,他們訓練了一個Sequence to Sequence的Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:02.960" id=50:02.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3002">50:02.960</a></div>
+        <div class="t">還有一個東西叫做UniLN,UniLN是一個神奇的Model,同時既是Encoder,也是Decoder,也是Encoder加Decoder,也就是同時又是一個Sequence to Sequence的Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:24.960" id=50:24.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3024">50:24.960</a></div>
+        <div class="t">那這UniLN是怎麼運作的呢?這邊就是直接截了UniLN那篇Paper的圖來給大家看。UniLN它就是一個有很多的Self-Attention Layer的Model,它就是一個Model,它沒有切Encoder、Decoder。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:43.960" id=50:43.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3043">50:43.960</a></div>
+        <div class="t">不像剛才我們在講Bart跟Math的時候,這個Sequence to Sequence的Model,切出Encoder的部分跟Decoder的部分,Encoder跟Decoder的參數是不一樣的。UniLN只有一個Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#50:54.960" id=50:54.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3054">50:54.960</a></div>
+        <div class="t">這個Model同時進行三種訓練。第一種訓練,所以它是多才多藝、十項全能,同時做三種訓練。第一種訓練就跟Bart一樣,就是把一些Token Mask起來,Predicted Mask的Token就跟Bart一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:13.960" id=51:13.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3073">51:13.960</a></div>
+        <div class="t">同時它也做GPT的訓練。什麼叫GPT的訓練呢?把它當作一個Language Model來用。可是你說,像這種有Self-Attention的Model可以當作Language Model來用嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:28.960" id=51:28.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3088">51:28.960</a></div>
+        <div class="t">把它當作Language Model,因為它可以看到整個句子,你說給它第一個Token叫它Predicted下一個Token的時候,它不是已經偷看到下一個Token了嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:36.960" id=51:36.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3096">51:36.960</a></div>
+        <div class="t">所以你要好好的設計你的Attention。當它採取GPT這種訓練的時候,你會強制要求它只能Attempt左邊的Token。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#51:48.960" id=51:48.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3108">51:48.960</a></div>
+        <div class="t">在這個圖上,很明顯地看到說,每一個Token都只能看左邊的Token。接下來,它居然也可以當作一個Sequence-to-Sequence Model使用。就跟Bart和Math一樣,它可以直接當一個Sequence-to-Sequence Model使用。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:07.960" id=52:07.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3127">52:07.960</a></div>
+        <div class="t">怎麼當一個Sequence-to-Sequence Model使用呢?你就是把這個Transformer當它Input這個Token Sequence的時候,把它分成兩部分。Input第一個Token Sequence的時候,這個Token Sequence上的Token可以互相看,可以做Self-Attention。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:28.960" id=52:28.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3148">52:28.960</a></div>
+        <div class="t">但是,第二個Sequence裡面的Token都只能看左邊,也就是這個部分是一個Encoder。輸入給Encoder部分的Token可以用Self-Attention,互相愛看誰就看誰。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#52:44.960" id=52:44.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3164">52:44.960</a></div>
+        <div class="t">但是,第二個Sequence進來的時候,它變成了一個Decoder,我們只能看左邊的Token。所以,今天如果這樣子限制你的Attention的話,同樣是一個Network,它就搖身一變,變成Sequence-to-Sequence Model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:05.960" id=53:05.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3185">53:05.960</a></div>
+        <div class="t">我覺得這個設計還蠻神奇的,它可以同時當一個Encoder,用BERT的方法訓練,當一個Decoder,當作Language Model GPT一樣訓練,又可以做Sequence-to-Sequence,當作Bars跟Math一樣訓練。給大家參考這個神奇的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:22.960" id=53:22.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3202">53:22.960</a></div>
+        <div class="t">到目前為止,我們講的Pre-training的方法都是要預測一些失去的資訊,要預測下一個Token,或者要預測被蓋起來的部分。但是,有沒有其他的做法呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:40.960" id=53:40.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3220">53:40.960</a></div>
+        <div class="t">其實,預測一個東西需要的運算量,需要的訓練的強度是很大的。所以,就有一個方法叫做Electra,Electra就是想要避開需要預測東西,需要生成東西這件事。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#53:57.960" id=53:57.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3237">53:57.960</a></div>
+        <div class="t">Electra是什麼的縮寫呢?它是Efficiently Learning an Encoder that Classifies Token Replacement,而且還加了一個Accurately,就是為了要應湊Electra。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:14.960" id=54:14.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3254">54:14.960</a></div>
+        <div class="t">Electra是誰呢?其實我也不是很清楚。Electra好像是一個希臘人物,Electra Complex就是戀母情結的意思。Electra的故事我是不知道啦。總之,有一個希臘人物叫Electra,有一個方法就是應湊出了Electra這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:37.960" id=54:37.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3277">54:37.960</a></div>
+        <div class="t">Electra做的事情是什麼呢?相較於我們剛才講的方法,都是要把被Masking或者是下一個Token預測出來。Electra不做預測這件事,Electra只回答Binary的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#54:52.960" id=54:52.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3292">54:52.960</a></div>
+        <div class="t">Electra怎麼回答Binary的問題呢?Electra的Model就是吃一個句子進來,比如說The chef cooked the meal,然後接下來我們把這個句子裡面其中一些地方不是Mask起來,而是置換成其他詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:09.960" id=55:09.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3309">55:09.960</a></div>
+        <div class="t">比如說把這個句子置換成The chef ate the meal,這邊放at在文法上看起來也沒有什麼不對,但是意思有點怪怪的,就是廚師本來在煮晚餐,但是他現在煮完以後自己把他偷偷吃了,意思有點怪怪的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:27.960" id=55:27.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3327">55:27.960</a></div>
+        <div class="t">接下來Electra就要知道說,在輸入的這五個Token裡面,第一個沒有被置換,第二個沒有被置換,第三個有被置換,第四個沒有被置換,第五個沒有被置換,這就是Electra的訓練任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#55:41.960" id=55:41.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3341">55:41.960</a></div>
+        <div class="t">這樣做有什麼好處呢?這樣做第一個好處就是,預測Yes、No比Reconstruction簡單多了,就這樣。第二個好處是說,今天Electra每一個Position都有Error的Signal,不像之前在訓練Bird的時候,只有被Mask起來的地方我們才會去做Prediction,沒有被Mask起來的地方它輸出什麼就不管了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:05.960" id=56:05.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3365">56:05.960</a></div>
+        <div class="t">但是Electra每一個輸出都是需要的,所以每一個輸出都可以有Error的Signal流進你的Model的主體裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:17.460" id=56:17.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3377">56:17.460</a></div>
+        <div class="t">但是現在問題來了,怎麼樣把一些詞彙置換成其他詞彙,可以產生文法上沒有錯語意稍微怪怪的句子呢?如果你說你這邊固定置換成一個奇奇怪怪的Token,那很容易就會被發現,很容易被發現,那Electra就學不到什麼厲害的東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#56:39.960" id=56:39.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3399">56:39.960</a></div>
+        <div class="t">所以怎麼辦呢?這邊用了另外一個比較小的Bird去產生被Mask起來的東西。也就是說,你今天給小的Bird一個句子,把一些地方Mask起來,然後問Bird說這個Mask起來的地方你想要填什麼word,然後Bird就說想要填at,那我們就把這個地方變成at,然後丟給Electra,看Electra知不知道說這個位置是被Bird填上去的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:09.460" id=57:09.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3429">57:09.460</a></div>
+        <div class="t">所以有人就會說這個方法其實有點像Game啦,就是這個Bird把一些詞彙Mask起來,然後置換成別的詞彙,然後Electra要去抓說這個詞彙有沒有被Bird偷換過,不過這個Bird不需要Train一個很好的Bird,甚至你Train一個很好的Bird反而比較糟,你Train一個很好的Bird,如果他Mask起來的東西不一定都跟原來一模一樣,這個也不是你要的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:36.460" id=57:36.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3456">57:36.460</a></div>
+        <div class="t">所以Electra在訓練的時候,這邊就用一個沒有很好的Bird,小的Bird就好了,希望他預測的時候是有點錯,他錯的地方要被Electra抓出來說這個地方是被Bird已經置換掉的,被Bird已經動過手腳的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#57:51.460" id=57:51.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3471">57:51.460</a></div>
+        <div class="t">所以有人就會說這個有點像Game啦,這個什麼小的Bird是Generator,Electra是Discriminator,但其實他也不能說是Game,為什麼他不能說是Game呢?因為如果是Game的話,你的Generator在訓練的時候要去騙過Discriminator,也就是說你這個Bird在想辦法產生一些詞彙去讓Electra覺得很困惑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:15.460" id=58:15.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3495">58:15.460</a></div>
+        <div class="t">但實際上在實作的時候,這邊Paper裡面並沒有這麼做,這個小的Bird就是自己Train自己的,他就是自己玩自己的,他自己跟一般的Bird的訓練是一模一樣的,他自己去訓練說怎麼把Mask還原成原來的詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:32.460" id=58:32.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3512">58:32.460</a></div>
+        <div class="t">之所以不把他當作Game來Train,其實Paper裡面有稍微提到一句說大家都知道Game很難Train嘛,然後Bird是這麼大的Model,你用Game真的Train得起來嗎?所以他就沒有考慮這麼做就是了啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#58:46.460" id=58:46.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3526">58:46.460</a></div>
+        <div class="t">那Electra結果怎麼樣呢?我覺得他結果還蠻驚人的,所以特別Show一下給大家看。這個橫軸是訓練的時候的運算量,縱軸是Group Score,就是在Group比賽這個任務裡面的8個指任務上的平均成績。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:06.460" id=59:06.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3546">59:06.460</a></div>
+        <div class="t">那你會看到說藍色的點就是過去的方法啦,有Glove、Elmo、Bird Small、GBT、Bird Base、Bird Large、然後Roberta,我還沒有講過Roberta,我沒有怪他,反正就是一個Bird的進階版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:21.460" id=59:21.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3561">59:21.460</a></div>
+        <div class="t">總之,運算量越來越多,當然Performance也越來越好。那今天呢,Electra想要做到的事情就是,在同樣等級的運算量下,因為他做的事情比較簡單啦,所以只要同等級的運算量,他就可以訓練得比其他模型更好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#59:48.460" id=59:48.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3588">59:48.460</a></div>
+        <div class="t">甚至,他只要四分之一的運算量,他就已經接近XLNA了。這個給大家參考。也許你自己不可能trainXLNA,曾經有人發一個Twitter說,哇靠,trainXLNA要合大概台幣六百萬左右啊,如果你去租Google的TPU的話,你大概沒辦法trainXLNA。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:10.460" id=01:00:10.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3610">01:00:10.460</a></div>
+        <div class="t">那也許Electra你自己有辦法train,你只需要四分之一的運算量,一百五十萬就可以train起來了,不過你大概也沒有一百五十萬就失了啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:20.460" id=01:00:20.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3620">01:00:20.460</a></div>
+        <div class="t">到剛才目前為止,我們講的技術都是想要給每一個token一個embedded,但有時候我們要做的不是給一個token一個embedded,而是希望給整個input的token sequence一個global的embedded。我們現在用一個embedded來表示整個input的token sequence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:00:45.460" id=01:00:45.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3645">01:00:45.460</a></div>
+        <div class="t">這件事情要怎麼做呢?有很多任務會需要整個sentence的token sequence,比如說你今天要對整個sequence做分類的時候,也許你希望有一個vector可以代表整個sequence,那你直接把這個vector丟到一個簡單的classifier,就可以知道整個sequence屬於哪一個類別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:03.460" id=01:01:03.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3663">01:01:03.460</a></div>
+        <div class="t">那怎麼產生sentence的embedding呢?我們之前有講過說,怎麼理解一個word呢?要看這個word的company是什麼,看這個word跟哪些其他的word相鄰。那怎麼了解一個sentence呢?也許也可以用同樣的道理,看一個sentence跟哪些sentence相鄰。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:23.460" id=01:01:23.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3683">01:01:23.460</a></div>
+        <div class="t">那基於這樣子的想法,有一招叫做skip-solve。skip-solve是說,我們train一個sequence to sequence的model,把一個句子讀進去,通過encoder變成一個vector。接下來要根據這個vector用decoder去預測這個句子的下一句是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:44.460" id=01:01:44.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3704">01:01:44.460</a></div>
+        <div class="t">如果今天有兩個不同的句子,他們下一句可以接的句子都很像,那這兩個不同的句子就會有類似的embedding,這是skip-solve的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01:58.460" id=01:01:58.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3718">01:01:58.460</a></div>
+        <div class="t">那skip-solve訓練起來是比較困難的,因為我們剛才在講electra的時候有說,你要叫model去生成東西,這個訓練的運算量往往比較大。所以怎麼辦呢?skip-solve有一個進階的版本叫做quixel,從它的名字一聽就知道,quixel就很快的意思。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:17.460" id=01:02:17.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3737">01:02:17.460</a></div>
+        <div class="t">那quixel是怎麼做的呢?它跟electra的思路一樣,就是想辦法去避開需要做生成這件事。有兩個句子,這兩個句子各自通過encoder得到他們的embedding。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:30.460" id=01:02:30.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3750">01:02:30.460</a></div>
+        <div class="t">然後接下來呢,如果這兩個句子他們是相鄰的,那我們就讓他的embedding越相近越好。反之如果他們不是相鄰的,就要讓他們的embedding距離越遠越好。那這個就是quixel。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:02:48.460" id=01:02:48.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3768">01:02:48.460</a></div>
+        <div class="t">那它跟electra一樣呢,想辦法去避開需要做生成這樣的問題。在原始的BERT裡面,有一個叫做CLS的token,然後我們期待說當丟進CLStoken的時候我們會產生一個embedding,這個embedding代表了整個BERT輸入的所有的token,整個token sequence的資訊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:13.460" id=01:03:13.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3793">01:03:13.460</a></div>
+        <div class="t">可是要怎麼輸出這個,要怎麼訓練出這個embedding呢?對BERT來說呢,它希望去解一個比較global的任務。什麼樣的global的任務呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:27.460" id=01:03:27.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3807">01:03:27.460</a></div>
+        <div class="t">在原始的BERT裡面,它提出一個任務叫做next sentence prediction,也就是給這個model輸入兩個句子,兩個句子中間用一個特殊的符號叫sep分割,然後在CLS這邊讀出一個藍色的vector,再把這個藍色的vector丟到一個linear的classifier裡面去,要求這個linear classifier去判斷說這兩個句子他們是相接的還是不是相接的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:03:54.460" id=01:03:54.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3834">01:03:54.460</a></div>
+        <div class="t">就是如果這兩個句子是接在一起的,那這個classifier就要output yes,如果這兩個句子不是相接在一起的,那可能是來自於不同的文章,就是從不同文章隨便sample兩個句子,他們不是相接在一起的,那這個classifier就應該要說no。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:10.960" id=01:04:10.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3850">01:04:10.960</a></div>
+        <div class="t">要知道這兩個句子是不是接在一起的,也許就需要看完這整個sequence,對這整個sequence都有一個整體性的了解以後,才有辦法判斷。所以我們期待說,藍色這個vector是對整個sequence都有所理解以後,才產生出藍色的這個vector,然後再去判斷說這兩個句子是不是應該被接在一起的。這個方法叫做next sentence prediction。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:37.460" id=01:04:37.460>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3877">01:04:37.460</a></div>
+        <div class="t">next sentence prediction就是後來被發現說結果沒有很好,有一篇paper叫做Roberta,現在就是要湊梗才行,所以Roberta是什麼呢?Roberta就是robustly optimize birth approach,湊起來就是Roberta,但Roberta是什麼我也不知道,我查了一下,感覺就是一個包包的品牌吧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04:59.360" id=01:04:59.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3899">01:04:59.360</a></div>
+        <div class="t">其實不只Roberta,Roberta這篇paper就說next sentence prediction其實試了一下,嗯,沒有什麼用。那Excel內也說,嗯,沒有什麼用,然後Spamford那篇paper也說,嗯,沒有什麼用,就強導眾人推啊,大家都說NSP沒有什麼用,所以它就試為了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:18.040" id=01:05:18.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3918">01:05:18.040</a></div>
+        <div class="t">那有另外一個方法呢,叫做SOP,它是sentence order prediction。sentence order prediction意思是說,我們給機器兩個相接的句子,它要說yes,然後我們把這兩個句子反向,就把本來相接的句子倒過來,就本來在後面的句子移到前面,前面的句子移到後面,然後這個時候呢,你的birth model呢,要說no這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:05:44.020" id=01:05:44.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3944">01:05:44.020</a></div>
+        <div class="t">那SOP有用在Albert上,Albert就是愛因斯坦啊,不知道Bert是芝麻街的人物啊,但加上Lal,Lal就是一個簡化版的輕量的Bert,lightweight Bert,他就是Albert。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:00.020" id=01:06:00.020>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3960">01:06:00.020</a></div>
+        <div class="t">我覺得,next sentence prediction之所以沒有什麼幫助的一個問題,也許是說,這個next sentence prediction也許太簡單了。對機器來說,你隨機sample兩個句子,那如果這兩個句子講的就是完全風馬牛不相及的事情,那它要知道說這兩個句子本來就不是相接的,也許頗容易的,所以也許next sentence prediction沒有辦法讓機器學到比較多東西。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:26.400" id=01:06:26.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3986">01:06:26.400</a></div>
+        <div class="t">那SOP因為它很困難,你把兩個句子只是它的順序弄反,那這兩個句子是從同一篇文章來的啊,所以它們講的事情可能是很像的啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:37.000" id=01:06:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=3997">01:06:37.000</a></div>
+        <div class="t">如果是NSP,它也許只要偵測說兩個句子講的事情是不是一樣的,它的主題一不一樣,就知道說兩個句子是不是相接了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06:45.180" id=01:06:45.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4005">01:06:45.180</a></div>
+        <div class="t">但SOP比較困難,這兩個句子是來自同一篇文章的,只是你故意不按照順序來擺放,然後機器要能夠偵測出來。這是一個比較難的問題,也許它對於訓練你的pre-trained model是比較有幫助的。至少在Albert裡面,是有顯示SOP是有幫助的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:03.440" id=01:07:03.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4023">01:07:03.440</a></div>
+        <div class="t">還有另外一個方法叫做Struckberg,Struckberg不知道為什麼又叫做Alice,就是愛麗絲夢,我先講愛麗絲,她喜歡這個包包啊,所以她這邊有很多愛心。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:15.380" id=01:07:15.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4035">01:07:15.380</a></div>
+        <div class="t">愛麗絲為什麼叫愛麗絲呢?我真的是不知道,如果有人知道的話跟我講一下。愛麗絲是阿里巴巴提出的,所以也許愛麗絲就是阿里巴巴。但是CE是什麼呢?我真的是不知道。它又叫做Struckberg,它在文章裡面說Struckberg又叫做愛麗絲,但沒有解釋為什麼叫做愛麗絲。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:35.600" id=01:07:35.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4055">01:07:35.600</a></div>
+        <div class="t">這個Struckberg呢,裡面也有用到很類似SOP的想法,但是它不是完全就是SOP,它有三個類別,它等於就是把NSP跟SOP結合起來,用在愛麗絲裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:07:51.040" id=01:07:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4071">01:07:51.040</a></div>
+        <div class="t">今天到目前為止講了這麼多pre-trained的方法,到底哪一種比較好呢?不過因為要pre-trained model,需要的運算資源其實太大,這個不是隨隨便便一般人都可以做的,所以我們也不太容易自己來測試說什麼樣的pre-trained的方法好,什麼樣的pre-trained的方法不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:14.380" id=01:08:14.380>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4094">01:08:14.380</a></div>
+        <div class="t">不過Google有一篇paper叫做T5,它裡面展現了Google龐大的財力跟運算資源,它把各式各樣當時可以想到的pre-training的方法都暴做了一次,這篇paper叫做T5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:34.480" id=01:08:34.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4114">01:08:34.480</a></div>
+        <div class="t">T5是Transformer的縮寫,因為這裡面有五個T,所以叫做T5。Google每個人都是模型命名大師,這個就叫做T5。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08:47.480" id=01:08:47.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4127">01:08:47.480</a></div>
+        <div class="t">在裡面還有一個Corpus叫做C4,C4是Colossal Clean Crawl Corpus的縮寫,Colossal就是非常巨大的意思,之所以用這個冷屁的字就是為了要硬湊C4。所以T5它用的Corpus叫做C4,真的是湊梗王,命名大師。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:10.980" id=01:09:10.980>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4150">01:09:10.980</a></div>
+        <div class="t">這篇paper長達五十幾頁,你有興趣的話就自己慢慢看,裡面就是試了各式各樣不同的pre-training的方法,然後試圖得到一些結論。這個就留給大家自己慢慢的品味。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:29.240" id=01:09:29.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4169">01:09:29.240</a></div>
+        <div class="t">其實Ernie有兩個,剛才已經講過了一個Ernie,其實還有另外一個Ernie,這個Ernie叫做Enhanced Language Representation with Informative Entity,它的縮寫也是Ernie。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:09:46.740" id=01:09:46.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4186">01:09:46.740</a></div>
+        <div class="t">我覺得這個沒有上一個Ernie那麼硬,至少它的每一個字母都是在一個詞彙的開頭跟結尾,這個我還可以接受,但它叫做Ernie。其實這篇paper裡面還有特別用一個註解,講說還有另外一個Ernie。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:01.740" id=01:10:01.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4201">01:10:01.740</a></div>
+        <div class="t">他們按照NLP領域的傳統Elmo Birth之後應該叫做Ernie。我想說其實也沒有這個傳統,也只有兩個芝麻街的人物,這也不算是一個傳統。總之它也叫做Ernie。Ernie做的事情是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:17.180" id=01:10:17.180>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4217">01:10:17.180</a></div>
+        <div class="t">Ernie是希望在pre-train的時候,這一個Ernie跟三個Ernie不一樣,這一個Ernie是希望在pre-train的時候加入external knowledge。這個就是另外一個故事,我們之後再講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:31.880" id=01:10:31.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4231">01:10:31.880</a></div>
+        <div class="t">就是Birth它有external knowledge,比如說一個knowledge graph以後,它就進化成了Ernie。剛才到目前為止,我們講的Birth都是文字的Birth,從大量的文字裡面去學習如何理解文字,再去做各式各樣的NLP的任務,這個是文字的部分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10:57.880" id=01:10:57.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4257">01:10:57.880</a></div>
+        <div class="t">但我們能不能有語音版的Birth呢?舉例來說,我們能不能夠讓Birth聽大量的聲音以後,它也從大量沒有標註的聲音裡面學到什麼,然後把它用在各式各樣,在這門課裡面,我們提過的跟語音的相關的任務。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:19.780" id=01:11:19.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4279">01:11:19.780</a></div>
+        <div class="t">5月27號那一天,我會請AudioBird的其中一篇paper,叫做Markie Chang的第一作者,劉廷煒同學,來跟大家講一下AudioBird相關的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:11:32.780" id=01:11:32.780>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=Bywo7m6ySlk&t=4292">01:11:32.780</a></div>
+        <div class="t">反正有關Birth的pre-training,我們這個部分就先暫時停在這邊,接下來其實還有很多跟Birth有關的內容,只是我們先把pre-training的技術先講一講。</div>
+    </div>
+    
+</body>
+</html>   

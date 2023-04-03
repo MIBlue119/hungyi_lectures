@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>Meta Learning – MAML (5/9)</h2><a href=https://www.youtube.com/watch?v=vUwOA3SNb_E><img src=https://i.ytimg.com/vi_webp/vUwOA3SNb_E/hqdefault.webp></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.720" id=00:00.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=0">00:00.720</a></div>
+        <div class="t">好,那請說,請說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:07.520" id=00:07.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=7">00:07.520</a></div>
+        <div class="t">喔,您說我直接就三個example,訓練一個classifier這樣,那其實通常就是會慘掉這樣子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:13.640" id=00:13.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=13">00:13.640</a></div>
+        <div class="t">那我其實沒有非常懂你指的one-shot learning的方法是什麼,但你會發現說那些one-shot learning的方法,其實往往就是meta learning的方法的其中一種這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:31.760" id=00:31.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=31">00:31.760</a></div>
+        <div class="t">舉例來說,有很多one-shot learning做得非常強的model,比如說你有可能聽過的match network或是prototype network,那其實你仔細想想會發現說,他們都可以算是放在meta learning那個框架下面學習的其中一種方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:52.640" id=00:52.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=52">00:52.640</a></div>
+        <div class="t">對,就是這樣,沒錯,對,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:56.640" id=00:56.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=56">00:56.640</a></div>
+        <div class="t">好,現在還有什麼問題要問,大家還有問題要問嗎,好,那我們就繼續。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:06.000" id=01:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=66">01:06.000</a></div>
+        <div class="t">好,那今天就是介紹兩個方法給大家認識,那下週再講更多其他的方法,下週再講剛才講到的match network或是prototype network等等。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:16.080" id=01:16.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=76">01:16.080</a></div>
+        <div class="t">今天要講的方法有一個叫做MEMO,它是ICML2017的paper,另外一個叫reptile,reptile是2018的paper,我還不知道它投到哪一個conference去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:29.640" id=01:29.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=89">01:29.640</a></div>
+        <div class="t">這個MEMO聽起來就像是哺乳類動物,reptile它就是爬蟲類,所以這邊放了一個貓,放了一個蜥蜴。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.280" id=01:38.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=98">01:38.280</a></div>
+        <div class="t">那MEMO為什麼叫MEMO呢?從它的Title就可以看出來,它是model-agnostic meta learning,因為它是model-agnostic meta learning,可以叫MAML。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:47.320" id=01:47.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=107">01:47.320</a></div>
+        <div class="t">model-agnostic意思就是說,它是跟model無關的,它可以跨model,它不會受到model限制的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.720" id=01:54.720>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=114">01:54.720</a></div>
+        <div class="t">那reptile呢?我讀完這paper以後,我還是不知道為什麼叫做reptile這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.440" id=01:59.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=119">01:59.440</a></div>
+        <div class="t">真的真的,你如果知道的話你告訴我,我有點懷疑說是不是為了湊梗,MEMO是哺乳類,硬湊一個爬蟲類,所以叫做reptile。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:09.880" id=02:09.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=129">02:09.880</a></div>
+        <div class="t">我實在看不出來它是什麼東西的縮寫。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:13.800" id=02:13.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=133">02:13.800</a></div>
+        <div class="t">那我就先來講一下MEMO,MEMO要做的事情是什麼?MEMO要做的事情就是,我們來學一個initialization的parameter,過去initialization parameter,你就從某一個distribution裡面去sample出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:28.520" id=02:28.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=148">02:28.520</a></div>
+        <div class="t">現在MEMO要做的事情是,我們來學一個最好的initialization的parameter。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:35.160" id=02:35.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=155">02:35.160</a></div>
+        <div class="t">那怎麼做呢?我們就定一個loss function,這個loss function的input就是初始化的參數,然後它告訴我們說這種初始化的參數是好還是不好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:46.040" id=02:46.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=166">02:46.040</a></div>
+        <div class="t">那怎麼知道這個初始化的參數好還是不好呢?你就拿這個初始化的參數去各個不同的task上面做訓練,雖然初始化的參數是一樣的,但不同的task上面你最終學出來的model會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:59.880" id=02:59.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=179">02:59.880</a></div>
+        <div class="t">那我們把theta hat上標n代表在第n個task上面學出來的model,就theta hat代表某一個learning的algorithm最終學出來的model,我們用theta hat來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:12.480" id=03:12.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=192">03:12.480</a></div>
+        <div class="t">theta hat上標n代表在第n個任務上面學出來的model,叫做theta hat上標n。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.320" id=03:18.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=198">03:18.320</a></div>
+        <div class="t">然後theta hat上標n呢,它顯然是跟mine初始化參數有關係,你給它不同的初始化參數,就算是你這邊關鍵design方法都一樣,你最後學出來的theta hat也會是不一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:31.480" id=03:31.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=211">03:31.480</a></div>
+        <div class="t">那ln括號theta hat上標n就是說,我們現在把theta hat上標n這組參數,最終拿去taskn的testing set要試試看,看它做起來的loss怎麼樣,這個就是ln括號theta hat上標n。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:47.120" id=03:47.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=227">03:47.120</a></div>
+        <div class="t">那我們現在有大n個task,然後把這大n個task都用fine做初始化參數去訓練出theta hat,然後把它在大n個task上面的loss統統加起來,就是這個fine的loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:04.640" id=04:04.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=244">04:04.640</a></div>
+        <div class="t">對,這所有task都輸出一樣的initialization,所以我剛才就說memo它的限制就是所有的task的model structure必須要是一樣的,這樣大家還有問題要問嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:20.120" id=04:20.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=260">04:20.120</a></div>
+        <div class="t">所以memo還是有一些限制,就model structure要是一樣的。每一個小任務都是一個訓練的過程,每一個小任務你都要拿fine set去做訓練,這樣大家還有問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:43.120" id=04:43.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=283">04:43.120</a></div>
+        <div class="t">好,如果沒有的話我們就繼續。好,那怎麼minimize大L的fine呢?就用gradient descent這樣,就硬做,就用gradient descent硬做,怎麼用gradient descent呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:57.360" id=04:57.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=297">04:57.360</a></div>
+        <div class="t">只要你有辦法用fine對大L的fine做算出它的gradient就結束了,就假設你有辦法做這件事,你可以知道說這個fine對大L的gradient就結束了,然後算出這個gradient,把它乘上一個learning rate,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.040" id=05:17.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=317">05:17.040</a></div>
+        <div class="t">那當然這個learning rate你要調一下,這邊一個add還有一個learning rate,然後你就可以update你的fine,就結束了。好,那這邊要強調一下memo跟model pre-training是不太一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:28.240" id=05:28.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=328">05:28.240</a></div>
+        <div class="t">那我們知道說在做transfer learning的時候,你會用model pre-training這樣的方法,就是你把你現在某一個任務的data很少,但是你另外一個任務的data很多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:39.520" id=05:39.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=339">05:39.520</a></div>
+        <div class="t">你就把你的modelpre-train在那個有多量資料的任務上,然後fine-tune在只有少量資料的任務上,這個叫做model的pre-training。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:50.240" id=05:50.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=350">05:50.240</a></div>
+        <div class="t">那如果是model pre-training,它跟NAML的差別就是,如果是model pre-training的話,它的loss function你會寫成這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.000" id=06:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=360">06:00.000</a></div>
+        <div class="t">在NAML裡面,你的ln是用哪一個model算出來的呢?是用fine訓練完後的model set ahead算出來的,它是訓練過後的model。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:12.000" id=06:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=372">06:12.000</a></div>
+        <div class="t">在model pre-training裡面,你是拿你現在手上的那一個model,直接去量說它現在在我要拿來做pre-training的那些task上面表現怎麼樣,所以它們是不太一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.600" id=06:25.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=385">06:25.600</a></div>
+        <div class="t">如果你還是覺得有點抽象的話,那下一頁我就舉一個更具體的例子來跟你講說NAML跟model pre-training有什麼樣不一樣的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:35.440" id=06:35.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=395">06:35.440</a></div>
+        <div class="t">這個橫軸是你的model的變化,但model其實是高微的,現在就假設是一微的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.600" id=06:41.600>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=401">06:41.600</a></div>
+        <div class="t">這個深綠色的線跟淺綠色的線,代表兩個不同的task,task1跟task2,它的loss跟model parameter之間的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:53.040" id=06:53.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=413">06:53.040</a></div>
+        <div class="t">如果今天你用的是NAML的話,我們並不在意初始的參數fine在這些training的task上面表現怎麼樣,這不是重點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:07.120" id=07:07.120>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=427">07:07.120</a></div>
+        <div class="t">我們真正在意的並不是fine現在的表現,而是fine經過訓練以後的表現。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:14.240" id=07:14.240>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=434">07:14.240</a></div>
+        <div class="t">也就是說,今天假設我們的fine在這邊,它在task1上表現不是很好,在task2上表現可能也不是很好,但是它可能是一個很不錯的fine。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:27.840" id=07:27.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=447">07:27.840</a></div>
+        <div class="t">為什麼它是一個很不錯的fine呢?因為假設我們拿這個fine當作初始的參數,在task1上,它可能就順著這個歸點的方向一路滾下去,就可以走到最好的參數,setahead。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.440" id=07:41.440>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=461">07:41.440</a></div>
+        <div class="t">這個setahead的loss就會很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:44.640" id=07:44.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=464">07:44.640</a></div>
+        <div class="t">那如果看task2呢,你拿這邊當作初始的參數,它就順著這個task2的歸點方向就往這邊走下去,它也可以找到task2最好的參數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.960" id=07:56.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=476">07:56.960</a></div>
+        <div class="t">所以雖然fine本身拿去做task1跟task2都沒有很強,但是fine拿去做訓練以後,用task1的data,用task2的data做訓練以後可以變得很強,那它就是一個好的fine。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:11.520" id=08:11.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=491">08:11.520</a></div>
+        <div class="t">那如果是model pre-training是怎麼樣呢?model pre-training在意的是,現在我們train的這個modelfine,它到底表現得怎麼樣?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:20.640" id=08:20.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=500">08:20.640</a></div>
+        <div class="t">所以在model pre-training的方法來說,一個好的fine可能是在這個地方。就這個fine,它在task1上表現得很好,它在task2上也表現得不錯。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.960" id=08:32.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=512">08:32.960</a></div>
+        <div class="t">那我們在做model pre-training的時候,我們要找的fine是同時在兩個任務上面都可以表現好的fine。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:41.360" id=08:41.360>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=521">08:41.360</a></div>
+        <div class="t">但它訓練以後好不好呢?就不知道。雖然它現在很好,但它可能訓練以後並不一定很好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=528">08:48.000</a></div>
+        <div class="t">舉例來說,在這個例子上面,我們把這個當作初始值,然後在第二個task2上做訓練的時候,你最後會卡在一個local minima。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:56.480" id=08:56.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=536">08:56.480</a></div>
+        <div class="t">那這個loss並沒有很小,因為這邊有一個更好的loss,這個loss並沒有很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:00.880" id=09:00.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=540">09:00.880</a></div>
+        <div class="t">那這個fine對Meta Learning來說不是一個好的fine,但是model pre-training的時候沒有把訓練這件事情考慮進去。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:09.280" id=09:09.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=549">09:09.280</a></div>
+        <div class="t">所以在做model pre-training的時候,我們想要找一個fine,它可以在那些訓練的任務上得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.480" id=09:18.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=558">09:18.480</a></div>
+        <div class="t">在memo裡面,我們是要找到一個fine,它在這些任務上面經過訓練以後可以得到好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:26.880" id=09:26.880>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=566">09:26.880</a></div>
+        <div class="t">所以model pre-training,它看的是現在這個model表現得怎麼樣,NAML它看的是這個model的潛力經過訓練以後表現得怎麼樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.160" id=09:38.160>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=578">09:38.160</a></div>
+        <div class="t">這個就好像是說,你畢業以後在想說,我畢業以後到底應該要做什麼呢?是要去工作還是去簽博呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:46.320" id=09:46.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=586">09:46.320</a></div>
+        <div class="t">那如果你看工作的話,你就會覺得說,現在去工作馬上就有錢賺,那這個就是model pre-training的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:54.080" id=09:54.080>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=594">09:54.080</a></div>
+        <div class="t">那如果簽博的話,就是你知道你在念完博班以後,你的人生的道路會更加寬廣,這個就是NAML這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:02.320" id=10:02.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=602">10:02.320</a></div>
+        <div class="t">所以我們那時,現在都沒有什麼人要念博班,所以現在在上課的時候就是要來業配念博班這件事,讓人不妨的開始業配這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.520" id=10:13.520>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=613">10:13.520</a></div>
+        <div class="t">好,那剛才就是講了這個NAML跟model pre-training的差別。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:19.280" id=10:19.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=619">10:19.280</a></div>
+        <div class="t">那NAML在實作的時候,我們假設我們的training algorithm只會做一次參數的update。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.280" id=10:31.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=631">10:31.280</a></div>
+        <div class="t">我知道說,一般在做gradient descent的時候,你當然參數update不只一次,每次都update成千上萬次,但是在NAML裡面,我們在training的時候,我們假設參數只會被update一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:43.280" id=10:43.280>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=643">10:43.280</a></div>
+        <div class="t">也就是說,你的初始的參數是py,這個是訓練出來的,是model自己找出來的,他計算過一次gradient以後,被update一次以後,得到了state ahead,就當作是最終的模型訓練的結果了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:57.760" id=10:57.760>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=657">10:57.760</a></div>
+        <div class="t">所以py跟state ahead中間,在NAML裡面,他們的關係是還蠻直覺的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:04.320" id=11:04.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=664">11:04.320</a></div>
+        <div class="t">你把py減掉learning rate,乘上一個gradient,這個gradient是py對現在某一個task的loss function所算出來的gradient,就得到state ahead。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:18.000" id=11:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=678">11:18.000</a></div>
+        <div class="t">我這邊把n省略掉,這個l代表是某一個task的loss function,你把py對某一個task的loss function去算它的gradient,再減掉py,就得到那一個task這樣訓練出來的結果,state ahead。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:32.800" id=11:32.800>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=692">11:32.800</a></div>
+        <div class="t">那當然你可能會懷疑說,為什麼只做一次update呢?一般做訓練的時候不是應該update幾十萬次嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:40.320" id=11:40.320>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=700">11:40.320</a></div>
+        <div class="t">那這邊我就給你幾個我想到的理由了。第一個理由就是,你想想看,這個meta learning的訓練,這個computation的需要量往往都非常大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:51.040" id=11:51.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=711">11:51.040</a></div>
+        <div class="t">那如果你說,你要update幾千次,那每一次訓練都要一個小時,那這個怎麼可能支撐得住呢?所以我們就update一次,這樣才快。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:00.480" id=12:00.480>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=720">12:00.480</a></div>
+        <div class="t">而再來就是,假設,因為我們今天在訓練的時候,我們今天NNL的訓練目標就是希望在訓練以後可以得到好的結果,那假設今天NNL真的可以訓練出一個超強的initialization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:15.040" id=12:15.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=735">12:15.040</a></div>
+        <div class="t">這個initialization它棒到什麼地步呢?它棒到只要update一次參數,結果就很好,這樣不是很棒嗎?所以NNL就把這個當作目標,它就希望你就是只可以update一次,那update一次以後就要很好,看看有沒有辦法做到。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.560" id=12:28.560>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=748">12:28.560</a></div>
+        <div class="t">然後實作的時候,你雖然在訓練你的NNL的時候,你假設只update一次參數,但是在測試的時候你是可以update很多次參數的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.920" id=12:41.920>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=761">12:41.920</a></div>
+        <div class="t">就是你早說這個initialization,在訓練的時候是期待這個initializationupdate一次以後結果就很好,但有可能實際實作的時候只update一次真的結果不好,那沒關係,你就在測試的時候多update一次。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:55.040" id=12:55.040>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=775">12:55.040</a></div>
+        <div class="t">那你就在你的testing的task上,你在解你的testing的task的時候,你可以多update幾次讓你得到比較好的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.640" id=13:02.640>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=vUwOA3SNb_E&t=782">13:02.640</a></div>
+        <div class="t">然後再來就是,如果今天是future learning的test,你的data很少啊,那如果data很少,你update很多次不是會很容易overreaching嗎?所以我們把update的次數限制在只可以update一次。總之NNL只會通常在訓練的時候就假設只update一次參數。</div>
+    </div>
+    
+</body>
+</html>   

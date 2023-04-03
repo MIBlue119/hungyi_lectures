@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】類神經網路訓練不起來怎麼辦 (四)：損失函數 (Loss) 也可能有影響</h2><a href=https://www.youtube.com/watch?v=O2VkP8dJ5FE><img src=https://i.ytimg.com/vi/O2VkP8dJ5FE/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGGUgZShlMA8=&rs=AOn4CLDtVW66-HIeIa-y5lZxOIe9jmE5rA></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=0">00:00.000</a></div>
+        <div class="t">好,那接下來呢,我們要講有關分類怎麼做這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:10.000" id=00:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=10">00:10.000</a></div>
+        <div class="t">這邊講的是一個短的版本,因為時間有限的關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:15.000" id=00:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=15">00:15.000</a></div>
+        <div class="t">所以我們就講一個可以在20分鐘內講完的短的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:19.000" id=00:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=19">00:19.000</a></div>
+        <div class="t">既然有短的版本,就是有長的版本。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:22.000" id=00:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=22">00:22.000</a></div>
+        <div class="t">如果你想要看長的版本的話,可以看一下過去上課的錄影,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:26.000" id=00:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=26">00:26.000</a></div>
+        <div class="t">可能是花兩個小時到三個小時的時間才講完分類這件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:32.000" id=00:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=32">00:32.000</a></div>
+        <div class="t">我們這邊用一個最快的方法,直接跟你講分類是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:38.000" id=00:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=38">00:38.000</a></div>
+        <div class="t">分類是怎麼做的呢?我們已經講了regression,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:43.000" id=00:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=43">00:43.000</a></div>
+        <div class="t">就是輸入一個項量,然後輸出一個數值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:47.000" id=00:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=47">00:47.000</a></div>
+        <div class="t">我們希望輸出的數值跟某一個label,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:51.000" id=00:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=51">00:51.000</a></div>
+        <div class="t">也就是我們要學習的目標,越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:54.000" id=00:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=54">00:54.000</a></div>
+        <div class="t">有同學會問說,為什麼目標label有加head,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:59.000" id=00:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=59">00:59.000</a></div>
+        <div class="t">而不是輸出有加head呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:01.000" id=01:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=61">01:01.000</a></div>
+        <div class="t">你可能在別的地方有看過輸出有加head。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04.000" id=01:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=64">01:04.000</a></div>
+        <div class="t">那這邊的notation,它的使用並沒有一定的規定,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08.000" id=01:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=68">01:08.000</a></div>
+        <div class="t">如果你先上過我的機器學習的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:10.000" id=01:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=70">01:10.000</a></div>
+        <div class="t">你就會去問別的老師說,為什麼model的輸出有加head,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.000" id=01:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=75">01:15.000</a></div>
+        <div class="t">然後你的label沒有加head。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:17.000" id=01:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=77">01:17.000</a></div>
+        <div class="t">所以我們這門課呢,如果是正確的答案就有加head,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:22.000" id=01:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=82">01:22.000</a></div>
+        <div class="t">model的輸出沒有加head。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:25.000" id=01:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=85">01:25.000</a></div>
+        <div class="t">那有一個可能,假設你會用regression的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.000" id=01:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=90">01:30.000</a></div>
+        <div class="t">我們其實可以把classification當作是regression來看。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:35.000" id=01:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=95">01:35.000</a></div>
+        <div class="t">怎麼說呢?那這個方法不一定是一個好方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:38.000" id=01:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=98">01:38.000</a></div>
+        <div class="t">這是一個比較奇妙的方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:40.000" id=01:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=100">01:40.000</a></div>
+        <div class="t">你可以說,一樣輸入一個東西以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:43.000" id=01:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=103">01:43.000</a></div>
+        <div class="t">我們的輸出仍然是一個scalar,它叫做y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:48.000" id=01:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=108">01:48.000</a></div>
+        <div class="t">然後這個y,我們要讓它跟正確答案的class越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:54.000" id=01:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=114">01:54.000</a></div>
+        <div class="t">但是y是一個數字啊,我們怎麼讓它跟class越接近越好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.000" id=01:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=119">01:59.000</a></div>
+        <div class="t">我們必須把class也變成數字。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:03.000" id=02:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=123">02:03.000</a></div>
+        <div class="t">舉例來說,class1就是編號1,class2就是編號2,class3就是編號3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:12.000" id=02:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=132">02:12.000</a></div>
+        <div class="t">然後接下來呢,我們要做的事情就是希望y可以跟class的編號越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:21.000" id=02:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=141">02:21.000</a></div>
+        <div class="t">但是,這會是一個好方法嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:24.000" id=02:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=144">02:24.000</a></div>
+        <div class="t">如果你仔細想想的話,這個方法也許在某些狀況下是會有瑕疵的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:30.000" id=02:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=150">02:30.000</a></div>
+        <div class="t">因為如果你假設說class1就是編號1,class2就是編號2,class3就是編號3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:36.000" id=02:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=156">02:36.000</a></div>
+        <div class="t">意味著說你覺得class1跟class2它是比較像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:41.000" id=02:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=161">02:41.000</a></div>
+        <div class="t">然後class1跟class3它是比較不像的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:45.000" id=02:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=165">02:45.000</a></div>
+        <div class="t">那像這樣子的表示class的方式,有時候可行,有時候不可行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:53.000" id=02:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=173">02:53.000</a></div>
+        <div class="t">假設你的class1,2,3真的有某種關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:56.000" id=02:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=176">02:56.000</a></div>
+        <div class="t">舉例來說,你想要根據一個人的身高跟體重,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:00.000" id=03:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=180">03:00.000</a></div>
+        <div class="t">然後預測他是幾年級的小學生,一年級、二年級還是三年級。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:05.000" id=03:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=185">03:05.000</a></div>
+        <div class="t">那可能一年級真的跟二年級比較接近,一年級真的跟三年級比較沒有關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:10.000" id=03:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=190">03:10.000</a></div>
+        <div class="t">但是假設你的三個class本身並沒有什麼特定的關係的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:14.000" id=03:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=194">03:14.000</a></div>
+        <div class="t">你說class1是1,class2是2,class3是3,那就很奇怪了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:18.000" id=03:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=198">03:18.000</a></div>
+        <div class="t">因為你這樣預設說1,2有比較近的關係,1,3有比較遠的關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:23.000" id=03:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=203">03:23.000</a></div>
+        <div class="t">所以怎麼辦呢?當你在做分類的問題的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:26.000" id=03:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=206">03:26.000</a></div>
+        <div class="t">比較常見的做法是把你的class用one-half vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:34.000" id=03:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=214">03:34.000</a></div>
+        <div class="t">那one-half vector我們在作業1的時候有看過,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:39.000" id=03:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=219">03:39.000</a></div>
+        <div class="t">我們在作業1的時候說,我們把美國的州用one-half vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:44.000" id=03:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=224">03:44.000</a></div>
+        <div class="t">那同樣的道理,我們也可以把每一個class用一個one-half vector來表示。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:49.000" id=03:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=229">03:49.000</a></div>
+        <div class="t">如果有三個class,我們的label這個whitehead就是一個三維的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:55.000" id=03:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=235">03:55.000</a></div>
+        <div class="t">然後呢,如果是class1就是100,如果是class2就是010,如果是class3就是001。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:03.000" id=04:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=243">04:03.000</a></div>
+        <div class="t">所以每一個class你都用一個one-half vector來表示,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.000" id=04:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=246">04:06.000</a></div>
+        <div class="t">而且如果你用one-half vector來表示的話,就沒有說class1跟class2比較接近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:12.000" id=04:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=252">04:12.000</a></div>
+        <div class="t">class1跟class3比較遠這樣子的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:15.000" id=04:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=255">04:15.000</a></div>
+        <div class="t">如果你把one-half vector拿來算距離的話,class之間兩兩他們的距離都是一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:23.000" id=04:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=263">04:23.000</a></div>
+        <div class="t">好,那接下來呢,如果我們今天的目標whitehead是一個向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:29.000" id=04:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=269">04:29.000</a></div>
+        <div class="t">比如說這邊whitehead是有三個element的向量,三個數值的向量,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:35.000" id=04:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=275">04:35.000</a></div>
+        <div class="t">那我們的network也應該要output三個數值才行。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:40.000" id=04:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=280">04:40.000</a></div>
+        <div class="t">那到目前為止我們講的network其實都只output一個數值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:44.000" id=04:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=284">04:44.000</a></div>
+        <div class="t">因為我們過去做的都是regression的問題,所以只output一個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:48.000" id=04:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=288">04:48.000</a></div>
+        <div class="t">那怎麼把它改成output三個數值呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:51.000" id=04:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=291">04:51.000</a></div>
+        <div class="t">其實從一個數值到三個數值它是沒有什麼不同的啦。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:55.000" id=04:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=295">04:55.000</a></div>
+        <div class="t">怎麼說呢?你可以output一個數值,你就可以output三個數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.000" id=04:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=299">04:59.000</a></div>
+        <div class="t">所以把本來output一個數值的方法重複三次,你把a1、a2、a3乘上三個不同的位加上bias得到y1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:08.000" id=05:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=308">05:08.000</a></div>
+        <div class="t">再把a1、a2、a3乘上另外三個位再加上另外一個bias得到y2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:13.000" id=05:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=313">05:13.000</a></div>
+        <div class="t">把a1、a2、a3再乘上另外一組位再加上另外一個bias得到y3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:18.000" id=05:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=318">05:18.000</a></div>
+        <div class="t">你就可以產生三組數值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:20.000" id=05:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=320">05:20.000</a></div>
+        <div class="t">所以你就可以input一個feature的vector,然後產生y1、y2、y3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:25.000" id=05:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=325">05:25.000</a></div>
+        <div class="t">然後期待y1、y2、y3跟我們的目標越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.000" id=05:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=330">05:30.000</a></div>
+        <div class="t">所以我們現在知道了regression是怎麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:34.000" id=05:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=334">05:34.000</a></div>
+        <div class="t">input x, output y, yout跟label y hat越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:38.000" id=05:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=338">05:38.000</a></div>
+        <div class="t">如果是classification呢?我們剛才說input x可能乘上一個w再加上b,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:45.000" id=05:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=345">05:45.000</a></div>
+        <div class="t">再通過activation function再乘上w'再加上b'得到y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:51.000" id=05:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=351">05:51.000</a></div>
+        <div class="t">我們現在的y它不是一個數值,它是一個向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:56.000" id=05:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=356">05:56.000</a></div>
+        <div class="t">但是在做classification的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:59.000" id=05:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=359">05:59.000</a></div>
+        <div class="t">我們往往會把y再通過一個叫做softmax的function得到y'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:09.000" id=06:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=369">06:09.000</a></div>
+        <div class="t">然後我們才去計算y'跟y hat之間的距離,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.000" id=06:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=374">06:14.000</a></div>
+        <div class="t">才去說我們要讓y'跟y hat越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:19.000" id=06:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=379">06:19.000</a></div>
+        <div class="t">為什麼要加上softmax呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:21.000" id=06:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=381">06:21.000</a></div>
+        <div class="t">一個比較簡單的解釋,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:25.000" id=06:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=385">06:25.000</a></div>
+        <div class="t">這一段到底要怎麼在數十分鐘內講完,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:28.000" id=06:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=388">06:28.000</a></div>
+        <div class="t">我其實想了很久。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:30.000" id=06:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=390">06:30.000</a></div>
+        <div class="t">如果是在過去的課程裡面,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:32.000" id=06:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=392">06:32.000</a></div>
+        <div class="t">我們會花很長一段時間告訴你說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:35.000" id=06:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=395">06:35.000</a></div>
+        <div class="t">這裡為什麼要加softmax?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:38.000" id=06:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=398">06:38.000</a></div>
+        <div class="t">它背後有什麼樣的假設?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:40.000" id=06:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=400">06:40.000</a></div>
+        <div class="t">我們會先從generative的model開始講起,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:43.000" id=06:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=403">06:43.000</a></div>
+        <div class="t">然後一路講到logistic regression,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:45.000" id=06:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=405">06:45.000</a></div>
+        <div class="t">你就會知道為什麼這邊放個softmax,它有什麼樣的歷史淵源。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:50.000" id=06:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=410">06:50.000</a></div>
+        <div class="t">我們現在已經不是從那個角度切入,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:52.000" id=06:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=412">06:52.000</a></div>
+        <div class="t">所以就有點不知道要怎麼解釋說為什麼要放softmax。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:57.000" id=06:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=417">06:57.000</a></div>
+        <div class="t">那這邊有一個騙小孩的解釋就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:00.000" id=07:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=420">07:00.000</a></div>
+        <div class="t">這個y hat它裡面的值都是0跟1,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:04.000" id=07:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=424">07:04.000</a></div>
+        <div class="t">它是one-hot vector,所以裡面的值只有0跟1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:08.000" id=07:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=428">07:08.000</a></div>
+        <div class="t">那y呢?y裡面有任何值?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:11.000" id=07:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=431">07:11.000</a></div>
+        <div class="t">y裡面有任何值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:13.000" id=07:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=433">07:13.000</a></div>
+        <div class="t">既然我們的目標只有0跟1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:15.000" id=07:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=435">07:15.000</a></div>
+        <div class="t">但是y有任何值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:17.000" id=07:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=437">07:17.000</a></div>
+        <div class="t">那我們能不能夠就先把這個任何值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:20.000" id=07:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=440">07:20.000</a></div>
+        <div class="t">先把它normalize,移到0到1之間,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:25.000" id=07:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=445">07:25.000</a></div>
+        <div class="t">這樣才好跟label的計算相似度。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:29.000" id=07:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=449">07:29.000</a></div>
+        <div class="t">這是一個比較簡單的講法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:31.000" id=07:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=451">07:31.000</a></div>
+        <div class="t">如果你真的想要知道說為什麼要用softmax的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:35.000" id=07:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=455">07:35.000</a></div>
+        <div class="t">你可以參考過去的上課錄影。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:38.000" id=07:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=458">07:38.000</a></div>
+        <div class="t">那如果你不想知道的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:39.000" id=07:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=459">07:39.000</a></div>
+        <div class="t">你就記得一件事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:41.000" id=07:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=461">07:41.000</a></div>
+        <div class="t">softmax要做的事情就是把</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:43.000" id=07:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=463">07:43.000</a></div>
+        <div class="t">本來y裡面可以放任何值這件事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:45.000" id=07:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=465">07:45.000</a></div>
+        <div class="t">改成0到1之間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:50.000" id=07:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=470">07:50.000</a></div>
+        <div class="t">那softmax它裡面是怎麼運作的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:54.000" id=07:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=474">07:54.000</a></div>
+        <div class="t">這是這個softmax的block,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:56.000" id=07:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=476">07:56.000</a></div>
+        <div class="t">輸入y1、y2、y3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:58.000" id=07:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=478">07:58.000</a></div>
+        <div class="t">它會產生y1'、y2'、y3'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:02.000" id=08:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=482">08:02.000</a></div>
+        <div class="t">它裡面運作的模式是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:06.000" id=08:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=486">08:06.000</a></div>
+        <div class="t">我們會先把所有的y取一個exponential,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:11.000" id=08:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=491">08:11.000</a></div>
+        <div class="t">所以本來不管y是正的還是負的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:13.000" id=08:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=493">08:13.000</a></div>
+        <div class="t">反正取完exponential以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.000" id=08:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=495">08:15.000</a></div>
+        <div class="t">就都變成正的,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:17.000" id=08:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=497">08:17.000</a></div>
+        <div class="t">就算是負數,負小於0的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:19.000" id=08:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=499">08:19.000</a></div>
+        <div class="t">取exponential以後,也變成正的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:22.000" id=08:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=502">08:22.000</a></div>
+        <div class="t">然後你再對它做normalize,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:24.000" id=08:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=504">08:24.000</a></div>
+        <div class="t">除掉所有y的exponential值的和,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:27.000" id=08:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=507">08:27.000</a></div>
+        <div class="t">然後你就得到y'.</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:30.000" id=08:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=510">08:30.000</a></div>
+        <div class="t">或是用圖示化的方法是這個樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:32.000" id=08:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=512">08:32.000</a></div>
+        <div class="t">y1取exponential、y2取exponential、y3取exponential,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:36.000" id=08:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=516">08:36.000</a></div>
+        <div class="t">把它全部加起來,得到一個summation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:40.000" id=08:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=520">08:40.000</a></div>
+        <div class="t">得到一個summation,放在分母地方的summation。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:42.000" id=08:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=522">08:42.000</a></div>
+        <div class="t">接下來再把exponential y1除掉summation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:46.000" id=08:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=526">08:46.000</a></div>
+        <div class="t">exponential y2除掉summation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:48.000" id=08:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=528">08:48.000</a></div>
+        <div class="t">exponential y3除掉summation,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:49.000" id=08:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=529">08:49.000</a></div>
+        <div class="t">就得到y1'、y2'、y3'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:53.000" id=08:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=533">08:53.000</a></div>
+        <div class="t">有了這個式子以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:54.000" id=08:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=534">08:54.000</a></div>
+        <div class="t">你就會發現說這個y1'、y2'、y3'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:01.000" id=09:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=541">09:01.000</a></div>
+        <div class="t">它們都是介於0到1之間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:03.000" id=09:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=543">09:03.000</a></div>
+        <div class="t">然後這個y1'、y2'、y3'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:06.000" id=09:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=546">09:06.000</a></div>
+        <div class="t">它們的和會是1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:12.000" id=09:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=552">09:12.000</a></div>
+        <div class="t">如果舉一個例子的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:14.000" id=09:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=554">09:14.000</a></div>
+        <div class="t">本來y1等於3、y2等於1、y3等於負3。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:18.000" id=09:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=558">09:18.000</a></div>
+        <div class="t">取完exponential的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:20.000" id=09:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=560">09:20.000</a></div>
+        <div class="t">就變成exponential3就是20,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:23.000" id=09:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=563">09:23.000</a></div>
+        <div class="t">exponential1就是2.7,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:25.000" id=09:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=565">09:25.000</a></div>
+        <div class="t">exponential負3就是0.05。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:27.000" id=09:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=567">09:27.000</a></div>
+        <div class="t">做完normalization以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:29.000" id=09:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=569">09:29.000</a></div>
+        <div class="t">它就變成0.88、0.12跟0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:32.000" id=09:32.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=572">09:32.000</a></div>
+        <div class="t">所以這個summax它要做的事情</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:35.000" id=09:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=575">09:35.000</a></div>
+        <div class="t">除了normalize以外,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:37.000" id=09:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=577">09:37.000</a></div>
+        <div class="t">除了讓y1'、y2'、y3'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:39.000" id=09:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=579">09:39.000</a></div>
+        <div class="t">變成0到1之間還有和為1以外,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:42.000" id=09:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=582">09:42.000</a></div>
+        <div class="t">它還有一個附帶的效果是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:44.000" id=09:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=584">09:44.000</a></div>
+        <div class="t">它會讓大的值跟小的值</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:47.000" id=09:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=587">09:47.000</a></div>
+        <div class="t">它們的差距更大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:49.000" id=09:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=589">09:49.000</a></div>
+        <div class="t">所以本來負3,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:50.000" id=09:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=590">09:50.000</a></div>
+        <div class="t">然後通過這個exponential</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:52.000" id=09:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=592">09:52.000</a></div>
+        <div class="t">再做normalize以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:53.000" id=09:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=593">09:53.000</a></div>
+        <div class="t">最後會變成趨近於0的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:56.000" id=09:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=596">09:56.000</a></div>
+        <div class="t">然後這個summax的輸入</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:59.000" id=09:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=599">09:59.000</a></div>
+        <div class="t">往往就叫它logic,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:01.000" id=10:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=601">10:01.000</a></div>
+        <div class="t">它是有名字的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:02.000" id=10:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=602">10:02.000</a></div>
+        <div class="t">有時候就叫它logic。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:05.000" id=10:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=605">10:05.000</a></div>
+        <div class="t">那這邊是考慮了三個class的狀況。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:09.000" id=10:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=609">10:09.000</a></div>
+        <div class="t">那如果兩個class會是怎麼樣呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:12.000" id=10:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=612">10:12.000</a></div>
+        <div class="t">如果是兩個class,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:13.000" id=10:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=613">10:13.000</a></div>
+        <div class="t">你當然可以直接套summax這個function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:17.000" id=10:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=617">10:17.000</a></div>
+        <div class="t">沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:18.000" id=10:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=618">10:18.000</a></div>
+        <div class="t">但是也許你更常聽到的是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:21.000" id=10:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=621">10:21.000</a></div>
+        <div class="t">當有兩個class的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:22.000" id=10:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=622">10:22.000</a></div>
+        <div class="t">我們就不套summax了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:25.000" id=10:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=625">10:25.000</a></div>
+        <div class="t">直接取sigmoid。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:28.000" id=10:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=628">10:28.000</a></div>
+        <div class="t">那當兩個class用sigmoid</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:31.000" id=10:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=631">10:31.000</a></div>
+        <div class="t">跟summax兩個class</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:33.000" id=10:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=633">10:33.000</a></div>
+        <div class="t">它們之間的關係是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:35.000" id=10:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=635">10:35.000</a></div>
+        <div class="t">你其實可以自己想一想。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:37.000" id=10:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=637">10:37.000</a></div>
+        <div class="t">你如果推一下的話會發現說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:39.000" id=10:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=639">10:39.000</a></div>
+        <div class="t">這兩件事情是得價的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:43.000" id=10:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=643">10:43.000</a></div>
+        <div class="t">我知道說我這邊講summax,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:45.000" id=10:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=645">10:45.000</a></div>
+        <div class="t">那summax當然做在兩個class上</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:47.000" id=10:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=647">10:47.000</a></div>
+        <div class="t">一定是沒有問題的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:48.000" id=10:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=648">10:48.000</a></div>
+        <div class="t">但你更常看到的是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:49.000" id=10:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=649">10:49.000</a></div>
+        <div class="t">兩個class的時候就用sigmoid,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:51.000" id=10:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=651">10:51.000</a></div>
+        <div class="t">你可能會問說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:52.000" id=10:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=652">10:52.000</a></div>
+        <div class="t">這兩者有什麼不同,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:53.000" id=10:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=653">10:53.000</a></div>
+        <div class="t">哪一個比較好呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:54.000" id=10:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=654">10:54.000</a></div>
+        <div class="t">那我這邊告訴你</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:55.000" id=10:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=655">10:55.000</a></div>
+        <div class="t">它們是一模一樣的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:56.000" id=10:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=656">10:56.000</a></div>
+        <div class="t">你自己推一下會發現說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:57.000" id=10:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=657">10:57.000</a></div>
+        <div class="t">這兩件事情是同一件事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:02.000" id=11:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=662">11:02.000</a></div>
+        <div class="t">那所以呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:03.000" id=11:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=663">11:03.000</a></div>
+        <div class="t">我們把x丟到一個network裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:05.000" id=11:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=665">11:05.000</a></div>
+        <div class="t">產生y以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:07.000" id=11:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=667">11:07.000</a></div>
+        <div class="t">我們會通過summax得到y'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:09.000" id=11:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=669">11:09.000</a></div>
+        <div class="t">再去計算y'跟y'之間的距離,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:12.000" id=11:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=672">11:12.000</a></div>
+        <div class="t">這個寫作D。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:14.000" id=11:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=674">11:14.000</a></div>
+        <div class="t">那計算y'跟y'之間的距離</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:17.000" id=11:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=677">11:17.000</a></div>
+        <div class="t">有不只一種做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.000" id=11:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=679">11:19.000</a></div>
+        <div class="t">舉例來說,你可以說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:21.000" id=11:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=681">11:21.000</a></div>
+        <div class="t">如果我喜歡的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:22.000" id=11:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=682">11:22.000</a></div>
+        <div class="t">我要讓這個距離是mean squared error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:24.000" id=11:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=684">11:24.000</a></div>
+        <div class="t">跟作業用的一模一樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:26.000" id=11:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=686">11:26.000</a></div>
+        <div class="t">就是把y'裡面的每一個element拿出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:31.000" id=11:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=691">11:31.000</a></div>
+        <div class="t">把y'裡面的每一個element拿出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:34.000" id=11:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=694">11:34.000</a></div>
+        <div class="t">然後計算它們的平方和,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:36.000" id=11:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=696">11:36.000</a></div>
+        <div class="t">然後當作我的error。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:38.000" id=11:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=698">11:38.000</a></div>
+        <div class="t">這也是一個做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:39.000" id=11:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=699">11:39.000</a></div>
+        <div class="t">這樣也是計算兩個向量之間的距離,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:42.000" id=11:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=702">11:42.000</a></div>
+        <div class="t">你也可以做到說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:44.000" id=11:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=704">11:44.000</a></div>
+        <div class="t">當minimize mean squared error的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:46.000" id=11:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=706">11:46.000</a></div>
+        <div class="t">我們可以讓y'等於y'。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:50.000" id=11:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=710">11:50.000</a></div>
+        <div class="t">但是有另外一個更常用的做法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:54.000" id=11:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=714">11:54.000</a></div>
+        <div class="t">叫做cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:57.000" id=11:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=717">11:57.000</a></div>
+        <div class="t">那這個cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:58.000" id=11:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=718">11:58.000</a></div>
+        <div class="t">它的式子乍看之下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:59.000" id=11:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=719">11:59.000</a></div>
+        <div class="t">會讓你覺得有點匪夷所思,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:02.000" id=12:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=722">12:02.000</a></div>
+        <div class="t">怎麼是這個樣子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:03.000" id=12:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=723">12:03.000</a></div>
+        <div class="t">我們先來看看這個cross entropy的式子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:05.000" id=12:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=725">12:05.000</a></div>
+        <div class="t">長什麼樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:06.000" id=12:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=726">12:06.000</a></div>
+        <div class="t">它是summation over所有的i,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.000" id=12:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=729">12:09.000</a></div>
+        <div class="t">然後把y'的第i位拿出來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:13.000" id=12:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=733">12:13.000</a></div>
+        <div class="t">乘上y'的第i位取natural log,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:18.000" id=12:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=738">12:18.000</a></div>
+        <div class="t">然後再全部加起來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:20.000" id=12:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=740">12:20.000</a></div>
+        <div class="t">這個是cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:23.000" id=12:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=743">12:23.000</a></div>
+        <div class="t">那當y'跟y'一模一樣的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:26.000" id=12:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=746">12:26.000</a></div>
+        <div class="t">你也可以minimize cross entropy的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:30.000" id=12:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=750">12:30.000</a></div>
+        <div class="t">當y'跟y'一模一樣的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:33.000" id=12:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=753">12:33.000</a></div>
+        <div class="t">NSE會是最小的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:34.000" id=12:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=754">12:34.000</a></div>
+        <div class="t">cross entropy也會是最小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:38.000" id=12:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=758">12:38.000</a></div>
+        <div class="t">但是為什麼會有cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:41.000" id=12:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=761">12:41.000</a></div>
+        <div class="t">這麼奇怪的式子出現呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:44.000" id=12:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=764">12:44.000</a></div>
+        <div class="t">那如果要講得長一點的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:46.000" id=12:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=766">12:46.000</a></div>
+        <div class="t">這整個故事我們可以把它講成</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:49.000" id=12:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=769">12:49.000</a></div>
+        <div class="t">minimize cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:51.000" id=12:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=771">12:51.000</a></div>
+        <div class="t">其實就是maximize likelihood這個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:54.000" id=12:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=774">12:54.000</a></div>
+        <div class="t">那你可能在很多地方都聽過</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:56.000" id=12:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=776">12:56.000</a></div>
+        <div class="t">likelihood這個詞彙。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:58.000" id=12:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=778">12:58.000</a></div>
+        <div class="t">但是因為這堂課裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:59.000" id=12:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=779">12:59.000</a></div>
+        <div class="t">我們even把likelihood拿掉了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:01.000" id=13:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=781">13:01.000</a></div>
+        <div class="t">所以我們現在根本就沒有</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:02.000" id=13:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=782">13:02.000</a></div>
+        <div class="t">likelihood這個東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:03.000" id=13:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=783">13:03.000</a></div>
+        <div class="t">所以我們就不能往這個方向解釋,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:05.000" id=13:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=785">13:05.000</a></div>
+        <div class="t">我們就不能說minimize cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:08.000" id=13:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=788">13:08.000</a></div>
+        <div class="t">為什麼是maximize likelihood,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:09.000" id=13:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=789">13:09.000</a></div>
+        <div class="t">因為其實不知道likelihood是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:11.000" id=13:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=791">13:11.000</a></div>
+        <div class="t">但是這兩件事情其實是等價的啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:14.000" id=13:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=794">13:14.000</a></div>
+        <div class="t">所以如果有一天有人問你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:16.000" id=13:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=796">13:16.000</a></div>
+        <div class="t">如果我們今天在做分類問題的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:18.000" id=13:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=798">13:18.000</a></div>
+        <div class="t">maximize likelihood跟minimize cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:22.000" id=13:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=802">13:22.000</a></div>
+        <div class="t">有什麼關係的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.000" id=13:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=803">13:23.000</a></div>
+        <div class="t">你不要回答說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:24.000" id=13:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=804">13:24.000</a></div>
+        <div class="t">他們其實很像,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:25.000" id=13:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=805">13:25.000</a></div>
+        <div class="t">但是其實又有很微妙的不同。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:27.000" id=13:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=807">13:27.000</a></div>
+        <div class="t">不是這樣,他們兩個就是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:28.000" id=13:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=808">13:28.000</a></div>
+        <div class="t">一模一樣的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:30.000" id=13:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=810">13:30.000</a></div>
+        <div class="t">只是同一件事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:31.000" id=13:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=811">13:31.000</a></div>
+        <div class="t">不同的講法而已。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:33.000" id=13:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=813">13:33.000</a></div>
+        <div class="t">所以假設你可以接受說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:35.000" id=13:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=815">13:35.000</a></div>
+        <div class="t">我們在訓練一個classifier的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:37.000" id=13:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=817">13:37.000</a></div>
+        <div class="t">應該要maximize likelihood,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:38.000" id=13:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=818">13:38.000</a></div>
+        <div class="t">你就可以接受</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:39.000" id=13:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=819">13:39.000</a></div>
+        <div class="t">我們應該要minimize cross entropy。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:41.000" id=13:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=821">13:41.000</a></div>
+        <div class="t">但是我們沒有講這件事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:44.000" id=13:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=824">13:44.000</a></div>
+        <div class="t">所以我要怎麼說服你</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:45.000" id=13:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=825">13:45.000</a></div>
+        <div class="t">我們應該要用cross entropy呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:48.000" id=13:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=828">13:48.000</a></div>
+        <div class="t">下一頁投影片</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:49.000" id=13:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=829">13:49.000</a></div>
+        <div class="t">是從optimization的角度</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:51.000" id=13:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=831">13:51.000</a></div>
+        <div class="t">來告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:52.000" id=13:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=832">13:52.000</a></div>
+        <div class="t">cross entropy比mean squared error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:55.000" id=13:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=835">13:55.000</a></div>
+        <div class="t">更加適合用在分類上。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:59.000" id=13:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=839">13:59.000</a></div>
+        <div class="t">那cross entropy真的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:00.000" id=14:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=840">14:00.000</a></div>
+        <div class="t">相較於mean squared error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:02.000" id=14:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=842">14:02.000</a></div>
+        <div class="t">是更常用在classification上面的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:05.000" id=14:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=845">14:05.000</a></div>
+        <div class="t">所以它常用到什麼地步呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:07.000" id=14:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=847">14:07.000</a></div>
+        <div class="t">它常用到在PyTorch裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:10.000" id=14:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=850">14:10.000</a></div>
+        <div class="t">cross entropy跟softmax</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:12.000" id=14:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=852">14:12.000</a></div>
+        <div class="t">它們是被綁在一起的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:14.000" id=14:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=854">14:14.000</a></div>
+        <div class="t">它們是一個set</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:16.000" id=14:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=856">14:16.000</a></div>
+        <div class="t">你只要call cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:19.000" id=14:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=859">14:19.000</a></div>
+        <div class="t">裡面就自動內建了softmax</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:22.000" id=14:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=862">14:22.000</a></div>
+        <div class="t">所以如果你看</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:23.000" id=14:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=863">14:23.000</a></div>
+        <div class="t">助教作業2的程式的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:25.000" id=14:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=865">14:25.000</a></div>
+        <div class="t">你會找不到softmax在哪裡</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:28.000" id=14:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=868">14:28.000</a></div>
+        <div class="t">就本來softmax應該是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:30.000" id=14:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=870">14:30.000</a></div>
+        <div class="t">network的一部分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:31.000" id=14:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=871">14:31.000</a></div>
+        <div class="t">照理說你在定義network的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:33.000" id=14:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=873">14:33.000</a></div>
+        <div class="t">你應該也定義了softmax這個function</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:36.000" id=14:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=876">14:36.000</a></div>
+        <div class="t">但是你發現在助教程式裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:37.000" id=14:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=877">14:37.000</a></div>
+        <div class="t">你找不到softmax</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:38.000" id=14:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=878">14:38.000</a></div>
+        <div class="t">為什麼?它放在cross entropy裡面</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.000" id=14:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=881">14:41.000</a></div>
+        <div class="t">當你使用cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:43.000" id=14:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=883">14:43.000</a></div>
+        <div class="t">這個loss function的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:44.000" id=14:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=884">14:44.000</a></div>
+        <div class="t">PyTorch自動幫你把softmax</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:46.000" id=14:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=886">14:46.000</a></div>
+        <div class="t">加到你的network的最後一層</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:49.000" id=14:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=889">14:49.000</a></div>
+        <div class="t">所以如果你今天在用PyTorch</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:51.000" id=14:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=891">14:51.000</a></div>
+        <div class="t">你自己在network加softmax的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:53.000" id=14:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=893">14:53.000</a></div>
+        <div class="t">你用cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:55.000" id=14:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=895">14:55.000</a></div>
+        <div class="t">就會變成加了兩次softmax</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:57.000" id=14:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=897">14:57.000</a></div>
+        <div class="t">就這個一個PyTorch</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:58.000" id=14:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=898">14:58.000</a></div>
+        <div class="t">一個有趣的設計</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:01.000" id=15:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=901">15:01.000</a></div>
+        <div class="t">所以這顯示說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:02.000" id=15:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=902">15:02.000</a></div>
+        <div class="t">softmax跟cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:04.000" id=15:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=904">15:04.000</a></div>
+        <div class="t">它們往往是被綁在一起的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:06.000" id=15:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=906">15:06.000</a></div>
+        <div class="t">它們是一個set</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:08.000" id=15:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=908">15:08.000</a></div>
+        <div class="t">總是會被一起使用</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:10.000" id=15:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=910">15:10.000</a></div>
+        <div class="t">那接下來呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:12.000" id=15:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=912">15:12.000</a></div>
+        <div class="t">我從optimization的角度</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:14.000" id=15:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=914">15:14.000</a></div>
+        <div class="t">來告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:15.000" id=15:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=915">15:15.000</a></div>
+        <div class="t">為什麼相較於</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:18.000" id=15:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=918">15:18.000</a></div>
+        <div class="t">mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:20.000" id=15:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=920">15:20.000</a></div>
+        <div class="t">cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:21.000" id=15:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=921">15:21.000</a></div>
+        <div class="t">是更備常用在分類上</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:25.000" id=15:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=925">15:25.000</a></div>
+        <div class="t">那這個部分</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:26.000" id=15:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=926">15:26.000</a></div>
+        <div class="t">你完全可以在數學上面做證明</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:30.000" id=15:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=930">15:30.000</a></div>
+        <div class="t">但是我這邊是直接用</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:31.000" id=15:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=931">15:31.000</a></div>
+        <div class="t">舉例的方式來跟你說明</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:34.000" id=15:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=934">15:34.000</a></div>
+        <div class="t">如果你真的非常想看數學證明的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:36.000" id=15:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=936">15:36.000</a></div>
+        <div class="t">我把連結放在這邊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:38.000" id=15:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=938">15:38.000</a></div>
+        <div class="t">你可以看一下過去上課的錄影</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:40.000" id=15:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=940">15:40.000</a></div>
+        <div class="t">但如果你不想知道的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:41.000" id=15:41.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=941">15:41.000</a></div>
+        <div class="t">那我們就是舉個例子來告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:44.000" id=15:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=944">15:44.000</a></div>
+        <div class="t">為什麼cross entropy比較好</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:47.000" id=15:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=947">15:47.000</a></div>
+        <div class="t">好那現在我們要做一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:48.000" id=15:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=948">15:48.000</a></div>
+        <div class="t">三個class的分類</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:50.000" id=15:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=950">15:50.000</a></div>
+        <div class="t">我們的network先輸出</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:51.000" id=15:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=951">15:51.000</a></div>
+        <div class="t">y1 y2 y3</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:52.000" id=15:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=952">15:52.000</a></div>
+        <div class="t">再通過softmax以後</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:54.000" id=15:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=954">15:54.000</a></div>
+        <div class="t">產生y1' y2' 跟 y3'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:57.000" id=15:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=957">15:57.000</a></div>
+        <div class="t">好接下來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:58.000" id=15:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=958">15:58.000</a></div>
+        <div class="t">假設我們的正確答案就是100</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:01.000" id=16:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=961">16:01.000</a></div>
+        <div class="t">我們要去計算100這個向量</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:03.000" id=16:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=963">16:03.000</a></div>
+        <div class="t">跟y1' y2' 跟 y3'</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:05.000" id=16:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=965">16:05.000</a></div>
+        <div class="t">他們之間的距離</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:07.000" id=16:07.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=967">16:07.000</a></div>
+        <div class="t">那這個距離我們用1來表示</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:09.000" id=16:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=969">16:09.000</a></div>
+        <div class="t">1可以是mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:11.000" id=16:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=971">16:11.000</a></div>
+        <div class="t">也可以是cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:13.000" id=16:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=973">16:13.000</a></div>
+        <div class="t">好那我們看一下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:14.000" id=16:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=974">16:14.000</a></div>
+        <div class="t">如果我們這個1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:15.000" id=16:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=975">16:15.000</a></div>
+        <div class="t">設定為mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.000" id=16:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=977">16:17.000</a></div>
+        <div class="t">跟cross entropy的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:18.000" id=16:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=978">16:18.000</a></div>
+        <div class="t">算出來的error surface</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:20.000" id=16:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=980">16:20.000</a></div>
+        <div class="t">會有什麼樣不一樣的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:23.000" id=16:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=983">16:23.000</a></div>
+        <div class="t">我們現在假設y1的變化</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:25.000" id=16:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=985">16:25.000</a></div>
+        <div class="t">是從-10到10</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:28.000" id=16:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=988">16:28.000</a></div>
+        <div class="t">y2的變化也是從-10到10</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:31.000" id=16:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=991">16:31.000</a></div>
+        <div class="t">y3我們就固定設成-1000</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:34.000" id=16:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=994">16:34.000</a></div>
+        <div class="t">因為y3設很小啊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:36.000" id=16:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=996">16:36.000</a></div>
+        <div class="t">y3設-1000</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:37.000" id=16:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=997">16:37.000</a></div>
+        <div class="t">所以過softmax以後</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:38.000" id=16:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=998">16:38.000</a></div>
+        <div class="t">y3'就是非常趨近於0</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.000" id=16:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1000">16:40.000</a></div>
+        <div class="t">那他跟正確答案非常接近</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:42.000" id=16:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1002">16:42.000</a></div>
+        <div class="t">所以他對我們的結果影響很少</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:44.000" id=16:44.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1004">16:44.000</a></div>
+        <div class="t">總之我們y3設一個定值</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:46.000" id=16:46.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1006">16:46.000</a></div>
+        <div class="t">我們只看y1跟y2</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:47.000" id=16:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1007">16:47.000</a></div>
+        <div class="t">有變化的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:49.000" id=16:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1009">16:49.000</a></div>
+        <div class="t">對我們的1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:50.000" id=16:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1010">16:50.000</a></div>
+        <div class="t">對我們的loss</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:52.000" id=16:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1012">16:52.000</a></div>
+        <div class="t">你知道把很多個1加起來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:53.000" id=16:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1013">16:53.000</a></div>
+        <div class="t">就變成loss嘛</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:54.000" id=16:54.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1014">16:54.000</a></div>
+        <div class="t">對我們的loss</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:55.000" id=16:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1015">16:55.000</a></div>
+        <div class="t">有什麼樣的影響</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:57.000" id=16:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1017">16:57.000</a></div>
+        <div class="t">底下這兩個圖啊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:59.000" id=16:59.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1019">16:59.000</a></div>
+        <div class="t">而且在我們1是mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:01.000" id=17:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1021">17:01.000</a></div>
+        <div class="t">跟cross entropy的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:02.000" id=17:02.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1022">17:02.000</a></div>
+        <div class="t">y1 y2</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:04.000" id=17:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1024">17:04.000</a></div>
+        <div class="t">y1 y2的變化</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:06.000" id=17:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1026">17:06.000</a></div>
+        <div class="t">對loss的影響</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:08.000" id=17:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1028">17:08.000</a></div>
+        <div class="t">對error surface的影響</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:10.000" id=17:10.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1030">17:10.000</a></div>
+        <div class="t">那如果今天y1很大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:12.000" id=17:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1032">17:12.000</a></div>
+        <div class="t">y2很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:13.000" id=17:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1033">17:13.000</a></div>
+        <div class="t">y1很大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:14.000" id=17:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1034">17:14.000</a></div>
+        <div class="t">y2很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:15.000" id=17:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1035">17:15.000</a></div>
+        <div class="t">那y1很大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:16.000" id=17:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1036">17:16.000</a></div>
+        <div class="t">y2很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:17.000" id=17:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1037">17:17.000</a></div>
+        <div class="t">就代表y1'會很接近1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:18.000" id=17:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1038">17:18.000</a></div>
+        <div class="t">y2'會很接近0</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:20.000" id=17:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1040">17:20.000</a></div>
+        <div class="t">所以不管是對mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:22.000" id=17:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1042">17:22.000</a></div>
+        <div class="t">還是cross entropy而言</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:23.000" id=17:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1043">17:23.000</a></div>
+        <div class="t">y1大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:24.000" id=17:24.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1044">17:24.000</a></div>
+        <div class="t">y2小的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:25.000" id=17:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1045">17:25.000</a></div>
+        <div class="t">loss都是小的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:27.000" id=17:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1047">17:27.000</a></div>
+        <div class="t">我們這邊是用紅色代表loss大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:29.000" id=17:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1049">17:29.000</a></div>
+        <div class="t">藍色代表loss小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.000" id=17:30.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1050">17:30.000</a></div>
+        <div class="t">那左上角這邊</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:31.000" id=17:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1051">17:31.000</a></div>
+        <div class="t">y1小 y2大的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:33.000" id=17:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1053">17:33.000</a></div>
+        <div class="t">y1小 y2大的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:35.000" id=17:35.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1055">17:35.000</a></div>
+        <div class="t">如果y1小 y2大的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:37.000" id=17:37.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1057">17:37.000</a></div>
+        <div class="t">這邊y1'就是0</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:38.000" id=17:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1058">17:38.000</a></div>
+        <div class="t">y2'就是1</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:39.000" id=17:39.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1059">17:39.000</a></div>
+        <div class="t">所以這個時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:40.000" id=17:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1060">17:40.000</a></div>
+        <div class="t">loss會比較大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:42.000" id=17:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1062">17:42.000</a></div>
+        <div class="t">所以這兩個圖</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:43.000" id=17:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1063">17:43.000</a></div>
+        <div class="t">都是左上角loss大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:45.000" id=17:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1065">17:45.000</a></div>
+        <div class="t">右下角loss小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:47.000" id=17:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1067">17:47.000</a></div>
+        <div class="t">所以我們就期待說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:48.000" id=17:48.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1068">17:48.000</a></div>
+        <div class="t">我們最後在training的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:50.000" id=17:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1070">17:50.000</a></div>
+        <div class="t">我們的參數</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:51.000" id=17:51.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1071">17:51.000</a></div>
+        <div class="t">可以走到右下角的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:53.000" id=17:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1073">17:53.000</a></div>
+        <div class="t">那假設我們開始的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:55.000" id=17:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1075">17:55.000</a></div>
+        <div class="t">都是左上角的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:56.000" id=17:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1076">17:56.000</a></div>
+        <div class="t">會有什麼問題呢</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:57.000" id=17:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1077">17:57.000</a></div>
+        <div class="t">你會發現說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:58.000" id=17:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1078">17:58.000</a></div>
+        <div class="t">如果我們選擇cross entropy</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:00.000" id=18:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1080">18:00.000</a></div>
+        <div class="t">左上角這個地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:01.000" id=18:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1081">18:01.000</a></div>
+        <div class="t">它是有斜率的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:03.000" id=18:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1083">18:03.000</a></div>
+        <div class="t">所以你有辦法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:04.000" id=18:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1084">18:04.000</a></div>
+        <div class="t">透過gradient</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:05.000" id=18:05.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1085">18:05.000</a></div>
+        <div class="t">一路往右下的地方走</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.000" id=18:08.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1088">18:08.000</a></div>
+        <div class="t">但如果你選mean square error的話</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:11.000" id=18:11.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1091">18:11.000</a></div>
+        <div class="t">你就卡住了你知道嗎</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:13.000" id=18:13.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1093">18:13.000</a></div>
+        <div class="t">mean square error</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:14.000" id=18:14.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1094">18:14.000</a></div>
+        <div class="t">在這種loss很大的地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:16.000" id=18:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1096">18:16.000</a></div>
+        <div class="t">它是非常平坦的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:18.000" id=18:18.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1098">18:18.000</a></div>
+        <div class="t">它的gradient</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:19.000" id=18:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1099">18:19.000</a></div>
+        <div class="t">是非常小趨近於0的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:21.000" id=18:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1101">18:21.000</a></div>
+        <div class="t">如果你初始的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:22.000" id=18:22.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1102">18:22.000</a></div>
+        <div class="t">在這個地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:23.000" id=18:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1103">18:23.000</a></div>
+        <div class="t">離你的目標非常遠</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:25.000" id=18:25.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1105">18:25.000</a></div>
+        <div class="t">但它gradient很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:26.000" id=18:26.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1106">18:26.000</a></div>
+        <div class="t">你就會沒有辦法</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:28.000" id=18:28.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1108">18:28.000</a></div>
+        <div class="t">用gradient descent</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:29.000" id=18:29.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1109">18:29.000</a></div>
+        <div class="t">順利的走到</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:31.000" id=18:31.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1111">18:31.000</a></div>
+        <div class="t">右下角的地方去</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:33.000" id=18:33.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1113">18:33.000</a></div>
+        <div class="t">所以如果你今天</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:34.000" id=18:34.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1114">18:34.000</a></div>
+        <div class="t">自己在做classification</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:36.000" id=18:36.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1116">18:36.000</a></div>
+        <div class="t">你選mean square error的時候</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.000" id=18:38.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1118">18:38.000</a></div>
+        <div class="t">你有非常大的可能性</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:40.000" id=18:40.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1120">18:40.000</a></div>
+        <div class="t">會trap不起來</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:42.000" id=18:42.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1122">18:42.000</a></div>
+        <div class="t">當然這個是</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:43.000" id=18:43.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1123">18:43.000</a></div>
+        <div class="t">在你沒有好的optimization</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:45.000" id=18:45.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1125">18:45.000</a></div>
+        <div class="t">好的optimizer的情況下</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:47.000" id=18:47.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1127">18:47.000</a></div>
+        <div class="t">今天如果你用added</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.000" id=18:49.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1129">18:49.000</a></div>
+        <div class="t">這個地方</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:50.000" id=18:50.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1130">18:50.000</a></div>
+        <div class="t">gradient很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:52.000" id=18:52.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1132">18:52.000</a></div>
+        <div class="t">那gradient很小</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:53.000" id=18:53.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1133">18:53.000</a></div>
+        <div class="t">它learning rate會自動幫你調大</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:55.000" id=18:55.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1135">18:55.000</a></div>
+        <div class="t">也許你還是有機會</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:56.000" id=18:56.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1136">18:56.000</a></div>
+        <div class="t">走到右下角</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:57.000" id=18:57.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1137">18:57.000</a></div>
+        <div class="t">不過這會讓你的training</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:58.000" id=18:58.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1138">18:58.000</a></div>
+        <div class="t">比較困難一點</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:00.000" id=19:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1140">19:00.000</a></div>
+        <div class="t">讓你的training起步</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:01.000" id=19:01.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1141">19:01.000</a></div>
+        <div class="t">比較慢一點</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:03.000" id=19:03.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1143">19:03.000</a></div>
+        <div class="t">所以這邊有一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:04.000" id=19:04.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1144">19:04.000</a></div>
+        <div class="t">很好的例子是告訴我們說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:06.000" id=19:06.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1146">19:06.000</a></div>
+        <div class="t">就算是loss function的定義</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:09.000" id=19:09.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1149">19:09.000</a></div>
+        <div class="t">都可能影響training</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:12.000" id=19:12.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1152">19:12.000</a></div>
+        <div class="t">是不是容易這件事情</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:15.000" id=19:15.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1155">19:15.000</a></div>
+        <div class="t">我們剛才說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:16.000" id=19:16.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1156">19:16.000</a></div>
+        <div class="t">要用神羅天真</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:17.000" id=19:17.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1157">19:17.000</a></div>
+        <div class="t">直接把error surface炸平</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:19.000" id=19:19.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1159">19:19.000</a></div>
+        <div class="t">這邊就是一個好的例子</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:20.000" id=19:20.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1160">19:20.000</a></div>
+        <div class="t">告訴你說</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:21.000" id=19:21.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1161">19:21.000</a></div>
+        <div class="t">你可以改loss function</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:23.000" id=19:23.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=O2VkP8dJ5FE&t=1163">19:23.000</a></div>
+        <div class="t">居然可以改變optimization的難度</div>
+    </div>
+    
+</body>
+</html>   

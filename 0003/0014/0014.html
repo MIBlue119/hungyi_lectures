@@ -1,0 +1,3148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hung-yi Lee's Lectures(台大李宏毅老師系列課程)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 18px;
+            color: #111;
+            padding: 0 0 1em 0;
+        }
+        .l {
+          color: #050;
+        }
+        .s {
+            display: inline-block;
+        }
+        .e {
+            display: inline-block;
+        }
+        .t {
+            display: inline-block;
+        }
+    </style>
+  </head>
+  <body>
+    <a href="../../index.html">back to index</a>
+    <h2>【機器學習2021】生成式對抗網路 (Generative Adversarial Network, GAN) (二) – 理論介紹與WGAN</h2><a href=https://www.youtube.com/watch?v=jNY1WBb8l4U><img src=https://i.ytimg.com/vi/jNY1WBb8l4U/hqdefault.jpg?sqp=-oaymwEmCOADEOgC8quKqQMa8AEB-AH-BIAC4AOKAgwIABABGGUgZShlMA8=&rs=AOn4CLAi3qlZFmPEH6hicjR-yr8updPQSg></a><br>
+    
+    <div class="c">
+        <a class="l" href="#00:00.000" id=00:00.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=0">00:00.000</a></div>
+        <div class="t">剛才就是用了一堆比喻,告訴你 GAN 是怎麼運作的,也實際上告訴你 GAN 的操作是怎麼操作的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:12.900" id=00:12.900>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=12">00:12.900</a></div>
+        <div class="t">接下來我們要講一點理論的部分,講一點農場文不會講到的部分,告訴你說實際上為什麼 GAN 的這一番操作,為什麼這個 Generator 跟 Discriminator 的互動可以讓我們的 Generator 產生像是真正的人臉的圖片,這背後的互動在做的到底是什麼樣的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:38.400" id=00:38.400>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=38">00:38.400</a></div>
+        <div class="t">那我們先來弄清楚我們今天訓練的目標到底是什麼。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:45.060" id=00:45.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=45">00:45.060</a></div>
+        <div class="t">你知道我們在訓練 Network 的時候,你就是要訂一個 Loss Function 嘛,訂完以後用 Gradient Descent 去調你的參數,去 Minimize 那個 Loss Function 就結束了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#00:54.060" id=00:54.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=54">00:54.060</a></div>
+        <div class="t">那在這個 Generation 的問題裡面,到底我們要 Minimize 的或者是我們要 Maximize 的到底是什麼樣的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:04.300" id=01:04.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=64">01:04.300</a></div>
+        <div class="t">我們要把這件事弄清楚,才能夠做接下來的事情。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:08.500" id=01:08.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=68">01:08.500</a></div>
+        <div class="t">那在 Generator 裡面,我們到底想要 Minimize 或者是 Maximize 什麼樣的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:15.860" id=01:15.860>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=75">01:15.860</a></div>
+        <div class="t">我們想要 Minimize 的東西是這個樣子的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:19.060" id=01:19.060>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=79">01:19.060</a></div>
+        <div class="t">我們有一個 Generator,給他一大堆的 Vector,給他從 Normal Distribution Sample 出來的東西,丟進這個 Generator 以後,會產生一個比較複雜的 Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:30.960" id=01:30.960>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=90">01:30.960</a></div>
+        <div class="t">這個複雜的 Distribution,我們叫他 PG,然後我們有一堆的 Data,這個是真正的 Data,真正的 Data 也形成了另外一個 Distribution 叫做 P-Data,我們期待 PG 跟 P-Data 越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:49.700" id=01:49.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=109">01:49.700</a></div>
+        <div class="t">如果你一下子沒有辦法想像這個 PG、P-Data 是怎麼一回事的話,那我們用一維的狀況來跟大家說明。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#01:59.500" id=01:59.500>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=119">01:59.500</a></div>
+        <div class="t">我們假設 Generator 的 Input 是一個一維的向量,Generator 的 Output 也是一維的向量,我們的真正的 Data 也是一維的向量。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:10.300" id=02:10.300>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=130">02:10.300</a></div>
+        <div class="t">那我們的 Normal Distribution 就長這個樣子,沒有問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:14.700" id=02:14.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=134">02:14.700</a></div>
+        <div class="t">那丟到 Generator 以後,這邊這每一個點,假設你輸入五個點,這邊這每一個點,他的位置會改變,你就產生一個新的 Distribution。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:27.000" id=02:27.000>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=147">02:27.000</a></div>
+        <div class="t">那可能本來大家都集中在中間,通過這個 Generator,通過一個 Network,裡面很複雜,不知道做了什麼事情以後,這些點就分成兩邊,所以你的 Distribution 就變成這個樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:37.700" id=02:37.700>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=157">02:37.700</a></div>
+        <div class="t">而 P-Data 是指真正的資料的分布,真正的資料的分布可能長這個樣子,他分兩邊的狀況是更極端的,左邊的東西比較多,右邊的東西比較少,那你期待左邊這個分布跟右邊這個分布越接近越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#02:53.740" id=02:53.740>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=173">02:53.740</a></div>
+        <div class="t">如果寫成式子的話,你可以寫成這個樣子,你這邊這個 DIV of PG 跟 P-Data,他指的意思就是 PG 跟 P-Data 這兩個 Distribution 之間的 Divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:08.340" id=03:08.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=188">03:08.340</a></div>
+        <div class="t">那 Divergence 這邊指的是什麼意思呢? Divergence 這邊指的意思就是,你可以想成是這兩個 Distribution 之間的某種距離。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:20.340" id=03:20.340>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=200">03:20.340</a></div>
+        <div class="t">如果這個 Divergence 越大,就代表這兩個 Distribution 越不像,Divergence 越小,就代表這兩個 Distribution 越相近。Divergence 就是衡量兩個 Distribution 相似度的一個 measure。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#03:35.840" id=03:35.840>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=215">03:35.840</a></div>
+        <div class="t">然後呢,我們現在的目標是要去找一個 generator,所謂的找一個 generator,實際上骨子裡做的事情是找一個 generator 裡面的參數,找一組 generator 裡面的參數,generator 也是一個 network,裡面有一大堆的 weight 跟 bias,找一組 generator 的參數,他可以讓我們產生出來的 PG 跟 P-Data 之間的 Divergence 越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:01.540" id=04:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=241">04:01.540</a></div>
+        <div class="t">我們要找的就是這樣子的 generator,我們這邊把它寫作 G-SPOT。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:06.540" id=04:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=246">04:06.540</a></div>
+        <div class="t">所以我們這邊要做的事情跟一般的 train network 其實非常的像,我們第一堂課就告訴你說,我們定義了 loss function,找一組參數 minimize loss function,我們現在其實也定義了我們的 loss function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:19.540" id=04:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=259">04:19.540</a></div>
+        <div class="t">在 generation 這個問題裡面,我們的 loss function 就是 PG 跟 P-Data 的 divergence,就是他們兩個之間的距離,他們兩個越近,就代表產生出來的 PG 跟 P-Data 越像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:35.540" id=04:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=275">04:35.540</a></div>
+        <div class="t">所以 PG 跟 P-Data,我們希望他們越相像越好,所以我們希望 PG 跟 P-Data 的 divergence 越小越好,我們要做的事情就是找一個 G,讓 divergence 變得最小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:46.540" id=04:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=286">04:46.540</a></div>
+        <div class="t">但是我們這邊遇到一個困難的問題,怎麼樣困難的問題呢?這個 loss 我們是可以算的,但是這個 divergence 要怎麼樣算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#04:59.540" id=04:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=299">04:59.540</a></div>
+        <div class="t">你可能知道一些 divergence 的式子,比如說 KL divergence,比如說 JS divergence,這些 divergence 用在這種 continuous distribution 上面,你要做一個很複雜的,在實作上你幾乎不知道要怎麼算的積分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:17.540" id=05:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=317">05:17.540</a></div>
+        <div class="t">那我們根本就無法把這個 divergence 算出來,我們算不出這個 divergence,我們又要如何去找一個 G,去 minimize 這個 divergence 呢?這個就是 GAN 所遇到的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:30.540" id=05:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=330">05:30.540</a></div>
+        <div class="t">這就是我們在 train 這種 generator 的時候會遇到的問題。而 GAN 是一個很神奇的做法,它可以突破我們不知道怎麼計算 divergence 的限制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#05:43.540" id=05:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=343">05:43.540</a></div>
+        <div class="t">所以我們現在遇到的問題就是,不知道怎麼計算 divergence。而 GAN 告訴我們的就是,只要你知道怎麼從 pg 和 pdata 這兩個 distribution sample 東西出來,就有辦法算 divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:00.540" id=06:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=360">06:00.540</a></div>
+        <div class="t">你不需要知道 pg 和 pdata 實際上的 formulation 長什麼樣子,你只要能夠 sample 就能夠算 divergence。而 pg 和 pdata 是可以 sample 的嗎?是可以 sample 的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:14.540" id=06:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=374">06:14.540</a></div>
+        <div class="t">怎麼從真正的 data 裡面 sample 出東西來呢?你就把你的圖庫拿出來,從圖庫裡面隨機產生,隨機 sample 一些圖片出來,你就得到 pdata 了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:27.540" id=06:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=387">06:27.540</a></div>
+        <div class="t">那怎麼從 generator 裡面產生一些東西出來呢?那你就把你的 generator 輸入從 normal distribution sample 出來的 vector,丟到 generator 裡面。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:41.540" id=06:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=401">06:41.540</a></div>
+        <div class="t">我們剛才也說過說,你這邊的 distribution,你拿來 sample 那個 distribution,要是簡單的,要是你有辦法 sample 的,所以我們選 normal distribution,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#06:51.540" id=06:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=411">06:51.540</a></div>
+        <div class="t">我們是知道的,是有辦法 sample 的,我們從 normal distribution 裡面 sample 一堆 vector 出來,丟給 generator,讓 generator 產生一堆圖片出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:01.540" id=07:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=421">07:01.540</a></div>
+        <div class="t">這些圖片就是從 pg sample 出來的結果。所以我們有辦法從 pg 做 sample,我們有辦法從 pdata 做 sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:11.540" id=07:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=431">07:11.540</a></div>
+        <div class="t">接下來,GAN 這一整個系列的 work 就是要告訴你說,怎麼在只有做 sample 的前提之下,我根本不知道 pg 跟 pdata 實際上完整的 formulation 長什麼樣子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:23.540" id=07:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=443">07:23.540</a></div>
+        <div class="t">在只能做 sample 的前提之下,居然就算出了,居然就估測出了 divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:29.540" id=07:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=449">07:29.540</a></div>
+        <div class="t">那這個就是要靠 discriminator 的力量。我們剛才講過說,discriminator 是怎麼訓練出來的呢?我們有一大堆的 real data,這個 real data 就是從 pdata sample 出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:42.540" id=07:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=462">07:42.540</a></div>
+        <div class="t">我們有一大堆 generated data,generated data 就可以看出是從 pg sample 出來的結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#07:49.540" id=07:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=469">07:49.540</a></div>
+        <div class="t">根據 real data 跟 generated data,我們會去訓練一個 discriminator。訓練的目標是看到 real data 就給他比較高的分數,看到 generated data 就給他比較低的分數。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:03.540" id=08:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=483">08:03.540</a></div>
+        <div class="t">我們剛才就說,discriminator 訓練的目標就是要分辨好的圖跟不好的圖,分辨真的圖跟生成的圖,所以看到真的圖給他高分,看到生成的圖給他低分。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:15.540" id=08:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=495">08:15.540</a></div>
+        <div class="t">那實際上剛才講的,你也可以把它寫成四字,把它當作是一個 optimization 的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:23.540" id=08:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=503">08:23.540</a></div>
+        <div class="t">這個 optimization 的問題是這樣子的,我們要訓練一個 discriminator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:29.540" id=08:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=509">08:29.540</a></div>
+        <div class="t">這個 discriminator 可以去 maximize 某一個 function,這邊叫做 objective function,就是我們要 maximize 的東西,我們會叫 objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:40.540" id=08:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=520">08:40.540</a></div>
+        <div class="t">如果要 minimize,我們就會叫它 loss function。我們現在要找一個 d,它可以 maximize 這個 objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:47.540" id=08:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=527">08:47.540</a></div>
+        <div class="t">這個 objective function 長什麼樣子呢?這個 objective function 長這個樣子,我們有一堆 y,它是從 p data 裡面 sample 出來的,也就是它們是真正的 image。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#08:58.540" id=08:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=538">08:58.540</a></div>
+        <div class="t">而我們把這個真正的 image 丟到 d 裡面得到一個分數,再去 log。那另外一方面,我們有一堆 y,它是從 pg,從 generator 所產生出來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:10.540" id=09:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=550">09:10.540</a></div>
+        <div class="t">把這些圖片也丟到 discriminator 裡面得到一個分數,再去 log 1-b of y。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:17.540" id=09:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=557">09:17.540</a></div>
+        <div class="t">那我們希望這個 objective function b 越大越好。我們希望 b 越大越好,意味著我們希望這邊的 d of y 越大越好。我們希望 y 如果是從 p data sample 出來的,它就要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:32.540" id=09:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=572">09:32.540</a></div>
+        <div class="t">我們希望說如果 y 是從 pg sample 出來的,它就要越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:38.540" id=09:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=578">09:38.540</a></div>
+        <div class="t">那我們就去最大化 b 這個式子,找一個 d 可以 maximize 這個 objective function,我們其實就是讓 d of y 越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:50.540" id=09:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=590">09:50.540</a></div>
+        <div class="t">讓這邊的 d of y,也就是 generator 生成的圖片的值越小越好, discriminator output 的值越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#09:57.540" id=09:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=597">09:57.540</a></div>
+        <div class="t">那這件事情其實又等同於你可能覺得沒事突然寫出這個式子有點奇怪,那你不一定要把這個 objective function 寫成這個樣子,它完全可以有其他的寫法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:12.540" id=10:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=612">10:12.540</a></div>
+        <div class="t">那最早年之所以寫成這個樣子是有一個很明確的理由,有一個很明確的動機,是為了要把 discriminator 跟 binary 的 classification 跟分類,跟二元的分類扯上關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:27.540" id=10:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=627">10:27.540</a></div>
+        <div class="t">怎麼說呢?事實上這個 objective function 它就是 cross entropy 成一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:35.540" id=10:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=635">10:35.540</a></div>
+        <div class="t">我們知道我們在訓練一個 classifier 的時候,我們就是要 minimize cross entropy,所以當我們 maximize 這個 objective function, maximize cross entropy 成一個負號的時候,其實等同於 minimize cross entropy,也就等同於是在訓練一個 classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#10:56.540" id=10:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=656">10:56.540</a></div>
+        <div class="t">所以這個 discriminator 做的事情,如果 discriminator 做的事情是去 maximize 這個 objective function,那這個 discriminator 其實可以當作是一個 classifier。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:06.540" id=11:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=666">11:06.540</a></div>
+        <div class="t">它做的事情就是把藍色這些點,從 p data sample 出來的真實的 image 當作 class 1,把從 pg sample 出來的這些假的 image 當作 class 2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:19.540" id=11:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=679">11:19.540</a></div>
+        <div class="t">由兩個 class 的 data 訓練一個 binary 的 classifier,訓練完就等同於是解了這個 optimization 的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:29.540" id=11:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=689">11:29.540</a></div>
+        <div class="t">那這邊最神奇的地方是以下這句話,這一個式子,這個紅框框裡面的數值,它跟 JS divergence 有關。事實上有趣的事情是,我覺得最原始的 Gantt paper,它的發想可能真的是從 binary classifier 來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#11:49.540" id=11:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=709">11:49.540</a></div>
+        <div class="t">一開始是把 discriminator 寫成 binary classifier,然後有了這樣的 objective function,然後再經過一番推導以後,這個 objective function 它的 maximum,就是你找到一個 d,可以讓這個 objective function 它的值最大的時候,這個最大的值跟 JS divergence 是有關的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:09.540" id=12:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=729">12:09.540</a></div>
+        <div class="t">它們沒有完全一模一樣,所以顯然一開始並不是針對 JS divergence 設計的,而是經過一番推導以後發現它們是非常有關聯的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:19.540" id=12:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=739">12:19.540</a></div>
+        <div class="t">至於實際上的推導過程,你可以參見原始 Ian Goodfellow 寫的文章,其實裡面的推導過程我覺得寫得算是蠻清楚的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:28.540" id=12:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=748">12:28.540</a></div>
+        <div class="t">真正神奇的地方就是,這一個 objective function 的最大值,它跟 divergence 是有關的。所以我們剛才說,我們不知道怎麼算 divergence,沒關係,train 你的 discriminator,train 完以後,看看它的 objective function 可以到多大,那個值就跟 divergence 有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#12:50.540" id=12:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=770">12:50.540</a></div>
+        <div class="t">這邊我們並沒有把證明拿出來跟大家講,但是我們還是可以從直觀上來理解一下,為什麼這個 objective function 的值會跟 divergence 有關呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:05.540" id=13:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=785">13:05.540</a></div>
+        <div class="t">這個直觀的理解並沒有很困難,因為你可以想想看,假設 pg 跟 pdata 它的 divergence 很小,也就是 pg 跟 pdata 很像,它們差距沒有很大,它們很像 pg 跟 pdata sample 出來的藍色的星星跟紅色的星星,它們是混在一起的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:23.540" id=13:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=803">13:23.540</a></div>
+        <div class="t">這個時候對 discriminator 來說,discriminator 就是在 train 一個 binary 的 classifier,對 discriminator 來說,既然這兩堆資料是混在一起的,那就很難分開,這個問題很難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:35.540" id=13:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=815">13:35.540</a></div>
+        <div class="t">既然這個問題很難,你在解這個 optimization problem 的時候,你就沒有辦法讓這個 objective 的值非常的大,所以這個 objective,這個 v 的 maximum 的值就比較小,所以小的 divergence 對應到小的 objective function 的 maximum 的值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#13:55.540" id=13:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=835">13:55.540</a></div>
+        <div class="t">所以不是 objective function 的值本身,是 objective function 在窮取所有 discriminator 以後可以得到的最大的值。如果今天你的兩組 data 很不像,它們的 divergence 很大,那對 discriminator 而言就可以輕易地把它分開。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:11.540" id=14:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=851">14:11.540</a></div>
+        <div class="t">當 discriminator 可以輕易地把它分開的時候,這個 objective function 就可以衝得很大,所以當你有大的 divergence 的時候,這個 objective function 的 maximum 的值就可以很大。當然這邊是用直觀的方法來跟你講的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:26.540" id=14:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=866">14:26.540</a></div>
+        <div class="t">詳細的證明請參見 GANN 原始的 paper,裡面再做了一些假設,比如說 discriminator 的 capacity 是無窮大等等的假設以後,可以做出這個 maximum 的值跟 JS divergence 一些相關的推導。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#14:41.540" id=14:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=881">14:41.540</a></div>
+        <div class="t">所以我們說,我們本來的目標是要找一個 generator 去 minimize pg 跟 p data 的 divergence 的值,那我們卡在不知道怎麼計算 divergence。那我們現在要知道,我們只要訓練一個 discriminator,訓練完以後,這個 objective function 的最大值就是這個 divergence,就跟這個 divergence 有關。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:04.540" id=15:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=904">15:04.540</a></div>
+        <div class="t">那我們何不就把紅框框裡面這一項跟 divergence 做替換呢?我們何不就把 divergence 替換成紅框框裡面這一項呢?所以我們就有了這樣一個 objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:19.540" id=15:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=919">15:19.540</a></div>
+        <div class="t">這個 objective function 乍看之下有點複雜,它有一個 minimum 又有一個 maximum,所以你不小心就會腦筋轉不過來。我們是要找一個 generator 去 minimize 紅色框框裡面這件事,但是紅框框裡面這件事又是另外一個 optimization problem,它是在給定 generator 的情況下去找一個 discriminator,這個 discriminator 可以讓 v 這個 objective function 越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:47.540" id=15:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=947">15:47.540</a></div>
+        <div class="t">我們要找一個 g 讓紅框框裡面的值最小,這個 g 就是我們要的 generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#15:53.540" id=15:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=953">15:53.540</a></div>
+        <div class="t">而剛才我們講的 generator 跟 discriminator 互動、互相欺騙這個過程,其實就是想解這個有 minimize 又有 maximize 這個 min-max 的問題,就是透過下面這個我們剛才講的 GAN 的 algorithm 來解的。至於實際上為什麼下面這個 algorithm 可以解這個問題,你也可以參見原始的 GAN 的 paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:17.540" id=16:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=977">16:17.540</a></div>
+        <div class="t">講到這邊,也許你就會問說,為什麼是 JS Divergence,而且還不是真的 JS Divergence,是跟 JS Divergence 相關而已,怎麼不用真正的 JS Divergence 或不用別的,比如說 AL Divergence,你完全可以這麼做。你只要改了那個 objective function,你就可以量各式各樣的 divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#16:40.540" id=16:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1000">16:40.540</a></div>
+        <div class="t">至於怎麼樣設計 objective function 得到不同的 divergence,有一篇叫做 FGAN 的 paper 裡面有非常詳細的證明,它有很多的 table 告訴你說不同的 divergence 要怎麼設計它的 objective function,你設計什麼樣的 objective function 去找它的 maximum value 就會變成什麼樣的 divergence,在這篇文章裡面都有詳細的記載。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:05.540" id=17:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1025">17:05.540</a></div>
+        <div class="t">所以一開始有人會覺得說,GAN 之所以沒有很好 train,也許是因為我們沒有在真的 minimize JS Divergence,但是有了 FGAN 這篇 paper 以後,它就告訴你說,我們有辦法 minimize JS Divergence,但就算你真的可以 minimize JS Divergence,結果也還是沒有很好,GAN 還是沒有很好 train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:30.540" id=17:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1050">17:30.540</a></div>
+        <div class="t">所以 GAN 是以不好 train 而聞名的,所以俗話就說,no pain, no GAN,我們就要講一些 GAN 訓練的小技巧。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#17:43.540" id=17:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1063">17:43.540</a></div>
+        <div class="t">GAN 有什麼樣訓練的小技巧呢?其實 GAN 訓練的小技巧非常多,我想了很久以後,我們只挑一個最知名的來講。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:08.540" id=18:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1088">18:08.540</a></div>
+        <div class="t">這個最知名的就是很多人都聽過的 WGAN。這個 WGAN 是什麼呢?在講 WGAN 之前,我們先講 JS Divergence 有什麼樣的問題。在最早的 GAN 說,我們要 minimize 的是 JS Divergence。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:27.540" id=18:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1107">18:27.540</a></div>
+        <div class="t">選擇 JS Divergence 的時候會有什麼問題呢?在講 JS Divergence 的問題之前,我們先看一下 pg 跟 pdata 有什麼樣的特性。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:38.540" id=18:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1118">18:38.540</a></div>
+        <div class="t">pg 跟 pdata 有一個非常關鍵的特性是,pg 跟 pdata 它們重疊的部分往往非常少。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#18:49.540" id=18:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1129">18:49.540</a></div>
+        <div class="t">這邊有兩個理由,第一個理由是來自於 data 本身的特性。pg 跟 pdata 它們都是要產生圖片,圖片其實是高維空間裡面的一個低維的 metaphor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:07.540" id=19:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1147">19:07.540</a></div>
+        <div class="t">怎麼知道圖片是高維空間裡面低維的 metaphor 呢?因為你想想看,你在高維空間裡面隨便 sample 一個點,它通常都沒有辦法構成一個二次元人物的頭像。所以二次元人物的頭像的分布在高維空間中其實是非常狹窄的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:25.540" id=19:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1165">19:25.540</a></div>
+        <div class="t">所以二次元頭像的分布,這個圖片的分布,其實是高維空間中的低維的 metaphor,或者是如果是以二維空間來想的話,那圖片的分布可能就是二維空間的一條線。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:37.540" id=19:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1177">19:37.540</a></div>
+        <div class="t">二維空間中多數的點都不是圖片,就高維空間中隨便 sample 一個點都不是圖片,只有非常小的範圍,sample 出來它會是圖片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:50.540" id=19:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1190">19:50.540</a></div>
+        <div class="t">所以從這個角度來看,從資料本身的特性來看,Pg 跟 Pdata 它們都是 low-dimensional 的 metaphor。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#19:58.540" id=19:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1198">19:58.540</a></div>
+        <div class="t">用二維空間來講,Pg 跟 Pdata 都是二維空間中的兩條直線。而二維空間中的兩條直線,除非它剛好重合,不然它們相交的範圍幾乎是可以忽略的。這是第一個理由。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:13.540" id=20:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1213">20:13.540</a></div>
+        <div class="t">也許有人說,圖片根本就不是 low-dimensional 的 metaphor,那會不會第一個理由就不成立了呢?那我給你第二個理由。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:22.540" id=20:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1222">20:22.540</a></div>
+        <div class="t">第二個理由是,我們從來都不知道 Pg 跟 Pdata 長什麼樣子。我們對 Pg 跟 Pdata 分布的理解其實來自於 sample。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:35.540" id=20:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1235">20:35.540</a></div>
+        <div class="t">所以也許 Pg 跟 Pdata 它們是有非常大的 overlap 的範圍,但是我們實際上在了解 Pg 跟 Pdata,在計算它們的 divergence 的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:46.540" id=20:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1246">20:46.540</a></div>
+        <div class="t">我們是從 Pdata 裡面 sample 一些點出來,從 Pg 裡面 sample 一些點出來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#20:52.540" id=20:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1252">20:52.540</a></div>
+        <div class="t">如果你 sample 的點不夠多,你 sample 的點不夠密,那就算是這兩個 divergence 實際上,這兩個 distribution 實際上有重疊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:01.540" id=21:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1261">21:01.540</a></div>
+        <div class="t">但是假設你 sample 的點不夠多,對 discriminator 來說,它也是沒有重疊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:08.540" id=21:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1268">21:08.540</a></div>
+        <div class="t">這個藍色的分布跟紅色的分布明明是有重疊的,但如果你從藍色分布 sample 一些點、紅色分布 sample 一些點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:16.540" id=21:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1276">21:16.540</a></div>
+        <div class="t">這些點你又 sample 的不夠多,你根本就可以畫一條楚河漢界,把紅色的點跟藍色的點完全地分開來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:23.540" id=21:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1283">21:23.540</a></div>
+        <div class="t">然後說紅色的點的分布就是在楚河漢界的右邊,藍色的點就是在左邊,它們完全是沒有任何重疊的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:31.540" id=21:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1291">21:31.540</a></div>
+        <div class="t">以上給你兩個理由,試圖說服你說 Pg 跟 Pdata 這兩個分布,它們重疊的範圍是非常小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:40.540" id=21:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1300">21:40.540</a></div>
+        <div class="t">而幾乎沒有重疊這件事情,對於 JS divergence 會造成什麼問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:45.540" id=21:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1305">21:45.540</a></div>
+        <div class="t">JS divergence 有一個特性,是兩個沒有重疊的分布,JS divergence 算出來就永遠都是 log2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#21:56.540" id=21:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1316">21:56.540</a></div>
+        <div class="t">不管這兩個分布長什麼樣子。所以兩個分布只要沒有重疊,算出來就一定是 log2,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:02.540" id=22:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1322">22:02.540</a></div>
+        <div class="t">不管它們長什麼樣子,算出來都是 log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:06.540" id=22:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1326">22:06.540</a></div>
+        <div class="t">所以舉例來說,假設這是你的 Pdata,這是你的 Pg,假設它們都是一條直線,然後中間有很長的距離,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:16.540" id=22:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1336">22:16.540</a></div>
+        <div class="t">你算它們的 JS divergence 是 log2。假設你的 Pg 跟 Pdata 其實蠻接近的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:22.540" id=22:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1342">22:22.540</a></div>
+        <div class="t">那中間的間隔其實是比較小的,算出來結果還是 log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:28.540" id=22:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1348">22:28.540</a></div>
+        <div class="t">除非你的 Pg 跟 Pdata 有重合,不然這個 Pg 跟 Pdata 只要它們是兩條直線,它們這兩條直線沒有相交,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:37.540" id=22:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1357">22:37.540</a></div>
+        <div class="t">那算出來就是 log2。這個 case 算出來是 log2,這個 case 算出來也是 log2。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:46.540" id=22:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1366">22:46.540</a></div>
+        <div class="t">但是明明這個 case 就比這個 case 好啊,中間這個 case,中間這個 generator 明明就比左邊這個 generator 好啊,但是你不知道。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#22:58.540" id=22:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1378">22:58.540</a></div>
+        <div class="t">明明藍色的線就跟紅色的線比較近啊,但是從 JS divergence 上面看不出這樣子的現象。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:06.540" id=23:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1386">23:06.540</a></div>
+        <div class="t">那既然從 JS divergence 上看不出這樣子的現象,你在 training 的時候,你根本就沒有辦法把這樣子的 generator,update 參數變成這樣子的 generator。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:16.540" id=23:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1396">23:16.540</a></div>
+        <div class="t">因為對你的 loss 來說,對你的目標來說,這兩個 generator 是一樣好或者是一樣糟的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:24.540" id=23:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1404">23:24.540</a></div>
+        <div class="t">那以上是從比較理論的方向來說明,如果我們從更直觀的實際操作的角度來說明,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:31.540" id=23:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1411">23:31.540</a></div>
+        <div class="t">你會發現當你是用 JS divergence 的時候,也就是假設你今天在 train 一個 binary classifier 去分辨 real 的 image 跟 generated image,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:42.540" id=23:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1422">23:42.540</a></div>
+        <div class="t">你會發現實際上你通常 train 完以後,正確率幾乎都是百分之百。為什麼?因為你 sample 的圖片根本就沒幾張啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#23:51.540" id=23:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1431">23:51.540</a></div>
+        <div class="t">對你的 discriminator 來說,你 sample 256 張 real 的圖片、256 張 fake 的圖片,他直接用硬背的都可以把這兩組圖片分開,知道說誰是 real 的、誰是 fake 的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:02.540" id=24:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1442">24:02.540</a></div>
+        <div class="t">所以實際上如果你有自己 train 過 game 的話,你會發現如果你用 binary classifier train 下去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:08.540" id=24:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1448">24:08.540</a></div>
+        <div class="t">你會發現你幾乎每次 train 完你的 classifier 以後,也就是你 train 完你的 discriminator 以後,正確率都是 100%。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:16.540" id=24:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1456">24:16.540</a></div>
+        <div class="t">我們本來會期待說這個 discriminator 的 loss 也許代表了某些事情,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:22.540" id=24:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1462">24:22.540</a></div>
+        <div class="t">這個 binary classifier loss 也許代表某些事情,這個 loss 越來越大代表問題越來越難,代表我們的 generated data 跟 real 的 data 越來越接近。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:33.540" id=24:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1473">24:33.540</a></div>
+        <div class="t">但實際上,你在實際操作的時候你根本觀察不到這個現象,這個 binary classifier 訓練完的 loss 根本沒有什麼意義,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:40.540" id=24:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1480">24:40.540</a></div>
+        <div class="t">因為他總是可以讓他的正確率變到 100%,兩組 image 都是 sample 出來的,他硬背都可以得到 100% 的正確率,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:49.540" id=24:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1489">24:49.540</a></div>
+        <div class="t">你根本就沒有辦法看出你的 generated 有沒有越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#24:54.540" id=24:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1494">24:54.540</a></div>
+        <div class="t">所以過去,尤其是在還沒有 WGAN 這樣的技術,在我們還用 binary classifier 當作 discriminator 的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:01.540" id=25:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1501">25:01.540</a></div>
+        <div class="t">train game 真的就很像巫術、黑魔法,你根本就不知道你 train 的時候有沒有越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:08.540" id=25:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1508">25:08.540</a></div>
+        <div class="t">所以怎麼辦呢?那時候的做法就是,你每次 update 幾次 generator 以後,你就要把你的圖片 print 出來看,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:15.540" id=25:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1515">25:15.540</a></div>
+        <div class="t">然後你就要一邊吃飯一邊看圖片生成的結果,然後跑一跑就發現,哇,壞掉了,然後 cut 掉重做這樣子。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:24.540" id=25:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1524">25:24.540</a></div>
+        <div class="t">所以以前你根本就沒有,不像我們在 train 一般的 network 的時候,你有一個 loss function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:29.540" id=25:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1529">25:29.540</a></div>
+        <div class="t">然後那個 loss 隨著訓練的過程會慢慢慢慢變小,那你就會看說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:34.540" id=25:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1534">25:34.540</a></div>
+        <div class="t">ok, loss 慢慢變小,你就放心知道說你的 network 有在 train。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:38.540" id=25:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1538">25:38.540</a></div>
+        <div class="t">那會不會 overfitting 是另外一件事?至少他的 training data 上有越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:42.540" id=25:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1542">25:42.540</a></div>
+        <div class="t">但是對 game 而言,本來我們期待 classifier 的 loss 可以提供一些資訊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:47.540" id=25:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1547">25:47.540</a></div>
+        <div class="t">但是當你的 classifier 是一個簡單一般的 binary classifier 的時候,他訓練的結果就沒有任何資訊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:53.540" id=25:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1553">25:53.540</a></div>
+        <div class="t">你每次訓練出來,正確率都是 100%,你根本不知道你的 generator 有沒有越來越好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#25:58.540" id=25:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1558">25:58.540</a></div>
+        <div class="t">變成你只能夠用人眼看,用人眼守在電腦前面看,發現結果不好, cut 掉,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:04.540" id=26:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1564">26:04.540</a></div>
+        <div class="t">重新用一組 hyperparameter,重新調一下 network 架構重做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:08.540" id=26:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1568">26:08.540</a></div>
+        <div class="t">所以過去訓練 game 是有點辛苦的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:12.540" id=26:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1572">26:12.540</a></div>
+        <div class="t">那既然是 JS divergence 的問題,於是有人就想說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:16.540" id=26:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1576">26:16.540</a></div>
+        <div class="t">那會不會換一個衡量兩個 distribution 的相似程度的方式,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:23.540" id=26:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1583">26:23.540</a></div>
+        <div class="t">換一種 divergence 就可以解決這個問題了呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:28.540" id=26:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1588">26:28.540</a></div>
+        <div class="t">於是就有了使用 Wasserstein distance 的想法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:33.540" id=26:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1593">26:33.540</a></div>
+        <div class="t">那 Wasserstein distance 這邊有一個冷知識,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:38.540" id=26:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1598">26:38.540</a></div>
+        <div class="t">就是這個 w,其實這邊是唸 v,不是發 w 的音,不是唸 Wasserstein,而是唸 Wasserstein。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:47.540" id=26:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1607">26:47.540</a></div>
+        <div class="t">那這個 Wasserstein distance 是怎麼計算的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:51.540" id=26:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1611">26:51.540</a></div>
+        <div class="t">它的想法是這個樣子,假設你有兩個 distribution,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#26:55.540" id=26:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1615">26:55.540</a></div>
+        <div class="t">一個 distribution 我們叫它 p,另外一個 distribution 我們叫它 q,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:00.540" id=27:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1620">27:00.540</a></div>
+        <div class="t">Wasserstein distance 它計算的方法就是想像你在開一台推土機,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:06.540" id=27:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1626">27:06.540</a></div>
+        <div class="t">推土機的英文叫做 earth mover,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:09.540" id=27:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1629">27:09.540</a></div>
+        <div class="t">想像你在開一台推土機,那你把 p 想成是一堆土,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:15.540" id=27:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1635">27:15.540</a></div>
+        <div class="t">把 q 想成是你要把土堆放的目的地。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:20.540" id=27:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1640">27:20.540</a></div>
+        <div class="t">那這個推土機把 p 這邊的土挪到 q 所移動的平均距離就是 Wasserstein distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:29.540" id=27:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1649">27:29.540</a></div>
+        <div class="t">在這個例子裡面,我們假設 p 都集中在這個點,q 都集中在這個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:34.540" id=27:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1654">27:34.540</a></div>
+        <div class="t">對推土機而言,假設它要把 p 這邊的土挪到 q 這邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:38.540" id=27:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1658">27:38.540</a></div>
+        <div class="t">那它要平均走的距離就是 d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:42.540" id=27:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1662">27:42.540</a></div>
+        <div class="t">所以在這個例子裡面,假設 p 集中在一個點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:45.540" id=27:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1665">27:45.540</a></div>
+        <div class="t">q 集中在一個點,這兩個點之間的距離是 d 的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:48.540" id=27:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1668">27:48.540</a></div>
+        <div class="t">那 p 跟 q 的 Wasserstein distance 就是 d。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:52.540" id=27:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1672">27:52.540</a></div>
+        <div class="t">那因為在講這個 Wasserstein distance 的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:55.540" id=27:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1675">27:55.540</a></div>
+        <div class="t">你要想像有一個 earth mover,有一個推土機在推土,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#27:58.540" id=27:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1678">27:58.540</a></div>
+        <div class="t">所以其實 Wasserstein distance 就叫 earth mover distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:02.540" id=28:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1682">28:02.540</a></div>
+        <div class="t">那但是呢,如果是更複雜的 distribution,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:05.540" id=28:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1685">28:05.540</a></div>
+        <div class="t">你要算 Wasserstein distance 就有點困難了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:08.540" id=28:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1688">28:08.540</a></div>
+        <div class="t">怎麼說呢?假設這是你的 p,假設這是你的 q,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:12.540" id=28:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1692">28:12.540</a></div>
+        <div class="t">假設你開了一個推土機,想要把 p 把它重新塑造一下形狀,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:17.540" id=28:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1697">28:17.540</a></div>
+        <div class="t">讓 p 的形狀跟 q 比較接近一點。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:21.540" id=28:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1701">28:21.540</a></div>
+        <div class="t">那有什麼樣的做法呢?你會發現說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:24.540" id=28:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1704">28:24.540</a></div>
+        <div class="t">你可能的 moving plan,就是你把 q 呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:28.540" id=28:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1708">28:28.540</a></div>
+        <div class="t">把 p 重新塑造成 q 的方法,有無窮多種。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:33.540" id=28:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1713">28:33.540</a></div>
+        <div class="t">你可以說,我把這邊的土搬到這裡來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:36.540" id=28:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1716">28:36.540</a></div>
+        <div class="t">我把這邊的土搬到這裡來,把 p 變成 q。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:40.540" id=28:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1720">28:40.540</a></div>
+        <div class="t">那你也可以捨近求遠說,我把這裡的土搬到這裡來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:44.540" id=28:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1724">28:44.540</a></div>
+        <div class="t">把這裡的土搬到這裡來,捨近求遠一樣還是可以把 p 變成 q。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:49.540" id=28:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1729">28:49.540</a></div>
+        <div class="t">所以當我們考慮比較複雜的 distribution 的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:53.540" id=28:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1733">28:53.540</a></div>
+        <div class="t">把 p 變成 q 的方法是有非常非常多不同的方法的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#28:59.540" id=28:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1739">28:59.540</a></div>
+        <div class="t">你有各式各樣不同的 moving plan。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:02.540" id=29:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1742">29:02.540</a></div>
+        <div class="t">用不同的 moving plan,你算出來的距離,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:06.540" id=29:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1746">29:06.540</a></div>
+        <div class="t">你推土機平均走的距離就不一樣啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:08.540" id=29:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1748">29:08.540</a></div>
+        <div class="t">在左邊這個例子裡面,推土機平均走的距離比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:12.540" id=29:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1752">29:12.540</a></div>
+        <div class="t">在右邊這個例子裡面,因為捨近求遠,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:15.540" id=29:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1755">29:15.540</a></div>
+        <div class="t">推土機平均走的距離比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:17.540" id=29:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1757">29:17.540</a></div>
+        <div class="t">那難道這個 p 跟 q 他們之間的 vessel stand distance</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:21.540" id=29:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1761">29:21.540</a></div>
+        <div class="t">會根據你的不同的方法,不同的推土機行進的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:26.540" id=29:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1766">29:26.540</a></div>
+        <div class="t">就算出不同的值嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:28.540" id=29:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1768">29:28.540</a></div>
+        <div class="t">為了讓 vessel stand distance 只有一個值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:30.540" id=29:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1770">29:30.540</a></div>
+        <div class="t">所以這邊 vessel stand 的定義是窮取所有的 moving plan,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:35.540" id=29:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1775">29:35.540</a></div>
+        <div class="t">然後看哪一個推土的方法,哪一個 moving 的計劃,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:41.540" id=29:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1781">29:41.540</a></div>
+        <div class="t">哪一個推土的計劃可以讓平均的距離最小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:45.540" id=29:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1785">29:45.540</a></div>
+        <div class="t">那個最小的值才是 vessel stand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:49.540" id=29:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1789">29:49.540</a></div>
+        <div class="t">所以會窮取所有把 p 變成 q 的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:52.540" id=29:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1792">29:52.540</a></div>
+        <div class="t">然後看哪一個推土的平均距離最短,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:54.540" id=29:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1794">29:54.540</a></div>
+        <div class="t">那選最短的那個距離當作是 vessel stand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#29:58.540" id=29:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1798">29:58.540</a></div>
+        <div class="t">所以其實要計算 vessel stand distance 是挺麻煩的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:01.540" id=30:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1801">30:01.540</a></div>
+        <div class="t">你會發現說,你光我只是要計算一個 distance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:04.540" id=30:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1804">30:04.540</a></div>
+        <div class="t">我居然還要解一個 optimization 的問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:07.540" id=30:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1807">30:07.540</a></div>
+        <div class="t">解說這個 optimization 的問題才能算 vessel stand distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:12.540" id=30:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1812">30:12.540</a></div>
+        <div class="t">好,那我們先不講怎麼計算 vessel stand distance 這件事,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:17.540" id=30:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1817">30:17.540</a></div>
+        <div class="t">我們先來講假設我們能夠計算 vessel stand distance 的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:21.540" id=30:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1821">30:21.540</a></div>
+        <div class="t">它可以帶給我們什麼樣的好處呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:24.540" id=30:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1824">30:24.540</a></div>
+        <div class="t">那假設 pg 跟 pdata 它們的距離是 d0,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:29.540" id=30:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1829">30:29.540</a></div>
+        <div class="t">那在這個例子裡面, vessel stand distance 算出來就是 d0。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:33.540" id=30:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1833">30:33.540</a></div>
+        <div class="t">在這個例子裡面, pg 跟 pdata 它們之間的距離是 d1,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:38.540" id=30:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1838">30:38.540</a></div>
+        <div class="t">那 vessel stand 算出來的距離就是 d1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:41.540" id=30:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1841">30:41.540</a></div>
+        <div class="t">那假設 d1 比較小, d0 比較大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:44.540" id=30:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1844">30:44.540</a></div>
+        <div class="t">那算 vessel stand 的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:46.540" id=30:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1846">30:46.540</a></div>
+        <div class="t">這個 case 的 vessel stand 就比較小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:48.540" id=30:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1848">30:48.540</a></div>
+        <div class="t">這個 case 的 vessel stand 就比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:51.540" id=30:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1851">30:51.540</a></div>
+        <div class="t">所以我們就可以知道說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:53.540" id=30:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1853">30:53.540</a></div>
+        <div class="t">由左向右的時候, vessel stand 是越來越小的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:56.540" id=30:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1856">30:56.540</a></div>
+        <div class="t">所以如果你觀察 vessel stand 的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#30:59.540" id=30:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1859">30:59.540</a></div>
+        <div class="t">會知道說從左到右,我們的 generator 越來越進步。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:04.540" id=31:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1864">31:04.540</a></div>
+        <div class="t">但是如果你觀察 discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:06.540" id=31:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1866">31:06.540</a></div>
+        <div class="t">你會發現你觀察不到任何東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:08.540" id=31:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1868">31:08.540</a></div>
+        <div class="t">對 discriminator 而言,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:09.540" id=31:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1869">31:09.540</a></div>
+        <div class="t">這邊每一個 case 算出來的 divergence 都是一樣的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:12.540" id=31:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1872">31:12.540</a></div>
+        <div class="t">都是一樣好或一樣差。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:14.540" id=31:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1874">31:14.540</a></div>
+        <div class="t">但是如果換成 vessel stand distance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:16.540" id=31:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1876">31:16.540</a></div>
+        <div class="t">由左向右的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:18.540" id=31:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1878">31:18.540</a></div>
+        <div class="t">我們會知道說,我們的 generator 做得越來越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:23.540" id=31:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1883">31:23.540</a></div>
+        <div class="t">所以我們換一個計算 divergence 的方式,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:27.540" id=31:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1887">31:27.540</a></div>
+        <div class="t">我們就可以解決 this divergence 有可能帶來的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:32.540" id=31:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1892">31:32.540</a></div>
+        <div class="t">這讓我想到什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:34.540" id=31:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1894">31:34.540</a></div>
+        <div class="t">這又讓我想到一個演化的例子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:36.540" id=31:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1896">31:36.540</a></div>
+        <div class="t">就是眼睛的生成。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:38.540" id=31:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1898">31:38.540</a></div>
+        <div class="t">右邊這個是人類的眼睛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:41.540" id=31:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1901">31:41.540</a></div>
+        <div class="t">人類的眼睛是非常的複雜的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:44.540" id=31:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1904">31:44.540</a></div>
+        <div class="t">有一些生物,他有非常原始的眼睛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:47.540" id=31:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1907">31:47.540</a></div>
+        <div class="t">比如說有一些細胞具備有感光的能力,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:50.540" id=31:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1910">31:50.540</a></div>
+        <div class="t">這可以看作是最原始的眼睛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:53.540" id=31:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1913">31:53.540</a></div>
+        <div class="t">但是這些最原始的眼睛,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:56.540" id=31:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1916">31:56.540</a></div>
+        <div class="t">怎麼變成最複雜的眼睛呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#31:59.540" id=31:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1919">31:59.540</a></div>
+        <div class="t">這對人類來說,其實覺得非常難想像。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:01.540" id=32:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1921">32:01.540</a></div>
+        <div class="t">這個這麼簡單,只是一些感光的細胞,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:03.540" id=32:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1923">32:03.540</a></div>
+        <div class="t">在皮膚上經過突變產生一些感光的細胞,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:07.540" id=32:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1927">32:07.540</a></div>
+        <div class="t">聽起來像是合理的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:09.540" id=32:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1929">32:09.540</a></div>
+        <div class="t">但是天擇突變,怎麼可能產生這麼複雜的器官呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:14.540" id=32:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1934">32:14.540</a></div>
+        <div class="t">怎麼產生眼睛這麼精巧的器官呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:17.540" id=32:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1937">32:17.540</a></div>
+        <div class="t">如果你直接覺得說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:19.540" id=32:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1939">32:19.540</a></div>
+        <div class="t">從這個地方就可以一步跳到這個地方,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:22.540" id=32:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1942">32:22.540</a></div>
+        <div class="t">那根本不可能發生。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:24.540" id=32:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1944">32:24.540</a></div>
+        <div class="t">但是中間其實是有很多連續的步驟的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:28.540" id=32:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1948">32:28.540</a></div>
+        <div class="t">從感光細胞到眼睛,中間其實是有連續的步驟的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:32.540" id=32:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1952">32:32.540</a></div>
+        <div class="t">舉例來說,感光的細胞可能會出現在一個比較凹陷的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:37.540" id=32:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1957">32:37.540</a></div>
+        <div class="t">皮膚凹陷下去,這樣感光細胞就可以接受來自不同方向的光源。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:42.540" id=32:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1962">32:42.540</a></div>
+        <div class="t">後來覺得說,乾脆把凹陷的地方蓋起來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:46.540" id=32:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1966">32:46.540</a></div>
+        <div class="t">後來覺得蓋起來的地方裡面可以放一些液體,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:51.540" id=32:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1971">32:51.540</a></div>
+        <div class="t">然後最後就變成了人的眼睛。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:54.540" id=32:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1974">32:54.540</a></div>
+        <div class="t">而從這邊跳到這邊這一步非常大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#32:57.540" id=32:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1977">32:57.540</a></div>
+        <div class="t">但是這邊每一小步都可以讓一個生命存活的機率變大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:03.540" id=33:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1983">33:03.540</a></div>
+        <div class="t">都可以讓生命繁衍下去的機率變高。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:06.540" id=33:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1986">33:06.540</a></div>
+        <div class="t">現在這邊每一個步驟都可以讓生命繁衍的機率變高,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:10.540" id=33:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1990">33:10.540</a></div>
+        <div class="t">那生命就可以從左邊一直演化到右邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:14.540" id=33:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1994">33:14.540</a></div>
+        <div class="t">最終產生複雜的器官。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:16.540" id=33:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1996">33:16.540</a></div>
+        <div class="t">而我覺得對於當你使用WGAN,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:18.540" id=33:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=1998">33:18.540</a></div>
+        <div class="t">當你使用Vessel Stance Distance來衡量你的Divergence的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:23.540" id=33:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2003">33:23.540</a></div>
+        <div class="t">其實就製造了類似的效果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:25.540" id=33:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2005">33:25.540</a></div>
+        <div class="t">本來Pg0跟Pdata非常的遙遠,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:28.540" id=33:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2008">33:28.540</a></div>
+        <div class="t">你要它一步從這裡跑到這裡,一步從這裡跑到這裡,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:32.540" id=33:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2012">33:32.540</a></div>
+        <div class="t">讓Pg0跟Pdata直接align在一起,是不可能的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:37.540" id=33:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2017">33:37.540</a></div>
+        <div class="t">可能非常的困難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:39.540" id=33:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2019">33:39.540</a></div>
+        <div class="t">對Jace Divergence而言,它需要做到直接從這一步跳到這一步,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:43.540" id=33:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2023">33:43.540</a></div>
+        <div class="t">它的Jace Divergence Loss才會有差異。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:46.540" id=33:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2026">33:46.540</a></div>
+        <div class="t">但是對W Distance而言,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:48.540" id=33:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2028">33:48.540</a></div>
+        <div class="t">你只要每次有稍微把Pg往Pdata挪近一點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:53.540" id=33:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2033">33:53.540</a></div>
+        <div class="t">W Distance就會有變化。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#33:55.540" id=33:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2035">33:55.540</a></div>
+        <div class="t">W Distance有變化,你才有辦法train你的Generator去minimize W Distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:01.540" id=34:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2041">34:01.540</a></div>
+        <div class="t">所以這就是為什麼當我們從Jace Divergence</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:04.540" id=34:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2044">34:04.540</a></div>
+        <div class="t">換成Vessel Stance Distance的時候,可以帶來的好處。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:10.540" id=34:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2050">34:10.540</a></div>
+        <div class="t">好,那W Gain實際上就是當你用Vessel Stance Distance</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:16.540" id=34:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2056">34:16.540</a></div>
+        <div class="t">來取代Jace Divergence的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:18.540" id=34:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2058">34:18.540</a></div>
+        <div class="t">這個Gain就叫做W Gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:20.540" id=34:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2060">34:20.540</a></div>
+        <div class="t">那接下來你會遇到的問題就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:22.540" id=34:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2062">34:22.540</a></div>
+        <div class="t">Vessel Stance Distance要怎麼算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:24.540" id=34:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2064">34:24.540</a></div>
+        <div class="t">Pdata跟Pg它的Vessel Stance Distance要怎麼計算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:28.540" id=34:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2068">34:28.540</a></div>
+        <div class="t">Vessel Stance Distance是一個非常複雜的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:31.540" id=34:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2071">34:31.540</a></div>
+        <div class="t">我光要算個Vessel Stance Distance還要解一個optimization的問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:34.540" id=34:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2074">34:34.540</a></div>
+        <div class="t">實際上要怎麼計算呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:36.540" id=34:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2076">34:36.540</a></div>
+        <div class="t">那這邊就不講過程,直接告訴你結果。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:39.540" id=34:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2079">34:39.540</a></div>
+        <div class="t">解下面這個optimization的problem,解出來以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:45.540" id=34:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2085">34:45.540</a></div>
+        <div class="t">你得到的值就是Vessel Stance Distance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:49.540" id=34:49.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2089">34:49.540</a></div>
+        <div class="t">就是Pdata跟Pg的Vessel Stance Distance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:53.540" id=34:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2093">34:53.540</a></div>
+        <div class="t">那這邊我發現我犯了一個小小的錯誤,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:55.540" id=34:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2095">34:55.540</a></div>
+        <div class="t">是什麼樣小小的錯誤呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:56.540" id=34:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2096">34:56.540</a></div>
+        <div class="t">就是這邊的X可能都把它改成Y,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#34:59.540" id=34:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2099">34:59.540</a></div>
+        <div class="t">會跟前面的投影片比較自然。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:02.540" id=35:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2102">35:02.540</a></div>
+        <div class="t">所以這邊的X在前面的投影片裡面其實都是Y,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:06.540" id=35:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2106">35:06.540</a></div>
+        <div class="t">他們指的都是一張圖片,他們指的都是Network的輸出,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:10.540" id=35:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2110">35:10.540</a></div>
+        <div class="t">而不是Network的輸入。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:13.540" id=35:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2113">35:13.540</a></div>
+        <div class="t">那這個式子裡面有什麼樣的東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:16.540" id=35:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2116">35:16.540</a></div>
+        <div class="t">我們就觀察一下這個式子,這個式子裡面有說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:19.540" id=35:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2119">35:19.540</a></div>
+        <div class="t">X如果是從Pdata來的,那我們要計算它的Dx的期望值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:25.540" id=35:25.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2125">35:25.540</a></div>
+        <div class="t">X如果是從Pg來的,我們計算它的Dx的期望值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:30.540" id=35:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2130">35:30.540</a></div>
+        <div class="t">但是前面存上一個負號。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:33.540" id=35:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2133">35:33.540</a></div>
+        <div class="t">所以如果你要Maximize這個Objective Function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:36.540" id=35:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2136">35:36.540</a></div>
+        <div class="t">你會達成什麼樣的效果?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:37.540" id=35:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2137">35:37.540</a></div>
+        <div class="t">你會達成,如果X是從Pdata Sample出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:41.540" id=35:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2141">35:41.540</a></div>
+        <div class="t">Dx,就Discriminator的Output,要越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:44.540" id=35:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2144">35:44.540</a></div>
+        <div class="t">如果X是從Pg,從Generator Sample出來的,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:47.540" id=35:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2147">35:47.540</a></div>
+        <div class="t">那Dx,也就是Discriminator的Output,應該要越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:53.540" id=35:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2153">35:53.540</a></div>
+        <div class="t">但是這邊還有另外一個限制,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#35:56.540" id=35:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2156">35:56.540</a></div>
+        <div class="t">它不是光叫你把這裡大括號裡面的值變大就好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:01.540" id=36:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2161">36:01.540</a></div>
+        <div class="t">還有一個限制是,D不能夠是一個隨便的Function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:05.540" id=36:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2165">36:05.540</a></div>
+        <div class="t">D必須要是一個One Distance的Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:09.540" id=36:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2169">36:09.540</a></div>
+        <div class="t">可能會問說,One Distance是什麼東西呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:12.540" id=36:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2172">36:12.540</a></div>
+        <div class="t">如果你不知道是什麼的話,也沒有關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:14.540" id=36:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2174">36:14.540</a></div>
+        <div class="t">我們這邊你就想成,D必須要是一個足夠平滑的Function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:20.540" id=36:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2180">36:20.540</a></div>
+        <div class="t">它不可以是變動很劇烈的Function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:23.540" id=36:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2183">36:23.540</a></div>
+        <div class="t">它必須要是一個足夠平滑的Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:26.540" id=36:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2186">36:26.540</a></div>
+        <div class="t">那為什麼足夠平滑這件事情是非常重要的呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:29.540" id=36:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2189">36:29.540</a></div>
+        <div class="t">我們可以從直觀來理解它。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:31.540" id=36:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2191">36:31.540</a></div>
+        <div class="t">假設這個是真正的資料的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:34.540" id=36:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2194">36:34.540</a></div>
+        <div class="t">這是Generated的資料的分布。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:37.540" id=36:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2197">36:37.540</a></div>
+        <div class="t">如果我們沒有這個限制,只看大括號裡面的值的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:41.540" id=36:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2201">36:41.540</a></div>
+        <div class="t">大括號裡面的目標是要這些真正的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:44.540" id=36:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2204">36:44.540</a></div>
+        <div class="t">它的Dx越大越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:47.540" id=36:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2207">36:47.540</a></div>
+        <div class="t">那要讓Generated的值,它的Dx越小越好。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:51.540" id=36:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2211">36:51.540</a></div>
+        <div class="t">如果你沒有做任何限制,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:53.540" id=36:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2213">36:53.540</a></div>
+        <div class="t">只單純要這邊的值越大越好,這邊的值越小越好,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:56.540" id=36:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2216">36:56.540</a></div>
+        <div class="t">在藍色的點跟綠色的點,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#36:59.540" id=36:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2219">36:59.540</a></div>
+        <div class="t">也就是真正的Image跟Generated的Image沒有任何重疊的情況下,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:04.540" id=37:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2224">37:04.540</a></div>
+        <div class="t">你的Discriminator會做什麼?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:06.540" id=37:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2226">37:06.540</a></div>
+        <div class="t">它會給Real的Image無限大的正值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:09.540" id=37:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2229">37:09.540</a></div>
+        <div class="t">給Generated的Image無限大的負值。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:12.540" id=37:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2232">37:12.540</a></div>
+        <div class="t">所以你這個Training根本就沒有辦法收斂,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:15.540" id=37:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2235">37:15.540</a></div>
+        <div class="t">而且你會發現說,只要這兩堆Data沒有重疊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:18.540" id=37:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2238">37:18.540</a></div>
+        <div class="t">你算出來的值都是無限大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:21.540" id=37:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2241">37:21.540</a></div>
+        <div class="t">你算出來的這個Maximum值都是無限大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:23.540" id=37:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2243">37:23.540</a></div>
+        <div class="t">這顯然不是我們要的,這不就跟JS Divergence的問題一模一樣嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:27.540" id=37:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2247">37:27.540</a></div>
+        <div class="t">所以這邊你需要加上這個限制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:30.540" id=37:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2250">37:30.540</a></div>
+        <div class="t">其實你要加上這個限制以後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:32.540" id=37:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2252">37:32.540</a></div>
+        <div class="t">你這個Maximum的值才會是Versus Distance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:35.540" id=37:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2255">37:35.540</a></div>
+        <div class="t">你才是做W gain。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:37.540" id=37:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2257">37:37.540</a></div>
+        <div class="t">那為什麼加上這個限制就可以解決剛才的問題呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:41.540" id=37:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2261">37:41.540</a></div>
+        <div class="t">因為這個限制是要求Discriminator不可以太變化劇烈,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:48.540" id=37:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2268">37:48.540</a></div>
+        <div class="t">它必須要夠平滑。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:50.540" id=37:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2270">37:50.540</a></div>
+        <div class="t">那如果你要求你的Discriminator夠平滑的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:53.540" id=37:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2273">37:53.540</a></div>
+        <div class="t">假設Real跟Generated的Data距離比較近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:56.540" id=37:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2276">37:56.540</a></div>
+        <div class="t">那你就沒有辦法讓Real的Data值非常大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#37:59.540" id=37:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2279">37:59.540</a></div>
+        <div class="t">然後Generated的值非常小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:01.540" id=38:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2281">38:01.540</a></div>
+        <div class="t">因為如果你讓Real的值非常大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:03.540" id=38:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2283">38:03.540</a></div>
+        <div class="t">Generated的值非常小,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:04.540" id=38:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2284">38:04.540</a></div>
+        <div class="t">它們中間的差距很大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:06.540" id=38:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2286">38:06.540</a></div>
+        <div class="t">那這個Discriminator變化就很劇烈了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:09.540" id=38:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2289">38:09.540</a></div>
+        <div class="t">它就不平滑了,它就不是One Decision了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:11.540" id=38:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2291">38:11.540</a></div>
+        <div class="t">那為了要是One Decision,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:13.540" id=38:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2293">38:13.540</a></div>
+        <div class="t">這邊的值沒辦法很大,這邊的值沒辦法很小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:16.540" id=38:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2296">38:16.540</a></div>
+        <div class="t">如果Real跟Generated的Data差距離很遠,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:20.540" id=38:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2300">38:20.540</a></div>
+        <div class="t">那它們的值就可以差很多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:22.540" id=38:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2302">38:22.540</a></div>
+        <div class="t">這邊算出來的值就會比較大,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:24.540" id=38:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2304">38:24.540</a></div>
+        <div class="t">你的Best of Same Distance就比較大。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:26.540" id=38:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2306">38:26.540</a></div>
+        <div class="t">如果Real跟Generated很近,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:28.540" id=38:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2308">38:28.540</a></div>
+        <div class="t">就算它們沒有重合,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:30.540" id=38:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2310">38:30.540</a></div>
+        <div class="t">因為有了這個限制,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:32.540" id=38:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2312">38:32.540</a></div>
+        <div class="t">有了這個寫在Max下面的One Decision Function的限制,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:37.540" id=38:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2317">38:37.540</a></div>
+        <div class="t">因為有One Decision Function的限制,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:39.540" id=38:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2319">38:39.540</a></div>
+        <div class="t">所以Real Data的值跟Generated Data的值就沒有辦法差很多。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:44.540" id=38:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2324">38:44.540</a></div>
+        <div class="t">所以算出來的Best of Same Distance就會比較小。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:48.540" id=38:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2328">38:48.540</a></div>
+        <div class="t">那接下來的問題就是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:50.540" id=38:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2330">38:50.540</a></div>
+        <div class="t">怎麼做到這個限制呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:53.540" id=38:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2333">38:53.540</a></div>
+        <div class="t">怎麼確保Discriminator一定符合One Decision Function的限制呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#38:59.540" id=38:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2339">38:59.540</a></div>
+        <div class="t">最早,剛提出WGAN的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:02.540" id=39:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2342">39:02.540</a></div>
+        <div class="t">其實沒有什麼好想法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:04.540" id=39:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2344">39:04.540</a></div>
+        <div class="t">只知道寫出了這個式子,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:07.540" id=39:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2347">39:07.540</a></div>
+        <div class="t">但要怎麼真的解這個式子呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:09.540" id=39:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2349">39:09.540</a></div>
+        <div class="t">有點困難。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:11.540" id=39:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2351">39:11.540</a></div>
+        <div class="t">所以最早的一篇WGAN的paper,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:13.540" id=39:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2353">39:13.540</a></div>
+        <div class="t">最早使用Best of Same的那篇paper,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:15.540" id=39:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2355">39:15.540</a></div>
+        <div class="t">它做了一個比較rough,比較粗糙的處理方法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:20.540" id=39:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2360">39:20.540</a></div>
+        <div class="t">它是說,我就train a network,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:22.540" id=39:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2362">39:22.540</a></div>
+        <div class="t">那train network的時候呢,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:24.540" id=39:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2364">39:24.540</a></div>
+        <div class="t">如果我training的參數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:26.540" id=39:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2366">39:26.540</a></div>
+        <div class="t">我就要求它bond在C跟-C之間。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:30.540" id=39:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2370">39:30.540</a></div>
+        <div class="t">如果超過C,就Gradient Descent Update以後超過C就設為C,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:34.540" id=39:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2374">39:34.540</a></div>
+        <div class="t">Gradient Descent Update以後小於-C就直接設為-C。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:37.540" id=39:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2377">39:37.540</a></div>
+        <div class="t">那其實這個方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:39.540" id=39:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2379">39:39.540</a></div>
+        <div class="t">並不一定真的能夠讓Discriminator變成One Decision Function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:44.540" id=39:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2384">39:44.540</a></div>
+        <div class="t">但你可以想像說,這個方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:46.540" id=39:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2386">39:46.540</a></div>
+        <div class="t">也許真的可以讓我們的Discriminator比較平滑,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:50.540" id=39:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2390">39:50.540</a></div>
+        <div class="t">但它並沒有真的去解這個optimization的problem,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:54.540" id=39:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2394">39:54.540</a></div>
+        <div class="t">它並沒有真的讓Discriminator符合這個限制。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:57.540" id=39:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2397">39:57.540</a></div>
+        <div class="t">所以接下來就有其他的想法啦,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#39:59.540" id=39:59.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2399">39:59.540</a></div>
+        <div class="t">有一個想法叫做Gradient Penalty。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:02.540" id=40:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2402">40:02.540</a></div>
+        <div class="t">Gradient Penalty是出自ImproveWGAN這篇paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:07.540" id=40:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2407">40:07.540</a></div>
+        <div class="t">ImproveWGAN這篇paper是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:09.540" id=40:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2409">40:09.540</a></div>
+        <div class="t">假設這個是你的real data的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:12.540" id=40:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2412">40:12.540</a></div>
+        <div class="t">這個是你的fake data的分布,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:16.540" id=40:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2416">40:16.540</a></div>
+        <div class="t">那我在real data這邊取一個sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:18.540" id=40:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2418">40:18.540</a></div>
+        <div class="t">fake data這邊取一個sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:20.540" id=40:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2420">40:20.540</a></div>
+        <div class="t">兩點連線中間再取一個sample,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:23.540" id=40:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2423">40:23.540</a></div>
+        <div class="t">我要求這個點,它的gradient要接近1。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:28.540" id=40:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2428">40:28.540</a></div>
+        <div class="t">那你可能會覺得說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:30.540" id=40:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2430">40:30.540</a></div>
+        <div class="t">不知道在說些什麼這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:33.540" id=40:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2433">40:33.540</a></div>
+        <div class="t">這件事情的關係跟這個限制的關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:37.540" id=40:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2437">40:37.540</a></div>
+        <div class="t">到底是什麼呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:39.540" id=40:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2439">40:39.540</a></div>
+        <div class="t">那就詳盡ImproveWGAN的paper。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:42.540" id=40:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2442">40:42.540</a></div>
+        <div class="t">其實我覺得你現在也不一定要真的非常較真說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:46.540" id=40:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2446">40:46.540</a></div>
+        <div class="t">這件事情Gradient Penalty跟這個限制之間的關係,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:50.540" id=40:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2450">40:50.540</a></div>
+        <div class="t">因為其實有更多其他的方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:53.540" id=40:53.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2453">40:53.540</a></div>
+        <div class="t">真的可以去解這個問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:55.540" id=40:55.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2455">40:55.540</a></div>
+        <div class="t">那其實後來ImproveWGAN之後,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#40:57.540" id=40:57.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2457">40:57.540</a></div>
+        <div class="t">還有什麼Improve的ImproveWGAN,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:01.540" id=41:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2461">41:01.540</a></div>
+        <div class="t">真的有這篇paper,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:03.540" id=41:03.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2463">41:03.540</a></div>
+        <div class="t">他就是把這個限制再稍微改一改,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:05.540" id=41:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2465">41:05.540</a></div>
+        <div class="t">又有另外一篇paper就叫ImproveWGAN。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:08.540" id=41:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2468">41:08.540</a></div>
+        <div class="t">那今天其實你有一個方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:10.540" id=41:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2470">41:10.540</a></div>
+        <div class="t">真的把第一限制讓它是one list function,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:14.540" id=41:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2474">41:14.540</a></div>
+        <div class="t">這個叫做Spectral Normalization,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:17.540" id=41:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2477">41:17.540</a></div>
+        <div class="t">那我就把它的論文放在這邊,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:19.540" id=41:19.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2479">41:19.540</a></div>
+        <div class="t">給大家參考。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:21.540" id=41:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2481">41:21.540</a></div>
+        <div class="t">那如果你要train真的非常好的GAN,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:23.540" id=41:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2483">41:23.540</a></div>
+        <div class="t">你可能會需要用到Spectral Normalization。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:27.540" id=41:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2487">41:27.540</a></div>
+        <div class="t">講到這邊,正好告一個段落,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:30.540" id=41:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2490">41:30.540</a></div>
+        <div class="t">我看也快6點20了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:32.540" id=41:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2492">41:32.540</a></div>
+        <div class="t">我們就停在這邊好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:34.540" id=41:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2494">41:34.540</a></div>
+        <div class="t">我們就看看大家有沒有問題要問,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:36.540" id=41:36.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2496">41:36.540</a></div>
+        <div class="t">如果你沒有問題的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:38.540" id=41:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2498">41:38.540</a></div>
+        <div class="t">你就可以先離開了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#41:40.540" id=41:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2500">41:40.540</a></div>
+        <div class="t">請說。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:02.540" id=42:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2522">42:02.540</a></div>
+        <div class="t">我們從實作跟理論兩個方向來考慮。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:06.540" id=42:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2526">42:06.540</a></div>
+        <div class="t">如果今天我們看的是理論的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:09.540" id=42:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2529">42:09.540</a></div>
+        <div class="t">理論是要量現在的generator的output,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:12.540" id=42:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2532">42:12.540</a></div>
+        <div class="t">跟真正data之間的距離。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:15.540" id=42:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2535">42:15.540</a></div>
+        <div class="t">所以你不需要去管之前的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:18.540" id=42:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2538">42:18.540</a></div>
+        <div class="t">你只要看現在的generator的output就好了。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:21.540" id=42:21.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2541">42:21.540</a></div>
+        <div class="t">這個是理論上的做法。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:24.540" id=42:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2544">42:24.540</a></div>
+        <div class="t">但是實作上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:26.540" id=42:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2546">42:26.540</a></div>
+        <div class="t">你確實可以把過去的資料也加進來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:30.540" id=42:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2550">42:30.540</a></div>
+        <div class="t">那過去的資料加進來的好處可能是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:32.540" id=42:32.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2552">42:32.540</a></div>
+        <div class="t">我現在generator只generate一部分的資料,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:35.540" id=42:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2555">42:35.540</a></div>
+        <div class="t">那過去的資料比較多,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:37.540" id=42:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2557">42:37.540</a></div>
+        <div class="t">我就已經generate在那裡了,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:39.540" id=42:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2559">42:39.540</a></div>
+        <div class="t">那我把過去的資料再加上來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:41.540" id=42:41.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2561">42:41.540</a></div>
+        <div class="t">我資料比較多,也許我訓練出來的結果會比較robust。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:43.540" id=42:43.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2563">42:43.540</a></div>
+        <div class="t">所以把過去的資料加進來,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:45.540" id=42:45.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2565">42:45.540</a></div>
+        <div class="t">這樣子的想法是真的有人會做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:48.540" id=42:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2568">42:48.540</a></div>
+        <div class="t">這是一個Trend Game的Tip。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:51.540" id=42:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2571">42:51.540</a></div>
+        <div class="t">而且其實這邊你有沒有發現一個問題,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:54.540" id=42:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2574">42:54.540</a></div>
+        <div class="t">就是我們今天,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:56.540" id=42:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2576">42:56.540</a></div>
+        <div class="t">因為我們說我們Trend那個discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#42:58.540" id=42:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2578">42:58.540</a></div>
+        <div class="t">maximum的值就代表了我們的divergence,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:01.540" id=43:01.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2581">43:01.540</a></div>
+        <div class="t">那其實照理說我們每次discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:05.540" id=43:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2585">43:05.540</a></div>
+        <div class="t">大概都是重Trend的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:07.540" id=43:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2587">43:07.540</a></div>
+        <div class="t">對不對?我們每次就是重新去,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:09.540" id=43:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2589">43:09.540</a></div>
+        <div class="t">重新initialize一個discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:11.540" id=43:11.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2591">43:11.540</a></div>
+        <div class="t">重新去訓練。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:12.540" id=43:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2592">43:12.540</a></div>
+        <div class="t">但是在實作上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:13.540" id=43:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2593">43:13.540</a></div>
+        <div class="t">沒有任何人是這麼做的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:15.540" id=43:15.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2595">43:15.540</a></div>
+        <div class="t">因為實際上我們在updatediscriminator的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:17.540" id=43:17.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2597">43:17.540</a></div>
+        <div class="t">我們並沒有辦法真的跑很多iteration。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:20.540" id=43:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2600">43:20.540</a></div>
+        <div class="t">本來理論上應該是跑跑跑,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:22.540" id=43:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2602">43:22.540</a></div>
+        <div class="t">跑到discriminator真的收斂為止。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:24.540" id=43:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2604">43:24.540</a></div>
+        <div class="t">但實際上沒有人要這麼做,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:26.540" id=43:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2606">43:26.540</a></div>
+        <div class="t">因為你每次如果discriminator都要跑到收斂,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:28.540" id=43:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2608">43:28.540</a></div>
+        <div class="t">才update一次generator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:29.540" id=43:29.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2609">43:29.540</a></div>
+        <div class="t">太花時間了,沒有人這麼做。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:31.540" id=43:31.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2611">43:31.540</a></div>
+        <div class="t">所以變成實際上的做法都是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:33.540" id=43:33.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2613">43:33.540</a></div>
+        <div class="t">discriminator只update幾次,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:35.540" id=43:35.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2615">43:35.540</a></div>
+        <div class="t">就要輪到generatorupdate。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:37.540" id=43:37.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2617">43:37.540</a></div>
+        <div class="t">所以discriminator其實update的次數,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:39.540" id=43:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2619">43:39.540</a></div>
+        <div class="t">是非常的少的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:40.540" id=43:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2620">43:40.540</a></div>
+        <div class="t">我們並沒有辦法真的去maximize,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:42.540" id=43:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2622">43:42.540</a></div>
+        <div class="t">那個objective function。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:44.540" id=43:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2624">43:44.540</a></div>
+        <div class="t">所以變成說我們discriminator,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:46.540" id=43:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2626">43:46.540</a></div>
+        <div class="t">都不是重頭Trend的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:47.540" id=43:47.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2627">43:47.540</a></div>
+        <div class="t">它的參數都是從前一個iteration,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:50.540" id=43:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2630">43:50.540</a></div>
+        <div class="t">繼承過來的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:51.540" id=43:51.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2631">43:51.540</a></div>
+        <div class="t">它都是從前一個iteration,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:52.540" id=43:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2632">43:52.540</a></div>
+        <div class="t">再重新Trend起。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:54.540" id=43:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2634">43:54.540</a></div>
+        <div class="t">對,這是有很多理論跟實作上,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#43:58.540" id=43:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2638">43:58.540</a></div>
+        <div class="t">有歧異的地方。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:00.540" id=44:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2640">44:00.540</a></div>
+        <div class="t">這樣我回答到你的問題嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:02.540" id=44:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2642">44:02.540</a></div>
+        <div class="t">大家有事就可以先走啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:04.540" id=44:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2644">44:04.540</a></div>
+        <div class="t">如果有問題的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:05.540" id=44:05.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2645">44:05.540</a></div>
+        <div class="t">就歡迎你留下來問。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:07.540" id=44:07.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2647">44:07.540</a></div>
+        <div class="t">你還有沒有問題想問呢?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:09.540" id=44:09.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2649">44:09.540</a></div>
+        <div class="t">大家有問題要問嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:23.540" id=44:23.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2663">44:23.540</a></div>
+        <div class="t">我剛才忘了複述剛才那個同學的問題。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:26.540" id=44:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2666">44:26.540</a></div>
+        <div class="t">那同學的問題是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:27.540" id=44:27.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2667">44:27.540</a></div>
+        <div class="t">我們在訓練discriminator的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:30.540" id=44:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2670">44:30.540</a></div>
+        <div class="t">能不能夠用之前generator sample出來的資料。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:39.540" id=44:39.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2679">44:39.540</a></div>
+        <div class="t">好,沒關係,你慢慢來。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#44:40.540" id=44:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2680">44:40.540</a></div>
+        <div class="t">大家有事就可以先離開,沒有關係。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:00.540" id=45:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2700">45:00.540</a></div>
+        <div class="t">你請說啊。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:13.540" id=45:13.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2713">45:13.540</a></div>
+        <div class="t">找到一個比。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:16.540" id=45:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2716">45:16.540</a></div>
+        <div class="t">我們要做的是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:18.540" id=45:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2718">45:18.540</a></div>
+        <div class="t">divergence的function其實是已經定好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:20.540" id=45:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2720">45:20.540</a></div>
+        <div class="t">就比如說JsDivergence,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:22.540" id=45:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2722">45:22.540</a></div>
+        <div class="t">或是Wdistance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:24.540" id=45:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2724">45:24.540</a></div>
+        <div class="t">那個是我們事先定好的。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:26.540" id=45:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2726">45:26.540</a></div>
+        <div class="t">我們training的目標是,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:28.540" id=45:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2728">45:28.540</a></div>
+        <div class="t">在這個固定好的divergence的</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:30.540" id=45:30.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2730">45:30.540</a></div>
+        <div class="t">對,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:34.540" id=45:34.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2734">45:34.540</a></div>
+        <div class="t">可是你剛才不是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:38.540" id=45:38.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2738">45:38.540</a></div>
+        <div class="t">divergence其實比較難嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:40.540" id=45:40.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2740">45:40.540</a></div>
+        <div class="t">如果都可以計算的話,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:42.540" id=45:42.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2742">45:42.540</a></div>
+        <div class="t">那我們就直接用傳統方法,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:44.540" id=45:44.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2744">45:44.540</a></div>
+        <div class="t">讓它生成出來的東西越來越簡單嗎?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:46.540" id=45:46.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2746">45:46.540</a></div>
+        <div class="t">今天要解釋的原因,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:48.540" id=45:48.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2748">45:48.540</a></div>
+        <div class="t">就是因為我們沒辦法直接計算,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:50.540" id=45:50.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2750">45:50.540</a></div>
+        <div class="t">所以我們等於是要找到一個</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:52.540" id=45:52.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2752">45:52.540</a></div>
+        <div class="t">這個divergence的近似,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:54.540" id=45:54.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2754">45:54.540</a></div>
+        <div class="t">一個可以計算的近似。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:56.540" id=45:56.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2756">45:56.540</a></div>
+        <div class="t">就是這樣,就是這樣。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#45:58.540" id=45:58.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2758">45:58.540</a></div>
+        <div class="t">所以說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:00.540" id=46:00.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2760">46:00.540</a></div>
+        <div class="t">剛才講那個divergence,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:02.540" id=46:02.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2762">46:02.540</a></div>
+        <div class="t">Wdistance,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:04.540" id=46:04.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2764">46:04.540</a></div>
+        <div class="t">是我們要去確認的東西,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:06.540" id=46:06.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2766">46:06.540</a></div>
+        <div class="t">還是說它是我們要算的divergence,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:08.540" id=46:08.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2768">46:08.540</a></div>
+        <div class="t">近似的divergence?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:10.540" id=46:10.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2770">46:10.540</a></div>
+        <div class="t">你是說,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:12.540" id=46:12.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2772">46:12.540</a></div>
+        <div class="t">我們剛才在講Wgame的時候,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:14.540" id=46:14.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2774">46:14.540</a></div>
+        <div class="t">我猜你就是指這一頁投影片。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:16.540" id=46:16.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2776">46:16.540</a></div>
+        <div class="t">這個東西是什麼,對不對?</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:18.540" id=46:18.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2778">46:18.540</a></div>
+        <div class="t">這個東西解完,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:20.540" id=46:20.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2780">46:20.540</a></div>
+        <div class="t">就這個maximum的值,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:22.540" id=46:22.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2782">46:22.540</a></div>
+        <div class="t">就是VesselStandDistance。</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:24.540" id=46:24.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2784">46:24.540</a></div>
+        <div class="t">對,就是你把d確認完,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:26.540" id=46:26.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2786">46:26.540</a></div>
+        <div class="t">然後這邊會得到一個value,</div>
+    </div>
+    
+    <div class="c">
+        <a class="l" href="#46:28.540" id=46:28.540>link</a> |
+        <div class="s"><a href="https://www.youtube.com/watch?v=jNY1WBb8l4U&t=2788">46:28.540</a></div>
+        <div class="t">這個value就是VesselStandDistance。</div>
+    </div>
+    
+</body>
+</html>   
